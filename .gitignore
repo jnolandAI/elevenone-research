@@ -1,0 +1,28 @@
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Office / temp files
+~$*
+*.tmp
+
+# Environments and secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Editors
+.vscode/
+.idea/
