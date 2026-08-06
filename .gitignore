@@ -38,3 +38,6 @@ prototypes/png/
 
 # SDD workspace
 .superpowers/sdd/
+
+# Claude Code worktrees
+.claude/worktrees/
