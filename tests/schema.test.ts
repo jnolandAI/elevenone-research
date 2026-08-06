@@ -13,6 +13,15 @@ const claim = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
+// Every negative fixture below must fail for the ONE constraint it names.
+// A fixture that is also malformed some other way certifies a rule that may
+// not actually be enforced: with a 1-character conclusion, the .strict() test
+// below stays green even if .strict() is deleted, because the conclusion
+// length fails on its own. These two constants keep the incidental fields
+// valid so each test isolates its own target.
+const CONCLUSION = 'A peer median summarises a mixture.';
+const OFFPATH_TEXT = 'Held, and deliberately left out of the argument because it is untested.';
+
 const brief = (over: Record<string, unknown> = {}) => ({
   number: '001',
   title: 'Reported gross margin is not one distribution',
@@ -64,7 +73,7 @@ describe('the working, enforced by the schema', () => {
   it('rejects two claims', () => {
     expect(briefSchema.safeParse(brief({
       claims: [claim({ id: 'A' }), claim({ id: 'B' })],
-      loadPath: { conclusion: 'c', members: ['A', 'B'], offPath: null },
+      loadPath: { conclusion: CONCLUSION, members: ['A', 'B'], offPath: null },
     })).success).toBe(false);
   });
 
@@ -80,28 +89,28 @@ describe('the working, enforced by the schema', () => {
 
   // the load path can only be built from claims that exist
   it('rejects a load path member that resolves to nothing', () => {
-    const bad = brief({ loadPath: { conclusion: 'c', members: ['A', 'Z'], offPath: null } });
+    const bad = brief({ loadPath: { conclusion: CONCLUSION, members: ['A', 'Z'], offPath: null } });
     expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 
   it('rejects an off-path claim that resolves to nothing', () => {
-    const bad = brief({ loadPath: { conclusion: 'c', members: ['A'], offPath: { id: 'Z', text: 'x' } } });
+    const bad = brief({ loadPath: { conclusion: CONCLUSION, members: ['A'], offPath: { id: 'Z', text: OFFPATH_TEXT } } });
     expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 
   it('rejects a claim that is both on the load path and off it', () => {
-    const bad = brief({ loadPath: { conclusion: 'c', members: ['A', 'B'], offPath: { id: 'B', text: 'x' } } });
+    const bad = brief({ loadPath: { conclusion: CONCLUSION, members: ['A', 'B'], offPath: { id: 'B', text: OFFPATH_TEXT } } });
     expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 
   // rule 3 is not authorable: the cap is derived, so there is nowhere to assert it
   it('rejects an authored conclusion standing', () => {
-    const bad = brief({ loadPath: { conclusion: 'c', members: ['A'], offPath: null, standing: 'firm' } });
+    const bad = brief({ loadPath: { conclusion: CONCLUSION, members: ['A'], offPath: null, standing: 'firm' } });
     expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 
   it('requires an empty load path to be impossible', () => {
-    const bad = brief({ loadPath: { conclusion: 'c', members: [], offPath: null } });
+    const bad = brief({ loadPath: { conclusion: CONCLUSION, members: [], offPath: null } });
     expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 });
