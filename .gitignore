@@ -41,3 +41,11 @@ prototypes/png/
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Astro
+dist/
+.astro/
+
+# Test output
+test-results/
+playwright-report/
