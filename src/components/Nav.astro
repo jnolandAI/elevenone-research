@@ -25,7 +25,7 @@ const links = [
       ))}
     </nav>
     {print && (
-      <button class="print" type="button" data-print>Print</button>
+      <button class="print" type="button" data-print hidden>Print</button>
     )}
   </div>
 </header>
@@ -33,7 +33,17 @@ const links = [
 <script>
   // The brief is open in web and on paper. There is no file to download and
   // the button does not say there is.
-  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+  //
+  // It ships hidden and this reveals it. Without that, a reader with
+  // JavaScript off gets a button that renders, takes focus, looks actionable
+  // and does nothing, which is the same dishonesty as labelling it "Download
+  // PDF" while no file exists. Printing stays available through the browser's
+  // own command either way, so hiding the control costs that reader nothing.
+  const printButton = document.querySelector<HTMLButtonElement>('[data-print]');
+  if (printButton) {
+    printButton.hidden = false;
+    printButton.addEventListener('click', () => window.print());
+  }
 </script>
 
 <style>
