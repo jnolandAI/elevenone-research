@@ -34,7 +34,7 @@ export function checkBrief(source, path) {
   // Attribute-order independent. Anchoring id= to first position would let a
   // second marking of the same claim hide behind any other attribute, which
   // turns a real doubled-claim violation into a silent pass.
-  const marked = [...body.matchAll(/<Claim[^>]*?\sid=["']([A-Z])["']/g)].map((m) => m[1]);
+  const marked = [...body.matchAll(/<Claim\b[^>]*?\sid=["']([A-Z])["']/g)].map((m) => m[1]);
 
   const counts = new Map();
   for (const id of marked) counts.set(id, (counts.get(id) ?? 0) + 1);

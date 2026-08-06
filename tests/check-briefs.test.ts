@@ -48,4 +48,20 @@ describe('body to frontmatter correspondence', () => {
     expect(problems[0]).toMatch(/A/);
     expect(problems[0]).toMatch(/2 times/);
   });
+
+  // Without a word boundary after <Claim, the pattern is a prefix match, so a
+  // future component named ClaimList would have its id counted as a claim
+  // marking. C is never declared here, so a boundary-less pattern reports one
+  // problem for it; the correct pattern ignores <ClaimList> entirely.
+  it('does not mistake <ClaimList> for a <Claim> marking', () => {
+    const source = `---
+claims:
+  - id: A
+---
+
+<Claim id="A">Half the universe spans 23.1% to 59.7%.</Claim>
+<ClaimList id="C">Not a claim marking.</ClaimList>
+`;
+    expect(checkBrief(source, 'claim-list.mdx')).toEqual([]);
+  });
 });
