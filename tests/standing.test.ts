@@ -56,7 +56,10 @@ describe('the cap', () => {
   });
 
   it('throws on an empty load path rather than returning firm', () => {
-    expect(() => capOf([c('A', 'firm')], [])).toThrow();
+    // Pinned to capOf's own message. A bare .toThrow() cannot tell capOf's
+    // guard from weakest's, which would also throw on an empty array, so the
+    // test would keep passing with capOf's guard deleted.
+    expect(() => capOf([c('A', 'firm')], [])).toThrow(/no members/);
   });
 
   it('draws the thinnest wire for the claim holding the least', () => {
