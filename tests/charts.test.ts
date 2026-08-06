@@ -95,7 +95,10 @@ describe('ridge figure', () => {
   });
 
   it('sets axis ticks in mono, because a tick is a value standing alone', () => {
-    expect(svg).toContain('Martian Mono');
+    // Counted, not merely present. A bare substring check stays green if the
+    // ticks regress to SANS while any other element still carries MONO.
+    const ticks = svg.match(/font-family="Martian Mono[^"]*" font-weight="300" font-size="9"/g) ?? [];
+    expect(ticks).toHaveLength(3);
   });
 
   it('puts no drop shadow on any data mark', () => {
@@ -134,4 +137,24 @@ describe('range figure', () => {
     const readouts = svg.match(/font-family="Martian Mono[^"]*" font-size="9.5" font-weight="400"/g) ?? [];
     expect(readouts).toHaveLength(data.cohorts.length);
   });
+});
+
+// The density figure carries this check already. Both cohort figures introduce
+// their own literal hexes, so without it a tinted value could enter a figure
+// with nothing in the suite to notice.
+describe('every figure draws in greyscale only', () => {
+  for (const [name, svg] of [
+    ['density', densityFigure(data)],
+    ['ridge', ridgeFigure(data)],
+    ['range', rangeFigure(data)],
+  ] as const) {
+    it(`${name} introduces no colour`, () => {
+      const hexes = svg.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+      expect(hexes.length).toBeGreaterThan(0);
+      for (const hex of hexes) {
+        const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+        expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!), `${name} ${hex}`).toBeLessThanOrEqual(4);
+      }
+    });
+  }
 });
