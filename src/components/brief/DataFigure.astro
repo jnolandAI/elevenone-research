@@ -1,0 +1,21 @@
+---
+import Figure from './Figure.astro';
+import { loadDataset } from '../../lib/dataset';
+import { densityFigure } from '../../lib/charts/kde';
+import { ridgeFigure } from '../../lib/charts/ridge';
+import { rangeFigure } from '../../lib/charts/range';
+
+interface Props {
+  kind: 'kde' | 'ridge' | 'range';
+  dataset: string;
+  title: string;
+  meta?: string;
+  description: string;
+  footnote: string;
+}
+const { kind, dataset, ...chrome } = Astro.props;
+
+const data = loadDataset(dataset);
+const svg = { kde: densityFigure, ridge: ridgeFigure, range: rangeFigure }[kind](data);
+---
+<Figure {...chrome}><Fragment set:html={svg} /></Figure>

@@ -1,0 +1,34 @@
+---
+interface Props {
+  title: string;
+  /** A value standing alone, so it sets in mono. */
+  meta?: string;
+  description: string;
+  footnote: string;
+}
+const { title, meta, description, footnote } = Astro.props;
+---
+<figure class="fig">
+  <div class="h">
+    <div class="t">{title}</div>
+    {meta && <div class="m mono">{meta}</div>}
+  </div>
+  <figcaption class="d">{description}</figcaption>
+  <div class="plot"><slot /></div>
+  <div class="f">{footnote}</div>
+</figure>
+
+<style>
+  /* figures take the reading column exactly, never wider */
+  .fig {
+    margin: 34px 0; padding: 24px 26px 22px;
+    border-radius: var(--r-l);
+    background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%);
+    box-shadow: var(--e2);
+  }
+  .h { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+  .t { font-size: 15.5px; font-weight: 600; letter-spacing: -.014em; }
+  .m { font-size: 11.5px; color: var(--g70); white-space: nowrap; }
+  .d { font-size: 12.5px; color: var(--g70); margin: 7px 0 16px; line-height: 1.66; }
+  .f { font-size: 11.5px; color: var(--g70); margin-top: 14px; line-height: 1.7; }
+</style>

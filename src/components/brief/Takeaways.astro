@@ -1,0 +1,23 @@
+---
+interface Props { items: { lead: string; body: string }[]; }
+const { items } = Astro.props;
+---
+<ol class="take">
+  {items.map((i) => <li><b>{i.lead}</b> {i.body}</li>)}
+</ol>
+
+<style>
+  .take { margin: 0; padding-left: 0; list-style: none; counter-reset: t; }
+  .take li {
+    counter-increment: t; position: relative; padding-left: 36px; margin-bottom: 20px;
+    font-size: 16.5px; line-height: 1.72; color: var(--g80);
+  }
+  .take li:last-child { margin-bottom: 0; }
+  .take li::before {
+    content: counter(t); position: absolute; left: 0; top: 2px;
+    width: 23px; height: 23px; border-radius: 50%;
+    background: var(--ink); color: #fff; font-size: 11px;
+    font-variant-numeric: tabular-nums; display: grid; place-items: center; font-weight: 500;
+  }
+  .take li b { color: var(--ink); font-weight: 600; }
+</style>

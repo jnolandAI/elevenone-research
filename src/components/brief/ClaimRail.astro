@@ -1,0 +1,103 @@
+---
+import type { Claim } from '../../content.config';
+
+interface Props { claims: Claim[]; dataset: string; }
+const { claims, dataset } = Astro.props;
+const datasetName = dataset.split('/').pop();
+---
+<aside class="rail" id="rail" aria-label="Claims in this brief">
+  <h2>Claims in this brief</h2>
+  <!--
+    Not "these claims carry the argument": a brief may hold a claim and keep it
+    off the load path, which is exactly what claim D does in Brief 001. The
+    lead says what is true of all of them.
+  -->
+  <p class="lead">
+    Each claim below shows what it rests on, what it assumes, and what would
+    make it wrong. Which of them carry the conclusion is set out in the load path.
+  </p>
+  <ol>
+    {claims.map((c) => (
+      <li>
+        <details class={`ci ${c.standing}`} id={`c-${c.id}`} data-for={c.id}>
+          <summary>
+            <span class="let">{c.id}</span>
+            <span class="txt">
+              {c.text}
+              <span class="std"><b>{c.standing[0]!.toUpperCase() + c.standing.slice(1)}</b> &middot; {c.qualifier}</span>
+            </span>
+            <svg class="chev" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6.5 8 10.5 12 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="body">
+            <dl>
+              <dt>Rests on</dt><dd>{c.restsOn}</dd>
+              <dt>Assumes</dt><dd>{c.assumes}</dd>
+              <dt>Breaks if</dt><dd>{c.breaksIf}</dd>
+            </dl>
+            {c.note && <p class="note">{c.note}</p>}
+          </div>
+        </details>
+      </li>
+    ))}
+  </ol>
+  <p class="foot">Every figure here is recomputable from the published dataset, <a href={dataset}>{datasetName}</a>.</p>
+</aside>
+
+<style>
+  .rail {
+    position: sticky; top: 88px; max-height: calc(100vh - 116px);
+    overflow-y: auto; overscroll-behavior: contain; padding: 2px 2px 8px;
+  }
+  .rail::-webkit-scrollbar { width: 6px; }
+  .rail::-webkit-scrollbar-thumb { background: var(--g40); border-radius: 3px; }
+  h2 { font-size: 13.5px; font-weight: 600; letter-spacing: -.012em; margin: 0 0 5px; }
+  .lead { font-size: 11.5px; line-height: 1.66; color: var(--g70); margin: 0 0 16px; }
+  ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+  /* Standing is carried on three channels at once and never on shadow alone:
+     tone, elevation, and the written standing in .std. */
+  .ci {
+    border-radius: var(--r-m);
+    background: linear-gradient(160deg, #FFFFFF 0%, #F8F8F7 100%);
+    transition: box-shadow .35s var(--ez), transform .35s var(--ez);
+  }
+  .ci.firm { box-shadow: var(--e2); }
+  .ci.supported { box-shadow: var(--e1); }
+  .ci.provisional {
+    box-shadow: none;
+    background: linear-gradient(160deg, rgba(252,252,253,.72), rgba(243,243,244,.72));
+  }
+  .ci:global(.lit) { transform: translateY(-2px); box-shadow: var(--e3); }
+  .ci summary {
+    list-style: none; cursor: pointer; padding: 14px 15px;
+    display: grid; grid-template-columns: 18px 1fr 14px; gap: 9px; align-items: start;
+  }
+  .ci summary::-webkit-details-marker { display: none; }
+  .let {
+    font-family: 'Martian Mono Variable', 'Martian Mono', ui-monospace, monospace;
+    font-size: 9.5px; font-weight: 400; color: var(--g70); padding-top: 2px;
+  }
+  .txt { font-size: 12.5px; line-height: 1.56; letter-spacing: -.006em; }
+  .ci.firm .txt { color: var(--ink); font-weight: 500; }
+  .ci.supported .txt { color: var(--g80); font-weight: 500; }
+  .ci.provisional .txt { color: var(--g70); font-weight: 400; }
+  .std { display: block; font-size: 11px; font-weight: 400; color: var(--g70); margin-top: 6px; }
+  .std b { font-weight: 600; color: var(--ink); }
+  .chev { width: 14px; height: 14px; margin-top: 3px; color: var(--g70); transition: transform .35s var(--ez); }
+  .ci[open] .chev { transform: rotate(180deg); }
+  .body { padding: 0 15px 15px; }
+  dl { margin: 0; }
+  dt { font-size: 10.5px; color: var(--g70); margin-top: 11px; }
+  dd { margin: 3px 0 0; font-size: 12px; line-height: 1.62; color: var(--g80); }
+  .note { font-size: 11px; line-height: 1.6; color: var(--g70); margin: 12px 0 0; }
+  .foot { font-size: 11px; line-height: 1.66; color: var(--g70); margin: 16px 0 0; }
+  .foot a {
+    color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-color: var(--g40);
+  }
+
+  @media (max-width: 900px) {
+    .rail { position: static; max-height: none; overflow: visible; margin-top: 76px; }
+    ol { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 12px; }
+  }
+</style>
