@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "field": "diagonal ramp, jitter decaying with density",
+  "angle": 15.0,
+  "jitter": 0.85,
+  "gamma": 1.2,
+  "edge": 0.13,
+  "ink": "#131312",
+  "ink_inverse": "#FAFAF9",
+  "cuts": {
+    "display": {
+      "pitch": 9.5,
+      "rmax": 3.7
+    },
+    "small": {
+      "pitch": 21.38,
+      "rmax": 7.77
+    }
+  },
+  "files": [
+    "favicon-16.png",
+    "favicon-32.png",
+    "icon-180.png",
+    "icon-512.png",
+    "mark-inverse.svg",
+    "mark-small-inverse.svg",
+    "mark-small.svg",
+    "mark.svg"
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "datacenter-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "datacenter",
+    "w": 920
+  },
+  "datacenter-figure-dot.png": {
+    "engine_version": "1.1",
+    "h": 920,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "figure",
+    "source": "procedural",
+    "subject": "datacenter",
+    "w": 1440
+  },
+  "datacenter-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "datacenter",
+    "w": 2880
+  },
+  "datacenter-social-dot.png": {
+    "engine_version": "1.1",
+    "h": 630,
+    "mode": "dot",
+    "pitch": 6,
+    "role": "social",
+    "source": "procedural",
+    "subject": "datacenter",
+    "w": 1200
+  },
+  "grid-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "grid",
+    "w": 920
+  },
+  "grid-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "grid",
+    "w": 2880
+  },
+  "port-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "port",
+    "w": 920
+  },
+  "port-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "port",
+    "w": 2880
+  },
+  "robotics-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "robotics",
+    "w": 920
+  },
+  "robotics-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "robotics",
+    "w": 2880
+  },
+  "urban-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "urban",
+    "w": 920
+  },
+  "urban-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "urban",
+    "w": 2880
+  },
+  "wind-card-dot.png": {
+    "engine_version": "1.1",
+    "h": 600,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "card",
+    "source": "procedural",
+    "subject": "wind",
+    "w": 920
+  },
+  "wind-cover-contour.png": {
+    "engine_version": "1.1",
+    "h": 2000,
+    "mode": "contour",
+    "pitch": 9,
+    "role": "cover",
+    "source": "procedural",
+    "subject": "wind",
+    "w": 1600
+  },
+  "wind-hero-dot.png": {
+    "engine_version": "1.1",
+    "h": 1200,
+    "mode": "dot",
+    "pitch": 12,
+    "role": "hero",
+    "source": "procedural",
+    "subject": "wind",
+    "w": 2880
+  }
+}

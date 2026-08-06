@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — brass, greys, and the reserve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#E4E4E6;color:#111114;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .shell{max-width:1220px;margin:0 auto;padding:56px 24px 120px}
+  h1{font-size:27px;font-weight:500;letter-spacing:-.018em;margin:0 0 14px}
+  h2{font-size:19px;font-weight:600;letter-spacing:-.012em;margin:0 0 10px}
+  .sec{margin-top:66px;padding-top:26px;border-top:1px solid #CFCFD3}
+  .lede{font-size:14.5px;line-height:1.75;color:#4C4C52;max-width:80ch;margin:0 0 11px}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    letter-spacing:.1em;text-transform:uppercase}
+  .tiny{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.4px;letter-spacing:.13em;
+    text-transform:uppercase;color:#9A9AA0;line-height:2.1}
+  .pass{color:#1F7A3D}.fail{color:#B3132A}
+  svg{display:block;width:100%;height:auto}
+
+  /* recommendation */
+  .rec{background:#fff;border:1px solid #D4D4D8;border-left:3px solid #C9A227;
+    padding:24px 26px;margin:26px 0 8px}
+  .rec .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.18em;
+    text-transform:uppercase;color:#9A9AA0;margin-bottom:11px}
+  .rec p{margin:0 0 11px;font-size:14px;line-height:1.75;color:#3E3E44;max-width:82ch}
+  .rec p:last-child{margin-bottom:0}
+  .rec b{font-weight:600;color:#111114}
+
+  /* tonal scale */
+  .tones{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+    background:#DCDCE0;border:1px solid #DCDCE0;margin-top:20px}
+  .tone{background:#fff}
+  .tone i{display:block;height:58px}
+  .tone .m{padding:8px 10px 11px}
+  .tone .n{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.2px;letter-spacing:.13em;
+    text-transform:uppercase;color:#9A9AA0}
+  .tone .h{font-family:'Martian Mono',monospace;font-weight:400;font-size:9px;margin-top:4px}
+  .tone .c{font-family:'Martian Mono',monospace;font-weight:300;font-size:6.9px;margin-top:4px;line-height:1.7}
+
+  /* grey panels */
+  .greys{display:grid;grid-template-columns:1fr;gap:22px;margin-top:24px}
+  .gp{border:1px solid #D4D4D8;padding:30px 32px 32px;display:grid;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:34px;align-items:start}
+  @media (max-width:900px){ .gp{grid-template-columns:1fr} }
+  .gp .hdr{grid-column:1/-1;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid currentColor}
+  .gp .nm{font-family:'Martian Mono',monospace;font-weight:400;font-size:10px;letter-spacing:.17em;
+    text-transform:uppercase}
+  .gp .hx{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.4px;letter-spacing:.1em}
+  .gp .note{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.8px;letter-spacing:.11em;
+    text-transform:uppercase;margin-left:auto;text-align:right;max-width:44ch;line-height:1.9}
+  .gp h3{margin:6px 0 12px;font-size:27px;font-weight:400;letter-spacing:-.021em;line-height:1.24}
+  .gp p{margin:0 0 12px;font-size:13.5px;line-height:1.76;max-width:56ch}
+  .gp .rule{height:1px;margin:18px 0}
+  .gp .kv{display:flex;justify-content:space-between;gap:16px;padding:5px 0;
+    font-family:'Martian Mono',monospace;font-weight:300;font-size:8.4px;letter-spacing:.07em;
+    text-transform:uppercase;line-height:1.9}
+  .gp .kv.on{padding-left:6px;padding-right:6px}
+  .gp .strip{display:flex;height:15px;margin-top:18px}.gp .strip i{flex:1}
+  .gp .stripk{font-family:'Martian Mono',monospace;font-weight:300;font-size:7px;letter-spacing:.13em;
+    text-transform:uppercase;margin-top:7px}
+
+  /* reserve */
+  .res{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:22px}
+  .rc{background:#fff;border:1px solid #D4D4D8}
+  .rc .sw{display:flex;height:56px}.rc .sw i{flex:1}
+  .rc .b{padding:14px 15px 16px}
+  .rc .n{font-size:14px;font-weight:600;letter-spacing:-.006em}
+  .rc .h{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;color:#7A7A80;margin-top:4px}
+  .rc .d{font-size:11.8px;line-height:1.6;color:#5A5A60;margin-top:9px}
+  .rc .w{font-family:'Martian Mono',monospace;font-weight:300;font-size:7px;letter-spacing:.1em;
+    text-transform:uppercase;margin-top:10px;line-height:1.8}
+  .rules{background:#fff;border:1px solid #D4D4D8;padding:22px 26px;margin-top:22px}
+  .rules ol{margin:0;padding-left:20px}
+  .rules li{font-size:13.5px;line-height:1.78;color:#44444A;margin-bottom:9px;max-width:82ch}
+  .rules li:last-child{margin-bottom:0}
+  .rules b{color:#111114}
+  .bigfig{background:#EAEAE8;border:1px solid #D4D4D8;padding:22px 24px 18px;margin-top:22px}
+  .bigfig .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.16em;
+    text-transform:uppercase;color:#9A9AA0;margin-bottom:12px}
+  .bigfig .cap{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.2px;letter-spacing:.06em;
+    text-transform:uppercase;color:#9A9AA0;margin-top:9px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="shell">
+  <h1>Brass, the three greys, and a reserve set</h1>
+  <p class="lede">Brass is the lightest of the golds, which has a consequence worth seeing before anything else: it cannot carry small text on a light ground. Everything below works around that rather than pretending otherwise.</p>
+
+  <div class="rec">
+    <div class="k">Recommendation</div>
+    <p><b>Neutral grey, not cool grey.</b> Brass is a yellow. Put it on a blue-leaning grey and you rebuild the yellow-against-blue relationship you have now rejected twice, once in the Indigo Night comp and once in the glass hero. It is quieter than those were, but it is the same relationship. Neutral grey removes the blue cast entirely, so the tension cannot arise, and it stays clearly distinct from the cream you ruled out.</p>
+    <p><b>Two tones of brass, not one.</b> Brass at #C9A227 fails AA badly as text. It stays as the mark tone for fills, rules, dots and large display figures. A deepened tone carries any small text that has to be brass. This is normal practice and it is the only way brass works at all.</p>
+    <p><b>Reserve set of four, used under a written rule.</b> Not part of the palette. Available when a chart genuinely needs more than four series and value-plus-line-style has already failed.</p>
+  </div>
+
+  <div class="sec">
+    <h2>Brass, two tones</h2>
+    <p class="lede">Ratios are computed against each candidate ground. AA needs 4.5:1 for body text and 3:1 for large text and interface components.</p>
+    <div class="tones" id="tones"></div>
+    <p class="tiny" style="margin-top:14px">Rule: mark tone is never set below 18px. Text tone is never used as a fill.</p>
+  </div>
+
+  <div class="sec">
+    <h2>The same page on three greys</h2>
+    <p class="lede">Identical content and identical brass in all three. Only the grey changes.</p>
+    <div class="greys" id="greys"></div>
+  </div>
+
+  <div class="sec">
+    <h2>Reserve colours</h2>
+    <p class="lede">Chosen as siblings of brass rather than as a second palette: same muted saturation, same value band, so that when one appears it reads as another pigment from the same box rather than as a bolted-on brand colour.</p>
+    <div class="res" id="res"></div>
+    <div class="rules">
+      <ol>
+        <li><b>Never in the interface.</b> No reserve colour appears in navigation, type, rules, buttons or panels. They exist inside figures only.</li>
+        <li><b>Only after value and line style have failed.</b> Four series are separable with ink, brass, mid grey and a dash. Reach for a reserve colour at five or more, not before.</li>
+        <li><b>Prussian never sits adjacent to brass in the same figure.</b> That is the yellow-against-blue pairing again. If a chart needs both, put grey between them in the series order.</li>
+        <li><b>Introduced in the caption, not in a legend key floating alone.</b> A reserve colour that appears without being named in the caption is decoration.</li>
+        <li><b>One reserve colour per figure where possible.</b> Two is a signal the chart should be split.</li>
+      </ol>
+    </div>
+    <div class="bigfig">
+      <div class="k">Six series, the case the reserve exists for</div>
+      <div id="fig6"></div>
+      <div class="cap">Margin deciles by size cohort, six cohorts &middot; 2,186 SEC registrants, CY2024 &middot; ink, brass, mid grey, then three reserve pigments</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05", "series6": [{"label": "Under $30m", "n": 607, "deciles": [-0.04904475288237916, 0.09000009794063492, 0.1852302639252406, 0.2593046522873759, 0.33949549221382386, 0.4079646976060521, 0.4779060816012317, 0.5739177635632513, 0.6779486915407851, 0.8125403373510789, 1.0]}, {"label": "$30m to $150m", "n": 339, "deciles": [-0.03858401282253033, 0.07360210506531341, 0.16208173042026566, 0.22221505792335633, 0.28405794609011087, 0.357899394778179, 0.4401266236282939, 0.5514700874984876, 0.6412244101578916, 0.7593331477529306, 0.9915037375991126]}, {"label": "$150m to $600m", "n": 360, "deciles": [-0.03684792736208708, 0.16886508870764316, 0.252262443438914, 0.3147753692065055, 0.37838636329638436, 0.44310618066561014, 0.5219256463806349, 0.6106914092775882, 0.6915324011640287, 0.7705886745953212, 0.9832440769287115]}, {"label": "$600m to $2.5bn", "n": 427, "deciles": [0.007161205789296207, 0.17224156779796093, 0.23422068255318884, 0.2910635157619261, 0.34349114674367354, 0.3982588033749598, 0.4630783772629673, 0.5377102550189907, 0.6549586805579688, 0.7643112701252236, 0.9514155624109789]}, {"label": "$2.5bn to $10bn", "n": 302, "deciles": [0.011629697373848122, 0.14578779216411636, 0.20591165725672533, 0.24526138999226893, 0.31467903636091576, 0.3666131621187801, 0.4022154951598417, 0.4762967094255438, 0.5801967827580822, 0.6999626407722708, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}]};
+
+const BRASS      = '#C9A227';
+const BRASS_TEXT = '#6E5A1E';
+const BRASS_DEEP = '#8E7420';
+
+const GREYS = [
+  { id:'cool', name:'Cool grey', ground:'#E8E8EA', sheet:'#FFFFFF', ink:'#111114',
+    muted:'#6C6C72', faint:'#A2A2A8', rule:'#D3D3D7',
+    note:'Closest to Akira, Coders and QClay. Also the one that recreates yellow against blue.',
+    strip:['#FFFFFF','#E8E8EA','#C8C8CE','#8A8A92','#3A3A42','#111114'] },
+  { id:'neutral', name:'Neutral grey', ground:'#EAEAE8', sheet:'#FFFFFF', ink:'#131312',
+    muted:'#6E6E6B', faint:'#A3A3A0', rule:'#D5D5D2',
+    note:'No colour cast in either direction. Brass reads as metal rather than as a complement.',
+    strip:['#FFFFFF','#EAEAE8','#CACAC7','#8C8C89','#3C3C3A','#131312'] },
+  { id:'warm', name:'Warm neutral', ground:'#ECEBE6', sheet:'#FFFFFF', ink:'#15140F',
+    muted:'#706E66', faint:'#A5A399', rule:'#D8D6CE',
+    note:'Harmonises with brass most. Also the closest to the paper tone you ruled out.',
+    strip:['#FFFFFF','#ECEBE6','#CDCBC3','#8E8C83','#3E3C36','#15140F'] },
+];
+
+const RESERVE = [
+  { n:'Verdigris', h:'#4A7A67', d:'Oxidised copper. The natural sibling to brass because it is what brass becomes. Best first reach for a fifth series.',
+    w:'Safe adjacent to brass' },
+  { n:'Oxide', h:'#9E4630', d:'Iron red. Warm, so it groups with brass rather than opposing it. Use when the fifth series belongs with the accent conceptually.',
+    w:'Warm, groups with brass' },
+  { n:'Slate Violet', h:'#564A6B', d:'Cool without being blue. Carries a sixth series where verdigris and oxide are already taken.',
+    w:'Cool, no blue conflict' },
+  { n:'Prussian', h:'#2F4A61', d:'Deep muted blue. The most legible reserve and the most constrained, because brass beside it is the pairing you rejected.',
+    w:'Never adjacent to brass' },
+];
+
+/* ---------- contrast ---------- */
+const hx = h => parseInt(h.slice(1), 16);
+const rgbOf = h => [hx(h)>>16&255, hx(h)>>8&255, hx(h)&255];
+const srgb = c => { c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); };
+const lum = h => { const [r,g,b]=rgbOf(h); return .2126*srgb(r)+.7152*srgb(g)+.0722*srgb(b); };
+const ratio = (a,b) => { const l1=lum(a), l2=lum(b); return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const vs = (c, g, min) => { const r = ratio(c, g); return `<span class="${r>=min?'pass':'fail'}">${r.toFixed(2)} ${r>=min?'PASS':'FAIL'}</span>`; };
+
+/* ---------- tones ---------- */
+document.getElementById('tones').innerHTML = [
+  ['Mark tone', BRASS, 'Fills, dots, rules, figures over 18px'],
+  ['Deep', BRASS_DEEP, 'Large text and heavy strokes'],
+  ['Text tone', BRASS_TEXT, 'Any brass set below 18px'],
+].map(([n, h, use]) => `<div class="tone"><i style="background:${h}"></i><div class="m">
+    <div class="n">${n}</div><div class="h">${h.toUpperCase()}</div>
+    <div class="c">Cool ${vs(h, '#E8E8EA', 4.5)}<br>Neutral ${vs(h, '#EAEAE8', 4.5)}<br>Warm ${vs(h, '#ECEBE6', 4.5)}<br>White ${vs(h, '#FFFFFF', 4.5)}</div>
+    <div class="c" style="color:#9A9AA0;margin-top:6px">${use}</div></div></div>`).join('');
+
+/* ---------- chart used inside each grey panel ---------- */
+function figHist(G){
+  const OBJ = ['#DCDCDE','#B4B4B8','#828288','#505057','#2A2A30','#15151A'];
+  const H = DATA.hist, N = DATA.nbins, W = 340, Ht = 132, max = Math.max(...H);
+  let bars = '';
+  for (let i = 0; i < N; i++){
+    const t = i/(N-1), h = (H[i]/max)*(Ht-30);
+    const x = 26 + (i/N)*(W-40), w = (W-40)/N - 1.2;
+    bars += `<rect x="${x.toFixed(1)}" y="${(Ht-16-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${OBJ[Math.min(5,Math.floor(t*6))]}"/>`;
+  }
+  const mx = 26 + ((DATA.median+0.05)/1.05)*(W-40);
+  return `<svg viewBox="0 0 ${W} ${Ht}">${bars}
+    <line x1="${mx.toFixed(1)}" y1="6" x2="${mx.toFixed(1)}" y2="${Ht-16}" stroke="${BRASS}" stroke-width="1.5"/>
+    <circle cx="${mx.toFixed(1)}" cy="6" r="2.6" fill="${BRASS}"/>
+    <text x="${(mx+6).toFixed(1)}" y="14" fill="${BRASS_TEXT}" font-family="Martian Mono, monospace" font-size="6.4">MEDIAN 38.8%</text>
+    <line x1="26" y1="${Ht-16}" x2="${W-12}" y2="${Ht-16}" stroke="${G.ink}" stroke-width="1"/>
+    <text x="26" y="${Ht-4}" fill="${G.faint}" font-family="Martian Mono, monospace" font-size="6.4">0%</text>
+    <text x="${W-32}" y="${Ht-4}" fill="${G.faint}" font-family="Martian Mono, monospace" font-size="6.4">100%</text></svg>`;
+}
+
+/* ---------- grey panels ---------- */
+document.getElementById('greys').innerHTML = GREYS.map(G => `
+  <div class="gp" style="background:${G.ground};color:${G.ink};border-color:${G.rule}">
+    <div class="hdr" style="border-color:${G.rule}">
+      <span class="nm">${G.name}</span>
+      <span class="hx" style="color:${G.muted}">${G.ground.toUpperCase()} &middot; ink ${G.ink.toUpperCase()}</span>
+      <span class="note" style="color:${G.muted}">${G.note}</span>
+    </div>
+    <div>
+      <h3>The second ridge is the one nobody underwrites.</h3>
+      <p style="color:${G.muted}">Twelve of the forty verticals under coverage carry implied margin structures that observed deployment cannot reach before 2028. Median gross margin across the universe is <span style="color:${BRASS_TEXT};font-weight:600">38.8 percent</span>, and dispersion is widest where diligence is thinnest.</p>
+      <div class="rule" style="background:${G.rule}"></div>
+      <div class="kv" style="color:${G.muted}"><span>Universe</span><span style="color:${G.ink}">2,186 filers</span></div>
+      <div class="kv on" style="color:${G.muted};background:${G.rule}"><span>Second ridge</span><span style="color:${BRASS_TEXT};font-weight:600">$654m at 70%</span></div>
+      <div class="kv" style="color:${G.muted}"><span>Above 70%</span><span style="color:${G.ink}">339 filers</span></div>
+      <div class="strip">${G.strip.map(c=>`<i style="background:${c}"></i>`).join('')}<i style="background:${BRASS};flex:.55"></i></div>
+      <div class="stripk" style="color:${G.faint}">Value scale plus brass &mdash; brass on ground ${ratio(BRASS,G.ground).toFixed(2)}:1, text tone ${ratio(BRASS_TEXT,G.ground).toFixed(2)}:1</div>
+    </div>
+    <div>${figHist(G)}
+      <div class="stripk" style="color:${G.faint};margin-top:9px">Fig. 01 &mdash; Gross margin distribution &middot; brass marks the median and nothing else</div>
+    </div>
+  </div>`).join('');
+
+/* ---------- reserve ---------- */
+document.getElementById('res').innerHTML = RESERVE.map(R => `
+  <div class="rc"><div class="sw"><i style="background:${R.h}"></i><i style="background:${BRASS};flex:.34"></i></div>
+    <div class="b"><div class="n">${esc(R.n)}</div><div class="h">${R.h.toUpperCase()}</div>
+      <div class="d">${esc(R.d)}</div>
+      <div class="w" style="color:${R.n==='Prussian'?'#B3132A':'#1F7A3D'}">${esc(R.w)}</div>
+      <div class="w" style="color:#9A9AA0">On neutral ${vs(R.h,'#EAEAE8',4.5)}</div>
+    </div></div>`).join('');
+
+/* ---------- six series ---------- */
+(function(){
+  const Sx = DATA.series6 || DATA.series, W = 900, Ht = 250;
+  const styles = [
+    { c:'#131312', dash:'' }, { c:BRASS, dash:'' }, { c:'#8C8C89', dash:'' },
+    { c:'#4A7A67', dash:'' }, { c:'#9E4630', dash:'' }, { c:'#564A6B', dash:'' },
+  ];
+  let paths = '', key = '';
+  Sx.forEach((s, i) => {
+    const st = styles[i % styles.length];
+    let d = '';
+    s.deciles.forEach((v, k) => {
+      const x = 46 + (k/10)*(W-90), y = Ht-46 - v*(Ht-78);
+      d += (k?' L':'M') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    paths += `<path d="${d}" fill="none" stroke="${st.c}" stroke-width="2.1" stroke-linejoin="round"${st.dash?` stroke-dasharray="${st.dash}"`:''}/>`;
+    const kx = 46 + i*143;
+    key += `<rect x="${kx}" y="${Ht-22}" width="16" height="2.6" fill="${st.c}"/>
+      <text x="${kx+22}" y="${Ht-18}" fill="#5A5A60" font-family="Martian Mono, monospace" font-size="7.4">${esc(s.label.toUpperCase())}</text>`;
+  });
+  document.getElementById('fig6').innerHTML = `<svg viewBox="0 0 ${W} ${Ht}">
+    <line x1="46" y1="${Ht-46}" x2="${W-30}" y2="${Ht-46}" stroke="#131312" stroke-width="1"/>
+    <text x="10" y="26" fill="#A3A3A0" font-family="Martian Mono, monospace" font-size="7.4">100%</text>
+    <text x="18" y="${Ht-49}" fill="#A3A3A0" font-family="Martian Mono, monospace" font-size="7.4">0%</text>
+    <text x="46" y="${Ht-32}" fill="#A3A3A0" font-family="Martian Mono, monospace" font-size="7.4">DECILE 0</text>
+    <text x="${W-92}" y="${Ht-32}" fill="#A3A3A0" font-family="Martian Mono, monospace" font-size="7.4">DECILE 10</text>
+    ${paths}${key}</svg>`;
+})();
+</script>
+</body>
+</html>

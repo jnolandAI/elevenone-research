@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>dot render</title>
+<style>html,body{margin:0;background:#fff}canvas{display:block}#stage{display:none}
+pre{margin:0;font-family:ui-monospace,monospace;font-size:6px;line-height:1;white-space:pre}</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="out"></div>
+<!--__ENGINE__-->
+<script>
+/* Headless driver. Reads subject, role and mode from the query string, renders
+   exactly one image at the locked constants, and parks the result on window for
+   the CLI to collect. No UI, no sliders, nothing tunable. */
+(function(){
+  const q = new URLSearchParams(location.search);
+  const subject = q.get('subject') || 'port';
+  const role    = q.get('role')    || 'figure';
+  const mode    = q.get('mode')    || 'dot';
+  try {
+    if (!DotFoundry.SUBJECTS.some(s => s.id === subject)) throw new Error('unknown subject: ' + subject);
+    if (!DotFoundry.ROLES[role])   throw new Error('unknown role: ' + role);
+    if (!DotFoundry.MODES.includes(mode)) throw new Error('unknown mode: ' + mode);
+
+    const stage = document.getElementById('stage');
+    const renderer = new THREE.WebGLRenderer({ canvas:stage, antialias:true, preserveDrawingBuffer:true });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const res = DotFoundry.renderRole(renderer, stage, subject, role, mode);
+    const R = DotFoundry.ROLES[role];
+    window.__meta = { subject, role, mode, w:R.w, h:R.h, pitch:R.pitch,
+                      version: DotFoundry.CONST.version };
+    if (mode === 'ascii'){
+      window.__text = res.text;
+      const pre = document.createElement('pre'); pre.textContent = res.text;
+      document.getElementById('out').appendChild(pre);
+    } else {
+      window.__png = res.canvas.toDataURL('image/png');
+      document.getElementById('out').appendChild(res.canvas);
+    }
+    window.__renderReady = true;
+  } catch (e) {
+    window.__renderError = String(e && e.message || e);
+    window.__renderReady = true;
+  }
+})();
+</script>
+</body>
+</html>

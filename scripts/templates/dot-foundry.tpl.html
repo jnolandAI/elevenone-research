@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — dot imagery foundry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --g05:#FAFAF9;--g10:#F4F4F3;--g20:#EBEBEA;--g30:#DEDEDD;--g40:#C9C9C7;
+    --g50:#AEAEAC;--g60:#8C8C8A;--g70:#6C6C6A;--g80:#4A4A48;--ink:#131312;
+    --r-m:18px;--r-l:26px;--pill:999px;
+    --e1:0 1px 2px rgba(20,20,18,.05),0 2px 8px rgba(20,20,18,.035);
+    --e2:0 1px 2px rgba(20,20,18,.05),0 8px 24px rgba(20,20,18,.055);
+    --e3:0 2px 6px rgba(20,20,18,.05),0 20px 50px rgba(20,20,18,.08);
+  }
+  html,body{margin:0;color:var(--ink);font-family:'Familjen Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;background:var(--g10)}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 10% -6%,#FFF 0%,rgba(255,255,255,0) 62%),
+    radial-gradient(1100px 720px at 72% 106%,#E3E3E1 0%,rgba(227,227,225,0) 62%),
+    linear-gradient(180deg,#F6F6F5 0%,#F1F1F0 56%,#EAEAE9 100%)}
+  .shell{max-width:1240px;margin:0 auto;padding:60px 26px 140px}
+  h1{font-size:clamp(30px,3.6vw,44px);font-weight:500;letter-spacing:-.034em;line-height:1.08;margin:0 0 16px;max-width:20ch}
+  h2{font-size:24px;font-weight:600;letter-spacing:-.024em;margin:0 0 8px}
+  .lede{font-size:16px;line-height:1.7;color:var(--g80);max-width:70ch;margin:0 0 10px}
+  .sub{font-size:14px;line-height:1.7;color:var(--g70);max-width:76ch;margin:0 0 24px}
+  section{margin-top:80px}
+  .num{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;font-variant-numeric:tabular-nums}
+
+  .locked{background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(255,255,255,.6));
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-radius:var(--r-l);box-shadow:var(--e2);padding:22px 26px;margin-bottom:24px}
+  .locked .k{font-size:11.5px;color:var(--g60);margin-bottom:12px}
+  .locked .vals{display:flex;gap:30px;flex-wrap:wrap}
+  .locked .vals div{font-size:12.5px;color:var(--g70)}
+  .locked .vals b{display:block;font-size:20px;color:var(--ink);font-weight:500;
+    font-family:'Martian Mono',monospace;letter-spacing:-.02em;margin-top:3px}
+
+  .controls{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end;
+    background:linear-gradient(160deg,#FFF,#F7F7F6);border-radius:var(--r-l);
+    box-shadow:var(--e2);padding:20px 24px;margin-bottom:26px;position:sticky;top:14px;z-index:20}
+  .controls .warn{width:100%;font-size:11.5px;color:var(--g60);margin-bottom:2px}
+  .ctl label{display:block;font-size:11.5px;color:var(--g70);margin-bottom:7px}
+  .ctl input[type=range]{width:140px;accent-color:#131312}
+  .ctl .v{font-size:11.5px;color:var(--ink);margin-left:7px}
+  .modes{display:flex;gap:7px;flex-wrap:wrap}
+  .modes button{border:none;border-radius:var(--pill);padding:8px 15px;font-size:12.5px;
+    font-family:inherit;cursor:pointer;background:var(--g20);color:var(--g80);transition:.2s}
+  .modes button.on{background:var(--ink);color:#fff}
+  .modes button:hover{background:var(--g30)}
+  .modes button.on:hover{background:#000}
+  .reset{margin-left:auto;border:none;background:none;color:var(--g70);font-family:inherit;
+    font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+  .reset:hover{color:var(--ink)}
+
+  .roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .role{background:linear-gradient(160deg,#FFF,#F8F8F7);border-radius:var(--r-m);
+    box-shadow:var(--e1);padding:17px 19px 19px}
+  .role .n{font-size:14.5px;font-weight:600}
+  .role .s{font-size:12px;color:var(--ink);margin-top:5px;font-family:'Martian Mono',monospace;font-weight:300}
+  .role .d{font-size:12px;color:var(--g70);margin-top:7px;line-height:1.6}
+  .role .cmd{font-size:10.5px;color:var(--g60);margin-top:10px;font-family:'Martian Mono',monospace;
+    font-weight:300;word-break:break-all;line-height:1.7}
+
+  .lib{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:20px}
+  .sub-card{background:linear-gradient(160deg,#FFF,#F8F8F7);border-radius:var(--r-l);
+    box-shadow:var(--e2);overflow:hidden;display:flex;flex-direction:column}
+  .sub-card .art{background:#FCFCFB;line-height:0;position:relative}
+  .sub-card canvas{width:100%;height:auto;display:block}
+  .sub-card pre{margin:0;padding:14px 16px;background:#FCFCFB;color:var(--ink);
+    font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;font-size:4.6px;
+    line-height:1.0;letter-spacing:.4px;white-space:pre;overflow:hidden}
+  .sub-card .m{padding:17px 20px 19px;display:flex;justify-content:space-between;
+    align-items:flex-start;gap:14px}
+  .sub-card .n{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+  .sub-card .d{font-size:12.5px;color:var(--g70);margin-top:5px;line-height:1.6;max-width:44ch}
+  .sub-card .dl{border:none;background:var(--g20);color:var(--g80);border-radius:var(--pill);
+    padding:7px 13px;font-size:11.5px;font-family:inherit;cursor:pointer;white-space:nowrap;flex:none}
+  .sub-card .dl:hover{background:var(--ink);color:#fff}
+
+  .rules{background:linear-gradient(150deg,rgba(255,255,255,.86),rgba(255,255,255,.56));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-radius:var(--r-l);box-shadow:var(--e2);padding:26px 30px;margin-top:26px}
+  .rules ol{margin:0;padding-left:20px}
+  .rules li{font-size:14px;line-height:1.78;color:var(--g80);margin-bottom:9px;max-width:86ch}
+  .rules li:last-child{margin-bottom:0}
+  .rules b{color:var(--ink)}
+  #stage{display:none}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<canvas id="stage"></canvas>
+
+<div class="shell">
+  <h1>Dot imagery foundry</h1>
+  <p class="lede">Every subject is a procedural 3D scene, rendered offscreen, reduced to a luminance field, then pushed through one halftone screen. Nothing is photographed, licensed or generated, so all of it is owned and can be re-rendered at any size or angle.</p>
+  <p class="sub">This page is the tuning rig and the library viewer. Production runs through <span class="num">scripts/render_dot.py</span>, which uses the same engine with the sliders locked.</p>
+
+  <div class="locked">
+    <div class="k">Locked constants &mdash; engine version <span class="num" id="ver">&mdash;</span></div>
+    <div class="vals" id="lockedVals"></div>
+  </div>
+
+  <section style="margin-top:44px">
+    <h2>Roles</h2>
+    <p class="sub">Role decides output size and dot pitch together. Pitch is set so a hero and a figure show the same perceived dot size once each is displayed at its intended width, which is why the numbers are not proportional.</p>
+    <div class="roles" id="roles"></div>
+  </section>
+
+  <section>
+    <h2>Library</h2>
+    <p class="sub">Previewed at card scale. Use the export button for a one-off, or the CLI for anything going into a brief.</p>
+    <div class="controls">
+      <div class="warn">These sliders are for deciding the constants, not for producing assets. Whatever you leave them on does not affect the CLI.</div>
+      <div class="ctl"><label>Dot pitch <span class="v num" id="vPitch">6</span></label>
+        <input type="range" id="pitch" min="3" max="14" step="0.5" value="6"></div>
+      <div class="ctl"><label>Gamma <span class="v num" id="vGamma">1.00</span></label>
+        <input type="range" id="gamma" min="0.5" max="2.2" step="0.05" value="1"></div>
+      <div class="ctl"><label>Screen angle <span class="v num" id="vAngle">15</span>&deg;</label>
+        <input type="range" id="angle" min="0" max="45" step="1" value="15"></div>
+      <div class="ctl"><label>Edge dissolve <span class="v num" id="vFade">0.16</span></label>
+        <input type="range" id="fade" min="0" max="0.4" step="0.01" value="0.16"></div>
+      <div class="ctl"><label>Rendering</label>
+        <div class="modes" id="modes">
+          <button data-m="dot" class="on">Dot</button>
+          <button data-m="hatch">Hatch</button>
+          <button data-m="contour">Contour</button>
+          <button data-m="ascii">ASCII</button>
+        </div></div>
+      <button class="reset" id="reset">reset to locked</button>
+    </div>
+    <div class="lib" id="lib"></div>
+  </section>
+
+  <section>
+    <h2>Rules for using it</h2>
+    <div class="rules">
+      <ol>
+        <li><b>One image per brief at the top, and at most one more inside it.</b> The device stops working the moment it is everywhere. If a brief seems to want three, two of them are decoration.</li>
+        <li><b>Never where a real chart belongs.</b> These are subject imagery, not evidence. A dot rendering of a port signals that the brief concerns ports. It never substitutes for a figure and it never carries a number.</li>
+        <li><b>Never captioned as data.</b> The caption names the subject and says rendered, so no reader can mistake a procedural scene for a photograph of a specific real facility.</li>
+        <li><b>Same engine, always.</b> A one-off tuning is how a system becomes a folder.</li>
+        <li><b>Published work keeps the look it shipped with.</b> If a constant changes, bump the engine version. Do not re-render briefs that are already out; a dated brief is a document of record.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<!--__ENGINE__-->
+<script>
+const D = DotFoundry;
+const PREVIEW = { w: 740, h: 491 };
+const OVR = { pitch: D.CONST.pitchPreview || 6, gamma: D.CONST.gamma,
+              angle: D.CONST.angle, fade: D.CONST.fade, mode: 'dot' };
+const LOCKED = { ...OVR };
+
+document.getElementById('ver').textContent = D.CONST.version;
+document.getElementById('lockedVals').innerHTML = [
+  ['Gamma', D.CONST.gamma.toFixed(2)],
+  ['Screen angle', D.CONST.angle + '°'],
+  ['Edge dissolve', D.CONST.fade.toFixed(2)],
+  ['Dot', D.CONST.dot],
+  ['Field', D.CONST.field],
+].map(([k,v]) => `<div>${k}<b>${v}</b></div>`).join('');
+
+document.getElementById('roles').innerHTML = Object.entries(D.ROLES).map(([id,r]) =>
+  `<div class="role"><div class="n">${id}</div>
+   <div class="s">${r.w} &times; ${r.h} &middot; pitch ${r.pitch}</div>
+   <div class="d">${r.label}</div>
+   <div class="cmd">python scripts/render_dot.py --subject &lt;id&gt; --role ${id}</div></div>`).join('');
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ canvas:stage, antialias:true, preserveDrawingBuffer:true });
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+
+const lib = document.getElementById('lib');
+const cards = D.SUBJECTS.map(s => {
+  const el = document.createElement('div');
+  el.className = 'sub-card';
+  el.innerHTML = `<div class="art"><canvas width="${PREVIEW.w}" height="${PREVIEW.h}"></canvas></div>
+    <div class="m"><div><div class="n">${s.name}</div><div class="d">${s.d}</div></div>
+      <button class="dl">PNG</button></div>`;
+  lib.appendChild(el);
+  const rec = { s, art: el.querySelector('.art'), canvas: el.querySelector('canvas'), L:null };
+  el.querySelector('.dl').onclick = () => {
+    if (!rec.canvas) return;
+    const a = document.createElement('a');
+    a.download = `eleven-one-${s.id}-preview-${OVR.mode}.png`;
+    a.href = rec.canvas.toDataURL('image/png'); a.click();
+  };
+  return rec;
+});
+
+function renderAll(){
+  for (const rec of cards){
+    D.renderSource(renderer, stage, rec.s.id, PREVIEW.w, PREVIEW.h, 1);
+    rec.L = D.luminanceField(stage, PREVIEW.w, PREVIEW.h);
+  }
+  paintAll();
+}
+function paintAll(){
+  for (const rec of cards){
+    if (OVR.mode === 'ascii'){
+      rec.canvas = null;
+      const txt = D.asciiOf(rec.L, OVR.pitch, OVR);
+      rec.art.innerHTML = '<pre>' + txt.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])) + '</pre>';
+    } else {
+      let cv = rec.art.querySelector('canvas');
+      if (!cv){ rec.art.innerHTML=''; cv = document.createElement('canvas');
+        cv.width=PREVIEW.w; cv.height=PREVIEW.h; rec.art.appendChild(cv); }
+      rec.canvas = cv;
+      D.screen(rec.L, cv, OVR.mode, OVR.pitch, OVR);
+    }
+  }
+}
+
+const bind = (id, key, fmt) => {
+  const el = document.getElementById(id);
+  const out = document.getElementById('v' + id[0].toUpperCase() + id.slice(1));
+  el.oninput = () => { OVR[key] = parseFloat(el.value); out.textContent = fmt(OVR[key]); paintAll(); };
+  return { el, out, fmt };
+};
+const binds = {
+  pitch: bind('pitch','pitch', v=>v),
+  gamma: bind('gamma','gamma', v=>v.toFixed(2)),
+  angle: bind('angle','angle', v=>v),
+  fade:  bind('fade','fade',  v=>v.toFixed(2)),
+};
+document.getElementById('modes').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  for (const x of e.currentTarget.children) x.classList.toggle('on', x === b);
+  OVR.mode = b.dataset.m; paintAll();
+};
+document.getElementById('reset').onclick = () => {
+  for (const k of ['pitch','gamma','angle','fade']){
+    OVR[k] = LOCKED[k];
+    binds[k].el.value = LOCKED[k];
+    binds[k].out.textContent = binds[k].fmt(LOCKED[k]);
+  }
+  paintAll();
+};
+
+renderAll();
+window.__foundryReady = true;
+</script>
+</body>
+</html>

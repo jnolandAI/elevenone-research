@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — greyscale system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --w:#FFFFFF; --g05:#FAFAF9; --g10:#F4F4F3; --g20:#EBEBEA; --g30:#DEDEDD;
+    --g40:#C9C9C7; --g50:#AEAEAC; --g60:#8C8C8A; --g70:#6C6C6A; --g80:#4A4A48;
+    --g90:#2B2B2A; --ink:#131312;
+    --r-s:12px; --r-m:18px; --r-l:26px; --r-xl:40px; --pill:999px;
+    --e1:0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
+    --e2:0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);
+    --e3:0 2px 6px rgba(20,20,18,.05), 0 20px 50px rgba(20,20,18,.08);
+    --e4:0 4px 12px rgba(20,20,18,.06), 0 36px 84px rgba(20,20,18,.11);
+  }
+  html,body{margin:0;color:var(--ink);-webkit-font-smoothing:antialiased;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;background:var(--g10)}
+  /* Numbers inside a sentence are prose: same face, tabular figures on, so
+     columns of them still line up. Martian Mono is a wide face and its
+     punctuation advance breaks figures apart in running text, which is how
+     2,186 ends up setting as 2 , 186. Mono is for a value standing alone as a
+     value: chart axes, table cells, row counts. */
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    font-variant-numeric:tabular-nums;font-size:.92em;letter-spacing:-.012em}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 10% -6%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
+    radial-gradient(800px 520px at 94% 0%, #FAFAF9 0%, rgba(250,250,249,0) 58%),
+    radial-gradient(1100px 720px at 70% 106%, #E3E3E1 0%, rgba(227,227,225,0) 62%),
+    linear-gradient(180deg,#F6F6F5 0%, #F1F1F0 56%, #EAEAE9 100%)}
+  .noise{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.03;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .shell{max-width:1200px;margin:0 auto;padding:0 26px 150px}
+  section{margin-top:104px}
+  h2{font-size:27px;font-weight:600;letter-spacing:-.026em;margin:0 0 9px}
+  .sub{font-size:14.5px;line-height:1.72;color:var(--g70);max-width:74ch;margin:0 0 30px}
+  .eyebrow{font-size:12.5px;color:var(--g70);margin:0 0 14px}
+
+  /* ---------- hero, Formless register ---------- */
+  .hero{position:relative;min-height:82vh;display:flex;flex-direction:column;justify-content:center;
+    align-items:center;text-align:center;padding:110px 0 70px;overflow:hidden}
+  .hero .dots{position:absolute;left:-4%;right:-4%;top:52%;transform:translateY(-38%);z-index:0;
+    pointer-events:none}
+  /* clearing: the field fades out where the type sits, rather than the type
+     fighting it with a shadow */
+  .hero .clearing{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse 46% 40% at 50% 44%,
+      rgba(248,248,247,.96) 0%, rgba(248,248,247,.90) 38%, rgba(248,248,247,.55) 62%,
+      rgba(248,248,247,0) 82%)}
+  .hero .inner{position:relative;z-index:1;max-width:840px}
+  .hero h1{font-size:clamp(32px,4.6vw,62px);font-weight:500;letter-spacing:-.036em;line-height:1.06;
+    margin:0 0 6px;color:var(--g70)}
+  .hero h1 b{display:block;font-weight:500;color:var(--ink)}
+  .hero p{font-size:14.5px;line-height:1.7;color:var(--g70);max-width:46ch;margin:20px auto 30px}
+  .hero .corner{position:absolute;bottom:24px;font-size:11.5px;color:var(--g70);line-height:1.7}
+  .hero .cl{left:0;text-align:left}.hero .cr{right:0;text-align:right;max-width:34ch}
+  .hero .scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+    font-size:11.5px;color:var(--g70)}
+
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:var(--pill);
+    padding:13px 25px;font-size:14px;font-weight:500;letter-spacing:-.006em;cursor:pointer;
+    border:1px solid transparent;text-decoration:none;
+    transition:transform .3s cubic-bezier(.16,.9,.24,1), box-shadow .3s, background .3s}
+  .btn.p{background:var(--ink);color:#fff;box-shadow:0 2px 6px rgba(20,20,18,.2),0 10px 24px rgba(20,20,18,.16)}
+  .btn.p:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(20,20,18,.24),0 18px 38px rgba(20,20,18,.22)}
+  .btn.s{background:rgba(255,255,255,.7);color:var(--ink);border-color:var(--g30);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .btn.s:hover{transform:translateY(-2px);border-color:var(--g50);background:#fff}
+
+  /* ---------- scale ---------- */
+  .scale{display:grid;grid-template-columns:repeat(12,1fr);gap:0;border-radius:var(--r-m);
+    overflow:hidden;box-shadow:var(--e2)}
+  .scale i{display:block;height:88px}
+  .scalek{display:grid;grid-template-columns:repeat(12,1fr);gap:0;margin-top:9px}
+  .scalek span{font-size:9.5px;color:var(--g70);text-align:center;line-height:1.5}
+  .hues{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:26px}
+  .hue .bar{display:flex;height:56px;border-radius:var(--r-s);overflow:hidden;box-shadow:var(--e1)}
+  .hue .bar i{flex:1}
+  .hue .n{font-size:13.5px;font-weight:600;margin-top:11px}
+  .hue .d{font-size:12.5px;color:var(--g70);margin-top:4px;line-height:1.6}
+
+  /* ---------- surfaces ---------- */
+  .card{background:linear-gradient(160deg,#FFFFFF 0%,#F7F7F6 100%);border-radius:var(--r-l);
+    box-shadow:var(--e2);padding:26px 28px}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+
+  /* Depth is drawn, not blurred. A blurred dark blob under a light panel reads
+     as a smudge; a halftone ramp on the same staggered lattice and 15 degree
+     screen angle as the imagery engine reads as a surface that was made. */
+  .field{position:relative;border-radius:var(--r-xl);overflow:hidden;padding:46px;
+    box-shadow:var(--e3);background:linear-gradient(150deg,#FCFCFC 0%,#F7F7F6 54%,#F2F2F1 100%)}
+  .field .screen{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .field .screen svg{height:100%}
+  .glassrow{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+  .glass{position:relative;border-radius:var(--r-m);padding:20px 21px 22px;overflow:hidden;
+    background:linear-gradient(158deg,rgba(255,255,255,.70) 0%,rgba(255,255,255,.36) 52%,rgba(255,255,255,.46) 100%);
+    backdrop-filter:blur(26px) saturate(150%) brightness(1.05);
+    -webkit-backdrop-filter:blur(26px) saturate(150%) brightness(1.05);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.94), inset 0 -1px 0 rgba(255,255,255,.30),
+      0 1px 2px rgba(20,20,18,.05), 0 16px 40px rgba(20,20,18,.09);
+    transition:transform .42s cubic-bezier(.16,.9,.24,1), box-shadow .42s}
+  .glass::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
+    background:linear-gradient(150deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.30) 34%,
+      rgba(255,255,255,0) 62%,rgba(150,150,146,.32) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;pointer-events:none}
+  .glass::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    opacity:0;transition:opacity .45s;
+    background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),
+      rgba(255,255,255,.66) 0%,rgba(255,255,255,.16) 36%,rgba(255,255,255,0) 68%)}
+  .glass:hover::before{opacity:1}
+  .glass:hover{transform:translateY(-7px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.97),0 2px 6px rgba(20,20,18,.06),0 30px 66px rgba(20,20,18,.15)}
+  /* Polished dark glass. The gloss is carried by a sheen layer, a rim light and
+     the pointer specular rather than by translucency: a translucent dark tile
+     over a light field composites to mid grey, which is what put the label text
+     at 2.3:1. The tile stays dark under the type and opens up at the trailing
+     corner, where nothing has to be read through it. */
+  .glass.deep{background:
+      linear-gradient(158deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.055) 27%,
+        rgba(255,255,255,0) 54%,rgba(255,255,255,.06) 100%),
+      linear-gradient(158deg,rgba(30,30,28,.95) 0%,rgba(15,15,13,.94) 58%,
+        rgba(22,22,20,.86) 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.30), inset 0 -1px 0 rgba(255,255,255,.09),
+      0 2px 6px rgba(16,16,14,.22), 0 22px 52px rgba(16,16,14,.34)}
+  .glass.deep::after{background:linear-gradient(150deg,rgba(255,255,255,.54) 0%,
+    rgba(255,255,255,.15) 32%,rgba(255,255,255,0) 62%,rgba(255,255,255,.14) 100%)}
+  .glass.deep::before{background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),
+    rgba(255,255,255,.34) 0%,rgba(255,255,255,.09) 38%,rgba(255,255,255,0) 70%)}
+  .glass.deep:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -1px 0 rgba(255,255,255,.12),
+    0 2px 6px rgba(16,16,14,.26),0 34px 70px rgba(16,16,14,.42)}
+  .glass.deep .k,.glass.deep .s{color:#B4B4B0}.glass.deep .v{color:#F6F6F4}
+  .glass .k{font-size:12.5px;color:var(--g70);position:relative}
+  .glass .v{font-size:36px;letter-spacing:-.035em;margin-top:9px;line-height:1;position:relative}
+  .glass .s{font-size:11.5px;color:var(--g70);margin-top:9px;position:relative;line-height:1.6}
+
+  /* ---------- textures ---------- */
+  .tex{border-radius:var(--r-l);overflow:hidden;box-shadow:var(--e2);background:#FBFBFA}
+  .tex .in{padding:0;line-height:0}
+  .tex .m{padding:16px 20px 19px}
+  .tex .n{font-size:14.5px;font-weight:600;letter-spacing:-.008em}
+  .tex .d{font-size:12.5px;color:var(--g70);margin-top:5px;line-height:1.6}
+  pre.ascii{margin:0;padding:16px 18px;background:#FBFBFA;color:var(--ink);
+    font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    font-size:5.2px;line-height:1.02;letter-spacing:.5px;white-space:pre;overflow:hidden}
+
+  .chart .h{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .chart .t{font-size:16px;font-weight:600;letter-spacing:-.012em}
+  .chart .m{font-size:12px;color:var(--g70)}
+  .chart .d{font-size:12.5px;color:var(--g70);margin:6px 0 16px;line-height:1.6}
+  .chart .f{font-size:11.5px;color:var(--g70);margin-top:12px;line-height:1.7}
+  svg{display:block;width:100%;height:auto}
+
+  .rule{border-radius:var(--r-l);padding:26px 30px;box-shadow:var(--e2);margin-top:26px;
+    background:linear-gradient(150deg,rgba(255,255,255,.86),rgba(255,255,255,.56));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+  .rule ol{margin:0;padding-left:20px}
+  .rule li{font-size:14px;line-height:1.78;color:var(--g80);margin-bottom:9px;max-width:84ch}
+  .rule li:last-child{margin-bottom:0}
+  .rule b{color:var(--ink)}
+
+  .typerow{display:flex;flex-direction:column;gap:14px}
+  .typerow div{line-height:1.1}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="noise"></div>
+
+<div class="shell">
+
+  <div class="hero">
+    <div class="dots" id="heroDots"></div>
+    <div class="clearing"></div>
+    <div class="inner">
+      <h1>The universe of reported margin<b>and the ridge nobody underwrites</b></h1>
+      <p>Independent research for decisions that are hard to reverse. Every figure carries its source and its confidence.</p>
+      <a class="btn p" href="#">Read the brief</a>
+    </div>
+    <div class="corner cl">Drawn from <span id="hN">&mdash;</span> SEC registrants</div>
+    <div class="scroll">scroll</div>
+    <div class="corner cr">Revenue left to right, gross margin front to back, dot area is filer count</div>
+  </div>
+
+  <section>
+    <h2>One spine, twelve steps</h2>
+    <p class="sub">Built in OKLCH so the steps are perceptually even rather than evenly spaced in hex. That is what stops the mid greys bunching up and the light end washing out.</p>
+    <div class="scale" id="scale"></div>
+    <div class="scalek" id="scalek"></div>
+
+    <h2 style="margin-top:52px">Three greys, not one</h2>
+    <p class="sub">All three carry almost no chroma, well under what registers as colour, but the cast is enough to give surfaces relationship. Cool recedes, warm advances, neutral holds the type. Used together this is where the variation comes from without introducing a hue.</p>
+    <div class="hues" id="hues"></div>
+  </section>
+
+  <section>
+    <h2>Surfaces, depth, glass</h2>
+    <p class="sub">No borders anywhere below. Separation is elevation, gradient and blur. Hover any panel.</p>
+    <div class="field">
+      <div class="screen" id="fieldScreen"></div>
+      <div class="glassrow">
+        <div class="glass"><div class="k">Universe</div><div class="v num" id="v1">&mdash;</div><div class="s">Filers reporting revenue and gross profit</div></div>
+        <div class="glass"><div class="k">Median gross margin</div><div class="v num" id="v2">&mdash;</div><div class="s">Across the full window</div></div>
+        <div class="glass"><div class="k">Second ridge</div><div class="v num">70%</div><div class="s">131 filers cluster at $654m</div></div>
+        <div class="glass deep"><div class="k">Above 70% margin</div><div class="v num">339</div><div class="s"><span id="v4b">&mdash;</span> of the universe</div></div>
+      </div>
+    </div>
+    <div class="grid g4" style="margin-top:18px">
+      <div class="card" style="box-shadow:var(--e1)"><b>Resting</b><div class="sub" style="margin:6px 0 0">Tiles and quiet rows</div></div>
+      <div class="card" style="box-shadow:var(--e2)"><b>Raised</b><div class="sub" style="margin:6px 0 0">Cards and charts</div></div>
+      <div class="card" style="box-shadow:var(--e3)"><b>Floating</b><div class="sub" style="margin:6px 0 0">Fields and features</div></div>
+      <div class="card" style="box-shadow:var(--e4)"><b>Lifted</b><div class="sub" style="margin:6px 0 0">Hover and overlay</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Texture, all of it from the data</h2>
+    <p class="sub">The same surface rendered four ways. None of these is decoration: each one is the real distribution, so the texture on any page is always something the reader could interrogate.</p>
+    <div class="grid g2">
+      <div class="tex"><div class="in" id="texDots"></div>
+        <div class="m"><div class="n">Halftone</div><div class="d">Dot area encodes filer count. Dissolves at the edges instead of stopping, which is what keeps it from reading as a chart in a box.</div></div></div>
+      <div class="tex"><div class="in" id="texAscii"></div>
+        <div class="m"><div class="n">ASCII field</div><div class="d">Ten density characters mapped to the same values. Sets in monospace at 5px, so it reads as texture at a distance and as a readout up close.</div></div></div>
+      <div class="tex"><div class="in" id="texLines"></div>
+        <div class="m"><div class="n">Contour</div><div class="d">Marching squares over the same field. Line weight rises with level, so the ridges thicken rather than needing colour.</div></div></div>
+      <div class="tex"><div class="in" id="texHatch"></div>
+        <div class="m"><div class="n">Hatch</div><div class="d">Line density instead of dot area. Prints cleanly at any size and survives being faxed, which is a lower bar than it sounds for this audience.</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Type and controls</h2>
+    <p class="sub">Display runs large and tight. Numbers inside a sentence are set in the text face with tabular figures on. Mono is kept for a value standing alone as a value, which is where its width earns something.</p>
+    <div class="card">
+      <div class="typerow">
+        <div style="font-size:56px;font-weight:500;letter-spacing:-.04em">Display 56 / -0.04em</div>
+        <div style="font-size:34px;font-weight:500;letter-spacing:-.03em">Heading 34 / -0.03em</div>
+        <div style="font-size:22px;font-weight:600;letter-spacing:-.022em">Section 22 / -0.022em</div>
+        <div style="font-size:16px;line-height:1.7;color:var(--g80);max-width:60ch;letter-spacing:0">Body 16 at 1.7. Long-form briefs are set here, and the measure never runs past sixty characters.</div>
+        <div style="font-size:13px;color:var(--g70)">Caption 13, sentence case, never tracked uppercase.</div>
+        <div class="num" style="font-size:15px">In a sentence: 2,186 filers at a 38.8% median, second ridge at $654m.</div>
+        <div class="mono" style="font-size:14px;color:var(--g80)">Standing alone: 2,186 &middot; 38.8% &middot; 0.0746 &middot; 2026-08-05</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:26px;flex-wrap:wrap">
+        <a class="btn p" href="#">Read the brief</a>
+        <a class="btn s" href="#">Buy the report</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Figures</h2>
+    <p class="sub">Greyscale by default. Value, weight and line style carry the separation.</p>
+    <div class="card chart" style="margin-bottom:18px">
+      <div class="h"><div class="t">Where margin concentrates</div><div class="m num" id="cN">&mdash;</div></div>
+      <p class="d">Gaussian kernel density, bandwidth <span class="num" id="cBw">&mdash;</span> by Silverman's rule. Quartiles marked on the axis, median marked once on the curve.</p>
+      <div id="figArea"></div>
+      <div class="f">SEC XBRL frames, us-gaap, CY2024. All values as reported.</div>
+    </div>
+    <div class="grid g2">
+      <div class="card chart">
+        <div class="h"><div class="t">Distribution by size cohort</div><div class="m num">6 cohorts</div></div>
+        <p class="d">One density per cohort, sharing a scale so the heights are comparable. Overlap is the point: it shows where cohorts agree and where they separate.</p>
+        <div id="figRidge"></div>
+        <div class="f">Densities are normalised, so a taller ridge means tighter clustering, not more filers.</div>
+      </div>
+      <div class="card chart">
+        <div class="h"><div class="t">Spread by size cohort</div><div class="m num">p10 to p90</div></div>
+        <p class="d">The same six cohorts as ranges rather than curves. Light track is the tenth to ninetieth percentile, the darker band is the interquartile range, the dot is the median.</p>
+        <div id="figRange"></div>
+        <div class="f">Largest filers carry both the lowest median margin and the tightest spread.</div>
+      </div>
+    </div>
+
+    <div class="rule">
+      <ol>
+        <li><b>Greyscale is the default and the interface is greyscale absolutely.</b> Navigation, type, rules, panels, buttons and states never carry a hue, in any circumstance.</li>
+        <li><b>Colour is admitted into a figure only when greyscale has actually failed.</b> Six series separate cleanly on value and weight, as above. Reach for hue at the point where a reader would misread the chart without it, and not before.</li>
+        <li><b>Photography and rendered imagery may carry their own colour.</b> That colour belongs to the subject, not to the brand, and it is never sampled back out into the interface.</li>
+        <li><b>When colour is admitted it is named in the caption.</b> A hue that appears without being explained in the figure caption is decoration and should be removed.</li>
+        <li><b>Black is the emphasis.</b> The primary action, the marked point and the ridge that matters are all full black on a light field. There is no accent colour to reserve, so black has to be spent carefully.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05", "series6": [{"label": "Under $30m", "n": 607, "deciles": [-0.04904475288237916, 0.09000009794063492, 0.1852302639252406, 0.2593046522873759, 0.33949549221382386, 0.4079646976060521, 0.4779060816012317, 0.5739177635632513, 0.6779486915407851, 0.8125403373510789, 1.0]}, {"label": "$30m to $150m", "n": 339, "deciles": [-0.03858401282253033, 0.07360210506531341, 0.16208173042026566, 0.22221505792335633, 0.28405794609011087, 0.357899394778179, 0.4401266236282939, 0.5514700874984876, 0.6412244101578916, 0.7593331477529306, 0.9915037375991126]}, {"label": "$150m to $600m", "n": 360, "deciles": [-0.03684792736208708, 0.16886508870764316, 0.252262443438914, 0.3147753692065055, 0.37838636329638436, 0.44310618066561014, 0.5219256463806349, 0.6106914092775882, 0.6915324011640287, 0.7705886745953212, 0.9832440769287115]}, {"label": "$600m to $2.5bn", "n": 427, "deciles": [0.007161205789296207, 0.17224156779796093, 0.23422068255318884, 0.2910635157619261, 0.34349114674367354, 0.3982588033749598, 0.4630783772629673, 0.5377102550189907, 0.6549586805579688, 0.7643112701252236, 0.9514155624109789]}, {"label": "$2.5bn to $10bn", "n": 302, "deciles": [0.011629697373848122, 0.14578779216411636, 0.20591165725672533, 0.24526138999226893, 0.31467903636091576, 0.3666131621187801, 0.4022154951598417, 0.4762967094255438, 0.5801967827580822, 0.6999626407722708, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "cols": 96, "rows": 72, "grid": [[0.001, 0.0016, 0.0042, 0.0113, 0.0235, 0.0369, 0.0451, 0.0456, 0.0423, 0.0395, 0.0383, 0.0401, 0.051, 0.0771, 0.1181, 0.1712, 0.2368, 0.3049, 0.3414, 0.3133, 0.2321, 0.1516, 0.1163, 0.1258, 0.1472, 0.1505, 0.1315, 0.1066, 0.0954, 0.1078, 0.1445, 0.2034, 0.2793, 0.3576, 0.4151, 0.4314, 0.3995, 0.3289, 0.242, 0.163, 0.1072, 0.075, 0.0567, 0.0426, 0.0294, 0.0188, 0.0118, 0.0078, 0.0062, 0.0072, 0.014, 0.0333, 0.0688, 0.1092, 0.1305, 0.1171, 0.0791, 0.0403, 0.0158, 0.0051, 0.0014, 0.0003, 0.0001, 0.0001, 0.0003, 0.001, 0.0021, 0.0035, 0.0042, 0.0043, 0.0042, 0.0043, 0.0043, 0.0038, 0.0027, 0.0016, 0.0009, 0.0005, 0.0006, 0.0023, 0.0085, 0.0232, 0.0463, 0.0683, 0.0752, 0.0618, 0.0376, 0.0166, 0.0053, 0.0014, 0.0006, 0.0008, 0.0012, 0.0017, 0.0021, 0.0024], [0.0057, 0.0067, 0.0106, 0.0209, 0.0384, 0.0578, 0.0707, 0.0749, 0.075, 0.075, 0.0735, 0.0695, 0.068, 0.0761, 0.0966, 0.1302, 0.1777, 0.2306, 0.2621, 0.247, 0.1919, 0.1335, 0.1035, 0.105, 0.1187, 0.1248, 0.1185, 0.1104, 0.1156, 0.141, 0.1839, 0.2385, 0.3, 0.3599, 0.4026, 0.4128, 0.3865, 0.3327, 0.2665, 0.2022, 0.15, 0.1136, 0.0899, 0.0733, 0.0599, 0.0482, 0.0375, 0.0287, 0.0238, 0.0235, 0.0289, 0.0446, 0.0754, 0.1139, 0.1384, 0.1316, 0.0982, 0.0588, 0.0292, 0.0123, 0.0043, 0.0012, 0.0002, 0.0002, 0.001, 0.0033, 0.0071, 0.0113, 0.0137, 0.0137, 0.0133, 0.0137, 0.014, 0.0126, 0.0097, 0.0066, 0.0041, 0.0025, 0.0023, 0.0053, 0.0144, 0.0329, 0.0584, 0.0798, 0.0834, 0.0666, 0.0407, 0.0194, 0.0079, 0.0036, 0.0032, 0.0046, 0.0068, 0.0093, 0.0116, 0.0132], [0.0209, 0.0225, 0.0274, 0.04, 0.0621, 0.0874, 0.1062, 0.1157, 0.1204, 0.1225, 0.1184, 0.1058, 0.0892, 0.0764, 0.0742, 0.087, 0.1163, 0.1546, 0.1828, 0.1837, 0.1578, 0.1223, 0.0949, 0.0834, 0.0856, 0.0944, 0.1047, 0.1186, 0.1433, 0.1826, 0.2325, 0.2864, 0.3404, 0.3885, 0.4172, 0.4155, 0.3874, 0.3473, 0.3042, 0.2582, 0.2103, 0.1689, 0.1419, 0.129, 0.1222, 0.1124, 0.096, 0.0779, 0.0657, 0.062, 0.0649, 0.0765, 0.1035, 0.1431, 0.1748, 0.1765, 0.1457, 0.0997, 0.0573, 0.0274, 0.0104, 0.0029, 0.0006, 0.0008, 0.0031, 0.0089, 0.0184, 0.0281, 0.033, 0.0324, 0.0308, 0.0317, 0.033, 0.0312, 0.026, 0.0195, 0.0132, 0.0085, 0.0075, 0.0131, 0.0274, 0.05, 0.0754, 0.0918, 0.0893, 0.0698, 0.0452, 0.0262, 0.0151, 0.0102, 0.0105, 0.0152, 0.0227, 0.0311, 0.0387, 0.0439], [0.0526, 0.0551, 0.0593, 0.0695, 0.0898, 0.1158, 0.1383, 0.1524, 0.1591, 0.1583, 0.1474, 0.1263, 0.1001, 0.0763, 0.0629, 0.0661, 0.0872, 0.1191, 0.1473, 0.1595, 0.1519, 0.1283, 0.0974, 0.072, 0.0641, 0.0772, 0.1051, 0.1391, 0.1766, 0.2197, 0.2705, 0.3288, 0.3923, 0.4496, 0.479, 0.4674, 0.4284, 0.3884, 0.357, 0.3218, 0.2753, 0.2313, 0.2092, 0.211, 0.2187, 0.2124, 0.1872, 0.1551, 0.1315, 0.1214, 0.1205, 0.1291, 0.1557, 0.2003, 0.2412, 0.2498, 0.2168, 0.1579, 0.0965, 0.0484, 0.0191, 0.0058, 0.0019, 0.0028, 0.0081, 0.0203, 0.0385, 0.0552, 0.0616, 0.0578, 0.0532, 0.0544, 0.0582, 0.058, 0.0525, 0.043, 0.0313, 0.021, 0.0185, 0.0283, 0.0493, 0.0747, 0.0943, 0.0993, 0.0884, 0.0691, 0.0511, 0.0379, 0.028, 0.0219, 0.0235, 0.0341, 0.051, 0.0699, 0.0871, 0.0989], [0.0966, 0.1003, 0.1019, 0.1039, 0.1134, 0.132, 0.153, 0.1683, 0.1724, 0.1635, 0.1438, 0.1188, 0.0945, 0.0755, 0.0674, 0.0746, 0.0971, 0.1277, 0.1551, 0.17, 0.1669, 0.144, 0.1066, 0.0717, 0.0602, 0.0822, 0.1283, 0.1779, 0.217, 0.2491, 0.2894, 0.3509, 0.4339, 0.5173, 0.5652, 0.5571, 0.5118, 0.4666, 0.4347, 0.3983, 0.3473, 0.3026, 0.2921, 0.3134, 0.3341, 0.3247, 0.2839, 0.2339, 0.197, 0.179, 0.1746, 0.1833, 0.2137, 0.2652, 0.313, 0.324, 0.2855, 0.2131, 0.1338, 0.0693, 0.0292, 0.0112, 0.0069, 0.01, 0.021, 0.0426, 0.0713, 0.0934, 0.0966, 0.0847, 0.0741, 0.075, 0.0824, 0.0872, 0.0853, 0.0756, 0.0589, 0.0419, 0.037, 0.0513, 0.0794, 0.1057, 0.1155, 0.1056, 0.085, 0.067, 0.0573, 0.0509, 0.0421, 0.0346, 0.0375, 0.0546, 0.0816, 0.1119, 0.1394, 0.1582], [0.134, 0.1394, 0.1384, 0.1303, 0.1245, 0.1294, 0.1431, 0.155, 0.1546, 0.1391, 0.1161, 0.0959, 0.0836, 0.0799, 0.0855, 0.1021, 0.1277, 0.1554, 0.1773, 0.1874, 0.181, 0.1549, 0.1141, 0.0777, 0.0705, 0.105, 0.1681, 0.2284, 0.2622, 0.2748, 0.2957, 0.3525, 0.4485, 0.5543, 0.6242, 0.6337, 0.6018, 0.5665, 0.5387, 0.498, 0.4371, 0.3874, 0.3831, 0.4148, 0.4353, 0.4096, 0.3455, 0.2767, 0.229, 0.2064, 0.2026, 0.218, 0.2591, 0.3196, 0.3701, 0.3774, 0.3316, 0.2502, 0.1618, 0.0898, 0.0452, 0.026, 0.0237, 0.0319, 0.0518, 0.0856, 0.1243, 0.1467, 0.1394, 0.1135, 0.0939, 0.0929, 0.1034, 0.1141, 0.1186, 0.1124, 0.0941, 0.073, 0.0658, 0.0818, 0.1133, 0.1395, 0.1421, 0.1201, 0.0895, 0.0683, 0.0606, 0.0567, 0.0485, 0.0403, 0.0438, 0.0638, 0.0952, 0.1305, 0.1626, 0.1846], [0.147, 0.1539, 0.1525, 0.1385, 0.1211, 0.1122, 0.115, 0.1213, 0.1195, 0.1061, 0.0899, 0.0813, 0.0832, 0.0926, 0.1076, 0.1286, 0.1539, 0.1772, 0.1919, 0.1945, 0.1828, 0.1552, 0.1177, 0.0892, 0.093, 0.1399, 0.2141, 0.28, 0.3086, 0.3053, 0.3077, 0.353, 0.4455, 0.5516, 0.6263, 0.6514, 0.6477, 0.645, 0.6409, 0.6066, 0.5374, 0.4752, 0.4624, 0.4858, 0.49, 0.4393, 0.3512, 0.269, 0.2188, 0.1999, 0.2047, 0.2354, 0.2959, 0.3702, 0.4218, 0.4202, 0.3647, 0.2794, 0.1927, 0.124, 0.0816, 0.0644, 0.066, 0.0819, 0.1134, 0.1595, 0.2042, 0.2203, 0.1966, 0.1539, 0.1242, 0.1192, 0.1284, 0.14, 0.1483, 0.1476, 0.1345, 0.117, 0.1098, 0.1217, 0.148, 0.1715, 0.1734, 0.1477, 0.1086, 0.0766, 0.0601, 0.0519, 0.0429, 0.0354, 0.0381, 0.055, 0.0818, 0.1119, 0.1394, 0.1582], [0.1358, 0.1436, 0.1444, 0.1322, 0.1119, 0.0949, 0.0887, 0.0915, 0.0942, 0.0912, 0.0865, 0.0872, 0.0944, 0.1048, 0.1174, 0.1348, 0.1576, 0.1794, 0.1914, 0.1891, 0.1733, 0.1482, 0.1226, 0.1121, 0.1329, 0.1899, 0.2675, 0.3338, 0.3611, 0.3532, 0.3469, 0.3804, 0.4562, 0.5392, 0.5921, 0.6119, 0.6276, 0.6611, 0.6927, 0.6797, 0.6141, 0.5422, 0.5116, 0.5125, 0.492, 0.4195, 0.319, 0.2363, 0.1944, 0.1873, 0.2062, 0.2559, 0.3389, 0.4305, 0.4851, 0.4739, 0.4084, 0.323, 0.2457, 0.1883, 0.1529, 0.1392, 0.1453, 0.1699, 0.2119, 0.2643, 0.3054, 0.3082, 0.2682, 0.2141, 0.1788, 0.1682, 0.1682, 0.1695, 0.1726, 0.1761, 0.1762, 0.1735, 0.1713, 0.1731, 0.182, 0.1956, 0.1992, 0.1781, 0.1356, 0.0912, 0.0604, 0.0432, 0.0326, 0.0261, 0.0267, 0.0361, 0.0519, 0.0702, 0.0872, 0.0989], [0.1151, 0.1235, 0.1286, 0.1235, 0.1084, 0.0905, 0.0812, 0.0861, 0.0986, 0.1076, 0.1094, 0.108, 0.1065, 0.1052, 0.1063, 0.1162, 0.137, 0.1611, 0.1753, 0.1725, 0.1575, 0.1416, 0.1363, 0.1513, 0.1923, 0.2572, 0.3328, 0.3959, 0.4253, 0.4225, 0.4184, 0.4454, 0.5021, 0.5526, 0.568, 0.5601, 0.5684, 0.6133, 0.6671, 0.6791, 0.6337, 0.5692, 0.5285, 0.5071, 0.4658, 0.3857, 0.2915, 0.2228, 0.1961, 0.2021, 0.2314, 0.2912, 0.3864, 0.4897, 0.5498, 0.5364, 0.4675, 0.3856, 0.3204, 0.2778, 0.2536, 0.2464, 0.259, 0.2917, 0.3381, 0.3831, 0.4052, 0.3881, 0.3394, 0.2884, 0.2584, 0.2444, 0.2286, 0.2081, 0.1947, 0.1973, 0.2136, 0.2328, 0.2402, 0.2289, 0.2112, 0.2035, 0.2027, 0.1887, 0.1518, 0.1045, 0.0652, 0.0414, 0.0295, 0.0237, 0.0212, 0.0217, 0.0256, 0.0319, 0.0389, 0.044], [0.0961, 0.1053, 0.1151, 0.1187, 0.1116, 0.0976, 0.0908, 0.1022, 0.1255, 0.1429, 0.1438, 0.1315, 0.1136, 0.0959, 0.085, 0.0885, 0.1082, 0.134, 0.1502, 0.1501, 0.1425, 0.1432, 0.1626, 0.2022, 0.2589, 0.327, 0.3977, 0.4563, 0.488, 0.4943, 0.4991, 0.5269, 0.5712, 0.5968, 0.5807, 0.542, 0.524, 0.5486, 0.5931, 0.6147, 0.595, 0.5552, 0.5215, 0.492, 0.4457, 0.3768, 0.3052, 0.2579, 0.2452, 0.2575, 0.285, 0.3359, 0.4209, 0.5203, 0.5854, 0.5819, 0.522, 0.4478, 0.3927, 0.3644, 0.3562, 0.3634, 0.3879, 0.4287, 0.4716, 0.4938, 0.4812, 0.4396, 0.3916, 0.3601, 0.3483, 0.337, 0.3071, 0.2625, 0.2271, 0.2211, 0.2458, 0.2813, 0.2966, 0.2739, 0.2286, 0.1924, 0.177, 0.1662, 0.1422, 0.106, 0.0712, 0.0486, 0.0384, 0.0334, 0.0271, 0.0192, 0.0133, 0.0113, 0.012, 0.0132], [0.082, 0.0917, 0.1046, 0.1143, 0.1138, 0.1049, 0.1025, 0.1195, 0.149, 0.17, 0.1692, 0.1496, 0.1208, 0.0922, 0.0738, 0.0744, 0.0929, 0.1166, 0.1315, 0.1356, 0.1406, 0.1606, 0.2001, 0.2531, 0.3122, 0.3739, 0.4352, 0.4873, 0.5196, 0.5346, 0.5519, 0.588, 0.6307, 0.6472, 0.6205, 0.5709, 0.5346, 0.5281, 0.5388, 0.5439, 0.534, 0.5162, 0.4983, 0.4776, 0.4476, 0.4078, 0.3663, 0.3376, 0.3311, 0.3414, 0.3573, 0.3842, 0.4391, 0.5176, 0.582, 0.5944, 0.553, 0.4903, 0.4429, 0.4278, 0.4399, 0.4682, 0.5087, 0.5569, 0.5919, 0.5857, 0.5338, 0.4669, 0.4239, 0.4179, 0.4301, 0.429, 0.3956, 0.3384, 0.2862, 0.2654, 0.2818, 0.3153, 0.3296, 0.2995, 0.2354, 0.173, 0.1368, 0.1219, 0.1099, 0.0912, 0.0704, 0.0566, 0.052, 0.0489, 0.0393, 0.0247, 0.0118, 0.0049, 0.0027, 0.0024], [0.0755, 0.0847, 0.0975, 0.1085, 0.1111, 0.1061, 0.1065, 0.1241, 0.1528, 0.1742, 0.1768, 0.1616, 0.1342, 0.1031, 0.0818, 0.0814, 0.0983, 0.1183, 0.1319, 0.143, 0.1626, 0.1982, 0.2469, 0.2985, 0.3454, 0.3886, 0.4318, 0.4711, 0.4996, 0.5217, 0.5542, 0.6047, 0.6547, 0.6744, 0.6567, 0.6241, 0.5989, 0.5806, 0.5572, 0.5261, 0.4966, 0.476, 0.4639, 0.4586, 0.4594, 0.4593, 0.448, 0.4294, 0.4205, 0.4254, 0.4313, 0.4362, 0.4594, 0.5109, 0.5671, 0.5908, 0.5679, 0.5192, 0.482, 0.481, 0.5123, 0.5576, 0.6072, 0.6571, 0.686, 0.6616, 0.5832, 0.4973, 0.4557, 0.4665, 0.4969, 0.5086, 0.484, 0.4308, 0.374, 0.3382, 0.3329, 0.3459, 0.3484, 0.3143, 0.2438, 0.165, 0.1082, 0.0815, 0.0726, 0.067, 0.0608, 0.0585, 0.0608, 0.0597, 0.0482, 0.0296, 0.0131, 0.004, 0.0009, 0.0003], [0.0768, 0.0853, 0.0964, 0.1056, 0.1084, 0.1051, 0.1053, 0.1185, 0.1416, 0.1625, 0.1728, 0.1694, 0.1503, 0.121, 0.0982, 0.0961, 0.111, 0.1292, 0.1465, 0.1699, 0.2056, 0.252, 0.3012, 0.3425, 0.3697, 0.3872, 0.4038, 0.4219, 0.4406, 0.4673, 0.5151, 0.5811, 0.639, 0.6638, 0.6629, 0.6657, 0.6815, 0.6845, 0.6479, 0.5777, 0.5039, 0.4498, 0.4226, 0.4252, 0.4564, 0.4955, 0.511, 0.4974, 0.481, 0.48, 0.4837, 0.4827, 0.4925, 0.5286, 0.5771, 0.6059, 0.5978, 0.5667, 0.5448, 0.5559, 0.5952, 0.6411, 0.6843, 0.7269, 0.7533, 0.7285, 0.6464, 0.5542, 0.509, 0.5204, 0.554, 0.5726, 0.5601, 0.5206, 0.4702, 0.4268, 0.3995, 0.3854, 0.3698, 0.3323, 0.2637, 0.1787, 0.1057, 0.0632, 0.0487, 0.0483, 0.0524, 0.0592, 0.0656, 0.0645, 0.0511, 0.0308, 0.0134, 0.004, 0.0007, 0.0001], [0.0778, 0.0874, 0.0991, 0.1079, 0.1101, 0.1058, 0.1023, 0.1082, 0.1248, 0.1459, 0.1645, 0.1724, 0.1609, 0.1327, 0.1066, 0.0998, 0.1112, 0.1307, 0.1579, 0.1987, 0.2519, 0.3077, 0.3557, 0.3871, 0.3976, 0.3927, 0.3835, 0.3783, 0.3838, 0.4117, 0.4704, 0.5461, 0.6052, 0.6288, 0.6406, 0.6807, 0.7497, 0.7961, 0.769, 0.6694, 0.5435, 0.4386, 0.3801, 0.3782, 0.4286, 0.4977, 0.5372, 0.53, 0.5054, 0.4953, 0.499, 0.506, 0.5246, 0.5664, 0.6201, 0.6597, 0.6713, 0.6631, 0.6563, 0.668, 0.6964, 0.7274, 0.7564, 0.7884, 0.812, 0.7948, 0.7253, 0.6413, 0.5932, 0.5923, 0.6119, 0.6234, 0.6153, 0.5882, 0.5497, 0.5082, 0.4683, 0.4314, 0.396, 0.3526, 0.2885, 0.2048, 0.1232, 0.0683, 0.0468, 0.0482, 0.0588, 0.0702, 0.0763, 0.071, 0.0536, 0.0312, 0.0133, 0.0039, 0.0007, 0.0001], [0.0687, 0.0816, 0.0978, 0.1098, 0.1121, 0.1044, 0.0942, 0.0918, 0.1026, 0.1247, 0.1509, 0.1681, 0.1624, 0.1339, 0.1021, 0.0877, 0.0944, 0.1174, 0.1571, 0.2153, 0.2839, 0.3489, 0.3992, 0.4282, 0.4332, 0.4189, 0.3957, 0.3745, 0.3688, 0.3952, 0.4593, 0.5383, 0.5927, 0.6094, 0.6262, 0.6927, 0.8043, 0.891, 0.8801, 0.763, 0.5948, 0.4436, 0.3532, 0.3406, 0.3984, 0.4861, 0.5452, 0.5457, 0.512, 0.4865, 0.4855, 0.504, 0.543, 0.6056, 0.6799, 0.7452, 0.7876, 0.8049, 0.8041, 0.7993, 0.8036, 0.8202, 0.8456, 0.8738, 0.89, 0.8729, 0.8185, 0.7537, 0.7105, 0.6933, 0.6851, 0.6729, 0.6552, 0.6324, 0.6038, 0.5676, 0.5216, 0.4673, 0.4125, 0.3595, 0.2987, 0.2225, 0.1436, 0.0868, 0.0645, 0.0686, 0.0824, 0.0935, 0.0945, 0.0822, 0.0588, 0.0331, 0.0138, 0.004, 0.0007, 0.0001], [0.0497, 0.066, 0.088, 0.1055, 0.1093, 0.0982, 0.0808, 0.07, 0.0749, 0.0967, 0.1285, 0.154, 0.1546, 0.1272, 0.0906, 0.0691, 0.0726, 0.0999, 0.1497, 0.2192, 0.2979, 0.3721, 0.4314, 0.4691, 0.4815, 0.4711, 0.4458, 0.4175, 0.4048, 0.4296, 0.4977, 0.5796, 0.6309, 0.6423, 0.6604, 0.7387, 0.8679, 0.9697, 0.9646, 0.8401, 0.6533, 0.4799, 0.3717, 0.3499, 0.407, 0.5016, 0.5692, 0.5697, 0.5215, 0.477, 0.47, 0.5012, 0.5619, 0.6461, 0.7443, 0.8401, 0.9143, 0.9498, 0.943, 0.9139, 0.8977, 0.9151, 0.9554, 0.9899, 0.9962, 0.9711, 0.9292, 0.8902, 0.8609, 0.8306, 0.7886, 0.7396, 0.6971, 0.6651, 0.6357, 0.5982, 0.5459, 0.4792, 0.4082, 0.3436, 0.2834, 0.2189, 0.1542, 0.1078, 0.0917, 0.0984, 0.1105, 0.1151, 0.1075, 0.0878, 0.0603, 0.033, 0.0137, 0.0039, 0.0007, 0.0001], [0.03, 0.0478, 0.0745, 0.0987, 0.1073, 0.0959, 0.0729, 0.0539, 0.0506, 0.0671, 0.0983, 0.1276, 0.1341, 0.1111, 0.0756, 0.0527, 0.0565, 0.0873, 0.1419, 0.2163, 0.3033, 0.3916, 0.469, 0.5239, 0.549, 0.5443, 0.518, 0.4852, 0.4695, 0.4963, 0.5697, 0.6559, 0.7088, 0.7221, 0.7439, 0.8223, 0.9423, 1.0291, 1.0147, 0.8943, 0.7211, 0.56, 0.4552, 0.4278, 0.4762, 0.5633, 0.6236, 0.6115, 0.5442, 0.4837, 0.4772, 0.5255, 0.6054, 0.7015, 0.8091, 0.9187, 1.0068, 1.0467, 1.0311, 0.9885, 0.9688, 0.9995, 1.0596, 1.1033, 1.1054, 1.0787, 1.0519, 1.0384, 1.0242, 0.9852, 0.9126, 0.8235, 0.7448, 0.6871, 0.6408, 0.5926, 0.5352, 0.4657, 0.3882, 0.3147, 0.2532, 0.2006, 0.155, 0.1245, 0.1159, 0.1217, 0.1264, 0.1201, 0.1024, 0.0778, 0.0509, 0.0272, 0.0111, 0.0032, 0.0006, 0.0], [0.0168, 0.0351, 0.066, 0.099, 0.1169, 0.1096, 0.0835, 0.0558, 0.0412, 0.046, 0.0673, 0.0913, 0.0992, 0.0833, 0.0562, 0.0393, 0.0458, 0.0771, 0.1321, 0.2119, 0.3146, 0.4271, 0.528, 0.5976, 0.6263, 0.6167, 0.583, 0.5472, 0.5357, 0.5694, 0.6454, 0.7295, 0.7824, 0.803, 0.832, 0.9026, 0.9942, 1.0465, 1.017, 0.9154, 0.7858, 0.6681, 0.5851, 0.5541, 0.5834, 0.6489, 0.6922, 0.6671, 0.5886, 0.5221, 0.521, 0.5843, 0.6756, 0.7688, 0.8627, 0.958, 1.0377, 1.0765, 1.0675, 1.0374, 1.031, 1.0704, 1.1317, 1.1724, 1.1758, 1.1605, 1.1515, 1.1525, 1.1429, 1.0975, 1.0085, 0.8935, 0.7817, 0.6892, 0.6132, 0.548, 0.4903, 0.4311, 0.3618, 0.2887, 0.2271, 0.1826, 0.1514, 0.1324, 0.1265, 0.1274, 0.1228, 0.1062, 0.0813, 0.0555, 0.0336, 0.0172, 0.0069, 0.002, 0.0004, 0.0], [0.0108, 0.0295, 0.0645, 0.1068, 0.1358, 0.1357, 0.1098, 0.0755, 0.0495, 0.0397, 0.0451, 0.0563, 0.0603, 0.0512, 0.0362, 0.0287, 0.0374, 0.0654, 0.1193, 0.2098, 0.3377, 0.4795, 0.5979, 0.6673, 0.684, 0.6612, 0.6212, 0.5912, 0.5934, 0.6353, 0.7037, 0.7711, 0.8166, 0.8458, 0.8835, 0.9409, 0.9953, 1.009, 0.9691, 0.8978, 0.8258, 0.7639, 0.7105, 0.6759, 0.6802, 0.7192, 0.7508, 0.7314, 0.6646, 0.6046, 0.6044, 0.6675, 0.7552, 0.8325, 0.8964, 0.9589, 1.0209, 1.0691, 1.0939, 1.1031, 1.1176, 1.1464, 1.1748, 1.1849, 1.1796, 1.1742, 1.1746, 1.1721, 1.1532, 1.1063, 1.0259, 0.9179, 0.7978, 0.6787, 0.5692, 0.4812, 0.4222, 0.3791, 0.3291, 0.2679, 0.2107, 0.1695, 0.1429, 0.1266, 0.1188, 0.1143, 0.1036, 0.0825, 0.0561, 0.033, 0.0173, 0.0081, 0.0031, 0.0009, 0.0002, 0.0], [0.0089, 0.0272, 0.0634, 0.1098, 0.1455, 0.1525, 0.1315, 0.0984, 0.0689, 0.0501, 0.0418, 0.0388, 0.0353, 0.0299, 0.0258, 0.027, 0.0357, 0.0575, 0.1088, 0.2103, 0.3607, 0.5212, 0.641, 0.6965, 0.6985, 0.6707, 0.6383, 0.6255, 0.6447, 0.6881, 0.737, 0.7788, 0.8154, 0.8565, 0.9052, 0.9494, 0.9673, 0.9465, 0.8998, 0.8565, 0.8324, 0.815, 0.7848, 0.747, 0.7309, 0.7524, 0.7877, 0.7953, 0.7613, 0.7182, 0.7137, 0.7634, 0.8377, 0.8972, 0.9317, 0.9616, 1.0094, 1.0779, 1.1521, 1.2125, 1.2456, 1.2446, 1.2098, 1.158, 1.1178, 1.1023, 1.0958, 1.0777, 1.0461, 1.0085, 0.9629, 0.8975, 0.8019, 0.6759, 0.5375, 0.421, 0.3514, 0.3182, 0.2887, 0.2455, 0.1966, 0.1554, 0.1262, 0.1079, 0.0982, 0.0915, 0.0795, 0.0591, 0.0359, 0.0177, 0.0074, 0.0028, 0.001, 0.0003, 0.0, 0.0], [0.0095, 0.0258, 0.0576, 0.0984, 0.1313, 0.1418, 0.1308, 0.1105, 0.0918, 0.0773, 0.0639, 0.0494, 0.0362, 0.03, 0.0332, 0.0412, 0.0486, 0.0618, 0.1058, 0.2079, 0.3623, 0.5194, 0.6257, 0.6687, 0.6717, 0.6593, 0.6485, 0.6547, 0.6821, 0.7165, 0.7427, 0.7657, 0.8046, 0.867, 0.934, 0.9726, 0.9623, 0.9112, 0.8525, 0.8194, 0.8166, 0.8174, 0.795, 0.7553, 0.7329, 0.7529, 0.8014, 0.8385, 0.8393, 0.8192, 0.8191, 0.8638, 0.9347, 0.9891, 1.0079, 1.0149, 1.0493, 1.1298, 1.2406, 1.3408, 1.3866, 1.3525, 1.2479, 1.1191, 1.0225, 0.9776, 0.9564, 0.9268, 0.8911, 0.8703, 0.8666, 0.8535, 0.796, 0.6784, 0.5225, 0.3806, 0.2956, 0.2645, 0.25, 0.2233, 0.1827, 0.1406, 0.1073, 0.0873, 0.0787, 0.0732, 0.0618, 0.043, 0.0235, 0.0098, 0.0031, 0.0008, 0.0002, 0.0001, 0.0, 0.0], [0.015, 0.0283, 0.0517, 0.0795, 0.101, 0.11, 0.1107, 0.1121, 0.1177, 0.1209, 0.1117, 0.0884, 0.0626, 0.0503, 0.056, 0.0683, 0.0737, 0.0774, 0.1092, 0.1983, 0.3359, 0.4714, 0.5596, 0.6005, 0.6207, 0.6345, 0.6452, 0.6608, 0.6842, 0.7048, 0.7166, 0.737, 0.7922, 0.8839, 0.976, 1.0201, 0.9947, 0.9202, 0.8428, 0.7998, 0.7907, 0.7848, 0.7581, 0.7212, 0.7075, 0.7367, 0.793, 0.8409, 0.8607, 0.8655, 0.8899, 0.9566, 1.0473, 1.1145, 1.1319, 1.1229, 1.1361, 1.2034, 1.3171, 1.4321, 1.4865, 1.436, 1.2856, 1.0967, 0.9483, 0.8754, 0.8483, 0.8219, 0.7899, 0.7764, 0.7898, 0.8015, 0.7668, 0.6607, 0.5029, 0.3516, 0.2587, 0.2286, 0.2247, 0.2108, 0.1772, 0.1346, 0.0984, 0.078, 0.0714, 0.0671, 0.0551, 0.0361, 0.018, 0.0069, 0.0022, 0.0008, 0.0004, 0.0002, 0.0, 0.0], [0.0307, 0.0416, 0.0569, 0.0703, 0.0774, 0.0808, 0.0901, 0.1134, 0.1473, 0.1745, 0.1753, 0.1458, 0.1051, 0.0804, 0.0815, 0.0933, 0.0962, 0.0934, 0.1142, 0.1858, 0.298, 0.4066, 0.4782, 0.5202, 0.5547, 0.5853, 0.6066, 0.6234, 0.6406, 0.6524, 0.6598, 0.6857, 0.7576, 0.8723, 0.9851, 1.0404, 1.0147, 0.9318, 0.8415, 0.7816, 0.7521, 0.7288, 0.6985, 0.675, 0.6807, 0.7183, 0.766, 0.8002, 0.8195, 0.8459, 0.9082, 1.0168, 1.1435, 1.2342, 1.2588, 1.2391, 1.2264, 1.2607, 1.3476, 1.4521, 1.511, 1.4678, 1.3149, 1.1106, 0.9444, 0.8658, 0.8491, 0.8362, 0.8032, 0.7708, 0.7588, 0.7528, 0.7149, 0.6181, 0.4736, 0.3302, 0.2382, 0.209, 0.2119, 0.2081, 0.1815, 0.1408, 0.1039, 0.0827, 0.0753, 0.0695, 0.0556, 0.0356, 0.0182, 0.0085, 0.0048, 0.0033, 0.002, 0.0009, 0.0003, 0.0], [0.0608, 0.0688, 0.0771, 0.0795, 0.0746, 0.0705, 0.0817, 0.1177, 0.1719, 0.22, 0.2333, 0.2026, 0.1491, 0.1079, 0.0963, 0.1016, 0.1032, 0.1016, 0.1207, 0.1806, 0.2704, 0.355, 0.4108, 0.4461, 0.478, 0.5077, 0.5306, 0.5512, 0.5713, 0.5832, 0.5881, 0.6106, 0.6802, 0.7952, 0.9124, 0.9764, 0.9626, 0.8912, 0.8058, 0.7381, 0.6916, 0.6571, 0.636, 0.6401, 0.671, 0.7098, 0.7332, 0.7365, 0.7405, 0.7772, 0.8704, 1.0173, 1.1773, 1.2914, 1.3289, 1.3105, 1.2841, 1.2902, 1.342, 1.4185, 1.4706, 1.4465, 1.3295, 1.1618, 1.0228, 0.9644, 0.9652, 0.9602, 0.9117, 0.8363, 0.7691, 0.7195, 0.6658, 0.5807, 0.4602, 0.3327, 0.2403, 0.2029, 0.2022, 0.2027, 0.1831, 0.148, 0.1143, 0.0931, 0.0829, 0.0737, 0.0584, 0.0393, 0.0241, 0.0166, 0.0136, 0.0106, 0.0065, 0.0029, 0.0009, 0.0002], [0.1024, 0.1037, 0.1033, 0.0973, 0.0847, 0.0737, 0.08, 0.1156, 0.1759, 0.2358, 0.2623, 0.2383, 0.1801, 0.1249, 0.0982, 0.0952, 0.0993, 0.1081, 0.136, 0.1927, 0.2663, 0.3305, 0.3697, 0.3907, 0.4075, 0.4259, 0.4484, 0.4793, 0.5119, 0.5288, 0.526, 0.5287, 0.5717, 0.6621, 0.7656, 0.8322, 0.8361, 0.7897, 0.7242, 0.6629, 0.6138, 0.5845, 0.5887, 0.6304, 0.6875, 0.7233, 0.7177, 0.6849, 0.6633, 0.6926, 0.7949, 0.9591, 1.136, 1.2644, 1.3165, 1.3144, 1.3017, 1.3089, 1.3414, 1.3846, 1.4131, 1.4008, 1.3351, 1.2356, 1.1516, 1.1213, 1.128, 1.1139, 1.0396, 0.9193, 0.7984, 0.7075, 0.6421, 0.5752, 0.4847, 0.3749, 0.2761, 0.217, 0.1967, 0.1892, 0.1719, 0.1439, 0.1171, 0.0992, 0.0883, 0.0779, 0.0636, 0.0477, 0.0363, 0.0319, 0.0296, 0.0238, 0.0146, 0.0065, 0.0019, 0.0004], [0.1435, 0.1344, 0.1224, 0.1087, 0.0921, 0.0765, 0.0746, 0.1001, 0.1536, 0.2158, 0.2539, 0.2437, 0.1917, 0.1321, 0.0963, 0.0902, 0.1023, 0.127, 0.1687, 0.2276, 0.2903, 0.3378, 0.3613, 0.3672, 0.3683, 0.375, 0.3964, 0.4368, 0.4819, 0.5036, 0.4906, 0.4675, 0.4747, 0.5292, 0.6093, 0.6729, 0.6922, 0.6691, 0.6238, 0.5752, 0.5374, 0.5293, 0.5686, 0.6486, 0.7297, 0.766, 0.7411, 0.6789, 0.6272, 0.6339, 0.7255, 0.8873, 1.0633, 1.1906, 1.2477, 1.2656, 1.2885, 1.3305, 1.3731, 1.3935, 1.3894, 1.3722, 1.346, 1.3091, 1.2725, 1.2532, 1.2433, 1.206, 1.1119, 0.9714, 0.8266, 0.7164, 0.6491, 0.6013, 0.5396, 0.4485, 0.3446, 0.2599, 0.2095, 0.1811, 0.1561, 0.1299, 0.1082, 0.0947, 0.0869, 0.0797, 0.0696, 0.0579, 0.0503, 0.0487, 0.0469, 0.038, 0.0234, 0.0104, 0.0031, 0.0006], [0.1682, 0.1518, 0.1317, 0.1133, 0.0956, 0.0778, 0.0678, 0.0793, 0.1191, 0.176, 0.2211, 0.2259, 0.1873, 0.1333, 0.0986, 0.097, 0.1211, 0.1617, 0.2161, 0.2787, 0.3351, 0.3703, 0.3805, 0.3749, 0.3671, 0.3685, 0.3887, 0.4312, 0.4801, 0.5037, 0.486, 0.4482, 0.4304, 0.4554, 0.5121, 0.5673, 0.5912, 0.5769, 0.5389, 0.4989, 0.4778, 0.4974, 0.57, 0.6791, 0.7797, 0.8262, 0.8014, 0.7254, 0.6485, 0.6306, 0.7077, 0.8622, 1.0285, 1.1402, 1.1836, 1.2045, 1.2559, 1.3413, 1.4145, 1.4338, 1.4069, 1.3759, 1.364, 1.3568, 1.3362, 1.3028, 1.2603, 1.1985, 1.1037, 0.9797, 0.8523, 0.7514, 0.6892, 0.6505, 0.6044, 0.5279, 0.4258, 0.3247, 0.2469, 0.1924, 0.1504, 0.1161, 0.0918, 0.0791, 0.0747, 0.0728, 0.0682, 0.0608, 0.056, 0.056, 0.0546, 0.0443, 0.0273, 0.0121, 0.0036, 0.0007], [0.168, 0.1548, 0.1384, 0.1235, 0.1085, 0.0899, 0.0723, 0.0698, 0.0945, 0.1419, 0.1872, 0.2009, 0.1742, 0.1301, 0.103, 0.1103, 0.1459, 0.1977, 0.2592, 0.3232, 0.3751, 0.4009, 0.4008, 0.3897, 0.3849, 0.3947, 0.4204, 0.4604, 0.5026, 0.5236, 0.5094, 0.4751, 0.4526, 0.4633, 0.5022, 0.5433, 0.5577, 0.5352, 0.4911, 0.4532, 0.4456, 0.4843, 0.5723, 0.6912, 0.8038, 0.8705, 0.8657, 0.7944, 0.7063, 0.6771, 0.7526, 0.9087, 1.0677, 1.1597, 1.1758, 1.1718, 1.2134, 1.3098, 1.4055, 1.4408, 1.4158, 1.3807, 1.369, 1.3651, 1.3397, 1.2861, 1.2153, 1.1373, 1.0553, 0.9705, 0.8881, 0.8171, 0.7622, 0.7171, 0.6653, 0.5901, 0.4903, 0.3833, 0.2892, 0.2146, 0.1551, 0.1079, 0.075, 0.0578, 0.0534, 0.0545, 0.054, 0.0501, 0.0472, 0.0479, 0.0467, 0.038, 0.0234, 0.0104, 0.0031, 0.0006], [0.1483, 0.1487, 0.1482, 0.1454, 0.1364, 0.1173, 0.0927, 0.0789, 0.0919, 0.1298, 0.1691, 0.1817, 0.1595, 0.1236, 0.1061, 0.1221, 0.1641, 0.2187, 0.2791, 0.3387, 0.3838, 0.4015, 0.3956, 0.3884, 0.4019, 0.4383, 0.4827, 0.5217, 0.5497, 0.5618, 0.5543, 0.5362, 0.5268, 0.5393, 0.5683, 0.5915, 0.5856, 0.5467, 0.496, 0.4621, 0.4613, 0.4966, 0.5663, 0.6649, 0.7761, 0.8662, 0.8927, 0.8409, 0.7605, 0.7412, 0.833, 1.0004, 1.1573, 1.2348, 1.2239, 1.1768, 1.1662, 1.2224, 1.3066, 1.3565, 1.3555, 1.3392, 1.3374, 1.3397, 1.3204, 1.2696, 1.1942, 1.1104, 1.0361, 0.9798, 0.9349, 0.8892, 0.8358, 0.7742, 0.7029, 0.6163, 0.5129, 0.4034, 0.3042, 0.2227, 0.1566, 0.103, 0.0636, 0.0407, 0.0324, 0.0321, 0.0325, 0.0308, 0.0294, 0.0299, 0.0292, 0.0237, 0.0146, 0.0065, 0.0019, 0.0004], [0.124, 0.1406, 0.1591, 0.1695, 0.1654, 0.1447, 0.1151, 0.0962, 0.1054, 0.1385, 0.1699, 0.174, 0.1493, 0.1199, 0.113, 0.1361, 0.1778, 0.2261, 0.2773, 0.3276, 0.3646, 0.3769, 0.372, 0.3774, 0.418, 0.4889, 0.5579, 0.598, 0.6096, 0.608, 0.6046, 0.6064, 0.6207, 0.648, 0.6745, 0.6793, 0.6516, 0.603, 0.5602, 0.5413, 0.5416, 0.5478, 0.5632, 0.6099, 0.7, 0.8044, 0.861, 0.8379, 0.7848, 0.796, 0.9135, 1.0894, 1.239, 1.3036, 1.2731, 1.1867, 1.1135, 1.1036, 1.1471, 1.1957, 1.2225, 1.2405, 1.2658, 1.2918, 1.3022, 1.2851, 1.2329, 1.1527, 1.0702, 1.0074, 0.9605, 0.9098, 0.844, 0.7665, 0.6819, 0.5877, 0.4817, 0.3732, 0.2778, 0.2034, 0.1461, 0.0991, 0.0612, 0.035, 0.0213, 0.0163, 0.0148, 0.0137, 0.013, 0.0133, 0.013, 0.0105, 0.0065, 0.0029, 0.0009, 0.0003], [0.1064, 0.1347, 0.1655, 0.182, 0.1767, 0.1522, 0.1211, 0.1049, 0.119, 0.154, 0.1802, 0.176, 0.1491, 0.1282, 0.1338, 0.1625, 0.1985, 0.2344, 0.2734, 0.3157, 0.3497, 0.3642, 0.3665, 0.3844, 0.4422, 0.5312, 0.6115, 0.6496, 0.6488, 0.6366, 0.6345, 0.652, 0.6904, 0.7373, 0.7663, 0.7568, 0.7153, 0.6715, 0.6522, 0.6561, 0.6537, 0.6193, 0.567, 0.5487, 0.6024, 0.7035, 0.7795, 0.7901, 0.781, 0.8338, 0.9706, 1.1363, 1.2604, 1.3036, 1.2601, 1.1573, 1.0529, 1.0003, 1.0077, 1.045, 1.0876, 1.1329, 1.1818, 1.2287, 1.2687, 1.2914, 1.274, 1.2048, 1.1059, 1.0094, 0.9232, 0.8361, 0.7449, 0.6584, 0.5788, 0.4962, 0.403, 0.3067, 0.2244, 0.1658, 0.1265, 0.0955, 0.0665, 0.0407, 0.0217, 0.0108, 0.0061, 0.0044, 0.0039, 0.004, 0.0039, 0.0032, 0.0022, 0.0014, 0.0013, 0.0014], [0.0945, 0.1274, 0.1616, 0.1765, 0.1657, 0.1366, 0.1064, 0.0969, 0.1195, 0.1598, 0.1865, 0.1823, 0.1626, 0.1566, 0.1754, 0.2059, 0.2321, 0.2545, 0.2844, 0.3253, 0.3658, 0.3914, 0.4032, 0.4228, 0.4718, 0.545, 0.6099, 0.639, 0.6364, 0.626, 0.6272, 0.6511, 0.7016, 0.7613, 0.7933, 0.7762, 0.7306, 0.699, 0.7028, 0.7224, 0.714, 0.6497, 0.553, 0.4903, 0.5119, 0.5993, 0.6842, 0.7283, 0.7664, 0.8526, 0.986, 1.1149, 1.1945, 1.2096, 1.163, 1.0759, 0.9915, 0.9487, 0.9537, 0.9879, 1.0343, 1.0834, 1.1263, 1.1613, 1.1981, 1.2346, 1.24, 1.1847, 1.0782, 0.9525, 0.8242, 0.6944, 0.5749, 0.4831, 0.4189, 0.3632, 0.2997, 0.2299, 0.1685, 0.1274, 0.1051, 0.0903, 0.0724, 0.0495, 0.0272, 0.0116, 0.0039, 0.0013, 0.0008, 0.0007, 0.0008, 0.0009, 0.0015, 0.0031, 0.0056, 0.0077], [0.0795, 0.1103, 0.1419, 0.1537, 0.1397, 0.1095, 0.0818, 0.0776, 0.1052, 0.1488, 0.1801, 0.1879, 0.1899, 0.2072, 0.2376, 0.2628, 0.2752, 0.2867, 0.313, 0.3577, 0.4087, 0.4472, 0.4646, 0.4722, 0.4891, 0.52, 0.5506, 0.5683, 0.5767, 0.5845, 0.5955, 0.6181, 0.6649, 0.7241, 0.7549, 0.7327, 0.6843, 0.6571, 0.666, 0.683, 0.666, 0.5959, 0.4986, 0.434, 0.4477, 0.527, 0.6171, 0.6858, 0.7528, 0.8438, 0.9437, 1.0159, 1.046, 1.041, 1.0105, 0.9708, 0.9469, 0.954, 0.9862, 1.0302, 1.075, 1.107, 1.1134, 1.1017, 1.0986, 1.1145, 1.1198, 1.0764, 0.9807, 0.8551, 0.7131, 0.5612, 0.4219, 0.3233, 0.2694, 0.2381, 0.2064, 0.1675, 0.1291, 0.1017, 0.0881, 0.0811, 0.0703, 0.0514, 0.0295, 0.0125, 0.0037, 0.0007, 0.0001, 0.0001, 0.0002, 0.0011, 0.0039, 0.0099, 0.0184, 0.0256], [0.0575, 0.0814, 0.1069, 0.1172, 0.1061, 0.0807, 0.0579, 0.0565, 0.0833, 0.1256, 0.1624, 0.1898, 0.2225, 0.2672, 0.3065, 0.322, 0.3203, 0.3251, 0.3516, 0.3984, 0.4527, 0.4949, 0.5094, 0.4982, 0.4791, 0.4669, 0.4656, 0.4778, 0.5065, 0.5432, 0.5718, 0.5945, 0.6322, 0.6829, 0.7059, 0.6735, 0.6138, 0.5759, 0.572, 0.5733, 0.5492, 0.4934, 0.4279, 0.3934, 0.4205, 0.5, 0.5909, 0.6658, 0.7318, 0.7978, 0.8477, 0.8648, 0.8584, 0.8505, 0.855, 0.8803, 0.9292, 0.9909, 1.0501, 1.1017, 1.1407, 1.1495, 1.1138, 1.0501, 0.9975, 0.9766, 0.9658, 0.9299, 0.8578, 0.7583, 0.6339, 0.4878, 0.3455, 0.2425, 0.1902, 0.1702, 0.1579, 0.1407, 0.1187, 0.0973, 0.0813, 0.07, 0.0584, 0.0425, 0.0246, 0.0106, 0.0031, 0.0006, 0.0, 0.0, 0.0004, 0.0023, 0.0087, 0.0223, 0.0413, 0.0577], [0.0363, 0.0512, 0.068, 0.0761, 0.07, 0.0532, 0.038, 0.0389, 0.0622, 0.0994, 0.1387, 0.1819, 0.2397, 0.3056, 0.3521, 0.3631, 0.3561, 0.3603, 0.3874, 0.4305, 0.477, 0.5103, 0.5147, 0.4885, 0.4477, 0.4116, 0.3943, 0.4073, 0.4546, 0.5181, 0.5683, 0.6007, 0.6389, 0.685, 0.6986, 0.6517, 0.5749, 0.5196, 0.4979, 0.4841, 0.4586, 0.4248, 0.3972, 0.3946, 0.432, 0.5031, 0.5792, 0.6391, 0.6848, 0.7208, 0.7361, 0.7245, 0.704, 0.7039, 0.7444, 0.8274, 0.9313, 1.0219, 1.083, 1.125, 1.1526, 1.1457, 1.087, 0.9949, 0.9113, 0.8613, 0.8334, 0.8011, 0.7506, 0.6803, 0.5849, 0.4638, 0.3385, 0.2435, 0.1944, 0.1778, 0.1711, 0.1602, 0.1415, 0.1154, 0.0868, 0.0617, 0.0428, 0.0279, 0.0155, 0.0066, 0.002, 0.0004, 0.0001, 0.0001, 0.0006, 0.0037, 0.0139, 0.0357, 0.0661, 0.0923], [0.0283, 0.0347, 0.0415, 0.0439, 0.0393, 0.0298, 0.022, 0.0255, 0.0445, 0.0747, 0.1107, 0.1573, 0.222, 0.2942, 0.3464, 0.3654, 0.3682, 0.3794, 0.407, 0.4439, 0.4792, 0.5004, 0.4954, 0.4639, 0.4193, 0.3784, 0.356, 0.3675, 0.4201, 0.4958, 0.5625, 0.6119, 0.6635, 0.7159, 0.7286, 0.6763, 0.5914, 0.5259, 0.4918, 0.4682, 0.4445, 0.4291, 0.4278, 0.4407, 0.47, 0.5128, 0.5544, 0.5855, 0.6133, 0.6438, 0.6652, 0.6638, 0.649, 0.6537, 0.7104, 0.8203, 0.9417, 1.0241, 1.0585, 1.0746, 1.0878, 1.0764, 1.0177, 0.925, 0.8362, 0.7769, 0.7423, 0.7114, 0.6696, 0.6132, 0.5408, 0.4521, 0.3598, 0.2879, 0.2504, 0.2378, 0.2296, 0.2127, 0.1838, 0.1433, 0.0973, 0.0569, 0.0299, 0.0153, 0.0076, 0.0035, 0.0015, 0.0007, 0.0004, 0.0002, 0.0008, 0.0044, 0.0162, 0.0417, 0.0772, 0.1077], [0.0377, 0.0379, 0.0351, 0.0288, 0.0211, 0.0141, 0.0109, 0.0153, 0.0295, 0.0514, 0.0795, 0.1189, 0.1747, 0.2387, 0.2921, 0.3259, 0.3485, 0.3724, 0.4027, 0.4376, 0.4704, 0.4891, 0.4837, 0.4557, 0.4158, 0.3759, 0.3487, 0.3509, 0.3927, 0.4611, 0.5297, 0.5902, 0.6553, 0.719, 0.7431, 0.7053, 0.6337, 0.5727, 0.5329, 0.5, 0.4729, 0.4645, 0.4752, 0.4923, 0.5073, 0.5176, 0.5214, 0.526, 0.5515, 0.6082, 0.6752, 0.7152, 0.7163, 0.7137, 0.7578, 0.8565, 0.9582, 1.0057, 0.9986, 0.9811, 0.9773, 0.9662, 0.9194, 0.8409, 0.7618, 0.7075, 0.6758, 0.6452, 0.6008, 0.5459, 0.4907, 0.437, 0.3835, 0.3387, 0.3139, 0.304, 0.2909, 0.2616, 0.2157, 0.1584, 0.099, 0.0507, 0.0212, 0.0084, 0.0046, 0.0041, 0.0039, 0.0032, 0.002, 0.0009, 0.0009, 0.0038, 0.0139, 0.0357, 0.0661, 0.0923], [0.0554, 0.0518, 0.042, 0.0278, 0.0149, 0.0074, 0.0053, 0.0084, 0.017, 0.0311, 0.0518, 0.0833, 0.1275, 0.1778, 0.2249, 0.2664, 0.3048, 0.341, 0.3771, 0.4175, 0.46, 0.4907, 0.4961, 0.4759, 0.4398, 0.3987, 0.3657, 0.3562, 0.3787, 0.4241, 0.4752, 0.5278, 0.5905, 0.6562, 0.6943, 0.6846, 0.6433, 0.5994, 0.5596, 0.5173, 0.4808, 0.4674, 0.4793, 0.501, 0.5168, 0.5174, 0.5042, 0.4978, 0.5346, 0.6331, 0.7619, 0.8538, 0.8706, 0.8474, 0.8545, 0.9151, 0.9803, 0.992, 0.9487, 0.897, 0.8701, 0.8566, 0.8242, 0.7615, 0.6904, 0.6385, 0.6074, 0.5753, 0.5283, 0.4785, 0.4452, 0.4269, 0.406, 0.3773, 0.3536, 0.3383, 0.3162, 0.2737, 0.213, 0.1458, 0.0845, 0.0397, 0.0153, 0.0072, 0.008, 0.0111, 0.0125, 0.0106, 0.0065, 0.0029, 0.0012, 0.0025, 0.0087, 0.0223, 0.0413, 0.0577], [0.0674, 0.0622, 0.0491, 0.0309, 0.0156, 0.0078, 0.0056, 0.0064, 0.0097, 0.0179, 0.0351, 0.065, 0.1047, 0.145, 0.1808, 0.2168, 0.2573, 0.2988, 0.3401, 0.3888, 0.4465, 0.4973, 0.5202, 0.5098, 0.4768, 0.4373, 0.4059, 0.3913, 0.3938, 0.4069, 0.4251, 0.4515, 0.4925, 0.5434, 0.5841, 0.5977, 0.5868, 0.5632, 0.5301, 0.4872, 0.4462, 0.4252, 0.4319, 0.4597, 0.4924, 0.5104, 0.5071, 0.5071, 0.5598, 0.6944, 0.8736, 1.0062, 1.031, 0.9817, 0.9446, 0.9615, 0.9967, 0.9924, 0.9331, 0.8542, 0.8001, 0.7801, 0.7618, 0.7125, 0.6391, 0.575, 0.5338, 0.4986, 0.4569, 0.4232, 0.4164, 0.4263, 0.4223, 0.3937, 0.3585, 0.3298, 0.296, 0.2433, 0.1763, 0.1107, 0.059, 0.0264, 0.012, 0.0114, 0.0185, 0.0265, 0.0292, 0.0242, 0.0149, 0.0066, 0.0021, 0.0014, 0.0039, 0.0099, 0.0184, 0.0256], [0.0688, 0.0635, 0.0504, 0.033, 0.0199, 0.0146, 0.0133, 0.0118, 0.0103, 0.0139, 0.0295, 0.0611, 0.1021, 0.1392, 0.1665, 0.1918, 0.224, 0.2618, 0.3035, 0.3567, 0.425, 0.4913, 0.5288, 0.5281, 0.5042, 0.479, 0.4631, 0.4512, 0.4339, 0.4109, 0.3925, 0.3889, 0.4026, 0.4294, 0.4589, 0.4801, 0.4874, 0.4804, 0.46, 0.4301, 0.3995, 0.3789, 0.3791, 0.4062, 0.4509, 0.4888, 0.5043, 0.5189, 0.5851, 0.7373, 0.9369, 1.0842, 1.1101, 1.0461, 0.9814, 0.9675, 0.9852, 0.983, 0.9289, 0.839, 0.7644, 0.7375, 0.7316, 0.695, 0.6175, 0.5368, 0.4819, 0.4451, 0.413, 0.3952, 0.4042, 0.4234, 0.4193, 0.3829, 0.3361, 0.2949, 0.2508, 0.1927, 0.1276, 0.072, 0.035, 0.0167, 0.0136, 0.0216, 0.0356, 0.0478, 0.0501, 0.0403, 0.0242, 0.0105, 0.0032, 0.0009, 0.0012, 0.003, 0.0055, 0.0077], [0.0673, 0.0624, 0.0505, 0.0362, 0.0282, 0.0282, 0.0295, 0.026, 0.0196, 0.018, 0.0299, 0.059, 0.0989, 0.1358, 0.1621, 0.1832, 0.2085, 0.2408, 0.281, 0.3349, 0.403, 0.4676, 0.5041, 0.5084, 0.5016, 0.5047, 0.5141, 0.5066, 0.4678, 0.411, 0.364, 0.3412, 0.3376, 0.345, 0.3607, 0.3817, 0.4001, 0.4074, 0.4023, 0.3911, 0.3795, 0.3697, 0.3678, 0.3841, 0.4177, 0.4508, 0.4708, 0.4953, 0.568, 0.7156, 0.9014, 1.0376, 1.0661, 1.0137, 0.9519, 0.9248, 0.928, 0.928, 0.8897, 0.8099, 0.7322, 0.7004, 0.7007, 0.6782, 0.6113, 0.5338, 0.4806, 0.4484, 0.4212, 0.4029, 0.4032, 0.409, 0.3947, 0.3553, 0.3083, 0.2637, 0.2138, 0.1536, 0.0936, 0.0483, 0.0228, 0.0149, 0.0209, 0.0365, 0.055, 0.0672, 0.0656, 0.0501, 0.0292, 0.0125, 0.0037, 0.0007, 0.0003, 0.0005, 0.001, 0.0014], [0.0689, 0.0642, 0.0535, 0.0424, 0.04, 0.0459, 0.0504, 0.0463, 0.0365, 0.0303, 0.0356, 0.0556, 0.0867, 0.1199, 0.1485, 0.1738, 0.2022, 0.2386, 0.2857, 0.3428, 0.4006, 0.4412, 0.4539, 0.452, 0.4629, 0.4972, 0.5304, 0.5241, 0.4659, 0.3851, 0.3233, 0.2954, 0.2877, 0.2876, 0.2986, 0.3264, 0.3622, 0.388, 0.3964, 0.3963, 0.3988, 0.4043, 0.4085, 0.4114, 0.414, 0.4149, 0.4168, 0.4373, 0.5041, 0.6287, 0.7793, 0.8941, 0.9347, 0.9165, 0.8787, 0.8465, 0.8287, 0.8198, 0.7969, 0.7436, 0.6812, 0.6476, 0.6441, 0.6339, 0.5966, 0.5531, 0.5265, 0.5082, 0.479, 0.4422, 0.413, 0.3915, 0.3653, 0.3315, 0.2964, 0.2583, 0.2088, 0.1493, 0.093, 0.0513, 0.028, 0.0228, 0.033, 0.052, 0.0696, 0.076, 0.0674, 0.0479, 0.0265, 0.011, 0.0032, 0.0006, 0.0001, 0.0, 0.0001, 0.0001], [0.0677, 0.0638, 0.0555, 0.0487, 0.0516, 0.062, 0.0688, 0.0659, 0.0574, 0.0515, 0.0526, 0.0623, 0.0797, 0.102, 0.127, 0.1564, 0.1953, 0.2486, 0.3155, 0.382, 0.4247, 0.4272, 0.4008, 0.3816, 0.4011, 0.4552, 0.5019, 0.4958, 0.4295, 0.342, 0.2803, 0.2566, 0.2519, 0.2526, 0.2692, 0.3145, 0.3765, 0.4242, 0.4407, 0.4399, 0.4463, 0.466, 0.4826, 0.4767, 0.4456, 0.405, 0.3771, 0.3816, 0.4319, 0.5265, 0.6417, 0.741, 0.8, 0.8174, 0.8009, 0.7605, 0.7167, 0.6905, 0.6774, 0.6551, 0.6185, 0.5861, 0.5702, 0.5638, 0.5608, 0.567, 0.5813, 0.5825, 0.5503, 0.4913, 0.4298, 0.3806, 0.3443, 0.3189, 0.2995, 0.2743, 0.2335, 0.1806, 0.1267, 0.0811, 0.051, 0.0413, 0.0499, 0.0659, 0.0759, 0.0722, 0.0564, 0.0359, 0.0183, 0.0072, 0.002, 0.0004, 0.0, 0.0, 0.0, 0.0], [0.056, 0.0548, 0.052, 0.0526, 0.0611, 0.0733, 0.0798, 0.0787, 0.0762, 0.0778, 0.0831, 0.0899, 0.0965, 0.1034, 0.1149, 0.1393, 0.1858, 0.258, 0.3461, 0.422, 0.4508, 0.4202, 0.3599, 0.3219, 0.3379, 0.3944, 0.4442, 0.4431, 0.386, 0.3112, 0.2625, 0.2491, 0.2499, 0.2541, 0.2789, 0.3417, 0.4252, 0.4865, 0.5026, 0.4941, 0.4992, 0.5296, 0.5583, 0.549, 0.4941, 0.4215, 0.3689, 0.3594, 0.3968, 0.4714, 0.5649, 0.6559, 0.7256, 0.7592, 0.7471, 0.694, 0.6281, 0.5848, 0.5745, 0.5752, 0.5618, 0.5307, 0.4973, 0.4829, 0.5012, 0.548, 0.5975, 0.6156, 0.5844, 0.5149, 0.4349, 0.3675, 0.3232, 0.3027, 0.2965, 0.2873, 0.2631, 0.2232, 0.1736, 0.1229, 0.085, 0.0704, 0.075, 0.0825, 0.0792, 0.063, 0.0412, 0.0223, 0.0098, 0.0035, 0.0009, 0.0002, 0.0, 0.0, 0.0, 0.0], [0.0377, 0.0411, 0.047, 0.0571, 0.0706, 0.0815, 0.0846, 0.0837, 0.0877, 0.1005, 0.1179, 0.1325, 0.1374, 0.1315, 0.125, 0.1362, 0.1805, 0.2588, 0.353, 0.4277, 0.4471, 0.4043, 0.3342, 0.2881, 0.2933, 0.338, 0.3842, 0.3943, 0.3596, 0.3089, 0.2799, 0.2797, 0.2881, 0.2964, 0.326, 0.395, 0.4816, 0.5382, 0.5425, 0.5228, 0.5243, 0.5606, 0.5987, 0.5921, 0.5285, 0.4413, 0.3792, 0.3714, 0.4162, 0.493, 0.579, 0.6585, 0.7185, 0.744, 0.7233, 0.6611, 0.5851, 0.5319, 0.5179, 0.5249, 0.5181, 0.4795, 0.4255, 0.3955, 0.4187, 0.4857, 0.5534, 0.5809, 0.5554, 0.491, 0.411, 0.3373, 0.2873, 0.2684, 0.2721, 0.2787, 0.2717, 0.2455, 0.202, 0.1526, 0.1167, 0.106, 0.1107, 0.1089, 0.0894, 0.0589, 0.0309, 0.013, 0.0045, 0.0013, 0.0003, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0232, 0.0324, 0.0473, 0.0651, 0.0807, 0.0887, 0.0882, 0.0867, 0.0941, 0.1149, 0.1445, 0.1713, 0.1818, 0.171, 0.1521, 0.1509, 0.1862, 0.2554, 0.3364, 0.3973, 0.4124, 0.3807, 0.3281, 0.2886, 0.2816, 0.3064, 0.3442, 0.3659, 0.3544, 0.3255, 0.3111, 0.3202, 0.3354, 0.3484, 0.3787, 0.4419, 0.5148, 0.5515, 0.5356, 0.5003, 0.4936, 0.5303, 0.5775, 0.5844, 0.5312, 0.4488, 0.3939, 0.405, 0.4781, 0.5768, 0.6633, 0.7223, 0.7543, 0.7581, 0.7287, 0.6688, 0.5973, 0.5422, 0.5187, 0.5109, 0.4852, 0.4239, 0.3477, 0.304, 0.3257, 0.3982, 0.4709, 0.5019, 0.4847, 0.4341, 0.3648, 0.2924, 0.2383, 0.2192, 0.2301, 0.2482, 0.252, 0.2329, 0.1953, 0.1553, 0.1339, 0.1377, 0.1487, 0.141, 0.1074, 0.0636, 0.0287, 0.0098, 0.0026, 0.0006, 0.0001, 0.0001, 0.0001, 0.0, 0.0, 0.0], [0.0173, 0.0311, 0.0518, 0.0727, 0.0876, 0.0947, 0.0964, 0.098, 0.1065, 0.1276, 0.1604, 0.193, 0.2089, 0.2003, 0.1799, 0.1739, 0.1999, 0.2535, 0.3134, 0.3568, 0.3731, 0.3664, 0.3469, 0.323, 0.3051, 0.3079, 0.3342, 0.3618, 0.364, 0.3442, 0.3306, 0.3375, 0.353, 0.3685, 0.3973, 0.4495, 0.5027, 0.5176, 0.4828, 0.4324, 0.4147, 0.4482, 0.5053, 0.5354, 0.5101, 0.4513, 0.4172, 0.4544, 0.5597, 0.6827, 0.7703, 0.8069, 0.8095, 0.7964, 0.77, 0.7254, 0.6666, 0.6099, 0.5665, 0.5248, 0.4602, 0.3669, 0.2738, 0.2267, 0.251, 0.3254, 0.3976, 0.4286, 0.4172, 0.3786, 0.3205, 0.2511, 0.1931, 0.1705, 0.1828, 0.2051, 0.2118, 0.1942, 0.1617, 0.1346, 0.1313, 0.1507, 0.169, 0.16, 0.1204, 0.0704, 0.0318, 0.0114, 0.0036, 0.0012, 0.0006, 0.0006, 0.0007, 0.0006, 0.0004, 0.0002], [0.0167, 0.0315, 0.0523, 0.0715, 0.0855, 0.0975, 0.1102, 0.1218, 0.1322, 0.1477, 0.1725, 0.1995, 0.2148, 0.2112, 0.1975, 0.1929, 0.2116, 0.2505, 0.2931, 0.3253, 0.3478, 0.368, 0.3814, 0.3738, 0.3482, 0.333, 0.3484, 0.3764, 0.383, 0.362, 0.3381, 0.3309, 0.3371, 0.35, 0.3759, 0.417, 0.4521, 0.4505, 0.4067, 0.3529, 0.333, 0.3658, 0.43, 0.4813, 0.4881, 0.4625, 0.4555, 0.5138, 0.635, 0.7655, 0.8484, 0.8717, 0.8649, 0.8577, 0.8518, 0.8291, 0.7778, 0.706, 0.6277, 0.5418, 0.4381, 0.3232, 0.2285, 0.1909, 0.2229, 0.2975, 0.3642, 0.3895, 0.3777, 0.3458, 0.2965, 0.2301, 0.1671, 0.1357, 0.1408, 0.1591, 0.1637, 0.1465, 0.1193, 0.1027, 0.1102, 0.1356, 0.1557, 0.149, 0.1149, 0.0717, 0.0376, 0.0177, 0.0081, 0.0039, 0.0028, 0.0033, 0.0036, 0.0031, 0.002, 0.001], [0.0205, 0.0309, 0.0453, 0.059, 0.0731, 0.0939, 0.122, 0.1469, 0.1611, 0.17, 0.1825, 0.1978, 0.2082, 0.2092, 0.2042, 0.2027, 0.215, 0.2431, 0.2772, 0.307, 0.3365, 0.374, 0.4075, 0.4108, 0.3824, 0.3577, 0.3664, 0.3945, 0.4053, 0.3848, 0.3514, 0.3269, 0.3184, 0.3256, 0.3488, 0.3801, 0.3971, 0.3801, 0.335, 0.294, 0.2899, 0.3312, 0.3985, 0.4577, 0.4836, 0.4833, 0.4967, 0.5626, 0.6777, 0.7942, 0.8661, 0.8913, 0.9038, 0.9296, 0.958, 0.9544, 0.8956, 0.7904, 0.6658, 0.5396, 0.4165, 0.3057, 0.2289, 0.2082, 0.2452, 0.3111, 0.3618, 0.3738, 0.3587, 0.334, 0.2952, 0.2333, 0.1649, 0.1215, 0.1136, 0.122, 0.1213, 0.1037, 0.0807, 0.0691, 0.0771, 0.0975, 0.1134, 0.1113, 0.0923, 0.0674, 0.0456, 0.0289, 0.0165, 0.0095, 0.0085, 0.0108, 0.0121, 0.0104, 0.0066, 0.0034], [0.0361, 0.0373, 0.0397, 0.0443, 0.0559, 0.0818, 0.1194, 0.1534, 0.1713, 0.1771, 0.1815, 0.1879, 0.194, 0.1984, 0.2004, 0.2019, 0.2113, 0.2364, 0.2724, 0.3069, 0.3385, 0.3743, 0.4055, 0.4083, 0.3804, 0.3552, 0.3637, 0.3963, 0.4182, 0.4087, 0.3762, 0.342, 0.3235, 0.3295, 0.3555, 0.3799, 0.3759, 0.3368, 0.2878, 0.2661, 0.2895, 0.3477, 0.4158, 0.4699, 0.4957, 0.5013, 0.5191, 0.5797, 0.6771, 0.772, 0.834, 0.8729, 0.9209, 0.9902, 1.0527, 1.0602, 0.9847, 0.8409, 0.6725, 0.5195, 0.3997, 0.3153, 0.2684, 0.2632, 0.2944, 0.337, 0.3596, 0.3539, 0.3391, 0.3282, 0.3048, 0.2504, 0.1792, 0.1263, 0.1069, 0.1044, 0.0955, 0.0743, 0.0516, 0.0401, 0.0431, 0.0544, 0.0643, 0.0675, 0.0656, 0.0615, 0.054, 0.0412, 0.0265, 0.0175, 0.0181, 0.0241, 0.0274, 0.0234, 0.0148, 0.0076], [0.0716, 0.0619, 0.05, 0.042, 0.0451, 0.0658, 0.1004, 0.1336, 0.1523, 0.1586, 0.1619, 0.1662, 0.1711, 0.1773, 0.1839, 0.1898, 0.2033, 0.2357, 0.2834, 0.3269, 0.3539, 0.3692, 0.3755, 0.3638, 0.3352, 0.3154, 0.3292, 0.3703, 0.4074, 0.4152, 0.3926, 0.36, 0.3443, 0.3622, 0.403, 0.4291, 0.4058, 0.3392, 0.2767, 0.2648, 0.3097, 0.3819, 0.4486, 0.4917, 0.5067, 0.505, 0.5168, 0.5691, 0.6541, 0.7363, 0.7953, 0.8482, 0.9239, 1.0226, 1.1048, 1.1171, 1.0304, 0.8618, 0.6659, 0.5006, 0.394, 0.3401, 0.3207, 0.3234, 0.338, 0.3472, 0.3367, 0.3147, 0.3049, 0.3112, 0.3049, 0.2612, 0.1938, 0.1394, 0.1146, 0.1041, 0.0866, 0.0593, 0.0341, 0.0205, 0.0187, 0.0228, 0.0284, 0.035, 0.0443, 0.0539, 0.0568, 0.0484, 0.0342, 0.0256, 0.0289, 0.0389, 0.0439, 0.0374, 0.0237, 0.0121], [0.1209, 0.1044, 0.0822, 0.062, 0.0521, 0.059, 0.0805, 0.1042, 0.1187, 0.1249, 0.13, 0.1362, 0.1423, 0.1496, 0.1587, 0.1696, 0.1907, 0.234, 0.2948, 0.3465, 0.3667, 0.3578, 0.3342, 0.3035, 0.2717, 0.2564, 0.2744, 0.3205, 0.3671, 0.3869, 0.3743, 0.3507, 0.3499, 0.3921, 0.4594, 0.4995, 0.4695, 0.383, 0.3038, 0.2871, 0.3346, 0.4062, 0.4642, 0.4948, 0.5006, 0.4952, 0.5068, 0.5604, 0.6468, 0.7297, 0.7898, 0.846, 0.9261, 1.0276, 1.1107, 1.124, 1.0373, 0.8646, 0.6624, 0.4968, 0.4014, 0.3659, 0.3607, 0.3627, 0.3573, 0.3345, 0.2959, 0.2626, 0.2578, 0.2761, 0.2826, 0.2515, 0.195, 0.1464, 0.121, 0.1057, 0.0829, 0.052, 0.0253, 0.0109, 0.0068, 0.0076, 0.0106, 0.0172, 0.029, 0.0429, 0.0512, 0.0487, 0.0392, 0.0329, 0.0369, 0.0471, 0.0518, 0.0438, 0.0277, 0.0141], [0.1629, 0.1491, 0.1276, 0.1025, 0.0817, 0.0739, 0.0804, 0.0913, 0.0968, 0.0978, 0.1013, 0.1088, 0.1174, 0.1265, 0.1372, 0.1502, 0.1734, 0.2182, 0.2803, 0.3329, 0.3512, 0.335, 0.3022, 0.2658, 0.2324, 0.2134, 0.2231, 0.2609, 0.3043, 0.3266, 0.321, 0.3086, 0.3249, 0.3897, 0.4813, 0.5408, 0.5214, 0.4375, 0.3559, 0.3324, 0.3672, 0.42, 0.4571, 0.4729, 0.4767, 0.4812, 0.5079, 0.5761, 0.6752, 0.7673, 0.8298, 0.8788, 0.9427, 1.0245, 1.0924, 1.1008, 1.0193, 0.8572, 0.6665, 0.511, 0.422, 0.3891, 0.3832, 0.3791, 0.3585, 0.314, 0.2581, 0.2187, 0.2152, 0.2361, 0.2474, 0.2262, 0.1813, 0.1391, 0.1134, 0.0954, 0.0721, 0.0436, 0.0203, 0.0083, 0.0051, 0.0052, 0.0063, 0.0099, 0.0182, 0.0305, 0.0421, 0.0474, 0.045, 0.0402, 0.0399, 0.0442, 0.0456, 0.0377, 0.0237, 0.0121], [0.1792, 0.1779, 0.1695, 0.1503, 0.1261, 0.1089, 0.1043, 0.1042, 0.0987, 0.0893, 0.0856, 0.0912, 0.1019, 0.1138, 0.1257, 0.1373, 0.1541, 0.1869, 0.236, 0.2822, 0.3055, 0.3043, 0.2907, 0.2702, 0.2404, 0.2081, 0.193, 0.2067, 0.2369, 0.2592, 0.2626, 0.262, 0.2869, 0.3556, 0.4502, 0.5191, 0.5198, 0.4636, 0.4055, 0.3888, 0.4088, 0.4317, 0.4375, 0.4351, 0.4416, 0.466, 0.5181, 0.6077, 0.7232, 0.8292, 0.8996, 0.9421, 0.9825, 1.0316, 1.0724, 1.0699, 0.9947, 0.8503, 0.6807, 0.5395, 0.4522, 0.4115, 0.3977, 0.3888, 0.3622, 0.3089, 0.2462, 0.2044, 0.1987, 0.2144, 0.2217, 0.2021, 0.1616, 0.1207, 0.0923, 0.0726, 0.0527, 0.0317, 0.0163, 0.0105, 0.0112, 0.0124, 0.0114, 0.01, 0.0126, 0.0217, 0.0357, 0.0481, 0.0521, 0.0468, 0.0388, 0.0339, 0.0304, 0.0239, 0.0149, 0.0076], [0.1691, 0.1837, 0.1942, 0.1881, 0.167, 0.1454, 0.1332, 0.125, 0.1107, 0.0914, 0.0785, 0.0791, 0.0895, 0.1033, 0.1163, 0.1258, 0.1351, 0.1543, 0.1885, 0.2277, 0.2582, 0.2785, 0.2936, 0.2978, 0.2761, 0.2292, 0.1839, 0.1685, 0.1848, 0.2108, 0.2275, 0.2373, 0.2595, 0.3107, 0.3833, 0.4435, 0.4614, 0.4434, 0.4249, 0.428, 0.4389, 0.432, 0.406, 0.3859, 0.3956, 0.4403, 0.5179, 0.6278, 0.758, 0.879, 0.9639, 1.0085, 1.0283, 1.0409, 1.0504, 1.0382, 0.9753, 0.8542, 0.7059, 0.5744, 0.4832, 0.4329, 0.414, 0.4068, 0.3833, 0.3308, 0.2683, 0.2269, 0.2174, 0.2232, 0.2185, 0.1906, 0.1462, 0.1021, 0.0699, 0.0486, 0.0324, 0.0198, 0.014, 0.0168, 0.0238, 0.0273, 0.0237, 0.0161, 0.0121, 0.0172, 0.0313, 0.0469, 0.0537, 0.0474, 0.034, 0.0225, 0.0158, 0.011, 0.0066, 0.0034], [0.1448, 0.1711, 0.197, 0.2031, 0.1865, 0.1618, 0.1432, 0.1297, 0.1119, 0.0887, 0.0703, 0.065, 0.0716, 0.0842, 0.0973, 0.1072, 0.116, 0.1323, 0.1619, 0.1985, 0.232, 0.2614, 0.2908, 0.3104, 0.2973, 0.2451, 0.1819, 0.147, 0.1539, 0.184, 0.2115, 0.227, 0.2405, 0.267, 0.309, 0.3513, 0.3769, 0.3881, 0.4017, 0.4215, 0.4272, 0.4005, 0.3541, 0.3237, 0.3367, 0.396, 0.4924, 0.6171, 0.7563, 0.8865, 0.983, 1.0317, 1.0351, 1.0151, 0.9988, 0.987, 0.9483, 0.8583, 0.7316, 0.6069, 0.5123, 0.458, 0.4413, 0.4412, 0.4241, 0.3749, 0.3147, 0.275, 0.2624, 0.2567, 0.2354, 0.1929, 0.1406, 0.0932, 0.0582, 0.0346, 0.0195, 0.0121, 0.0138, 0.0243, 0.0376, 0.0436, 0.0375, 0.0241, 0.0139, 0.0141, 0.0246, 0.038, 0.0442, 0.0384, 0.0254, 0.0135, 0.0068, 0.0037, 0.002, 0.001], [0.1194, 0.1494, 0.1807, 0.1922, 0.1781, 0.1521, 0.13, 0.115, 0.0996, 0.0802, 0.0619, 0.0517, 0.0514, 0.0583, 0.0688, 0.0804, 0.0949, 0.1182, 0.152, 0.1885, 0.2186, 0.2433, 0.2694, 0.2902, 0.2831, 0.2369, 0.1741, 0.1333, 0.1332, 0.1598, 0.1875, 0.2028, 0.2102, 0.2216, 0.2439, 0.273, 0.2996, 0.3219, 0.3457, 0.3679, 0.3691, 0.3366, 0.2868, 0.2561, 0.2713, 0.3365, 0.4413, 0.572, 0.7115, 0.8393, 0.9345, 0.9788, 0.9668, 0.9232, 0.8918, 0.8891, 0.8827, 0.8327, 0.7387, 0.6329, 0.5471, 0.4989, 0.4893, 0.4957, 0.4812, 0.4303, 0.3677, 0.3273, 0.3126, 0.2978, 0.2603, 0.2025, 0.1423, 0.0932, 0.0571, 0.0313, 0.0149, 0.0088, 0.0136, 0.0276, 0.0437, 0.0509, 0.0437, 0.0276, 0.0141, 0.0102, 0.0153, 0.0235, 0.0273, 0.0235, 0.015, 0.0071, 0.0026, 0.0009, 0.0004, 0.0002], [0.1012, 0.1266, 0.1527, 0.1619, 0.1499, 0.1282, 0.1102, 0.0997, 0.0918, 0.0811, 0.0669, 0.0527, 0.0426, 0.0389, 0.0425, 0.0534, 0.0735, 0.104, 0.1409, 0.1747, 0.1988, 0.2172, 0.2374, 0.2545, 0.2501, 0.2139, 0.1611, 0.1212, 0.1113, 0.1243, 0.1421, 0.1546, 0.1636, 0.176, 0.1966, 0.2234, 0.249, 0.2689, 0.2861, 0.2997, 0.2978, 0.2704, 0.2287, 0.2012, 0.2127, 0.2712, 0.3699, 0.4938, 0.6241, 0.7411, 0.8263, 0.8618, 0.8394, 0.7835, 0.7449, 0.7494, 0.7694, 0.7615, 0.714, 0.6467, 0.5859, 0.5515, 0.5491, 0.5577, 0.5396, 0.4801, 0.4076, 0.3607, 0.3423, 0.3219, 0.2745, 0.2062, 0.1405, 0.0912, 0.0562, 0.0305, 0.0136, 0.0071, 0.0112, 0.0235, 0.0374, 0.0436, 0.0374, 0.0235, 0.0113, 0.006, 0.0071, 0.0104, 0.0121, 0.0104, 0.0065, 0.0029, 0.0009, 0.0002, 0.0, 0.0], [0.0904, 0.1064, 0.121, 0.1241, 0.1163, 0.106, 0.1003, 0.1004, 0.1033, 0.1034, 0.0952, 0.0773, 0.0549, 0.0365, 0.0288, 0.0353, 0.0563, 0.0881, 0.1219, 0.1491, 0.169, 0.1882, 0.2102, 0.2268, 0.2235, 0.195, 0.1522, 0.1136, 0.0913, 0.0859, 0.0909, 0.1023, 0.1205, 0.1463, 0.1782, 0.211, 0.2361, 0.2496, 0.2564, 0.2611, 0.2584, 0.2392, 0.2054, 0.175, 0.1712, 0.2084, 0.285, 0.3885, 0.5018, 0.6077, 0.6892, 0.7267, 0.7082, 0.6536, 0.6116, 0.613, 0.6413, 0.661, 0.6558, 0.6306, 0.5988, 0.5788, 0.5815, 0.5901, 0.5676, 0.499, 0.4146, 0.3561, 0.3301, 0.3061, 0.2575, 0.1888, 0.124, 0.0776, 0.0468, 0.0252, 0.011, 0.0052, 0.0071, 0.0147, 0.0234, 0.0273, 0.0234, 0.0147, 0.0068, 0.0028, 0.0023, 0.0031, 0.0036, 0.0031, 0.0019, 0.0009, 0.0003, 0.0, 0.0, 0.0], [0.0797, 0.0873, 0.0923, 0.0921, 0.0914, 0.0952, 0.1038, 0.1155, 0.129, 0.1392, 0.137, 0.1163, 0.0824, 0.0492, 0.0299, 0.0301, 0.048, 0.0757, 0.1026, 0.123, 0.1411, 0.1647, 0.1922, 0.2106, 0.2082, 0.1856, 0.1515, 0.1149, 0.0831, 0.0625, 0.0581, 0.072, 0.1032, 0.1471, 0.195, 0.2362, 0.2621, 0.2723, 0.2751, 0.2774, 0.2759, 0.2606, 0.2261, 0.1821, 0.1524, 0.158, 0.2031, 0.2779, 0.3698, 0.4671, 0.5547, 0.6086, 0.6091, 0.5676, 0.5266, 0.5183, 0.5367, 0.558, 0.5686, 0.5653, 0.5513, 0.541, 0.548, 0.5591, 0.538, 0.4686, 0.3786, 0.3096, 0.2729, 0.2457, 0.2036, 0.1464, 0.0922, 0.0539, 0.0307, 0.0162, 0.0073, 0.0035, 0.0038, 0.0069, 0.0105, 0.0122, 0.0104, 0.0065, 0.0029, 0.001, 0.0005, 0.0006, 0.0007, 0.0006, 0.0004, 0.0002, 0.0, 0.0, 0.0, 0.0], [0.0641, 0.0689, 0.0732, 0.0778, 0.0869, 0.1016, 0.1182, 0.1345, 0.1516, 0.166, 0.1669, 0.1453, 0.1059, 0.0657, 0.0417, 0.0394, 0.0539, 0.0757, 0.0957, 0.1112, 0.1283, 0.1536, 0.1824, 0.2003, 0.1989, 0.1823, 0.157, 0.1249, 0.0893, 0.0611, 0.053, 0.0711, 0.1134, 0.1714, 0.232, 0.2809, 0.3103, 0.3239, 0.332, 0.3397, 0.3416, 0.3251, 0.281, 0.2162, 0.1573, 0.1319, 0.1474, 0.1944, 0.2631, 0.3481, 0.4378, 0.5064, 0.5282, 0.5062, 0.4747, 0.4617, 0.4642, 0.4671, 0.4651, 0.4579, 0.4464, 0.4406, 0.4521, 0.4686, 0.4555, 0.3953, 0.3102, 0.2373, 0.1922, 0.1629, 0.1311, 0.0923, 0.0556, 0.03, 0.016, 0.0092, 0.0061, 0.0048, 0.0041, 0.0039, 0.004, 0.0039, 0.0032, 0.002, 0.0009, 0.0003, 0.0001, 0.0001, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0509, 0.058, 0.0698, 0.0864, 0.1069, 0.1265, 0.1406, 0.1498, 0.1587, 0.1667, 0.1647, 0.144, 0.1087, 0.0756, 0.0603, 0.0648, 0.0802, 0.097, 0.1098, 0.12, 0.1344, 0.1577, 0.1839, 0.2, 0.1996, 0.1875, 0.1679, 0.1391, 0.1034, 0.0744, 0.0677, 0.0887, 0.1337, 0.1941, 0.2584, 0.3128, 0.3494, 0.3722, 0.3911, 0.4092, 0.4171, 0.3994, 0.3447, 0.2608, 0.1792, 0.1323, 0.1279, 0.1537, 0.199, 0.2619, 0.3369, 0.4037, 0.4384, 0.4392, 0.4292, 0.4249, 0.4188, 0.3996, 0.3722, 0.3471, 0.3286, 0.3232, 0.3371, 0.3573, 0.3527, 0.3057, 0.2326, 0.1646, 0.1188, 0.091, 0.0693, 0.0472, 0.0272, 0.0139, 0.0086, 0.0089, 0.0113, 0.0124, 0.0106, 0.0068, 0.0035, 0.0015, 0.0007, 0.0004, 0.0002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.054, 0.0627, 0.081, 0.1084, 0.1371, 0.1568, 0.1618, 0.1568, 0.1503, 0.1448, 0.1349, 0.1151, 0.0905, 0.0755, 0.0803, 0.1008, 0.1229, 0.1361, 0.1398, 0.1413, 0.1504, 0.171, 0.1956, 0.2114, 0.2123, 0.2012, 0.1806, 0.1498, 0.1145, 0.09, 0.0889, 0.1109, 0.1487, 0.1972, 0.253, 0.3075, 0.351, 0.3829, 0.4109, 0.4377, 0.4533, 0.4398, 0.3837, 0.2935, 0.2032, 0.1472, 0.1323, 0.1427, 0.1649, 0.1991, 0.2472, 0.3005, 0.3437, 0.3718, 0.3932, 0.4087, 0.4034, 0.3683, 0.3173, 0.2718, 0.2422, 0.2327, 0.2443, 0.2636, 0.263, 0.2266, 0.1669, 0.1105, 0.0726, 0.051, 0.0364, 0.0234, 0.0126, 0.0071, 0.0082, 0.0151, 0.0235, 0.0273, 0.0234, 0.0146, 0.0065, 0.002, 0.0004, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0776, 0.0806, 0.0946, 0.1214, 0.1509, 0.1684, 0.1677, 0.1545, 0.1378, 0.1209, 0.1019, 0.0808, 0.0656, 0.0679, 0.0922, 0.1287, 0.1588, 0.1701, 0.1654, 0.1582, 0.162, 0.1799, 0.203, 0.2184, 0.2192, 0.206, 0.1805, 0.1461, 0.1134, 0.0982, 0.1073, 0.1315, 0.158, 0.1856, 0.2212, 0.2649, 0.3073, 0.3417, 0.3714, 0.4005, 0.4225, 0.4197, 0.3765, 0.2983, 0.2159, 0.161, 0.1398, 0.1364, 0.1379, 0.146, 0.1702, 0.2135, 0.269, 0.3268, 0.3791, 0.4132, 0.4103, 0.365, 0.2972, 0.235, 0.1935, 0.1766, 0.1829, 0.1987, 0.199, 0.1694, 0.1217, 0.0797, 0.0551, 0.0423, 0.0313, 0.0192, 0.0095, 0.0061, 0.0111, 0.0235, 0.0374, 0.0436, 0.0374, 0.0234, 0.0104, 0.0031, 0.0006, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1064, 0.0972, 0.0962, 0.1109, 0.1341, 0.1516, 0.1559, 0.1489, 0.1344, 0.1134, 0.0873, 0.0626, 0.0501, 0.0587, 0.0892, 0.13, 0.1619, 0.1728, 0.1668, 0.1594, 0.163, 0.1771, 0.1926, 0.2007, 0.1972, 0.1813, 0.1542, 0.1219, 0.0981, 0.0972, 0.1201, 0.1501, 0.1688, 0.175, 0.1833, 0.2047, 0.2348, 0.2636, 0.2886, 0.3138, 0.3377, 0.3473, 0.3261, 0.2732, 0.2104, 0.163, 0.1368, 0.1208, 0.1064, 0.0984, 0.1102, 0.152, 0.2204, 0.2993, 0.3684, 0.4075, 0.4013, 0.3504, 0.2766, 0.2075, 0.159, 0.1359, 0.1373, 0.1501, 0.1516, 0.1285, 0.0924, 0.0651, 0.0541, 0.0493, 0.0393, 0.0243, 0.0114, 0.0069, 0.0127, 0.0273, 0.0436, 0.0509, 0.0436, 0.0273, 0.0121, 0.0036, 0.0007, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1173, 0.0979, 0.0826, 0.0842, 0.1012, 0.1225, 0.1395, 0.1474, 0.1424, 0.1228, 0.094, 0.0676, 0.0541, 0.0583, 0.0788, 0.1075, 0.1317, 0.1429, 0.1448, 0.1484, 0.1576, 0.1659, 0.1663, 0.1588, 0.1463, 0.1293, 0.1078, 0.0868, 0.0783, 0.093, 0.1285, 0.1655, 0.1811, 0.1707, 0.1525, 0.1473, 0.1597, 0.1794, 0.1977, 0.2155, 0.2359, 0.2528, 0.2515, 0.2249, 0.1842, 0.1468, 0.1187, 0.095, 0.0729, 0.0593, 0.0675, 0.1081, 0.178, 0.258, 0.3224, 0.3521, 0.3395, 0.2916, 0.2274, 0.1669, 0.1216, 0.097, 0.0944, 0.1041, 0.1073, 0.0929, 0.0701, 0.0558, 0.0542, 0.0539, 0.0443, 0.0275, 0.0127, 0.0068, 0.0111, 0.0234, 0.0374, 0.0436, 0.0374, 0.0234, 0.0104, 0.0031, 0.0006, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1053, 0.0846, 0.0657, 0.0629, 0.0783, 0.1039, 0.1304, 0.1485, 0.1503, 0.1348, 0.1111, 0.0914, 0.0811, 0.078, 0.0797, 0.0862, 0.0961, 0.1069, 0.1198, 0.1366, 0.1512, 0.1521, 0.1357, 0.1114, 0.0901, 0.0748, 0.0642, 0.0597, 0.0673, 0.0927, 0.133, 0.1709, 0.1834, 0.1626, 0.1263, 0.1015, 0.0992, 0.1109, 0.1233, 0.1337, 0.1475, 0.1647, 0.1745, 0.1662, 0.1424, 0.1142, 0.0882, 0.0643, 0.0434, 0.0316, 0.0385, 0.0716, 0.1276, 0.1888, 0.2332, 0.2478, 0.2334, 0.1998, 0.1594, 0.1202, 0.0865, 0.0637, 0.0568, 0.0619, 0.0669, 0.0627, 0.0531, 0.0475, 0.0482, 0.0474, 0.0384, 0.0236, 0.0108, 0.0051, 0.0071, 0.0147, 0.0234, 0.0273, 0.0234, 0.0146, 0.0065, 0.0019, 0.0004, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1019, 0.085, 0.0691, 0.0669, 0.0814, 0.1059, 0.1308, 0.1475, 0.15, 0.1405, 0.1293, 0.1252, 0.125, 0.1181, 0.102, 0.0863, 0.0818, 0.0911, 0.1102, 0.1324, 0.1458, 0.1384, 0.1103, 0.0761, 0.0511, 0.0407, 0.0422, 0.0522, 0.0698, 0.096, 0.1289, 0.1575, 0.1635, 0.1386, 0.0975, 0.066, 0.0567, 0.0627, 0.0707, 0.0763, 0.0855, 0.1014, 0.1159, 0.1167, 0.1015, 0.0783, 0.0556, 0.0365, 0.0219, 0.015, 0.0209, 0.0436, 0.0795, 0.1155, 0.1372, 0.1396, 0.129, 0.1151, 0.1015, 0.0853, 0.0641, 0.0434, 0.0323, 0.0335, 0.0409, 0.0465, 0.0469, 0.0438, 0.0397, 0.0341, 0.0253, 0.015, 0.0067, 0.0028, 0.0032, 0.0065, 0.0104, 0.0121, 0.0104, 0.0065, 0.0029, 0.0009, 0.0002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1633, 0.144, 0.1229, 0.1131, 0.1185, 0.1328, 0.1473, 0.156, 0.1564, 0.1518, 0.1516, 0.1602, 0.1686, 0.1604, 0.1327, 0.1021, 0.0881, 0.0951, 0.114, 0.1325, 0.1387, 0.1242, 0.0917, 0.0563, 0.034, 0.0306, 0.042, 0.0601, 0.0782, 0.0947, 0.1109, 0.1234, 0.1214, 0.0987, 0.065, 0.0384, 0.0287, 0.0311, 0.0363, 0.0417, 0.0528, 0.072, 0.0902, 0.0937, 0.0786, 0.0543, 0.0324, 0.0176, 0.0093, 0.0071, 0.0133, 0.0296, 0.0518, 0.0698, 0.075, 0.069, 0.0619, 0.0615, 0.0655, 0.0641, 0.0515, 0.0333, 0.0208, 0.0209, 0.0317, 0.0446, 0.0505, 0.0457, 0.0343, 0.0226, 0.0135, 0.0071, 0.003, 0.0011, 0.001, 0.002, 0.0031, 0.0036, 0.0031, 0.0019, 0.0009, 0.0003, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3281, 0.2919, 0.2469, 0.2125, 0.1967, 0.1941, 0.1972, 0.2003, 0.1989, 0.1932, 0.1893, 0.1922, 0.1946, 0.1811, 0.1476, 0.1112, 0.0933, 0.0977, 0.1125, 0.1241, 0.1233, 0.1057, 0.0752, 0.045, 0.0292, 0.0332, 0.0509, 0.0701, 0.0811, 0.0831, 0.0814, 0.079, 0.0718, 0.0558, 0.035, 0.0187, 0.0121, 0.0129, 0.0172, 0.0266, 0.046, 0.0739, 0.0965, 0.0977, 0.076, 0.0455, 0.0213, 0.0084, 0.0036, 0.0046, 0.0126, 0.0284, 0.0467, 0.0571, 0.0533, 0.0409, 0.0322, 0.0344, 0.0428, 0.0464, 0.0389, 0.025, 0.015, 0.0166, 0.0295, 0.0455, 0.053, 0.0463, 0.0307, 0.0159, 0.0068, 0.0026, 0.0009, 0.0003, 0.0002, 0.0004, 0.0006, 0.0007, 0.0006, 0.0004, 0.0002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5619, 0.4978, 0.416, 0.3471, 0.3043, 0.2842, 0.2801, 0.2833, 0.2816, 0.2672, 0.2436, 0.2204, 0.2002, 0.1744, 0.1379, 0.1021, 0.0837, 0.0853, 0.0952, 0.1014, 0.0974, 0.0815, 0.0573, 0.0353, 0.027, 0.0367, 0.0569, 0.0731, 0.0752, 0.0648, 0.0512, 0.0408, 0.0328, 0.024, 0.0144, 0.0071, 0.004, 0.0046, 0.0099, 0.0252, 0.0552, 0.0932, 0.119, 0.1145, 0.0829, 0.0447, 0.0177, 0.0051, 0.0019, 0.0044, 0.0141, 0.0317, 0.0509, 0.0599, 0.0523, 0.0352, 0.0221, 0.0201, 0.0251, 0.028, 0.0239, 0.0155, 0.01, 0.0131, 0.0254, 0.04, 0.0466, 0.0402, 0.0254, 0.0117, 0.0039, 0.001, 0.0002, 0.0001, 0.0, 0.0, 0.0, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.7598, 0.6713, 0.558, 0.4608, 0.3973, 0.3653, 0.3583, 0.3642, 0.3628, 0.3385, 0.293, 0.2412, 0.1961, 0.1571, 0.1187, 0.0854, 0.0677, 0.0668, 0.0731, 0.0765, 0.0723, 0.0598, 0.0421, 0.0272, 0.0245, 0.0373, 0.0577, 0.0705, 0.0665, 0.0496, 0.0313, 0.0188, 0.0121, 0.0079, 0.0045, 0.0021, 0.001, 0.0021, 0.0088, 0.0288, 0.0668, 0.1121, 0.1391, 0.1289, 0.089, 0.0453, 0.0165, 0.0041, 0.0014, 0.0045, 0.015, 0.0337, 0.0539, 0.063, 0.0542, 0.0348, 0.0184, 0.0121, 0.0129, 0.0142, 0.0121, 0.008, 0.006, 0.0097, 0.0197, 0.0312, 0.0364, 0.0312, 0.0195, 0.0087, 0.0026, 0.0005, 0.0001, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], "x0": 5.0, "x1": 11.6, "y0": -0.05, "y1": 1.0, "peak": {"rev": 1443361111.7769544, "margin": 0.278125, "band_count": 200, "col": 60, "row": 22}, "ridge": {"rev": 654071159.7277772, "margin": 0.7010416666666667, "band_count": 131, "col": 55, "row": 51}, "n_kept": 2186, "n_excluded": 221, "n_above_70": 339, "median_margin": 0.38813668600902645, "kde": [0.15783, 0.178, 0.19949, 0.22226, 0.2462, 0.27123, 0.29723, 0.32409, 0.35169, 0.37987, 0.40852, 0.4375, 0.46669, 0.49599, 0.5253, 0.55453, 0.5836, 0.61248, 0.64111, 0.6695, 0.69763, 0.72551, 0.75317, 0.78064, 0.80794, 0.83515, 0.86228, 0.88939, 0.91655, 0.94381, 0.97121, 0.9988, 1.02663, 1.05471, 1.08306, 1.11166, 1.14049, 1.16951, 1.19862, 1.22773, 1.25672, 1.28542, 1.31366, 1.34126, 1.36802, 1.39375, 1.41826, 1.44137, 1.46294, 1.48286, 1.50101, 1.51733, 1.5318, 1.54444, 1.55525, 1.56432, 1.57172, 1.57756, 1.58198, 1.58513, 1.58714, 1.58818, 1.58843, 1.58806, 1.58721, 1.58609, 1.58483, 1.58355, 1.58235, 1.5813, 1.58042, 1.57968, 1.57903, 1.57833, 1.57745, 1.57616, 1.57426, 1.57154, 1.56775, 1.56268, 1.55615, 1.54802, 1.5382, 1.52665, 1.5134, 1.49856, 1.48226, 1.4647, 1.44611, 1.4267, 1.40678, 1.3866, 1.36638, 1.34637, 1.32672, 1.30762, 1.28914, 1.27134, 1.25423, 1.23779, 1.22197, 1.20669, 1.19186, 1.17739, 1.1632, 1.1492, 1.13532, 1.12152, 1.1078, 1.09414, 1.0806, 1.06724, 1.05411, 1.0413, 1.02891, 1.01704, 1.00575, 0.99512, 0.98523, 0.97611, 0.96781, 0.96034, 0.95365, 0.94775, 0.9426, 0.93814, 0.93431, 0.93106, 0.9283, 0.92595, 0.92396, 0.92223, 0.92069, 0.91925, 0.91785, 0.91639, 0.91484, 0.9131, 0.91112, 0.90883, 0.90617, 0.9031, 0.89954, 0.89544, 0.89073, 0.88536, 0.87925, 0.87232, 0.86451, 0.85575, 0.846, 0.83518, 0.82326, 0.81024, 0.79612, 0.78093, 0.76472, 0.7476, 0.72967, 0.71106, 0.69191, 0.67237, 0.65262, 0.63278, 0.613, 0.59342, 0.57412, 0.55517, 0.53661, 0.51848, 0.50074, 0.48337, 0.4663, 0.44949, 0.43287, 0.41637, 0.39996, 0.38358, 0.36724, 0.35095, 0.33474, 0.31868, 0.30282, 0.28727, 0.27211, 0.25741, 0.24325, 0.22969, 0.21676, 0.20447, 0.19279, 0.1817, 0.17115, 0.16104, 0.15132, 0.1419, 0.13272, 0.12371, 0.11484, 0.10609], "kde_n": 200, "kde_bw": 0.04599, "kde_x0": -0.05, "kde_x1": 1.0, "q": {"p10": 0.12150725722251415, "p25": 0.23097272280098935, "p50": 0.3879759060297233, "p75": 0.5965565666924258, "p90": 0.7629971258246369}, "cohorts": [{"label": "Under $30m", "n": 607, "p10": 0.0900614110174092, "p25": 0.2196477737007058, "p50": 0.4079646976060521, "p75": 0.6294572339944193, "p90": 0.8120919472147998, "kde": [0.33157, 0.36322, 0.39569, 0.4288, 0.46232, 0.49601, 0.52971, 0.56318, 0.59627, 0.62878, 0.66056, 0.6915, 0.72148, 0.75042, 0.77828, 0.80499, 0.83054, 0.85495, 0.87823, 0.90044, 0.92163, 0.94188, 0.96126, 0.97988, 0.99783, 1.0152, 1.03209, 1.0486, 1.06481, 1.08078, 1.09657, 1.1122, 1.12766, 1.14293, 1.15799, 1.17275, 1.18711, 1.20097, 1.21421, 1.22669, 1.23831, 1.24892, 1.25843, 1.26678, 1.27391, 1.2798, 1.2845, 1.28807, 1.2906, 1.29225, 1.2932, 1.29364, 1.29376, 1.29379, 1.29393, 1.29438, 1.29527, 1.29675, 1.29888, 1.30169, 1.30515, 1.3092, 1.31371, 1.3185, 1.32339, 1.32814, 1.33251, 1.33626, 1.33912, 1.34087, 1.34131, 1.34026, 1.33759, 1.33316, 1.32696, 1.31896, 1.30916, 1.29764, 1.28452, 1.26991, 1.25402, 1.237, 1.21909, 1.20048, 1.18148, 1.16228, 1.14311, 1.12422, 1.10582, 1.08813, 1.07133, 1.05557, 1.04097, 1.0276, 1.01554, 1.0048, 0.99533, 0.98708, 0.97994, 0.97376, 0.96839, 0.96364, 0.95929, 0.95511, 0.95091, 0.94643, 0.94149, 0.93586, 0.92938, 0.9219, 0.91329, 0.90348, 0.89243, 0.88011, 0.86653, 0.85177, 0.83591, 0.81907, 0.80142, 0.78312, 0.76437, 0.74536, 0.72629, 0.70736, 0.68879, 0.67076, 0.65342, 0.63692, 0.62136, 0.60684, 0.59338, 0.581, 0.56968, 0.55936, 0.54996, 0.54136, 0.53343, 0.52602, 0.519, 0.5122, 0.50548, 0.49867, 0.49166, 0.48432, 0.47654, 0.46822, 0.45928, 0.44966, 0.4393, 0.42814, 0.41619, 0.40339, 0.38976, 0.37532, 0.36007, 0.34407, 0.32738, 0.31008, 0.29227, 0.27406]}, {"label": "$30m to $150m", "n": 339, "p10": 0.07462480539874403, "p25": 0.20299068686731314, "p50": 0.357899394778179, "p75": 0.6024264833468986, "p90": 0.7539131754291127, "kde": [0.33104, 0.36606, 0.40264, 0.44058, 0.47965, 0.51962, 0.56021, 0.60114, 0.64219, 0.68304, 0.72345, 0.76322, 0.80215, 0.84005, 0.8768, 0.91231, 0.94656, 0.97956, 1.01129, 1.04184, 1.07131, 1.09981, 1.12744, 1.15435, 1.18066, 1.20649, 1.2319, 1.257, 1.28176, 1.30617, 1.33024, 1.35383, 1.37688, 1.39921, 1.42066, 1.44104, 1.46016, 1.47781, 1.49381, 1.50794, 1.52006, 1.53002, 1.53768, 1.54299, 1.54588, 1.54633, 1.54435, 1.54004, 1.53344, 1.5247, 1.51391, 1.50126, 1.48692, 1.47103, 1.45381, 1.43542, 1.41604, 1.39582, 1.375, 1.35365, 1.33191, 1.30998, 1.28795, 1.26594, 1.24404, 1.22241, 1.2011, 1.18024, 1.15991, 1.14024, 1.12129, 1.10313, 1.08592, 1.06967, 1.05448, 1.04044, 1.02755, 1.0159, 1.00549, 0.9963, 0.98837, 0.98165, 0.97611, 0.97168, 0.96832, 0.96594, 0.96443, 0.96367, 0.96355, 0.96394, 0.96473, 0.96576, 0.96688, 0.96798, 0.9689, 0.96962, 0.96995, 0.96978, 0.96906, 0.96774, 0.96577, 0.96311, 0.95972, 0.95561, 0.95083, 0.94533, 0.93916, 0.93233, 0.92486, 0.91676, 0.90801, 0.89864, 0.88863, 0.878, 0.86677, 0.85493, 0.84246, 0.82943, 0.81584, 0.80174, 0.7872, 0.77227, 0.75703, 0.74155, 0.72591, 0.71021, 0.69448, 0.67878, 0.66316, 0.64762, 0.63216, 0.61673, 0.60128, 0.58575, 0.57005, 0.5541, 0.53779, 0.52106, 0.50382, 0.48601, 0.46761, 0.4486, 0.42901, 0.40887, 0.38826, 0.36729, 0.34608, 0.32473, 0.3034, 0.28226, 0.26144, 0.24108, 0.22131, 0.20226, 0.18404, 0.16674, 0.15039, 0.13506, 0.12079, 0.10756]}, {"label": "$150m to $600m", "n": 360, "p10": 0.16860881534667999, "p25": 0.28522039951798367, "p50": 0.44105550469619303, "p75": 0.6568893671993508, "p90": 0.7697536483516998, "kde": [0.10874, 0.12343, 0.13927, 0.15622, 0.17425, 0.19331, 0.21337, 0.23436, 0.25625, 0.27892, 0.30234, 0.32642, 0.35115, 0.3764, 0.40215, 0.42831, 0.45482, 0.48161, 0.50862, 0.53581, 0.56312, 0.59052, 0.61796, 0.64547, 0.67308, 0.70079, 0.72866, 0.75679, 0.78524, 0.81413, 0.84356, 0.8736, 0.90437, 0.93591, 0.96825, 1.00137, 1.03517, 1.0696, 1.10449, 1.13962, 1.17473, 1.20958, 1.24387, 1.2773, 1.30961, 1.34052, 1.3698, 1.39728, 1.42282, 1.44635, 1.4678, 1.48722, 1.50465, 1.52015, 1.53376, 1.54559, 1.55571, 1.56414, 1.57089, 1.57596, 1.57926, 1.58073, 1.58028, 1.5778, 1.57316, 1.56637, 1.55735, 1.54613, 1.53281, 1.51751, 1.50049, 1.48195, 1.46219, 1.44159, 1.42051, 1.39925, 1.37814, 1.35749, 1.33753, 1.31846, 1.30042, 1.2834, 1.2675, 1.25264, 1.23877, 1.22582, 1.21373, 1.20245, 1.19186, 1.18203, 1.173, 1.16481, 1.15757, 1.15137, 1.14634, 1.14264, 1.14032, 1.13947, 1.14014, 1.14228, 1.14583, 1.15072, 1.15674, 1.16374, 1.17145, 1.17961, 1.188, 1.19631, 1.20422, 1.21152, 1.2179, 1.22314, 1.22697, 1.22915, 1.22946, 1.22769, 1.22362, 1.21708, 1.20785, 1.19581, 1.18081, 1.16276, 1.14164, 1.11741, 1.09016, 1.05998, 1.02707, 0.99163, 0.95396, 0.91437, 0.87323, 0.83091, 0.78778, 0.74424, 0.70068, 0.6574, 0.61477, 0.57305, 0.53247, 0.49328, 0.45558, 0.41952, 0.38517, 0.3526, 0.32182, 0.29282, 0.26564, 0.24022, 0.21655, 0.19457, 0.17423, 0.15551, 0.13832, 0.12261, 0.1083, 0.09534, 0.08364, 0.07314, 0.06372, 0.05532]}, {"label": "$600m to $2.5bn", "n": 427, "p10": 0.17263149826619525, "p25": 0.26252606335622863, "p50": 0.3982588033749598, "p75": 0.5911599079910481, "p90": 0.7640838690495518, "kde": [0.05438, 0.06444, 0.07576, 0.08839, 0.10242, 0.11787, 0.13486, 0.15337, 0.17352, 0.19533, 0.21886, 0.24421, 0.2714, 0.3005, 0.33152, 0.36453, 0.39953, 0.43655, 0.47553, 0.51646, 0.55928, 0.60385, 0.65012, 0.69792, 0.74705, 0.79735, 0.8486, 0.90053, 0.95288, 1.00539, 1.05782, 1.10987, 1.16124, 1.21171, 1.26106, 1.30906, 1.35552, 1.40031, 1.44329, 1.48436, 1.52345, 1.56046, 1.59532, 1.62798, 1.65837, 1.68642, 1.71205, 1.73517, 1.75569, 1.77355, 1.78863, 1.80084, 1.81015, 1.81651, 1.81989, 1.82031, 1.81784, 1.81259, 1.80469, 1.79429, 1.78168, 1.76708, 1.7508, 1.73318, 1.7145, 1.69512, 1.67531, 1.65535, 1.63544, 1.61573, 1.59637, 1.57736, 1.55869, 1.54023, 1.52184, 1.50334, 1.48458, 1.46526, 1.44517, 1.42417, 1.40204, 1.37863, 1.35387, 1.32771, 1.30021, 1.27139, 1.2414, 1.21038, 1.17859, 1.14636, 1.11396, 1.08176, 1.05013, 1.01951, 0.99028, 0.96282, 0.93752, 0.91473, 0.89471, 0.87764, 0.86366, 0.85289, 0.84529, 0.84075, 0.8391, 0.84014, 0.84355, 0.849, 0.85616, 0.86459, 0.87388, 0.88368, 0.89358, 0.90316, 0.91212, 0.92004, 0.92663, 0.93161, 0.93466, 0.93554, 0.93402, 0.9299, 0.923, 0.91321, 0.90045, 0.88468, 0.86592, 0.84427, 0.81986, 0.79288, 0.76359, 0.73228, 0.69928, 0.66496, 0.62967, 0.5938, 0.55772, 0.52174, 0.48618, 0.45129, 0.41731, 0.3844, 0.35275, 0.32245, 0.29358, 0.26619, 0.24029, 0.21594, 0.19315, 0.17188, 0.15213, 0.1339, 0.11717, 0.10189, 0.08804, 0.07556, 0.0644, 0.05451, 0.0458, 0.03817]}, {"label": "$2.5bn to $10bn", "n": 302, "p10": 0.1458504688109115, "p25": 0.2268503896382782, "p50": 0.3659217752087631, "p75": 0.5313030701315787, "p90": 0.6998083735108651, "kde": [0.06276, 0.07577, 0.09084, 0.10817, 0.12786, 0.15007, 0.17495, 0.20258, 0.23308, 0.26643, 0.30261, 0.3416, 0.38327, 0.42751, 0.47411, 0.5229, 0.57365, 0.62609, 0.68, 0.73511, 0.79119, 0.848, 0.90536, 0.9631, 1.02099, 1.07883, 1.13644, 1.19362, 1.25013, 1.3057, 1.36001, 1.41276, 1.46346, 1.51174, 1.55723, 1.59953, 1.63829, 1.67329, 1.70436, 1.73143, 1.75457, 1.774, 1.79004, 1.80314, 1.81383, 1.82273, 1.83038, 1.83739, 1.84432, 1.85161, 1.85955, 1.86832, 1.878, 1.88843, 1.89936, 1.91039, 1.921, 1.93059, 1.9386, 1.94429, 1.9471, 1.94644, 1.94175, 1.93269, 1.91896, 1.90035, 1.87685, 1.8486, 1.81578, 1.77882, 1.73811, 1.69428, 1.64785, 1.59959, 1.55013, 1.50014, 1.45043, 1.40162, 1.35428, 1.30893, 1.26603, 1.22591, 1.1889, 1.15506, 1.12443, 1.09699, 1.07253, 1.05076, 1.03137, 1.01397, 0.99811, 0.98336, 0.9693, 0.9555, 0.94157, 0.92718, 0.91218, 0.89639, 0.8797, 0.86213, 0.84378, 0.82476, 0.80528, 0.78553, 0.76583, 0.74638, 0.72741, 0.70919, 0.6919, 0.67571, 0.66079, 0.64726, 0.63523, 0.62472, 0.61572, 0.60823, 0.60212, 0.59726, 0.59348, 0.59056, 0.58817, 0.586, 0.58371, 0.58094, 0.57729, 0.5724, 0.56595, 0.5577, 0.54741, 0.53496, 0.5203, 0.50347, 0.48459, 0.46383, 0.44154, 0.41796, 0.39348, 0.36844, 0.34321, 0.31814, 0.29353, 0.26966, 0.24676, 0.22499, 0.20451, 0.18535, 0.16758, 0.15119, 0.13613, 0.12235, 0.10978, 0.09837, 0.08799, 0.07856, 0.07, 0.06223, 0.05518, 0.04877, 0.04295, 0.03768]}, {"label": "Over $10bn", "n": 151, "p10": 0.08364002634331538, "p25": 0.1677573245500928, "p50": 0.2917602748777587, "p75": 0.47388555643630437, "p90": 0.6106330082233696, "kde": [0.26897, 0.30569, 0.34538, 0.38791, 0.4332, 0.48111, 0.5315, 0.58412, 0.63882, 0.69533, 0.75349, 0.81303, 0.87381, 0.9356, 0.99828, 1.06163, 1.12555, 1.18986, 1.25445, 1.31907, 1.38348, 1.44744, 1.51064, 1.5727, 1.63313, 1.6915, 1.74723, 1.7998, 1.84862, 1.89311, 1.93278, 1.9672, 1.99595, 2.01882, 2.03563, 2.04641, 2.0513, 2.05057, 2.04467, 2.03409, 2.0195, 2.00155, 1.98107, 1.9587, 1.93523, 1.91133, 1.88756, 1.86443, 1.84225, 1.82131, 1.80165, 1.78323, 1.76584, 1.74913, 1.73283, 1.71637, 1.6993, 1.68105, 1.6612, 1.63933, 1.61515, 1.58839, 1.55896, 1.52697, 1.49258, 1.45611, 1.41798, 1.37872, 1.3389, 1.29918, 1.26016, 1.22242, 1.18657, 1.15301, 1.12211, 1.09414, 1.0692, 1.04742, 1.02859, 1.01259, 0.99917, 0.988, 0.97877, 0.97114, 0.96471, 0.95913, 0.95411, 0.94932, 0.94452, 0.93944, 0.93392, 0.92778, 0.92084, 0.91302, 0.90416, 0.89422, 0.88307, 0.87066, 0.85696, 0.84198, 0.82569, 0.8081, 0.78925, 0.76928, 0.74824, 0.72622, 0.7034, 0.67985, 0.65581, 0.63139, 0.6067, 0.58191, 0.55714, 0.53248, 0.50805, 0.48391, 0.46012, 0.43674, 0.41379, 0.39134, 0.36938, 0.34797, 0.32712, 0.30689, 0.28729, 0.26834, 0.25015, 0.2327, 0.21605, 0.20024, 0.1853, 0.17125, 0.15811, 0.14588, 0.13457, 0.12414, 0.11454, 0.10576, 0.09768, 0.09032, 0.08353, 0.0773, 0.07153, 0.06612, 0.06107, 0.0563, 0.05175, 0.04745, 0.04332, 0.03937, 0.03559, 0.03198, 0.02855, 0.02531, 0.02227, 0.01945, 0.01684, 0.01446, 0.01232, 0.01041]}]};
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- OKLab ---------- */
+const f2s=c=>c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055;
+const s2f=c=>c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);
+const h2r=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const cl=v=>Math.max(0,Math.min(255,Math.round(v)));
+const r2h=a=>'#'+a.map(v=>cl(v).toString(16).padStart(2,'0')).join('');
+function rgb2oklab(hex){let[R,G,B]=h2r(hex).map(v=>s2f(v/255));
+  const l=Math.cbrt(.4122214708*R+.5363325363*G+.0514459929*B),
+        m=Math.cbrt(.2119034982*R+.6806995451*G+.1073969566*B),
+        s=Math.cbrt(.0883024619*R+.2817188376*G+.6299787005*B);
+  return[.2104542553*l+.793617785*m-.0040720468*s,1.9779984951*l-2.428592205*m+.4505937099*s,
+         .0259040371*l+.7827717662*m-.808675766*s];}
+function oklab2rgb([L,a,b]){const l=(L+.3963377774*a+.2158037573*b)**3,
+  m=(L-.1055613458*a-.0638541728*b)**3,s=(L-.0894841775*a-1.291485548*b)**3;
+  return r2h([f2s(4.0767416621*l-3.3077115913*m+.2309699292*s)*255,
+              f2s(-1.2684380046*l+2.6097574011*m-.3413193965*s)*255,
+              f2s(-.0041960863*l-.7034186147*m+1.707614701*s)*255]);}
+/* perceptually even grey spine, optional micro chroma at a fixed hue */
+function greyScale(n, chroma, hueDeg){
+  const h = (hueDeg||0)*Math.PI/180, out=[];
+  for(let i=0;i<n;i++){
+    const L = 0.995 - (i/(n-1))*0.895;
+    out.push(oklab2rgb([L, (chroma||0)*Math.cos(h), (chroma||0)*Math.sin(h)]));
+  }
+  return out;
+}
+const SPINE   = greyScale(12, 0, 0);
+const COOLG   = greyScale(9, 0.006, 250);
+const NEUTG   = greyScale(9, 0, 0);
+const WARMG   = greyScale(9, 0.007, 80);
+
+const INK='#131312';
+
+/* readouts */
+const n = DATA.n_kept || DATA.n;
+hN.textContent = n.toLocaleString(); v1.textContent = n.toLocaleString();
+v2.textContent = (DATA.median_margin*100).toFixed(1)+'%';
+v4b.textContent = Math.round(DATA.n_above_70/n*100)+'%';
+cN.textContent = n.toLocaleString()+' filers';
+
+/* scale strip */
+document.getElementById('scale').innerHTML = SPINE.map(c=>`<i style="background:${c}"></i>`).join('');
+document.getElementById('scalek').innerHTML = SPINE.map((c,i)=>
+  `<span>${(i*10).toString().padStart(2,'0')}<br>${c.toUpperCase().slice(1)}</span>`).join('');
+document.getElementById('hues').innerHTML = [
+  ['Cool grey','Recedes. Use for wells, tracks and anything meant to sit back.',COOLG],
+  ['Neutral grey','Holds all type and every interface surface. The spine.',NEUTG],
+  ['Warm grey','Advances. Use sparingly on raised surfaces so they feel nearer.',WARMG],
+].map(([nm,d,arr])=>`<div class="hue"><div class="bar">${arr.map(c=>`<i style="background:${c}"></i>`).join('')}</div>
+  <div class="n">${nm}</div><div class="d">${d}</div></div>`).join('');
+
+/* glass specular */
+for(const el of document.querySelectorAll('.glass')){
+  el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');});
+}
+
+/* ---------- halftone ramp: depth drawn on the brand's own screen ----------
+   Dot area carries the value, never opacity, which is the rule the imagery
+   engine works to. Density rises toward the corner the light turns away from. */
+function dotRamp(W,H,o){
+  const pitch=o.pitch||13, rmax=o.rmax||2.15, ink=o.ink||'#131312';
+  const a=(o.angle==null?15:o.angle)*Math.PI/180, cs=Math.cos(a), sn=Math.sin(a);
+  const rowH=pitch*0.866, D=Math.hypot(W,H), N=Math.ceil(D/pitch)+2, M=Math.ceil(D/rowH)+2;
+  let s='';
+  for(let i=-M;i<=M;i++){
+    const sy=i*rowH;
+    for(let j=-N;j<=N;j++){
+      const sx=j*pitch+(i&1?pitch/2:0);
+      const x=sx*cs-sy*sn+W*0.5, y=sx*sn+sy*cs+H*0.5;
+      if(x<-pitch||x>W+pitch||y<-pitch||y>H+pitch) continue;
+      let t=0.5*(x/W)+0.5*(y/H);
+      t=Math.max(0,Math.min(1,(t-0.10)/0.90));
+      const fx=Math.min(1,Math.min(x,W-x)/(0.055*W)), fy=Math.min(1,Math.min(y,H-y)/(0.055*H));
+      const r=rmax*Math.pow(t,1.55)*Math.min(fx,fy);
+      if(r<0.3) continue;
+      s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">`
+       + `<g fill="${ink}" opacity="${o.alpha==null?0.44:o.alpha}">${s}</g></svg>`;
+}
+function renderFieldScreen(){
+  const el=document.getElementById('fieldScreen'); if(!el) return;
+  const r=el.parentElement.getBoundingClientRect(); if(r.width<2) return;
+  el.innerHTML=dotRamp(Math.round(r.width),Math.round(r.height),{});
+}
+renderFieldScreen();
+let fsT; addEventListener('resize',()=>{clearTimeout(fsT);fsT=setTimeout(renderFieldScreen,160);});
+if('ResizeObserver' in window)
+  new ResizeObserver(()=>renderFieldScreen()).observe(document.querySelector('.field'));
+
+/* ---------- the surface, four textures ---------- */
+const G = DATA.grid, RS = DATA.rows, CS = DATA.cols;
+let gmax=0; for(const row of G) for(const v of row) if(v>gmax) gmax=v;
+const val=(r,c)=>G[Math.max(0,Math.min(RS-1,r))][Math.max(0,Math.min(CS-1,c))]/gmax;
+/* horizontal falloff so the field dissolves at both ends */
+const fade=u=>Math.min(1, Math.min(u,1-u)/0.14);
+
+function dotField(W,Ht,cols,rows,rmax,dark,alpha){
+  const a = alpha == null ? 1 : alpha;
+  let s='';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const u=c/(cols-1), v=r/(rows-1);
+    const d=val(Math.round(v*(RS-1)),Math.round(u*(CS-1)))*fade(u);
+    if(d<0.012) continue;
+    const rad=Math.pow(d,0.55)*rmax;
+    if(rad<0.22) continue;
+    const x=(u*W).toFixed(1), y=(Ht-14-v*(Ht-28)).toFixed(1);
+    s+=`<circle cx="${x}" cy="${y}" r="${rad.toFixed(2)}" fill="${dark}" opacity="${((0.14+d*0.78)*a).toFixed(3)}"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${Ht}">${s}</svg>`;
+}
+/* hero field runs lighter and finer than the specimen, so type stays readable over it */
+document.getElementById('heroDots').innerHTML = dotField(1440,470,196,66,3.0,'#5A5A58',0.62);
+document.getElementById('texDots').innerHTML  = dotField(600,250,110,44,3.0,'#3A3A38',1);
+
+/* ASCII */
+(function(){
+  const CH=' .·:;=+*#%@', cols=176, rows=52;
+  let out='';
+  for(let r=0;r<rows;r++){
+    let line='';
+    for(let c=0;c<cols;c++){
+      const u=c/(cols-1), v=r/(rows-1);
+      const d=val(Math.round(v*(RS-1)),Math.round(u*(CS-1)))*fade(u);
+      line+=CH[Math.min(CH.length-1,Math.floor(Math.pow(d,0.62)*CH.length))];
+    }
+    out+=line+'\n';
+  }
+  document.getElementById('texAscii').innerHTML='<pre class="ascii">'+esc(out)+'</pre>';
+})();
+
+/* contour, marching squares */
+(function(){
+  const W=600,Ht=250,COLS=120,ROWS=54,L=0,R=W,T=14,B=Ht-14;
+  const f=(u,v)=>val(Math.round(v*(RS-1)),Math.round(u*(CS-1)))*fade(u);
+  const g=[]; for(let r=0;r<=ROWS;r++){g.push([]); for(let c=0;c<=COLS;c++) g[r].push(f(c/COLS,r/ROWS));}
+  let out='';
+  const LEV=16;
+  for(let lv=1;lv<=LEV;lv++){
+    const t=lv/LEV, thr=Math.pow(t,1.5)*0.98; let d='';
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      const v00=g[r][c],v10=g[r][c+1],v11=g[r+1][c+1],v01=g[r+1][c];
+      const idx=(v00>thr?8:0)|(v10>thr?4:0)|(v11>thr?2:0)|(v01>thr?1:0);
+      if(idx===0||idx===15) continue;
+      const xa=L+(c/COLS)*(R-L), xb=L+((c+1)/COLS)*(R-L), ya=T+(r/ROWS)*(B-T), yb=T+((r+1)/ROWS)*(B-T);
+      const ip=(p,q)=>(thr-p)/(q-p);
+      const Tp=[xa+(xb-xa)*ip(v00,v10),ya], Bp=[xa+(xb-xa)*ip(v01,v11),yb],
+            Lp=[xa,ya+(yb-ya)*ip(v00,v01)], Rp=[xb,ya+(yb-ya)*ip(v10,v11)];
+      const seg=(p,q)=>{d+='M'+p[0].toFixed(1)+','+p[1].toFixed(1)+'L'+q[0].toFixed(1)+','+q[1].toFixed(1);};
+      switch(idx){case 1:seg(Lp,Bp);break;case 2:seg(Bp,Rp);break;case 3:seg(Lp,Rp);break;
+        case 4:seg(Tp,Rp);break;case 5:seg(Tp,Lp);seg(Bp,Rp);break;case 6:seg(Tp,Bp);break;
+        case 7:seg(Lp,Tp);break;case 8:seg(Tp,Lp);break;case 9:seg(Tp,Bp);break;
+        case 10:seg(Tp,Rp);seg(Lp,Bp);break;case 11:seg(Tp,Rp);break;case 12:seg(Lp,Rp);break;
+        case 13:seg(Bp,Rp);break;case 14:seg(Lp,Bp);break;}
+    }
+    if(d) out+=`<path d="${d}" fill="none" stroke="${SPINE[Math.min(11,3+Math.floor(t*8))]}" stroke-width="${(0.5+t*1.5).toFixed(2)}" stroke-linecap="round"/>`;
+  }
+  document.getElementById('texLines').innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${out}</svg>`;
+})();
+
+/* hatch */
+(function(){
+  const W=600,Ht=250,cols=150,rows=46;
+  let s='';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const u=c/(cols-1), v=r/(rows-1);
+    const d=val(Math.round(v*(RS-1)),Math.round(u*(CS-1)))*fade(u);
+    if(d<0.05) continue;
+    const x=u*W, y=14+v*(Ht-28), h=Math.pow(d,0.7)*4.4;
+    s+=`<line x1="${x.toFixed(1)}" y1="${(y-h).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(y+h).toFixed(1)}" stroke="#3A3A38" stroke-width="0.7" opacity="${(0.18+d*0.72).toFixed(2)}"/>`;
+  }
+  document.getElementById('texHatch').innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${s}</svg>`;
+})();
+
+/* ---------- figures ---------- */
+function spline(p){let d='M'+p[0][0].toFixed(1)+','+p[0][1].toFixed(1);
+  for(let i=0;i<p.length-1;i++){const a=p[i-1]||p[i],b=p[i],c=p[i+1],e=p[i+2]||c;
+    d+='C'+(b[0]+(c[0]-a[0])/6).toFixed(1)+','+(b[1]+(c[1]-a[1])/6).toFixed(1)+' '
+      +(c[0]-(e[0]-b[0])/6).toFixed(1)+','+(c[1]-(e[1]-b[1])/6).toFixed(1)+' '
+      +c[0].toFixed(1)+','+c[1].toFixed(1);}
+  return d;}
+
+/* Shared chart language. No data mark ever casts a shadow. Baselines are hairline
+   greys, never black. Emphasis is one small solid dot, never a glow. */
+const AXIS=SPINE[3], GUIDE=SPINE[2], TICK=SPINE[6], CURVE='#2B2B2A';
+const SANS='Familjen Grotesk, sans-serif';
+/* mono is for a value standing alone as a value: axis ticks and readouts */
+const MONO='Martian Mono, ui-monospace, monospace';
+const pct = v => Math.round(v*100)+'%';
+
+cBw.textContent = DATA.kde_bw;
+
+/* ---- kernel density, quartile guides, one marked median ---- */
+(function(){
+  const K=DATA.kde,N=DATA.kde_n,x0=DATA.kde_x0,x1=DATA.kde_x1;
+  const max=Math.max(...K),W=1000,Ht=270,L=8,R=W-8,T=34,B=Ht-40;
+  const X=v=>L+((v-x0)/(x1-x0))*(R-L);
+  const pts=[];for(let i=0;i<N;i++)pts.push([L+(i/(N-1))*(R-L),B-(K[i]/max)*(B-T)]);
+  const line=spline(pts),area=line+`L${R},${B}L${L},${B}Z`;
+  const yAt=x=>{for(let i=0;i<N-1;i++)if(pts[i][0]<=x&&pts[i+1][0]>=x){
+    const f=(x-pts[i][0])/(pts[i+1][0]-pts[i][0]);return pts[i][1]+(pts[i+1][1]-pts[i][1])*f;}return B;};
+  const Q=DATA.q;
+  let guides='';
+  for(const [k,lab] of [['p25','25th'],['p75','75th']]){
+    const x=X(Q[k]);
+    guides+=`<line x1="${x.toFixed(1)}" y1="${yAt(x).toFixed(1)}" x2="${x.toFixed(1)}" y2="${B}" stroke="${GUIDE}" stroke-width="1" stroke-dasharray="2 4"/>
+      <text x="${(x+6).toFixed(1)}" y="${B-7}" fill="${TICK}" font-family="${SANS}" font-size="11">${lab} ${pct(Q[k])}</text>`;
+  }
+  const mx=X(Q.p50),my=yAt(mx);
+  figArea.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}"><defs>
+    <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3C3C3A" stop-opacity=".16"/>
+      <stop offset="62%" stop-color="#6C6C6A" stop-opacity=".05"/>
+      <stop offset="100%" stop-color="#8C8C8A" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#ga)"/>
+    ${guides}
+    <path d="${line}" fill="none" stroke="${CURVE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="${AXIS}" stroke-width="1"/>
+    <line x1="${mx.toFixed(1)}" y1="${(my+4).toFixed(1)}" x2="${mx.toFixed(1)}" y2="${B}" stroke="${SPINE[5]}" stroke-width="1"/>
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="3.6" fill="${INK}"/>
+    <text x="${mx.toFixed(1)}" y="${(my-13).toFixed(1)}" text-anchor="middle" fill="${INK}"
+      font-family="${SANS}" font-size="12" font-weight="600">Median ${(Q.p50*100).toFixed(1)}%</text>
+    <text x="${L}" y="${Ht-12}" fill="${TICK}" font-family="${SANS}" font-size="11.5">0% gross margin</text>
+    <text x="${R}" y="${Ht-12}" text-anchor="end" fill="${TICK}" font-family="${SANS}" font-size="11.5">100%</text></svg>`;
+})();
+
+/* ---- ridgeline: one density per cohort, shared scale, occluding fills ---- */
+(function(){
+  const C=DATA.cohorts,W=500,Ht=250,L=112,R=W-16,TOP=20,BOT=Ht-40;
+  const NK=C[0].kde.length;
+  let gmaxk=0;for(const c of C)for(const v of c.kde)if(v>gmaxk)gmaxk=v;
+  const step=(BOT-TOP)/(C.length-1), amp=step*1.55;
+  const X=v=>L+((v-DATA.kde_x0)/(DATA.kde_x1-DATA.kde_x0))*(R-L);
+  let out='', ticks=[];
+  /* front to back: the lower row is nearer, so it is drawn last and occludes */
+  for(let i=0;i<C.length;i++){
+    const c=C[i],base=TOP+i*step;
+    const pts=[];for(let k=0;k<NK;k++)pts.push([L+(k/(NK-1))*(R-L),base-(c.kde[k]/gmaxk)*amp]);
+    const curve=spline(pts);
+    const tone=SPINE[4+Math.round((i/(C.length-1))*6)];
+    /* fill and stroke are separate so the closing baseline never draws as a rule */
+    out+=`<path d="${curve}L${R},${base}L${L},${base}Z" fill="#FCFCFB"/>`;
+    out+=`<path d="${curve}" fill="none" stroke="${tone}" stroke-width="1.25" stroke-linejoin="round"/>`;
+    ticks.push([X(c.p50), base]);
+    out+=`<text x="${L-14}" y="${(base-1).toFixed(1)}" text-anchor="end" fill="${SPINE[8]}" font-family="${SANS}" font-size="10.5">${esc(c.label)}</text>`;
+  }
+  /* ticks go on last, otherwise the next row's fill paints over them */
+  for(const [mx,base] of ticks)
+    out+=`<line x1="${mx.toFixed(1)}" y1="${(base-5).toFixed(1)}" x2="${mx.toFixed(1)}" y2="${(base+1).toFixed(1)}" stroke="${INK}" stroke-width="1.4"/>`;
+  out+=`<line x1="${L}" y1="${BOT.toFixed(1)}" x2="${R}" y2="${BOT.toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>`;
+  for(const v of [0,0.5,1]){
+    out+=`<line x1="${X(v).toFixed(1)}" y1="${BOT}" x2="${X(v).toFixed(1)}" y2="${BOT+4}" stroke="${AXIS}" stroke-width="1"/>
+      <text x="${X(v).toFixed(1)}" y="${BOT+17}" text-anchor="middle" fill="${TICK}" font-family="${MONO}" font-weight="300" font-size="9.5">${pct(v)}</text>`;
+  }
+  out+=`<text x="${R}" y="${Ht-4}" text-anchor="end" fill="${TICK}" font-family="${SANS}" font-size="10">tick marks each median</text>`;
+  figRidge.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${out}</svg>`;
+})();
+
+/* ---- range plot: p10 to p90 track, interquartile band, median dot ---- */
+(function(){
+  const C=DATA.cohorts,W=500,Ht=250,L=112,R=W-46,T=16;
+  const rowH=(Ht-T-34)/C.length;
+  const X=v=>L+v*(R-L);
+  let out='';
+  for(const [i,c] of C.entries()){
+    const y=T+i*rowH+rowH/2;
+    out+=`<line x1="${L}" y1="${y.toFixed(1)}" x2="${R}" y2="${y.toFixed(1)}" stroke="${SPINE[1]}" stroke-width="1"/>`;
+    out+=`<rect x="${X(c.p10).toFixed(1)}" y="${(y-2.5).toFixed(1)}" width="${(X(c.p90)-X(c.p10)).toFixed(1)}" height="5" rx="2.5" fill="${SPINE[4]}"/>`;
+    out+=`<rect x="${X(c.p25).toFixed(1)}" y="${(y-5).toFixed(1)}" width="${(X(c.p75)-X(c.p25)).toFixed(1)}" height="10" rx="5" fill="${SPINE[7]}"/>`;
+    out+=`<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${INK}"/>`;
+    out+=`<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="none" stroke="#FAFAF9" stroke-width="1.4"/>`;
+    out+=`<text x="${L-12}" y="${(y+3.6).toFixed(1)}" text-anchor="end" fill="${SPINE[8]}" font-family="${SANS}" font-size="11">${esc(c.label)}</text>`;
+    out+=`<text x="${R+8}" y="${(y+3.6).toFixed(1)}" fill="${INK}" font-family="${MONO}" font-size="10" font-weight="400">${pct(c.p50)}</text>`;
+  }
+  const yb=T+C.length*rowH+6;
+  out+=`<line x1="${L}" y1="${yb.toFixed(1)}" x2="${R}" y2="${yb.toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>`;
+  for(const v of [0,0.25,0.5,0.75,1]){
+    out+=`<line x1="${X(v).toFixed(1)}" y1="${yb.toFixed(1)}" x2="${X(v).toFixed(1)}" y2="${(yb+4).toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>
+      <text x="${X(v).toFixed(1)}" y="${(yb+17).toFixed(1)}" text-anchor="middle" fill="${TICK}" font-family="${MONO}" font-weight="300" font-size="9.5">${pct(v)}</text>`;
+  }
+  figRange.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${out}</svg>`;
+})();
+</script>
+</body>
+</html>

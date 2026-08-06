@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mark directions — Eleven One Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --g05:#FAFAF9; --g10:#F4F4F3; --g20:#EBEBEA; --g30:#DEDEDD; --g40:#C9C9C7;
+    --g50:#AEAEAC; --g70:#6C6C6A; --g80:#4A4A48; --ink:#131312;
+    --r-m:18px; --r-l:26px; --r-xl:40px; --pill:999px;
+    --e1:0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
+    --e2:0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);
+    --e3:0 2px 6px rgba(20,20,18,.05), 0 20px 50px rgba(20,20,18,.08);
+    --ez:cubic-bezier(.16,.9,.24,1);
+  }
+  body{margin:0;color:var(--ink);-webkit-font-smoothing:antialiased;background:var(--g10);
+    font-family:'Familjen Grotesk',system-ui,sans-serif}
+  .num{font-variant-numeric:tabular-nums}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;font-size:.92em;
+    letter-spacing:-.012em}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 10% -6%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#F6F6F5 0%, #F1F1F0 56%, #EAEAE9 100%)}
+  .frame{max-width:1120px;margin:0 auto;padding:0 26px}
+
+  .top{padding:78px 0 0;max-width:70ch}
+  .top h1{font-size:clamp(29px,3.6vw,44px);font-weight:500;letter-spacing:-.034em;line-height:1.08;
+    margin:0;color:var(--g70)}
+  .top h1 b{display:block;font-weight:500;color:var(--ink)}
+  .top p{font-size:16px;line-height:1.74;color:var(--g80);margin:22px 0 0;max-width:62ch}
+
+  section{margin-top:74px}
+  h2{font-size:23px;font-weight:600;letter-spacing:-.024em;margin:0 0 8px}
+  .sub{font-size:14.5px;line-height:1.72;color:var(--g70);max-width:70ch;margin:0 0 26px}
+
+  .dir{border-radius:var(--r-l);background:linear-gradient(160deg,#FFFFFF 0%,#F7F7F6 100%);
+    box-shadow:var(--e2);padding:0;overflow:hidden;margin-bottom:22px}
+  .dir:last-child{margin-bottom:0}
+  .dh{display:flex;align-items:baseline;gap:12px;padding:24px 30px 0;flex-wrap:wrap}
+  .dh .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:10.5px;color:var(--g70)}
+  .dh .n{font-size:19px;font-weight:600;letter-spacing:-.018em}
+  .dbody{display:grid;grid-template-columns:230px minmax(0,1fr);gap:34px;padding:22px 30px 26px;
+    align-items:start}
+  .stage{display:grid;place-items:center;min-height:180px;border-radius:var(--r-m);
+    background:linear-gradient(160deg,#FDFDFC 0%,#F4F4F3 100%);
+    box-shadow:inset 0 1px 3px rgba(20,20,18,.05)}
+  .stage svg{display:block}
+  .dtext p{font-size:14.5px;line-height:1.74;color:var(--g80);margin:0 0 14px;max-width:62ch}
+  .dtext p:last-child{margin-bottom:0}
+  .dtext b{color:var(--ink);font-weight:600}
+  .dtext .risk{font-size:13px;color:var(--g70);line-height:1.7}
+  .dtext .risk b{color:var(--ink)}
+
+  /* lockup and small-size proofs share one strip */
+  .proof{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0;
+    box-shadow:inset 0 1px 0 rgba(20,20,18,.07)}
+  .pcell{padding:20px 30px 22px;box-shadow:inset 1px 0 0 rgba(20,20,18,.055)}
+  .pcell:first-child{box-shadow:none}
+  .pcell .lab{font-family:'Martian Mono',monospace;font-weight:300;font-size:9.5px;
+    color:var(--g70);margin:0 0 14px}
+  .lock{display:flex;align-items:center;gap:11px}
+  .lock .wm{font-size:17px;font-weight:600;letter-spacing:-.022em;white-space:nowrap}
+  .lock .wm span{color:var(--g70);font-weight:500}
+  .smalls{display:flex;align-items:center;gap:18px}
+  .chip{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;
+    background:#FFFFFF;box-shadow:var(--e1)}
+  .chip.dark{background:var(--ink)}
+  .chip.grey{background:var(--g30)}
+
+  .note{font-size:12.5px;line-height:1.72;color:var(--g70);margin:16px 0 0;max-width:82ch}
+  .note b{color:var(--ink);font-weight:600}
+
+  footer{margin-top:88px;padding:38px 0 90px;box-shadow:inset 0 1px 0 rgba(20,20,18,.07);
+    font-size:12.5px;color:var(--g70);line-height:1.76}
+  footer .frame{max-width:82ch}
+  footer b{color:var(--ink);font-weight:600}
+  @media (max-width:840px){ .dbody{grid-template-columns:1fr;gap:22px} }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="frame">
+  <div class="top">
+    <h1>Four marks drawn from the system<b>rather than invented beside it</b></h1>
+    <p>The previous four directions were drawn in Spectral, Fragment Mono and a yellow accent, against a drafting register that has since been dropped. This set uses only what the brand actually committed to: greyscale, Familjen Grotesk, and the halftone screen at its own constants.</p>
+  </div>
+
+  <section>
+    <h2>The directions</h2>
+    <p class="sub">Each shown at display size, in the horizontal lockup, and at the sizes a favicon and an avatar actually get. Where a mark needs a separate small-size cut, that cut is shown rather than hidden.</p>
+    <div id="dirs"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="frame">
+    <p><b>What each one costs.</b> A mark is a maintenance commitment, not a one-time drawing. It has to survive a favicon, a social avatar, a report cover, an email signature, and a partner's slide at 30% scale. Anything that needs a different drawing at each of those is four marks, not one.</p>
+    <p>The halftone constants used here are the engine's own: staggered lattice, 15 degree screen angle, dot area carrying the value. Nothing new was invented for these, which is the point. <b>Ink is <span class="mono">#131312</span> throughout and no direction uses a second value that is not a dot.</b></p>
+  </div>
+</footer>
+
+<script>
+const INK='#131312';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------------------------------------------------------- helpers
+   All screen geometry uses the imagery engine's constants: a staggered
+   lattice at 15 degrees, with dot area carrying the value and opacity never
+   doing so. */
+const ANG=15*Math.PI/180, CS=Math.cos(ANG), SN=Math.sin(ANG);
+
+function lattice(W,H,pitch,fn){
+  const rowH=pitch*0.866, D=Math.hypot(W,H);
+  const N=Math.ceil(D/pitch)+2, M=Math.ceil(D/rowH)+2;
+  let s='';
+  for(let i=-M;i<=M;i++){
+    const sy=i*rowH;
+    for(let j=-N;j<=N;j++){
+      const sx=j*pitch+(i&1?pitch/2:0);
+      const x=sx*CS-sy*SN+W/2, y=sx*SN+sy*CS+H/2;
+      if(x<-pitch||x>W+pitch||y<-pitch||y>H+pitch) continue;
+      const r=fn(x,y);
+      if(r>0.22) s+=`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}"/>`;
+    }
+  }
+  return s;
+}
+
+/* A — the screen. A square carrying the brand's own ramp. */
+function markScreen(size,opt){
+  const o=opt||{}, S=100, pitch=o.pitch||9.5, rmax=o.rmax||3.5;
+  const dots=lattice(S,S,pitch,(x,y)=>{
+    let t=0.5*(x/S)+0.5*(y/S);
+    t=Math.max(0,Math.min(1,(t-0.06)/0.9));
+    return rmax*Math.pow(t,1.15);
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${S} ${S}" role="img" aria-label="Eleven One Research">
+    <defs><clipPath id="cs${size}${pitch}"><rect width="${S}" height="${S}" rx="23"/></clipPath></defs>
+    <g clip-path="url(#cs${size}${pitch})" fill="${o.ink||INK}">
+      <rect width="${S}" height="${S}" fill="${o.ink||INK}" opacity=".055"/>${dots}</g></svg>`;
+}
+
+/* B — the marked point. One solid dot in a field that dissolves outward. */
+function markPoint(size,opt){
+  const o=opt||{}, S=100, pitch=o.pitch||10, rmax=o.rmax||3.4, R=o.dot||9.5;
+  const dots=lattice(S,S,pitch,(x,y)=>{
+    const d=Math.hypot(x-S/2,y-S/2)/(S/2);
+    if(d<0.26) return 0;                       /* clearing around the point */
+    const t=Math.max(0,Math.min(1,(0.98-d)/0.62));
+    return rmax*Math.pow(t,1.3);
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${S} ${S}" role="img" aria-label="Eleven One Research">
+    <g fill="${o.ink||INK}">${dots}<circle cx="${S/2}" cy="${S/2}" r="${R}"/></g></svg>`;
+}
+
+/* C — the numerals. 11.1 in the committed face, the point drawn as the
+   emphasis dot the charts already use. */
+function markNumerals(size,opt){
+  const o=opt||{}, h=size, ink=o.ink||INK;
+  const fs=h*0.98, dot=h*0.115;
+  return `<svg width="${(h*1.72).toFixed(0)}" height="${h}" viewBox="0 0 ${(h*1.72).toFixed(1)} ${h}" role="img" aria-label="Eleven One Research">
+    <text x="0" y="${(h*0.79).toFixed(1)}" fill="${ink}" font-family="Familjen Grotesk, sans-serif"
+      font-size="${fs.toFixed(1)}" font-weight="500" letter-spacing="${(-0.045*fs).toFixed(2)}">11</text>
+    <circle cx="${(h*1.10).toFixed(1)}" cy="${(h*0.735).toFixed(1)}" r="${dot.toFixed(2)}" fill="${ink}"/>
+    <text x="${(h*1.30).toFixed(1)}" y="${(h*0.79).toFixed(1)}" fill="${ink}" font-family="Familjen Grotesk, sans-serif"
+      font-size="${fs.toFixed(1)}" font-weight="500" letter-spacing="${(-0.045*fs).toFixed(2)}">1</text></svg>`;
+}
+
+/* D — the load path. One conclusion carried by members of unequal weight. */
+function markPath(size,opt){
+  const o=opt||{}, S=100, ink=o.ink||INK, k=o.simple?1.34:1;
+  const top={x:50,y:22}, ys=70, xs=[19,50,81];
+  const w=[3.2*k,4.8*k,7.2*k];                  /* thin, mid, heavy: the standings */
+  let s='';
+  xs.forEach((x,i)=>{
+    const dy=(ys-top.y)*0.55;
+    s+=`<path d="M ${top.x} ${top.y+ (o.simple?7:8)} C ${top.x} ${top.y+dy}, ${x} ${ys-dy}, ${x} ${ys-(o.simple?7:8)}"
+      fill="none" stroke="${ink}" stroke-width="${(o.simple?3.4:2.6)}" stroke-linecap="round" opacity="${0.34+i*0.33}"/>`;
+  });
+  s+=`<circle cx="${top.x}" cy="${top.y}" r="${o.simple?10:8.4}" fill="${ink}"/>`;
+  xs.forEach((x,i)=>{
+    s+=`<rect x="${x-w[i]/2}" y="${ys-(o.simple?8:7)}" width="${w[i]}" height="${(o.simple?16:14)}"
+      rx="${w[i]/2}" fill="${ink}"/>`;
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${S} ${S}" role="img" aria-label="Eleven One Research">${s}</svg>`;
+}
+
+const DIRS=[
+  {k:'A', n:'The screen',
+   big:()=>markScreen(132),
+   lock:()=>markScreen(30,{pitch:13,rmax:4.6}),
+   small:i=>markScreen(i,{pitch:i<=20?22:17,rmax:i<=20?8:6.4}),
+   smallInk:(i,ink)=>markScreen(i,{pitch:i<=20?22:17,rmax:i<=20?8:6.4,ink}),
+   body:`<p>The mark is the renderer. A square carrying the brand's own halftone ramp at the engine's constants, which makes the identity and the imagery literally the same drawing rather than two things that resemble each other.</p>
+     <p>This is the only direction where the mark gets stronger as the practice publishes, because every rendered image is a restatement of it.</p>`,
+   risk:`<b>Risk.</b> A graded square is close to generic on its own, and it needs a coarser lattice below about 24px or the dots turn to mud. It says nothing about research; it only says the thing is made by one hand.`},
+
+  {k:'B', n:'The marked point',
+   big:()=>markPoint(132),
+   lock:()=>markPoint(30,{pitch:13,rmax:4.4,dot:12}),
+   small:i=>markPoint(i,{pitch:i<=20?26:20,rmax:i<=20?9:7,dot:i<=20?15:13}),
+   smallInk:(i,ink)=>markPoint(i,{pitch:i<=20?26:20,rmax:i<=20?9:7,dot:i<=20?15:13,ink}),
+   body:`<p>One solid dot with the field dissolving away from it. The dot is the same mark the charts already use for an emphasised value, and the dissolve is the same screen, so the logo is a statement of the house rule: <b>a point worth making, and the distribution it came out of.</b></p>
+     <p>It reads as an estimate and its surrounding uncertainty without drawing an error bar, which was the cliché the earlier version fell into.</p>`,
+   risk:`<b>Risk.</b> The silhouette is a soft circle, so it has less edge than the other three. It relies on the dissolve surviving reproduction, which it will on screen and in good print, and will not on a fax or a photocopied deck.`},
+
+  {k:'C', n:'The numerals',
+   big:()=>markNumerals(96),
+   lock:()=>markNumerals(24),
+   small:i=>markNumerals(i*0.86),
+   smallInk:(i,ink)=>markNumerals(i*0.86,{ink}),
+   body:`<p>No symbol. The name set as numerals in the committed face, with the decimal drawn rather than typed, at the size the charts use for an emphasised median. The one deliberate detail is that the point is the only round form in the mark.</p>
+     <p>Cheapest to own and impossible to draw wrong. PRODUCT.md already allows the numerals as a visual device, so this direction costs no new commitment.</p>`,
+   risk:`<b>Risk.</b> It is a wordmark, not a mark. It cannot sit alone on a report cover or a square avatar without the name beside it, and it gives the practice nothing to put where a symbol is expected.`},
+
+  {k:'D', n:'The load path',
+   big:()=>markPath(132),
+   lock:()=>markPath(30,{simple:true}),
+   small:i=>markPath(i,{simple:true}),
+   smallInk:(i,ink)=>markPath(i,{simple:true,ink}),
+   body:`<p>The signature move reduced to a glyph: one conclusion carried by three members of unequal weight. It is the only direction that states what the practice actually does rather than what it looks like.</p>
+     <p>It also encodes the rule. The heaviest member is the one doing the most work, and the conclusion sits on top of all three.</p>`,
+   risk:`<b>Risk.</b> The most literal of the four, and at small sizes it flattens toward a generic node diagram. It is also the direction most likely to be read as an org chart by someone who has not read the method page.`},
+];
+
+document.getElementById('dirs').innerHTML = DIRS.map(d=>`
+  <div class="dir">
+    <div class="dh"><span class="k">${d.k}</span><span class="n">${esc(d.n)}</span></div>
+    <div class="dbody">
+      <div class="stage">${d.big()}</div>
+      <div class="dtext">${d.body}<p class="risk">${d.risk}</p></div>
+    </div>
+    <div class="proof">
+      <div class="pcell">
+        <p class="lab">horizontal lockup</p>
+        <div class="lock">${d.lock()}<span class="wm">Eleven One <span>Research</span></span></div>
+      </div>
+      <div class="pcell">
+        <p class="lab">favicon 20 and 16</p>
+        <div class="smalls">${d.small(20)}${d.small(16)}
+          <span style="font-size:11.5px;color:var(--g70)">at size</span></div>
+      </div>
+      <div class="pcell">
+        <p class="lab">avatar, light / grey / dark</p>
+        <div class="smalls">
+          <span class="chip">${d.small(24)}</span>
+          <span class="chip grey">${d.small(24)}</span>
+          <span class="chip dark">${d.smallInk(24,'#FAFAF9')}</span>
+        </div>
+      </div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>

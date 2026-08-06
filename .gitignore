@@ -26,3 +26,15 @@ node_modules/
 # Editors
 .vscode/
 .idea/
+
+# Brainstorming session scratch
+.superpowers/
+
+# Reference material, explicitly not binding (see PRODUCT.md)
+*.zip
+
+# Prototype review screenshots, regenerable from the prototypes
+prototypes/png/
+
+# SDD workspace
+.superpowers/sdd/

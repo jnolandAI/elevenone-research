@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — achromatic system, accent study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#E8E8EA;color:#111114;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    letter-spacing:.1em;text-transform:uppercase}
+  .shell{max-width:1200px;margin:0 auto;padding:56px 24px 110px}
+  h1{font-size:27px;font-weight:500;letter-spacing:-.018em;margin:0 0 14px}
+  h2.sec{font-size:19px;font-weight:600;letter-spacing:-.012em;margin:64px 0 8px;
+    padding-top:26px;border-top:1px solid #D3D3D7}
+  .lede{font-size:14.5px;line-height:1.75;color:#4C4C52;max-width:78ch;margin:0 0 11px}
+  .tiny{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.6px;letter-spacing:.13em;
+    text-transform:uppercase;color:#9C9CA2;line-height:2.1}
+
+  .fixed{background:#fff;border:1px solid #D8D8DC;padding:22px 24px 24px;margin:26px 0 44px}
+  .fixed .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.17em;
+    text-transform:uppercase;color:#9C9CA2;margin-bottom:12px}
+  .scaleRow{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:1px;background:#E2E2E6}
+  .sw{background:#fff;padding:0}
+  .sw i{display:block;height:52px}
+  .sw .m{padding:7px 9px 10px}
+  .sw .n{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.2px;letter-spacing:.13em;
+    text-transform:uppercase;color:#9C9CA2}
+  .sw .h{font-family:'Martian Mono',monospace;font-weight:400;font-size:9px;margin-top:4px}
+  .sw .c{font-family:'Martian Mono',monospace;font-weight:300;font-size:7px;margin-top:3px}
+  .pass{color:#1F7A3D}.fail{color:#B3132A}
+
+  .acc{border:1px solid #D8D8DC;background:#fff;margin-bottom:26px}
+  .acc > .hd{display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid #E4E4E8;
+    flex-wrap:wrap}
+  .acc .dot{width:36px;height:36px;flex:none;border:1px solid rgba(0,0,0,.12)}
+  .acc .nm{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .acc .hex{font-family:'Martian Mono',monospace;font-weight:300;font-size:9px;color:#6C6C72}
+  .acc .prov{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.12em;
+    text-transform:uppercase;color:#9C9CA2;margin-left:auto;text-align:right}
+  .acc .verdict{font-size:13px;line-height:1.7;color:#54545A;max-width:84ch;padding:16px 22px 0}
+  .ramps{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:22px;padding:20px 22px 6px}
+  .ramp .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.8px;letter-spacing:.15em;
+    text-transform:uppercase;color:#9C9CA2;margin-bottom:8px}
+  .ramp .bar{display:flex;height:22px}.ramp .bar i{flex:1}
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px;padding:18px 22px 20px}
+  .fig .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.8px;letter-spacing:.15em;
+    text-transform:uppercase;color:#9C9CA2;margin-bottom:8px}
+  .fig .in{padding:11px 11px 7px;border:1px solid #E4E4E8}
+  .fig .cap{font-family:'Martian Mono',monospace;font-weight:300;font-size:7px;letter-spacing:.05em;
+    text-transform:uppercase;color:#A8A8AE;margin-top:7px;line-height:1.9}
+  svg{display:block;width:100%;height:auto}
+  .spec{margin:0 22px 22px;padding:26px 28px;border:1px solid #E4E4E8}
+  .spec .lbl{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.8px;letter-spacing:.16em;
+    text-transform:uppercase;color:#A2A2A8;margin-bottom:10px}
+  .spec h3{margin:0 0 12px;font-size:23px;font-weight:400;letter-spacing:-.017em;line-height:1.3;max-width:23ch}
+  .spec p{margin:0 0 10px;font-size:13.5px;line-height:1.72;max-width:62ch;color:#54545A}
+  .spec .hl{padding:1px 4px}
+  .conf{display:flex;gap:24px;margin-top:18px;flex-wrap:wrap}
+  .conf div{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.2px;letter-spacing:.1em;
+    text-transform:uppercase;display:flex;align-items:center;gap:7px}
+  .conf i{width:24px;height:3px;display:block}
+
+  .greys{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:22px}
+  .gcard{border:1px solid #D8D8DC;padding:24px 26px 26px}
+  .gcard .n{font-family:'Martian Mono',monospace;font-weight:400;font-size:9px;letter-spacing:.15em;
+    text-transform:uppercase;margin-bottom:4px}
+  .gcard .d{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.4px;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:16px}
+  .gcard h4{margin:0 0 9px;font-size:19px;font-weight:400;letter-spacing:-.014em;line-height:1.3}
+  .gcard p{margin:0;font-size:12.5px;line-height:1.7}
+  .gcard .strip{display:flex;height:16px;margin-top:16px}.gcard .strip i{flex:1}
+</style>
+</head>
+<body>
+<div class="shell">
+  <h1>Achromatic system, one accent</h1>
+  <p class="lede">No brand palette. The interface is a single grey scale, the object carries all of its material from light rather than hue, and exactly one accent exists. The only open decision is which accent, and how warm the grey underneath it should be.</p>
+  <p class="lede">Every chart is the same 2,186 SEC registrants, CY2024. The greyscale is held identical across all six so the accent is the only variable.</p>
+  <p class="tiny" style="margin:20px 0 0">Rule applied throughout: the accent marks the single most important value on a surface and nothing else. It never carries confidence, never fills a button, never appears twice where once will do.</p>
+
+  <div class="fixed">
+    <div class="k">Fixed interface scale &mdash; shared by every option below</div>
+    <div class="scaleRow" id="scale"></div>
+    <div class="k" style="margin:22px 0 12px">Object value ramp &mdash; what the rendered surface is coloured with</div>
+    <div class="scaleRow" id="objramp"></div>
+  </div>
+
+  <div id="out"></div>
+
+  <h2 class="sec">How warm should the grey be?</h2>
+  <p class="lede">A separate decision from the accent, and a real one. Cream and paper tones are out by your own constraint, but there is meaningful range between a blue-leaning grey and a warm-leaning one before anything reads as paper. Shown with gold, since that is where you are leaning.</p>
+  <div class="greys" id="greys"></div>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05"};
+
+/* fixed interface scale */
+const S = {
+  ground:'#E8E8EA', sheet:'#FFFFFF', ink:'#111114',
+  muted:'#6C6C72', faint:'#A2A2A8', rule:'#D3D3D7',
+};
+const OBJ = ['#DCDCDE','#B4B4B8','#828288','#505057','#2A2A30','#15151A'];
+
+const ACCENTS = [
+  { id:'graphite', name:'No accent', hex:'#1A1A1F',
+    prov:'The honest null option',
+    verdict:'Colour is absent entirely and emphasis comes from value alone. This is the most severe reading of what your gallery actually shows, and it is the only option that can never date. It also gives up the single point of recognition a brand normally lives on, and the categorical chart below is where it hurts.' },
+  { id:'antique', name:'Antique Gold', hex:'#A8842C',
+    prov:'Exploded mechanism, gold picking out components',
+    verdict:'Deep and slightly dulled, closer to brass hardware than to a signal colour. Against a cool grey it reads as metal rather than as branding, which is exactly what the exploded mechanism does with its gold. The safest of the golds and the one that holds contrast best at small sizes.' },
+  { id:'brass', name:'Brass', hex:'#C9A227',
+    prov:'Brighter reading of the same reference',
+    verdict:'More light in it, so a single marked point carries further across a large surface. The cost is that it starts to read as yellow rather than as metal, and yellow against a neutral grey is the closest this set comes to looking decorative.' },
+  { id:'bronze', name:'Bronze',  hex:'#87702B',
+    prov:'The gold pulled toward olive',
+    verdict:'The most restrained metal here and the most unusual. It sits close enough to the grey scale that it barely registers as colour until you look for it, which suits a brand whose whole claim is restraint. Its weakness is legibility: at 8px it is very nearly a dark grey.' },
+  { id:'copper', name:'Copper',  hex:'#A96A3C',
+    prov:'The Leibal lamp',
+    verdict:'Warmer and more human than the golds, and the only option that clearly reads as a material rather than a hue. It also pulls the whole page slightly warm, which fights the cool grey and would push the substrate decision in the next section toward the warm end.' },
+  { id:'vermilion', name:'Vermilion', hex:'#C2412B',
+    prov:'Union division points, the radio dial tick',
+    verdict:'Included as the control. It is the loudest and the most legible, it is genuinely present in two of your instrument references, and it is also the single most common accent in machine-generated design. I would not choose it over the golds unless you want the extra legibility badly.' },
+];
+
+const GREYS = [
+  { id:'cool', name:'Cool grey', d:'Blue leaning &middot; #E8E8EA',
+    ground:'#E8E8EA', ink:'#111114', muted:'#6C6C72', rule:'#D3D3D7',
+    strip:['#FFFFFF','#E8E8EA','#C8C8CE','#8A8A92','#3A3A42','#111114'] },
+  { id:'neutral', name:'Neutral grey', d:'No cast &middot; #EAEAE8',
+    ground:'#EAEAE8', ink:'#131312', muted:'#6E6E6B', rule:'#D5D5D2',
+    strip:['#FFFFFF','#EAEAE8','#CACAC7','#8C8C89','#3C3C3A','#131312'] },
+  { id:'warm', name:'Warm neutral', d:'Warm leaning, not cream &middot; #ECEBE6',
+    ground:'#ECEBE6', ink:'#15140F', muted:'#706E66', rule:'#D8D6CE',
+    strip:['#FFFFFF','#ECEBE6','#CDCBC3','#8E8C83','#3E3C36','#15140F'] },
+];
+
+/* ---------- helpers ---------- */
+const hx = h => parseInt(h.slice(1), 16);
+const rgbOf = h => [hx(h)>>16&255, hx(h)>>8&255, hx(h)&255];
+const toHex = a => '#' + a.map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+const mix = (a,b,t) => { const A=rgbOf(a), B=rgbOf(b); return toHex(A.map((v,i)=>v+(B[i]-v)*t)); };
+const srgb = c => { c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); };
+const lum = h => { const [r,g,b]=rgbOf(h); return .2126*srgb(r)+.7152*srgb(g)+.0722*srgb(b); };
+const ratio = (a,b) => { const l1=lum(a), l2=lum(b); return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function swatch(name, hexv, note){
+  const r = ratio(hexv, S.ground);
+  return `<div class="sw"><i style="background:${hexv}"></i><div class="m">
+    <div class="n">${name}</div><div class="h">${hexv.toUpperCase()}</div>
+    <div class="c ${note === null ? '' : (r >= note ? 'pass' : 'fail')}">${note === null ? '&nbsp;' : r.toFixed(2)+':1 '+(r>=note?'PASS':'FAIL')}</div>
+  </div></div>`;
+}
+document.getElementById('scale').innerHTML =
+  swatch('Ground', S.ground, null) + swatch('Sheet', S.sheet, null) +
+  swatch('Ink', S.ink, 4.5) + swatch('Muted', S.muted, 4.5) +
+  swatch('Faint', S.faint, 3) + swatch('Rule', S.rule, null);
+document.getElementById('objramp').innerHTML =
+  OBJ.map((c,i) => swatch('Step ' + (i+1), c, null)).join('');
+
+/* ---------- charts ---------- */
+function figHist(A){
+  const H = DATA.hist, N = DATA.nbins, W = 320, Ht = 126, max = Math.max(...H);
+  let bars = '';
+  for (let i = 0; i < N; i++){
+    const t = i/(N-1), h = (H[i]/max)*(Ht-28);
+    const x = 24 + (i/N)*(W-38), w = (W-38)/N - 1.2;
+    bars += `<rect x="${x.toFixed(1)}" y="${(Ht-15-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${OBJ[Math.min(5,Math.floor(t*6))]}"/>`;
+  }
+  const mx = 24 + ((DATA.median+0.05)/1.05)*(W-38);
+  return `<svg viewBox="0 0 ${W} ${Ht}">${bars}
+    <line x1="${mx.toFixed(1)}" y1="5" x2="${mx.toFixed(1)}" y2="${Ht-15}" stroke="${A.hex}" stroke-width="1.3" stroke-dasharray="3 3"/>
+    <text x="${(mx+5).toFixed(1)}" y="13" fill="${A.hex}" font-family="Martian Mono, monospace" font-size="6.2">MEDIAN 38.8%</text>
+    <line x1="24" y1="${Ht-15}" x2="${W-12}" y2="${Ht-15}" stroke="${S.ink}" stroke-width="1"/>
+    <text x="24" y="${Ht-4}" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">0%</text>
+    <text x="${W-32}" y="${Ht-4}" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">100%</text></svg>`;
+}
+function figDiv(A){
+  const B = DATA.buckets, W = 320, Ht = 144;
+  const maxDev = Math.max(...B.map(b => Math.abs(b.dev)));
+  const mid = W*0.5, rowH = (Ht-22)/B.length;
+  let rows = '';
+  B.forEach((b,i) => {
+    const y = 8 + i*rowH, w = (Math.abs(b.dev)/maxDev)*(W*0.42), t = Math.abs(b.dev)/maxDev;
+    const fill = b.dev >= 0 ? mix(S.ground, A.hex, .25+t*.75) : mix(S.ground, S.ink, .22+t*.72);
+    rows += `<rect x="${(b.dev>=0?mid:mid-w).toFixed(1)}" y="${(y+1).toFixed(1)}" width="${w.toFixed(1)}" height="${(rowH-2.2).toFixed(1)}" fill="${fill}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">${rows}
+    <line x1="${mid}" y1="4" x2="${mid}" y2="${Ht-12}" stroke="${S.ink}" stroke-width="1"/>
+    <text x="${mid-3}" y="${Ht-3}" text-anchor="end" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">BELOW MEDIAN</text>
+    <text x="${mid+3}" y="${Ht-3}" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">ABOVE</text></svg>`;
+}
+/* four series out of one accent: value plus line style, since hue is unavailable */
+function figCat(A){
+  const Ss = DATA.series, W = 320, Ht = 144;
+  const styles = [
+    { c:S.ink,   dash:'' },
+    { c:A.hex,   dash:'' },
+    { c:'#8A8A92', dash:'' },
+    { c:S.ink,   dash:'5 4' },
+  ];
+  let paths = '', key = '';
+  Ss.forEach((s,i) => {
+    const st = styles[i] || styles[3];
+    let d = '';
+    s.deciles.forEach((v,k) => {
+      const x = 24 + (k/10)*(W-40), y = Ht-26 - v*(Ht-46);
+      d += (k?' L':'M') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    paths += `<path d="${d}" fill="none" stroke="${st.c}" stroke-width="1.8" stroke-linejoin="round"${st.dash?` stroke-dasharray="${st.dash}"`:''}/>`;
+    key += `<text x="${24+i*74}" y="${Ht-3}" fill="${st.c}" font-family="Martian Mono, monospace" font-size="5.8">${esc(s.label.toUpperCase())}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    <line x1="24" y1="${Ht-26}" x2="${W-14}" y2="${Ht-26}" stroke="${S.ink}" stroke-width="1"/>
+    ${paths}${key}
+    <text x="2" y="18" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">100%</text>
+    <text x="6" y="${Ht-29}" fill="${S.faint}" font-family="Martian Mono, monospace" font-size="6.2">0%</text></svg>`;
+}
+
+/* ---------- render accents ---------- */
+const out = document.getElementById('out');
+for (const A of ACCENTS){
+  const seq = OBJ;
+  const div = [S.ink, mix(S.ground,S.ink,.4), S.ground, mix(S.ground,A.hex,.45), A.hex];
+  const cat = [S.ink, A.hex, '#8A8A92', S.ink];
+  const cr = ratio(A.hex, S.ground);
+  const crw = ratio(A.hex, '#FFFFFF');
+
+  const el = document.createElement('div');
+  el.className = 'acc';
+  el.innerHTML = `
+    <div class="hd">
+      <span class="dot" style="background:${A.hex}"></span>
+      <span class="nm">${esc(A.name)}</span>
+      <span class="hex">${A.hex.toUpperCase()}</span>
+      <span class="hex ${cr>=4.5?'pass':'fail'}">on ground ${cr.toFixed(2)}:1 ${cr>=4.5?'PASS':'FAIL'}</span>
+      <span class="hex ${crw>=4.5?'pass':'fail'}">on white ${crw.toFixed(2)}:1 ${crw>=4.5?'PASS':'FAIL'}</span>
+      <span class="prov">${esc(A.prov)}</span>
+    </div>
+    <p class="verdict">${esc(A.verdict)}</p>
+    <div class="ramps">
+      <div class="ramp"><div class="k">Sequential &mdash; achromatic</div><div class="bar">${seq.map(c=>`<i style="background:${c}"></i>`).join('')}</div></div>
+      <div class="ramp"><div class="k">Diverging &mdash; ink against accent</div><div class="bar">${div.map(c=>`<i style="background:${c}"></i>`).join('')}</div></div>
+      <div class="ramp"><div class="k">Categorical &mdash; value plus line style</div><div class="bar">${cat.map(c=>`<i style="background:${c}"></i>`).join('')}</div></div>
+    </div>
+    <div class="charts">
+      <div class="fig"><div class="k">Sequential</div><div class="in" style="background:${S.ground}">${figHist(A)}</div>
+        <div class="cap">Gross margin distribution, 2,186 registrants</div></div>
+      <div class="fig"><div class="k">Diverging</div><div class="in" style="background:${S.ground}">${figDiv(A)}</div>
+        <div class="cap">Median margin by revenue bucket, deviation from 38.8%</div></div>
+      <div class="fig"><div class="k">Categorical</div><div class="in" style="background:${S.ground}">${figCat(A)}</div>
+        <div class="cap">Margin deciles by size cohort, four series</div></div>
+    </div>
+    <div class="spec" style="background:${S.ground};border-color:${S.rule}">
+      <div class="lbl">Specimen</div>
+      <h3 style="color:${S.ink}">Consensus is pricing an adoption curve the deployment data will not support.</h3>
+      <p>Twelve of the forty verticals under coverage carry implied margin structures that observed deployment cannot reach before 2028. The gap is widest at <span class="hl" style="color:${A.hex}">71 percent implied against 54 observed</span>, and it is visible in filings that are already public.</p>
+      <div class="conf">
+        <div style="color:${S.ink}"><i style="background:${S.ink}"></i>High confidence</div>
+        <div style="color:#6C6C72"><i style="background:#6C6C72"></i>Moderate</div>
+        <div style="color:#A2A2A8"><i style="background:#A2A2A8"></i>Speculative</div>
+      </div>
+    </div>`;
+  out.appendChild(el);
+}
+
+/* ---------- grey families ---------- */
+const gwrap = document.getElementById('greys');
+const GOLD = '#A8842C';
+for (const G of GREYS){
+  const d = document.createElement('div');
+  d.className = 'gcard';
+  d.style.background = G.ground; d.style.borderColor = G.rule;
+  d.innerHTML = `
+    <div class="n" style="color:${G.ink}">${G.name}</div>
+    <div class="d" style="color:${G.muted}">${G.d}</div>
+    <h4 style="color:${G.ink}">The gap is not priced, and it is not obscure.</h4>
+    <p style="color:${G.muted}">Median gross margin across the universe is <span style="color:${GOLD}">38.8 percent</span>, and dispersion is widest where diligence is thinnest.</p>
+    <div class="strip">${G.strip.map(c=>`<i style="background:${c}"></i>`).join('')}<i style="background:${GOLD};flex:.5"></i></div>`;
+  gwrap.appendChild(d);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mark variations — Eleven One Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --g05:#FAFAF9; --g10:#F4F4F3; --g20:#EBEBEA; --g30:#DEDEDD; --g40:#C9C9C7;
+    --g50:#AEAEAC; --g70:#6C6C6A; --g80:#4A4A48; --ink:#131312;
+    --r-m:18px; --r-l:26px; --pill:999px;
+    --e1:0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
+    --e2:0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);
+    --e3:0 2px 6px rgba(20,20,18,.05), 0 20px 50px rgba(20,20,18,.08);
+    --ez:cubic-bezier(.16,.9,.24,1);
+  }
+  body{margin:0;color:var(--ink);-webkit-font-smoothing:antialiased;background:var(--g10);
+    font-family:'Familjen Grotesk',system-ui,sans-serif}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;letter-spacing:-.012em}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 10% -6%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#F6F6F5 0%, #F1F1F0 56%, #EAEAE9 100%)}
+  .frame{max-width:1180px;margin:0 auto;padding:0 26px}
+
+  .top{padding:76px 0 0;max-width:70ch}
+  .top h1{font-size:clamp(29px,3.5vw,42px);font-weight:500;letter-spacing:-.034em;line-height:1.08;
+    margin:0;color:var(--g70)}
+  .top h1 b{display:block;font-weight:500;color:var(--ink)}
+  .top p{font-size:16px;line-height:1.74;color:var(--g80);margin:22px 0 0;max-width:62ch}
+
+  section{margin-top:70px}
+  h2{font-size:22px;font-weight:600;letter-spacing:-.024em;margin:0 0 7px}
+  .sub{font-size:14px;line-height:1.72;color:var(--g70);max-width:74ch;margin:0 0 26px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:18px}
+  .m{border-radius:var(--r-l);background:linear-gradient(160deg,#FFFFFF 0%,#F7F7F6 100%);
+    box-shadow:var(--e2);overflow:hidden;transition:transform .35s var(--ez), box-shadow .35s var(--ez)}
+  .m:hover{transform:translateY(-4px);box-shadow:var(--e3)}
+  .m .stage{display:grid;place-items:center;height:190px;
+    background:linear-gradient(160deg,#FDFDFC 0%,#F4F4F3 100%);
+    box-shadow:inset 0 -1px 0 rgba(20,20,18,.055)}
+  .m .stage svg{display:block}
+  .m .meta{padding:16px 18px 14px}
+  .m .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:9.5px;color:var(--g70)}
+  .m .n{font-size:14.5px;font-weight:600;letter-spacing:-.014em;margin:5px 0 0}
+  .m .d{font-size:12px;line-height:1.6;color:var(--g70);margin:6px 0 0}
+  .m .sizes{display:flex;align-items:center;gap:14px;padding:13px 18px 16px;
+    box-shadow:inset 0 1px 0 rgba(20,20,18,.055)}
+  .m .sizes .lb{font-family:'Martian Mono',monospace;font-weight:300;font-size:9px;color:var(--g70);
+    margin-left:auto}
+  .chip{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:#fff;
+    box-shadow:var(--e1)}
+  .chip.dark{background:var(--ink)}
+
+  footer{margin-top:86px;padding:36px 0 90px;box-shadow:inset 0 1px 0 rgba(20,20,18,.07);
+    font-size:12.5px;color:var(--g70);line-height:1.76}
+  footer .frame{max-width:82ch}
+  footer b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="frame">
+  <div class="top">
+    <h1>Thirteen variations on the two that worked<b>the screen, the point, and what happens when they meet</b></h1>
+    <p>Both directions are the same object underneath: a lattice of dots whose area is driven by a field. Changing the field, the boundary and whether a point is marked in it produces everything below. Every variant uses the engine's staggered lattice at 15 degrees, and none of them uses opacity to carry a value.</p>
+  </div>
+
+  <section>
+    <h2>The screen</h2>
+    <p class="sub">A field with no marked point. The variable is the boundary and the direction the density runs.</p>
+    <div class="grid" id="gScreen"></div>
+  </section>
+
+  <section>
+    <h2>The point</h2>
+    <p class="sub">One solid dot with a field around it. The variable is where the point sits in its own distribution, which is a claim about what an estimate is.</p>
+    <div class="grid" id="gPoint"></div>
+  </section>
+
+  <section>
+    <h2>Both</h2>
+    <p class="sub">The screen's boundary carrying the point's content. These are the only variants that say two things at once: the work is rendered, and it lands somewhere.</p>
+    <div class="grid" id="gBoth"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="frame">
+    <p><b>How to read the small sizes.</b> The 20 and 16 pixel versions are drawn with a coarser lattice, not scaled down from the large one. Any dot mark needs that, the way a real halftone changes line screen for newsprint. What matters is whether the coarse cut still looks like the same mark, which is where several of these separate.</p>
+    <p>Ink is <span class="mono">#131312</span> throughout. Nothing here uses a second value that is not a dot.</p>
+  </div>
+</footer>
+
+<script>
+const INK='#131312';
+const ANG=15*Math.PI/180, CS=Math.cos(ANG), SN=Math.sin(ANG);
+let uid=0;
+
+function lattice(S,pitch,fn){
+  const rowH=pitch*0.866, D=S*1.45;
+  const N=Math.ceil(D/pitch)+2, M=Math.ceil(D/rowH)+2;
+  let s='';
+  for(let i=-M;i<=M;i++){
+    const sy=i*rowH;
+    for(let j=-N;j<=N;j++){
+      const sx=j*pitch+(i&1?pitch/2:0);
+      const x=sx*CS-sy*SN+S/2, y=sx*SN+sy*CS+S/2;
+      if(x<-pitch||x>S+pitch||y<-pitch||y>S+pitch) continue;
+      const r=fn(x,y);
+      if(r>0.22) s+=`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}"/>`;
+    }
+  }
+  return s;
+}
+
+/* One generator. Boundary, field and marked point are the three variables. */
+function mark(size,o){
+  o=o||{}; const S=100, ink=o.ink||INK, id='c'+(uid++);
+  const pitch=o.pitch||9.5, rmax=o.rmax||3.5, gamma=o.gamma||1.15;
+  const dx=o.dx==null?50:o.dx, dy=o.dy==null?50:o.dy;
+
+  const dots=lattice(S,pitch,(x,y)=>{
+    const u=x/S, v=y/S; let t;
+    if(o.field==='vertical')      t = v;
+    else if(o.field==='radial'){  const d=Math.hypot(x-dx,y-dy)/(S/2); t=(0.98-d)/0.62; }
+    else if(o.field==='skew'){    const d=Math.hypot((x-dx)*0.78,(y-dy)*1.24)/(S/2); t=(1.02-d)/0.66; }
+    else                          t = 0.5*u+0.5*v;              /* diagonal */
+    t=Math.max(0,Math.min(1,(t-(o.lo==null?0.06:o.lo))/(o.span||0.9)));
+    if(o.clear){ const d=Math.hypot(x-dx,y-dy)/(S/2); if(d<o.clear) return 0; }
+    if(!o.shape){ const e=Math.min(1,Math.min(x,S-x,y,S-y)/(S*0.11)); t*=e; }
+    return rmax*Math.pow(t,gamma);
+  });
+
+  let clip='', open='', close='';
+  if(o.shape==='square'){
+    clip=`<clipPath id="${id}"><rect width="${S}" height="${S}" rx="${o.rx==null?23:o.rx}"/></clipPath>`;
+    open=`<g clip-path="url(#${id})">`; close='</g>';
+  } else if(o.shape==='circle'){
+    clip=`<clipPath id="${id}"><circle cx="${S/2}" cy="${S/2}" r="${S/2}"/></clipPath>`;
+    open=`<g clip-path="url(#${id})">`; close='</g>';
+  }
+  const plate = o.shape && o.plate!==false
+    ? `<rect width="${S}" height="${S}" fill="${ink}" opacity="${o.plateA||.055}"/>` : '';
+  const point = o.dot ? `<circle cx="${dx}" cy="${dy}" r="${o.dot}" fill="${ink}"/>` : '';
+
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${S} ${S}" role="img"
+    aria-label="Eleven One Research"><defs>${clip}</defs>
+    ${open}${plate}<g fill="${ink}">${dots}</g>${point}${close}</svg>`;
+}
+
+/* Small cuts are coarser drawings, not scaled-down ones. */
+const coarse = o => Object.assign({},o,{
+  pitch:(o.pitch||9.5)*2.3, rmax:(o.rmax||3.5)*2.15,
+  dot:o.dot?o.dot*1.35:0, rx:o.rx==null?23:o.rx
+});
+
+const SCREEN=[
+  {k:'S1',n:'Rounded square',d:'The original. Density runs corner to corner.',
+   o:{shape:'square',field:'diagonal'}},
+  {k:'S2',n:'Roundel',d:'Same field, circular boundary. Less of an app icon, more of a stamp.',
+   o:{shape:'circle',field:'diagonal'}},
+  {k:'S3',n:'Unbounded',d:'No boundary at all. The dissolve is the silhouette.',
+   o:{field:'diagonal',rmax:3.8}},
+  {k:'S4',n:'Rising',d:'Density runs bottom to top rather than diagonally.',
+   o:{shape:'square',field:'vertical',lo:0.02,span:.94}},
+  {k:'S5',n:'Aperture',d:'The same ramp with a void cut out of it. The empty centre is the mark.',
+   o:{shape:'square',field:'diagonal',clear:0.34}},
+];
+
+const POINT=[
+  {k:'P1',n:'Centred',d:'The original. The estimate sits at the centre of its distribution.',
+   o:{field:'radial',dot:9.5,clear:0.26,pitch:10,rmax:3.4}},
+  {k:'P2',n:'Off-centre',d:'The point sits away from the middle of the mass. A truer claim about most estimates.',
+   o:{field:'radial',dx:50,dy:50,dot:9.5,clear:0.26,pitch:10,rmax:3.4,gamma:1.3,offset:true}},
+  {k:'P3',n:'Skewed',d:'The field is taller than it is wide, so the distribution has a shape rather than a radius.',
+   o:{field:'skew',dot:9.5,clear:0.28,pitch:10,rmax:3.5}},
+  {k:'P4',n:'Contained',d:'The same point clipped into the square, which gives it an edge it otherwise lacks.',
+   o:{shape:'square',field:'radial',dot:10,clear:0.26,pitch:10,rmax:4.4,span:1.2}},
+  {k:'P5',n:'Tight',d:'Smaller clearing, denser field, smaller dot. The most compact silhouette of the five.',
+   o:{field:'radial',dot:7.5,clear:0.19,pitch:8,rmax:3.0}},
+];
+
+const BOTH=[
+  {k:'B1',n:'Screen with a point',d:'The ramp square with one solid dot marked in the dense end. The renderer, and the thing it found.',
+   o:{shape:'square',field:'diagonal',dot:8.6,dx:66,dy:64,clear:0.2}},
+  {k:'B2',n:'Roundel with a point',d:'The same, in the circular boundary. Reads as a lens rather than a tile.',
+   o:{shape:'circle',field:'diagonal',dot:8.6,dx:64,dy:62,clear:0.2}},
+  {k:'B3',n:'Point in an aperture',d:'The ramp with a void cut out and the point sitting alone inside it.',
+   o:{shape:'square',field:'diagonal',clear:0.36,dot:8.2}},
+];
+
+function card(v){
+  /* P2 places the point off the centre of its own field */
+  const big = v.o.offset ? mark(122,Object.assign({},v.o,{dx:50,dy:50,dot:0}))
+                             .replace('</svg>',`<circle cx="63" cy="40" r="9.5" fill="${INK}"/></svg>`)
+                         : mark(122,v.o);
+  const sm = s => v.o.offset
+    ? mark(s,Object.assign({},coarse(v.o),{dot:0})).replace('</svg>',`<circle cx="63" cy="40" r="13" fill="${INK}"/></svg>`)
+    : mark(s,coarse(v.o));
+  const dk = mark(22,Object.assign({},coarse(v.o),{ink:'#FAFAF9'}));
+  return `<div class="m">
+    <div class="stage">${big}</div>
+    <div class="meta"><span class="k">${v.k}</span><p class="n">${v.n}</p><p class="d">${v.d}</p></div>
+    <div class="sizes">${sm(22)}${sm(16)}<span class="chip dark">${dk}</span>
+      <span class="lb">22 &middot; 16 &middot; dark</span></div>
+  </div>`;
+}
+
+document.getElementById('gScreen').innerHTML=SCREEN.map(card).join('');
+document.getElementById('gPoint').innerHTML=POINT.map(card).join('');
+document.getElementById('gBoth').innerHTML=BOTH.map(card).join('');
+</script>
+</body>
+</html>

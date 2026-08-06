@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Typeface decision — Eleven One Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@400;500;600;700&family=Archivo:wght@400;500;600;700&family=Wix+Madefor+Display:wght@400;500;600;700&family=Wix+Madefor+Text:wght@400;500;600;700&family=Martian+Mono:wght@300;400&family=DM+Mono:wght@300;400;500&family=Spline+Sans+Mono:wght@300;400&family=Chivo+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --g05:#FAFAF9; --g10:#F4F4F3; --g20:#EBEBEA; --g30:#DEDEDD;
+    --g40:#C9C9C7; --g50:#AEAEAC; --g70:#6C6C6A; --g80:#4A4A48; --ink:#131312;
+    --r-s:12px; --r-m:18px; --r-l:26px; --r-xl:40px; --pill:999px;
+    --e1:0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
+    --e2:0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);
+    --e3:0 2px 6px rgba(20,20,18,.05), 0 20px 50px rgba(20,20,18,.08);
+    --ez:cubic-bezier(.16,.9,.24,1);
+    --sans:'Familjen Grotesk'; --text:'Familjen Grotesk'; --mono:'Martian Mono';
+    --adj:1; --adjd:1;
+  }
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);-webkit-font-smoothing:antialiased;background:var(--g10);
+    font-family:'Familjen Grotesk',system-ui,sans-serif}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(900px 600px at 10% -6%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#F6F6F5 0%, #F1F1F0 56%, #EAEAE9 100%)}
+  .frame{max-width:1120px;margin:0 auto;padding:0 26px}
+
+  .top{padding:76px 0 8px;max-width:74ch}
+  .top h1{font-size:clamp(28px,3.6vw,44px);font-weight:500;letter-spacing:-.034em;line-height:1.1;
+    margin:0;color:var(--g70)}
+  .top h1 b{display:block;font-weight:500;color:var(--ink)}
+  .top p{font-size:16px;line-height:1.74;color:var(--g80);margin:22px 0 0;max-width:62ch}
+
+  section{margin-top:88px}
+  h2{font-size:24px;font-weight:600;letter-spacing:-.026em;margin:0 0 8px}
+  .sub{font-size:14.5px;line-height:1.72;color:var(--g70);max-width:70ch;margin:0 0 30px}
+
+  .card{border-radius:var(--r-l);background:linear-gradient(160deg,#FFFFFF 0%,#F7F7F6 100%);
+    box-shadow:var(--e2);padding:28px 30px 26px;margin-bottom:18px}
+  .card:last-child{margin-bottom:0}
+  .tag{display:flex;align-items:baseline;gap:12px;margin:0 0 20px;flex-wrap:wrap}
+  .tag .n{font-size:14px;font-weight:600;letter-spacing:-.012em;font-family:'Familjen Grotesk',sans-serif}
+  .tag .w{font-size:11.5px;color:var(--g70);font-family:'Familjen Grotesk',sans-serif}
+  .tag .x{font-size:10.5px;color:var(--g70);margin-left:auto;
+    font-family:'Martian Mono',monospace;font-weight:300}
+
+  /* every specimen inherits the candidate's faces and optical size correction */
+  .sp{font-family:var(--sans),system-ui,sans-serif}
+  .sp .disp{font-size:calc(46px * var(--adjd));font-weight:500;letter-spacing:-.036em;
+    line-height:1.06;color:var(--g70);margin:0;max-width:18ch}
+  .sp .disp b{display:block;font-weight:500;color:var(--ink)}
+  .sp .h2{font-size:calc(25px * var(--adjd));font-weight:600;letter-spacing:-.026em;
+    margin:0 0 12px;color:var(--ink)}
+  .sp .body{font-family:var(--text),system-ui,sans-serif;
+    font-size:calc(17px * var(--adj));line-height:1.76;color:var(--g80);max-width:62ch;margin:0}
+  .sp .body + .body{margin-top:18px}
+  .sp .cl{color:var(--ink);font-weight:500}
+  .sp .cap{font-family:var(--text),system-ui,sans-serif;
+    font-size:calc(12.5px * var(--adj));line-height:1.68;color:var(--g70);max-width:70ch;margin:0}
+  .sp .mono{font-family:var(--mono),ui-monospace,monospace;font-weight:300;
+    font-variant-numeric:tabular-nums;letter-spacing:-.012em}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:30px 40px}
+  .rows{display:flex;flex-direction:column;gap:26px}
+
+  /* numerals proof: a real column of figures, checked for alignment */
+  table{border-collapse:collapse;width:100%;max-width:420px}
+  td,th{padding:5px 0;text-align:left;font-weight:400}
+  th{font-size:calc(11px * var(--adj));color:var(--g70);padding-bottom:9px}
+  td.l{font-size:calc(13.5px * var(--adj));color:var(--g80)}
+  td.v{font-family:var(--mono),ui-monospace,monospace;font-weight:300;
+    font-variant-numeric:tabular-nums;font-size:calc(12px * var(--adj));text-align:right;
+    color:var(--ink);letter-spacing:-.012em}
+
+  .note{font-size:12.5px;line-height:1.72;color:var(--g70);margin:18px 0 0;max-width:80ch;
+    font-family:'Familjen Grotesk',sans-serif}
+  .note b{color:var(--ink);font-weight:600}
+
+  /* ---------- live switch ---------- */
+  .switch{position:sticky;top:0;z-index:30;margin-top:88px;padding:14px 0;
+    backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+    background:linear-gradient(180deg,rgba(250,250,249,.9),rgba(250,250,249,.66));
+    box-shadow:0 1px 0 rgba(20,20,18,.06), 0 8px 24px rgba(20,20,18,.04)}
+  .switch .frame{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .switch .lab{font-size:12.5px;color:var(--g70);margin-right:6px;
+    font-family:'Familjen Grotesk',sans-serif}
+  .opt{font-family:'Familjen Grotesk',sans-serif;font-size:13px;cursor:pointer;
+    padding:9px 16px;border-radius:var(--pill);border:0;color:var(--g80);
+    background:rgba(255,255,255,.72);box-shadow:var(--e1);
+    transition:transform .3s var(--ez), box-shadow .3s, background .3s, color .3s}
+  .opt:hover{transform:translateY(-1px);box-shadow:var(--e2)}
+  .opt[aria-pressed=true]{background:var(--ink);color:#fff;
+    box-shadow:0 2px 6px rgba(20,20,18,.2),0 10px 24px rgba(20,20,18,.16)}
+
+  /* ---------- the in-place sample, real brief chrome ---------- */
+  .live{margin-top:34px}
+  .lnav{display:flex;align-items:center;gap:24px;padding:14px 26px;border-radius:var(--r-m);
+    background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.66));
+    box-shadow:var(--e1);margin-bottom:34px}
+  .lnav .b{font-size:15px;font-weight:600;letter-spacing:-.02em}
+  .lnav .ls{display:flex;gap:20px;margin-left:auto;font-size:13.5px;color:var(--g70)}
+  .lhero{max-width:780px}
+  .lkind{font-size:12.5px;color:var(--g70);margin:0 0 16px}
+  .lkind b{color:var(--ink);font-weight:600}
+  .lmeta{display:flex;flex-wrap:wrap;gap:9px 24px;margin-top:28px;font-size:12.5px;color:var(--g70)}
+  .lmeta b{color:var(--g80);font-weight:500}
+  .lstand{font-size:calc(17.5px * var(--adj));line-height:1.64;color:var(--g80);max-width:50ch;
+    margin:24px 0 0;font-family:var(--text),sans-serif}
+  .ldoc{display:grid;grid-template-columns:minmax(0,624px) minmax(0,300px);gap:60px;
+    justify-content:center;align-items:start;margin-top:62px}
+  .lfig{border-radius:var(--r-l);background:linear-gradient(160deg,#FFFFFF 0%,#F7F7F6 100%);
+    box-shadow:var(--e2);padding:24px 26px 22px;margin:30px 0 0}
+  .lfig .t{font-size:calc(15.5px * var(--adj));font-weight:600;letter-spacing:-.014em}
+  .lfig .d{font-size:calc(12.5px * var(--adj));color:var(--g70);margin:7px 0 14px;line-height:1.66;
+    font-family:var(--text),sans-serif}
+  .lfig svg{display:block;width:100%;height:auto}
+  .ci{border-radius:var(--r-m);background:linear-gradient(160deg,#FFFFFF 0%,#F8F8F7 100%);
+    box-shadow:var(--e2);padding:14px 15px;margin-bottom:10px}
+  .ci .let{font-family:var(--mono),monospace;font-size:calc(9.5px * var(--adj));color:var(--g70);
+    font-weight:400}
+  .ci .txt{font-size:calc(12.5px * var(--adj));line-height:1.56;letter-spacing:-.006em;
+    color:var(--ink);font-weight:500;margin:6px 0 0;font-family:var(--text),sans-serif}
+  .ci .std{display:block;font-size:calc(11px * var(--adj));font-weight:400;color:var(--g70);
+    margin-top:6px}
+  .ci .std b{font-weight:600;color:var(--ink)}
+  .rh{font-size:calc(13.5px * var(--adj));font-weight:600;letter-spacing:-.012em;margin:0 0 14px}
+
+  footer{margin-top:96px;padding:40px 0 90px;box-shadow:inset 0 1px 0 rgba(20,20,18,.07);
+    font-size:12.5px;color:var(--g70);line-height:1.74}
+  footer .frame{max-width:80ch}
+
+  button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  @media (max-width:900px){ .ldoc{grid-template-columns:1fr;gap:40px} }
+  @media (prefers-reduced-motion:reduce){ *,*::before,*::after{transition-duration:.001ms !important} }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div class="frame">
+  <div class="top">
+    <h1>Four free pairings<b>set in the brief that has to carry them</b></h1>
+    <p>Every specimen below uses real copy and real figures from Brief 001. Sizes are corrected for x-height, so the faces are compared at the same optical size rather than the same nominal one. The correction factor is printed on each card.</p>
+  </div>
+</div>
+
+<div class="frame">
+  <section>
+    <h2>The display test</h2>
+    <p class="sub">The brief title at 46px and -0.036em tracking, which is where the system runs its display. A face that loosens up or collides at this tracking is out, whatever else it does well.</p>
+    <div id="dispCards"></div>
+  </section>
+
+  <section>
+    <h2>The reading test</h2>
+    <p class="sub">The opening of Brief 001 at 17px and 1.76 line height, at the real measure. This is where most of a reader's time actually goes.</p>
+    <div id="readCards"></div>
+  </section>
+
+  <section>
+    <h2>The numerals test</h2>
+    <p class="sub">The one that matters most here. Figures inside a sentence must sit in the text without breaking it, and standalone values must align in a column. Both are shown, in the pairing's own text face and its mono.</p>
+    <div id="numCards"></div>
+  </section>
+</div>
+
+<div class="switch">
+  <div class="frame">
+    <span class="lab">See it in place</span>
+    <div id="opts" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+  </div>
+</div>
+
+<div class="frame live">
+  <div class="lnav">
+    <span class="b sp" style="font-family:var(--sans),sans-serif">Eleven One Research</span>
+    <span class="ls sp" style="font-family:var(--text),sans-serif">
+      <span>Briefs</span><span>Reports</span><span>Method</span><span>About</span></span>
+  </div>
+
+  <div class="sp lhero">
+    <p class="lkind"><b>Brief 001</b> &middot; Cross-sector financial analysis</p>
+    <p class="disp">Reported gross margin is not one distribution<b>The peer median sits between two of them</b></p>
+    <p class="lstand">We pulled every SEC registrant that reported both revenue and gross profit for calendar 2024. The median is 38.8%. About one company in six sits within five points of it, and almost exactly as many report above 70%.</p>
+    <div class="lmeta">
+      <span>Published <b>6 August 2026</b></span>
+      <span><b>4 min</b> read</span>
+      <span>Universe <b class="num">2,186</b> registrants</span>
+    </div>
+  </div>
+
+  <div class="sp ldoc">
+    <div>
+      <p class="h2">The spread swamps the middle</p>
+      <p class="body">A benchmark is only useful when the distribution around it is tight enough that distance from it means something. This one is not. <span class="cl">Half the universe reports a gross margin between 23.1% and 59.7%, and about one company in six sits within five points of the 38.8% median.</span> Eight companies in ten fall in a band 64 points wide.</p>
+      <div class="lfig">
+        <div class="t">Spread by size cohort</div>
+        <p class="d">Light track is the tenth to ninetieth percentile, the darker band is the interquartile range, the dot is the median.</p>
+        <div id="liveFig"></div>
+      </div>
+    </div>
+    <div>
+      <p class="rh">Claims in this brief</p>
+      <div class="ci">
+        <span class="let">A</span>
+        <p class="txt">Half the universe spans 23.1% to 59.7%, and one company in six sits within five points of the median.
+          <span class="std"><b>Firm</b> &middot; n=2,186</span></p>
+      </div>
+      <div class="ci">
+        <span class="let">C</span>
+        <p class="txt">A second concentration near 70% margin that a single median cannot represent.
+          <span class="std"><b>Supported</b> &middot; density feature</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="frame">
+    <p><b>Considered and excluded.</b> Geist and Geist Mono are excellent and free, and they have become a strong tell of AI and developer-tool products through 2025, which puts them in the same category as the faces already ruled out. The mechanical design detector flags Geist by name on sight, which settled it. Bricolage Grotesque has too much personality for a face that has to disappear under twelve hundred words of analysis. Public Sans is safe to the point of having no position. Inter is the default that every other default is measured against.</p>
+    <p>All four pairings below are SIL Open Font License and served by Google Fonts, so they cost nothing and can be self-hosted. Figures are from the CY2024 SEC XBRL pull.</p>
+  </div>
+</footer>
+
+<script>
+const COHORTS=[
+  {label:'Under $30m',n:607,p10:.0901,p25:.2196,p50:.4080,p75:.6295,p90:.8121},
+  {label:'$30m to $150m',n:339,p10:.0746,p25:.2030,p50:.3579,p75:.6024,p90:.7539},
+  {label:'$150m to $600m',n:360,p10:.1686,p25:.2852,p50:.4411,p75:.6569,p90:.7698},
+  {label:'$600m to $2.5bn',n:427,p10:.1726,p25:.2625,p50:.3983,p75:.5912,p90:.7641},
+  {label:'$2.5bn to $10bn',n:302,p10:.1459,p25:.2269,p50:.3659,p75:.5313,p90:.6998},
+  {label:'Over $10bn',n:151,p10:.0836,p25:.1678,p50:.2918,p75:.4739,p90:.6106},
+];
+
+const CANDS=[
+  {id:'familjen', name:'Familjen Grotesk + Martian Mono',
+   sans:'Familjen Grotesk', text:'Familjen Grotesk', mono:'Martian Mono',
+   w:'Incumbent. Swedish grotesque, one optical size.',
+   note:'The face the system was built in. Real character in the a, g and R, and it takes tight display tracking without complaint. Its risk is that one optical size has to serve both a 46px title and 17px body, and it was drawn nearer the display end. Martian Mono is very wide, which is why it is now confined to standalone values.'},
+  {id:'schibsted', name:'Schibsted Grotesk + DM Mono',
+   sans:'Schibsted Grotesk', text:'Schibsted Grotesk', mono:'DM Mono',
+   w:'Norwegian news family, drawn for editorial.',
+   note:'Drawn for a newspaper group, which is exactly this problem: long text that has to stay comfortable, headlines that have to hold weight. Quieter than Familjen and slightly warmer. It says publication without dressing as a document. DM Mono is narrow and recedes, which suits a readout that should not shout.'},
+  {id:'archivo', name:'Archivo + Spline Sans Mono',
+   sans:'Archivo', text:'Archivo', mono:'Spline Sans Mono',
+   w:'American grotesque, very wide range.',
+   note:'A workhorse with a large weight and width range, including condensed and expanded cuts that would give a display voice without buying anything. Slightly industrial, a little more anonymous than Familjen. Strong tabular figures. The risk is that anonymity: it is competent everywhere and distinctive nowhere.'},
+  {id:'madefor', name:'Wix Madefor Display + Text + Chivo Mono',
+   sans:'Wix Madefor Display', text:'Wix Madefor Text', mono:'Chivo Mono',
+   w:'Superfamily with a real optical split.',
+   note:'The only candidate here with separate display and text cuts, which is the correct answer to setting a 46px title and 17px body from one family. Display is tighter and more closed; Text opens up for reading. Very little used, so it carries no association. Chivo Mono is a quiet grotesque mono with unambiguous figures, used only for standalone values.'},
+];
+
+/* ---------- optical size correction ----------
+   Faces at the same nominal size are not the same size. Every specimen is
+   scaled so its x-height matches the incumbent, otherwise the comparison is
+   between sizes rather than between faces. */
+function xh(family){
+  const c=document.createElement('canvas').getContext('2d');
+  c.font='200px "'+family+'"';
+  const m=c.measureText('x');
+  return m.actualBoundingBoxAscent||0;
+}
+/* A face must actually be loaded before canvas can measure it. document.fonts
+   .ready only settles what has already been requested, and nothing has drawn
+   in these families yet, so each one is loaded explicitly first. */
+async function computeAdj(){
+  const fams=[...new Set(CANDS.flatMap(c=>[c.sans,c.text,c.mono]))];
+  await Promise.all(fams.map(f=>document.fonts.load('200px "'+f+'"').catch(()=>{})));
+  const ref=xh('Familjen Grotesk')||1;
+  for(const c of CANDS){
+    const v=xh(c.text);
+    c.adj = v ? Math.round((ref/v)*1000)/1000 : 1;
+    /* the display face is a different face in a superfamily, so it gets its own
+       correction: comparing 46px titles at the text face's factor is unfair */
+    const d=xh(c.sans);
+    c.adjd = d ? Math.round((ref/d)*1000)/1000 : c.adj;
+    if(!document.fonts.check('200px "'+c.text+'"')) console.warn('not loaded:',c.text);
+  }
+}
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const head=c=>`<div class="tag"><span class="n">${esc(c.name)}</span>
+  <span class="w">${esc(c.w)}</span><span class="x">x-adj ${c.adj.toFixed(3)}${
+    c.adjd!==c.adj?' / '+c.adjd.toFixed(3):''}</span></div>`;
+const vars=c=>`--sans:'${c.sans}';--text:'${c.text}';--mono:'${c.mono}';--adj:${c.adj};--adjd:${c.adjd}`;
+
+function build(){
+  document.getElementById('dispCards').innerHTML = CANDS.map(c=>`
+    <div class="card"><div style="${vars(c)}">${head(c)}
+      <div class="sp"><p class="disp">Reported gross margin is not one distribution<b>The peer median sits between two of them</b></p></div>
+    </div></div>`).join('');
+
+  document.getElementById('readCards').innerHTML = `<div class="grid2">` + CANDS.map(c=>`
+    <div class="card" style="${vars(c)};margin-bottom:0">${head(c)}
+      <div class="sp">
+        <p class="h2">The spread swamps the middle</p>
+        <p class="body">Every diligence process we have worked inside anchors gross margin to a peer median. Pull a comparable set, take the middle, treat the distance from it as a finding. The method survives because it is fast and because the number it produces always looks like an answer.</p>
+        <p class="body">We wanted to know what that median is actually summarising. <span class="cl">Half the universe reports a gross margin between 23.1% and 59.7%.</span></p>
+      </div>
+      <p class="note">${esc(c.note)}</p>
+    </div>`).join('') + `</div>`;
+
+  document.getElementById('numCards').innerHTML = `<div class="grid2">` + CANDS.map(c=>`
+    <div class="card" style="${vars(c)};margin-bottom:0">${head(c)}
+      <div class="sp rows">
+        <div>
+          <p class="cap" style="margin-bottom:8px">In a sentence, text face, tabular figures on</p>
+          <p class="body">Across 2,186 registrants the median is 38.8%, the interquartile range runs 23.1% to 59.7%, and 339 filers report above 70%. Retrieved 2026-08-05.</p>
+        </div>
+        <div>
+          <p class="cap" style="margin-bottom:10px">Standing alone, mono, checked for column alignment</p>
+          <table>
+            <tr><th>Revenue cohort</th><th style="text-align:right">Median</th><th style="text-align:right">p10 to p90</th></tr>
+            ${COHORTS.map(k=>`<tr><td class="l">${esc(k.label)}</td>
+              <td class="v">${(k.p50*100).toFixed(1)}%</td>
+              <td class="v">${((k.p90-k.p10)*100).toFixed(1)}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>
+    </div>`).join('') + `</div>`;
+
+  document.getElementById('opts').innerHTML = CANDS.map((c,i)=>
+    `<button class="opt" data-i="${i}" aria-pressed="${i===0}">${esc(c.name.split(' + ')[0])}</button>`).join('');
+  for(const b of document.querySelectorAll('.opt')) b.addEventListener('click',()=>pick(+b.dataset.i));
+  pick(0);
+}
+
+function pick(i){
+  const c=CANDS[i], r=document.documentElement.style;
+  r.setProperty('--sans',"'"+c.sans+"'");
+  r.setProperty('--text',"'"+c.text+"'");
+  r.setProperty('--mono',"'"+c.mono+"'");
+  r.setProperty('--adj',c.adj);
+  r.setProperty('--adjd',c.adjd);
+  for(const b of document.querySelectorAll('.opt')) b.setAttribute('aria-pressed', b.dataset.i==i);
+}
+
+/* the real range plot, so the figure's labels are set in the candidate too */
+function liveFigure(){
+  const W=560,Ht=210,L=112,R=W-42,T=10,rowH=(Ht-T-30)/COHORTS.length, X=v=>L+v*(R-L);
+  const SP=['#EBEBEA','#DEDEDD','#C9C9C7','#AEAEAC','#8C8C8A','#6C6C6A','#4A4A48'];
+  let o='';
+  COHORTS.forEach((c,i)=>{
+    const y=T+i*rowH+rowH/2;
+    o+=`<line x1="${L}" y1="${y.toFixed(1)}" x2="${R}" y2="${y.toFixed(1)}" stroke="#EFEFEE" stroke-width="1"/>`;
+    o+=`<rect x="${X(c.p10).toFixed(1)}" y="${(y-2.5).toFixed(1)}" width="${(X(c.p90)-X(c.p10)).toFixed(1)}" height="5" rx="2.5" fill="#C9C9C7"/>`;
+    o+=`<rect x="${X(c.p25).toFixed(1)}" y="${(y-5).toFixed(1)}" width="${(X(c.p75)-X(c.p25)).toFixed(1)}" height="10" rx="5" fill="#4A4A48"/>`;
+    o+=`<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="#131312"/>`;
+    o+=`<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="none" stroke="#FAFAF9" stroke-width="1.4"/>`;
+    o+=`<text x="${L-12}" y="${(y+3.6).toFixed(1)}" text-anchor="end" fill="#4A4A48" font-family="var(--text)" font-size="10.5">${esc(c.label)}</text>`;
+    o+=`<text x="${R+8}" y="${(y+3.6).toFixed(1)}" fill="#131312" font-family="var(--mono)" font-size="9.5">${Math.round(c.p50*100)}%</text>`;
+  });
+  const yb=T+COHORTS.length*rowH+6;
+  o+=`<line x1="${L}" y1="${yb.toFixed(1)}" x2="${R}" y2="${yb.toFixed(1)}" stroke="#DEDEDD" stroke-width="1"/>`;
+  for(const v of [0,.25,.5,.75,1])
+    o+=`<line x1="${X(v).toFixed(1)}" y1="${yb.toFixed(1)}" x2="${X(v).toFixed(1)}" y2="${(yb+4).toFixed(1)}" stroke="#DEDEDD" stroke-width="1"/>
+      <text x="${X(v).toFixed(1)}" y="${(yb+16).toFixed(1)}" text-anchor="middle" fill="#6C6C6A" font-family="var(--mono)" font-size="9">${Math.round(v*100)}%</text>`;
+  document.getElementById('liveFig').innerHTML=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Percentile ranges by revenue cohort.">${o}</svg>`;
+}
+
+(async ()=>{
+  if(document.fonts){ await document.fonts.ready; await computeAdj(); }
+  build(); liveFigure();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — neutral grey and brass, modern register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --g0:#FFFFFF; --g1:#F5F5F3; --g2:#EFEFED; --g3:#EAEAE8; --g4:#E1E1DE; --g5:#D2D2CE;
+    --ink:#131312; --ink2:#3A3A37; --mut:#6E6E6B; --fnt:#9B9B97;
+    --brass:#C9A227; --brass-lo:#E0C25C; --brass-hi:#A5811C; --brass-txt:#6E5A1E;
+    --r-s:10px; --r-m:16px; --r-l:24px; --r-xl:34px;
+    --e1:0 1px 2px rgba(28,28,24,.045), 0 2px 6px rgba(28,28,24,.04);
+    --e2:0 1px 2px rgba(28,28,24,.04), 0 6px 16px rgba(28,28,24,.055);
+    --e3:0 2px 4px rgba(28,28,24,.04), 0 12px 32px rgba(28,28,24,.07);
+    --e4:0 4px 8px rgba(28,28,24,.045), 0 24px 60px rgba(28,28,24,.09);
+  }
+  html,body{margin:0;color:var(--ink);-webkit-font-smoothing:antialiased;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;
+    background:
+      radial-gradient(1100px 620px at 12% -6%, #FDFDFC 0%, rgba(253,253,252,0) 62%),
+      radial-gradient(900px 560px at 96% 4%, #F4F4F1 0%, rgba(244,244,241,0) 58%),
+      radial-gradient(1200px 800px at 60% 108%, #E2E2DF 0%, rgba(226,226,223,0) 60%),
+      linear-gradient(180deg,#EDEDEB 0%, #E7E7E4 52%, #E3E3E0 100%);
+    background-attachment:fixed;min-height:100%}
+  .num{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    font-variant-numeric:tabular-nums}
+
+  .shell{max-width:1180px;margin:0 auto;padding:60px 26px 130px}
+  .eyebrow{font-size:13px;color:var(--mut);margin:0 0 12px}
+  h1{font-size:clamp(30px,3.6vw,46px);font-weight:500;letter-spacing:-.032em;line-height:1.1;
+    margin:0 0 16px;max-width:17ch}
+  .lede{font-size:16px;line-height:1.72;color:var(--ink2);max-width:66ch;margin:0 0 10px}
+  h2{font-size:24px;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+  .sub{font-size:14.5px;line-height:1.7;color:var(--mut);max-width:70ch;margin:0 0 26px}
+  section{margin-top:78px}
+
+  .card{background:var(--g0);border-radius:var(--r-l);box-shadow:var(--e2);padding:26px 28px}
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+
+  /* elevation */
+  .elev{border-radius:var(--r-m);padding:20px 20px 22px;background:var(--g0)}
+  .elev .t{font-size:14.5px;font-weight:600;letter-spacing:-.008em}
+  .elev .d{font-size:12.5px;color:var(--mut);margin-top:5px;line-height:1.6}
+  .elev .v{font-size:11px;color:var(--fnt);margin-top:11px}
+
+  /* gradients */
+  .gr{border-radius:var(--r-m);height:104px;box-shadow:var(--e1)}
+  .grw .n{font-size:13.5px;font-weight:600;margin-top:11px}
+  .grw .d{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.6}
+
+  /* glass over a live field */
+  .field{position:relative;border-radius:var(--r-xl);overflow:hidden;padding:38px;
+    box-shadow:var(--e3);min-height:290px;
+    background:linear-gradient(140deg,#F2F2F0 0%,#E6E6E3 46%,#DCDCD8 100%)}
+  .field .blob{position:absolute;border-radius:50%;filter:blur(58px);pointer-events:none}
+  .b1{width:340px;height:340px;left:-40px;top:-90px;background:rgba(255,255,255,.95)}
+  .b2{width:300px;height:300px;right:6%;top:-60px;background:rgba(201,162,39,.30)}
+  .b3{width:380px;height:300px;right:-60px;bottom:-120px;background:rgba(120,120,112,.28)}
+  .glassrow{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+    gap:16px}
+  .glass{border-radius:var(--r-m);padding:19px 20px 21px;
+    background:linear-gradient(160deg,rgba(255,255,255,.72),rgba(255,255,255,.42));
+    backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+    box-shadow:0 1px 0 rgba(255,255,255,.9) inset, 0 14px 34px rgba(28,28,24,.10);
+    transition:transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s}
+  .glass:hover{transform:translateY(-6px);box-shadow:0 1px 0 rgba(255,255,255,.95) inset,
+    0 24px 52px rgba(28,28,24,.15)}
+  .glass .k{font-size:12.5px;color:var(--mut)}
+  .glass .v{font-size:34px;letter-spacing:-.03em;margin-top:8px;line-height:1}
+  .glass .s{font-size:11.5px;color:var(--mut);margin-top:8px}
+  .glass .s b{color:var(--brass-txt);font-weight:600}
+
+  /* brass */
+  .brassbar{height:74px;border-radius:var(--r-m);
+    background:linear-gradient(100deg,#E4C96E 0%,#C9A227 38%,#A5811C 72%,#C9A227 100%);
+    box-shadow:var(--e1)}
+  .glowwrap{position:relative;border-radius:var(--r-m);height:74px;overflow:hidden;
+    background:linear-gradient(#EFEFEC,#E6E6E3)}
+  .glowwrap i{position:absolute;left:50%;top:50%;width:150px;height:150px;transform:translate(-50%,-50%);
+    border-radius:50%;filter:blur(34px);background:rgba(201,162,39,.68)}
+  .glowwrap b{position:absolute;left:50%;top:50%;width:11px;height:11px;transform:translate(-50%,-50%);
+    border-radius:50%;background:#C9A227;box-shadow:0 0 0 3px rgba(201,162,39,.22)}
+
+  /* charts */
+  .chartcard{background:var(--g0);border-radius:var(--r-l);box-shadow:var(--e2);padding:24px 26px 20px}
+  .chartcard .h{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:4px}
+  .chartcard .t{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+  .chartcard .m{font-size:12px;color:var(--fnt)}
+  .chartcard .d{font-size:12.5px;color:var(--mut);margin:0 0 16px;line-height:1.6}
+  .chartcard .f{font-size:11.5px;color:var(--fnt);margin-top:12px;line-height:1.7}
+  svg{display:block;width:100%;height:auto}
+
+  .compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:18px}
+  .old{background:#fff;border:1px solid #D5D5D2;padding:18px 20px}
+  .old .lab{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.16em;
+    text-transform:uppercase;color:#9B9B97;margin-bottom:12px}
+  .new .lab{font-size:12.5px;color:var(--mut);margin-bottom:12px}
+
+  .tokens{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .tok{background:var(--g0);border-radius:var(--r-m);padding:16px 17px 18px;box-shadow:var(--e1)}
+  .tok .sw{height:46px;border-radius:var(--r-s);margin-bottom:11px}
+  .tok .n{font-size:12.5px;font-weight:600}
+  .tok .h{font-size:11px;color:var(--fnt);margin-top:3px}
+
+  .radii{display:flex;gap:16px;flex-wrap:wrap}
+  .rad{width:118px;height:92px;background:linear-gradient(160deg,#fff,#F1F1EE);box-shadow:var(--e2);
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:11px;font-size:11.5px;
+    color:var(--mut)}
+
+  .note{background:linear-gradient(150deg,rgba(255,255,255,.8),rgba(255,255,255,.5));
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border-radius:var(--r-l);padding:24px 28px;box-shadow:var(--e2);margin-top:26px}
+  .note p{margin:0 0 11px;font-size:14px;line-height:1.75;color:var(--ink2);max-width:80ch}
+  .note p:last-child{margin:0}
+  .note b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <p class="eyebrow">Neutral grey #EAEAE8 &middot; brass #C9A227</p>
+  <h1>Same system. Nothing that looks like a filed document.</h1>
+  <p class="lede">The palette did not change. What changed is how it is built: elevation instead of hairlines, gradients instead of flat fills, glass instead of boxes, sentence case instead of tracked uppercase, and mono kept for numerals only.</p>
+
+  <section>
+    <h2>Depth replaces borders</h2>
+    <p class="sub">Not a single 1px rule anywhere below. Surfaces separate by lift, which is what makes the Coders dashboard and the DataGenius hero read as current rather than printed.</p>
+    <div class="grid g4">
+      <div class="elev" style="box-shadow:var(--e1)"><div class="t">Resting</div><div class="d">Tiles, swatches, quiet rows</div><div class="v num">e1</div></div>
+      <div class="elev" style="box-shadow:var(--e2)"><div class="t">Raised</div><div class="d">Cards, charts, panels</div><div class="v num">e2</div></div>
+      <div class="elev" style="box-shadow:var(--e3)"><div class="t">Floating</div><div class="d">The object field, feature blocks</div><div class="v num">e3</div></div>
+      <div class="elev" style="box-shadow:var(--e4)"><div class="t">Lifted</div><div class="d">Hover, active, overlay</div><div class="v num">e4</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Glass over a live field</h2>
+    <p class="sub">Real backdrop blur over a gradient mesh, with brass as one of the light sources rather than as a painted swatch. Hover the panels.</p>
+    <div class="field">
+      <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+      <div class="glassrow">
+        <div class="glass"><div class="k">Universe</div><div class="v num" id="v1">&mdash;</div><div class="s">Filers reporting both revenue and gross profit</div></div>
+        <div class="glass"><div class="k">Median gross margin</div><div class="v num" id="v2">&mdash;</div><div class="s">Across the full window</div></div>
+        <div class="glass"><div class="k">Second ridge</div><div class="v num" id="v3">&mdash;</div><div class="s"><b id="v3b">&mdash;</b> filers cluster here</div></div>
+        <div class="glass"><div class="k">Above 70% margin</div><div class="v num" id="v4">&mdash;</div><div class="s">Roughly <b id="v4b">&mdash;</b> of the universe</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Gradients carry the greys</h2>
+    <p class="sub">Multiple shades of one neutral, moved through gradually. This is where the depth comes from without adding a second hue.</p>
+    <div class="grid g3">
+      <div class="grw"><div class="gr" style="background:linear-gradient(150deg,#FDFDFC,#E7E7E4)"></div>
+        <div class="n">Page field</div><div class="d">What the whole site sits on. Never a flat fill.</div></div>
+      <div class="grw"><div class="gr" style="background:linear-gradient(160deg,#FFFFFF,#F0F0ED)"></div>
+        <div class="n">Surface</div><div class="d">Cards and panels, lit from the top left.</div></div>
+      <div class="grw"><div class="gr" style="background:linear-gradient(140deg,#EDEDEA,#D8D8D4 60%,#C9C9C4)"></div>
+        <div class="n">Recess</div><div class="d">Wells, tracks, inactive states.</div></div>
+      <div class="grw"><div class="brassbar"></div>
+        <div class="n">Brass, as metal</div><div class="d">A gradient, never a flat swatch. Metal has a highlight.</div></div>
+      <div class="grw"><div class="glowwrap"><i></i><b></b></div>
+        <div class="n">Brass, as light</div><div class="d">One marked point with a soft bloom. This is the whole accent budget on most pages.</div></div>
+      <div class="grw"><div class="gr" style="background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(255,255,255,.25)),linear-gradient(140deg,#E9E9E6,#D9D9D5)"></div>
+        <div class="n">Glass</div><div class="d">White at 25 to 72 percent over blur, not a grey fill.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The charts, rebuilt</h2>
+    <p class="sub">Same data, same two colours. On the left is what I gave you before. On the right is the same figure in this register: gradient area fill, no axis furniture, rounded caps, and the accent carrying a bloom instead of a dashed line.</p>
+    <div class="compare">
+      <div class="old">
+        <div class="lab">Before &mdash; document register</div>
+        <div id="oldFig"></div>
+      </div>
+      <div class="chartcard new">
+        <div class="lab">After &mdash; same data</div>
+        <div id="newFig"></div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:18px">
+      <div class="chartcard">
+        <div class="h"><div class="t">Where margin concentrates</div><div class="m num" id="cN">&mdash;</div></div>
+        <p class="d">Gradient area under the distribution, with the median marked once.</p>
+        <div id="figArea"></div>
+        <div class="f">SEC XBRL frames, us-gaap, CY2024. All values as reported.</div>
+      </div>
+      <div class="chartcard">
+        <div class="h"><div class="t">Margin by size cohort</div><div class="m num">6 cohorts</div></div>
+        <p class="d">Six series without a second hue: value, weight and one brass line.</p>
+        <div id="figLines"></div>
+        <div class="f">Deciles within each revenue cohort. Brass marks the cohort carrying the second ridge.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Corners and tokens</h2>
+    <p class="sub">Radii do a lot of the modern reading. Nothing on the site is a right angle except a chart axis.</p>
+    <div class="radii">
+      <div class="rad" style="border-radius:10px">10 &middot; controls</div>
+      <div class="rad" style="border-radius:16px">16 &middot; cards</div>
+      <div class="rad" style="border-radius:24px">24 &middot; panels</div>
+      <div class="rad" style="border-radius:34px">34 &middot; fields</div>
+    </div>
+    <div class="tokens" style="margin-top:22px">
+      <div class="tok"><div class="sw" style="background:linear-gradient(150deg,#FFF,#F4F4F2)"></div><div class="n">Surface</div><div class="h num">#FFFFFF</div></div>
+      <div class="tok"><div class="sw" style="background:linear-gradient(150deg,#F1F1EF,#E9E9E6)"></div><div class="n">Raised</div><div class="h num">#EFEFED</div></div>
+      <div class="tok"><div class="sw" style="background:linear-gradient(150deg,#EDEDEB,#E3E3E0)"></div><div class="n">Field</div><div class="h num">#EAEAE8</div></div>
+      <div class="tok"><div class="sw" style="background:linear-gradient(150deg,#E3E3E0,#D2D2CE)"></div><div class="n">Recess</div><div class="h num">#E1E1DE</div></div>
+      <div class="tok"><div class="sw" style="background:linear-gradient(100deg,#E4C96E,#C9A227 40%,#A5811C)"></div><div class="n">Brass</div><div class="h num">#C9A227</div></div>
+      <div class="tok"><div class="sw" style="background:#6E5A1E"></div><div class="n">Brass text</div><div class="h num">#6E5A1E</div></div>
+    </div>
+  </section>
+
+  <div class="note">
+    <p><b>What actually changed, so you can hold me to it.</b> No 1px borders. No tracked uppercase labels outside of numerals. No boxed tables with visible cell rules. No flat grey fills. Corner radius on everything. Elevation and gradient doing the separation that hairlines were doing before.</p>
+    <p><b>What did not change.</b> Neutral grey #EAEAE8, brass #C9A227 with #6E5A1E for small text, colour only ever encoding, one accent per surface, and every number on this page still coming from the same 2,186 SEC registrants.</p>
+    <p><b>Still to carry over.</b> The WebGL hero currently uses the old register in its overlay, with mono uppercase everywhere and a bordered readout. It needs this same pass, and the object itself would take a gradient environment and a brass bloom on the marked ridge.</p>
+  </div>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05", "series6": [{"label": "Under $30m", "n": 607, "deciles": [-0.04904475288237916, 0.09000009794063492, 0.1852302639252406, 0.2593046522873759, 0.33949549221382386, 0.4079646976060521, 0.4779060816012317, 0.5739177635632513, 0.6779486915407851, 0.8125403373510789, 1.0]}, {"label": "$30m to $150m", "n": 339, "deciles": [-0.03858401282253033, 0.07360210506531341, 0.16208173042026566, 0.22221505792335633, 0.28405794609011087, 0.357899394778179, 0.4401266236282939, 0.5514700874984876, 0.6412244101578916, 0.7593331477529306, 0.9915037375991126]}, {"label": "$150m to $600m", "n": 360, "deciles": [-0.03684792736208708, 0.16886508870764316, 0.252262443438914, 0.3147753692065055, 0.37838636329638436, 0.44310618066561014, 0.5219256463806349, 0.6106914092775882, 0.6915324011640287, 0.7705886745953212, 0.9832440769287115]}, {"label": "$600m to $2.5bn", "n": 427, "deciles": [0.007161205789296207, 0.17224156779796093, 0.23422068255318884, 0.2910635157619261, 0.34349114674367354, 0.3982588033749598, 0.4630783772629673, 0.5377102550189907, 0.6549586805579688, 0.7643112701252236, 0.9514155624109789]}, {"label": "$2.5bn to $10bn", "n": 302, "deciles": [0.011629697373848122, 0.14578779216411636, 0.20591165725672533, 0.24526138999226893, 0.31467903636091576, 0.3666131621187801, 0.4022154951598417, 0.4762967094255438, 0.5801967827580822, 0.6999626407722708, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}]};
+
+const BRASS='#C9A227', BRASS_TXT='#6E5A1E', INK='#131312', MUT='#6E6E6B', FNT='#9B9B97';
+const fmtRev = v => v>=1e9 ? '$'+(v/1e9).toFixed(1)+'bn' : v>=1e6 ? '$'+Math.round(v/1e6)+'m' : '$'+Math.round(v/1e3)+'k';
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+v1.textContent = DATA.n.toLocaleString();
+v2.textContent = (DATA.median*100).toFixed(1)+'%';
+v3.textContent = '70%';
+v3b.textContent = '131';
+v4.textContent = '339';
+v4b.textContent = Math.round(339/DATA.n*100)+'%';
+cN.textContent = DATA.n.toLocaleString()+' filers';
+
+/* smooth path through points */
+function spline(pts){
+  let d = 'M'+pts[0][0].toFixed(1)+','+pts[0][1].toFixed(1);
+  for (let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+    const c1x=p1[0]+(p2[0]-p0[0])/6, c1y=p1[1]+(p2[1]-p0[1])/6;
+    const c2x=p2[0]-(p3[0]-p1[0])/6, c2y=p2[1]-(p3[1]-p1[1])/6;
+    d += 'C'+c1x.toFixed(1)+','+c1y.toFixed(1)+' '+c2x.toFixed(1)+','+c2y.toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
+  }
+  return d;
+}
+
+/* --- before: the document register, for comparison only --- */
+(function(){
+  const H=DATA.hist,N=DATA.nbins,W=320,Ht=132,max=Math.max(...H);
+  const OBJ=['#DCDCDE','#B4B4B8','#828288','#505057','#2A2A30','#15151A'];
+  let bars='';
+  for(let i=0;i<N;i++){
+    const t=i/(N-1),h=(H[i]/max)*(Ht-30),x=26+(i/N)*(W-40),w=(W-40)/N-1.2;
+    bars+=`<rect x="${x.toFixed(1)}" y="${(Ht-16-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${OBJ[Math.min(5,Math.floor(t*6))]}"/>`;
+  }
+  const mx=26+((DATA.median+0.05)/1.05)*(W-40);
+  oldFig.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${bars}
+    <line x1="${mx.toFixed(1)}" y1="6" x2="${mx.toFixed(1)}" y2="${Ht-16}" stroke="${BRASS}" stroke-width="1.3" stroke-dasharray="3 3"/>
+    <text x="${(mx+5).toFixed(1)}" y="13" fill="${BRASS_TXT}" font-family="Martian Mono, monospace" font-size="6.4" letter-spacing="0.8">MEDIAN 38.8%</text>
+    <line x1="26" y1="${Ht-16}" x2="${W-12}" y2="${Ht-16}" stroke="${INK}" stroke-width="1"/>
+    <text x="26" y="${Ht-4}" fill="${FNT}" font-family="Martian Mono, monospace" font-size="6.4">0%</text>
+    <text x="${W-32}" y="${Ht-4}" fill="${FNT}" font-family="Martian Mono, monospace" font-size="6.4">100%</text></svg>`;
+})();
+
+/* --- after / area chart, used twice --- */
+function areaChart(W, Ht, idSuffix){
+  const H=DATA.hist,N=DATA.nbins,max=Math.max(...H),L=14,R=W-14,T=22,B=Ht-30;
+  const pts=[];
+  for(let i=0;i<N;i++) pts.push([L+(i/(N-1))*(R-L), B-(H[i]/max)*(B-T)]);
+  const line=spline(pts);
+  const area=line+`L${R},${B}L${L},${B}Z`;
+  const mx=L+((DATA.median+0.05)/1.05)*(R-L);
+  let my=B;
+  for(let i=0;i<N-1;i++) if(pts[i][0]<=mx&&pts[i+1][0]>=mx){
+    const f=(mx-pts[i][0])/(pts[i+1][0]-pts[i][0]); my=pts[i][1]+(pts[i+1][1]-pts[i][1])*f; }
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    <defs>
+      <linearGradient id="ag${idSuffix}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3A3A37" stop-opacity=".30"/>
+        <stop offset="55%" stop-color="#6E6E6B" stop-opacity=".12"/>
+        <stop offset="100%" stop-color="#9B9B97" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="bl${idSuffix}"><stop offset="0%" stop-color="#C9A227" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#C9A227" stop-opacity="0"/></radialGradient>
+      <filter id="sh${idSuffix}" x="-20%" y="-30%" width="140%" height="180%">
+        <feDropShadow dx="0" dy="3" stdDeviation="3.4" flood-color="#2A2A26" flood-opacity=".16"/></filter>
+    </defs>
+    <path d="${area}" fill="url(#ag${idSuffix})"/>
+    <path d="${line}" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round" filter="url(#sh${idSuffix})"/>
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="26" fill="url(#bl${idSuffix})"/>
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="5.4" fill="${BRASS}"/>
+    <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="9" fill="none" stroke="${BRASS}" stroke-opacity=".34" stroke-width="1.4"/>
+    <text x="${(mx+15).toFixed(1)}" y="${(my-12).toFixed(1)}" fill="${BRASS_TXT}"
+      font-family="Familjen Grotesk, sans-serif" font-size="12" font-weight="600">Median 38.8%</text>
+    <text x="${L}" y="${Ht-9}" fill="${FNT}" font-family="Familjen Grotesk, sans-serif" font-size="11.5">0% margin</text>
+    <text x="${R}" y="${Ht-9}" text-anchor="end" fill="${FNT}" font-family="Familjen Grotesk, sans-serif" font-size="11.5">100%</text>
+  </svg>`;
+}
+newFig.innerHTML  = areaChart(340, 152, 'a');
+figArea.innerHTML = areaChart(480, 208, 'b');
+
+/* --- six cohorts, no second hue --- */
+(function(){
+  const Sx=DATA.series6||DATA.series,W=480,Ht=208,L=16,R=W-16,T=18,B=Ht-40;
+  const styles=[
+    {c:'#C6C6C2',w:1.6},{c:'#A6A6A2',w:1.6},{c:'#7C7C78',w:1.7},
+    {c:'#4C4C48',w:1.8},{c:BRASS,w:2.6},{c:INK,w:2.1},
+  ];
+  let paths='',key='';
+  Sx.forEach((s,i)=>{
+    const st=styles[i]||styles[5];
+    const pts=s.deciles.map((v,k)=>[L+(k/10)*(R-L), B-v*(B-T)]);
+    paths+=`<path d="${spline(pts)}" fill="none" stroke="${st.c}" stroke-width="${st.w}" stroke-linecap="round"/>`;
+    const kx=L+(i%3)*152, ky=Ht-20+Math.floor(i/3)*15;
+    key+=`<rect x="${kx}" y="${ky-6}" width="13" height="2.6" rx="1.3" fill="${st.c}"/>
+      <text x="${kx+19}" y="${ky-2}" fill="${i===4?BRASS_TXT:MUT}" font-family="Familjen Grotesk, sans-serif" font-size="10.5">${esc(s.label)}</text>`;
+  });
+  figLines.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}">${paths}${key}</svg>`;
+})();
+</script>
+</body>
+</html>

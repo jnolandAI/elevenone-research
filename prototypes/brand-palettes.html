@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — brand palette candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#E9E9E7;color:#131315;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    letter-spacing:.09em;text-transform:uppercase}
+  .shell{max-width:1240px;margin:0 auto;padding:56px 26px 100px}
+  h1{font-size:26px;font-weight:500;letter-spacing:-.018em;margin:0 0 12px}
+  .lede{font-size:14.5px;line-height:1.75;color:#4C4C50;max-width:76ch;margin:0 0 6px}
+  .note{font-size:9px;color:#8A8A8E;margin:20px 0 44px;line-height:2.1}
+
+  .card{background:#fff;border:1px solid #D6D6D3;margin-bottom:34px}
+  .card > .hd{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+    padding:20px 26px;border-bottom:1px solid #E4E4E1;flex-wrap:wrap}
+  .card .nm{font-size:19px;font-weight:600;letter-spacing:-.012em}
+  .card .tag{font-size:9px;color:#8A8A8E}
+  .card .verdict{font-size:11.5px;color:#5A5A5E;line-height:1.65;max-width:62ch;
+    padding:14px 26px 0}
+
+  .roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;
+    background:#E4E4E1;border-top:1px solid #E4E4E1;border-bottom:1px solid #E4E4E1;margin-top:18px}
+  .role{background:#fff;padding:0}
+  .role .chip{height:60px;display:block}
+  .role .meta{padding:8px 10px 11px}
+  .role .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.4px;
+    letter-spacing:.13em;text-transform:uppercase;color:#8A8A8E}
+  .role .h{font-family:'Martian Mono',monospace;font-weight:400;font-size:9.5px;
+    color:#131315;margin-top:4px}
+  .role .cr{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.4px;margin-top:4px}
+  .pass{color:#1F7A3D}.fail{color:#B3132A}
+
+  .ramps{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:26px;
+    padding:24px 26px 8px}
+  .ramp .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;
+    letter-spacing:.15em;text-transform:uppercase;color:#8A8A8E;margin-bottom:9px}
+  .ramp .bar{display:flex;height:26px}
+  .ramp .bar i{flex:1}
+  .ramp .hexes{display:flex;justify-content:space-between;margin-top:5px}
+  .ramp .hexes span{font-family:'Martian Mono',monospace;font-weight:300;font-size:6.6px;color:#9A9A9E}
+
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:26px;
+    padding:22px 26px 28px}
+  .fig .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;
+    letter-spacing:.15em;text-transform:uppercase;color:#8A8A8E;margin-bottom:10px}
+  .fig .cap{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.2px;
+    letter-spacing:.06em;text-transform:uppercase;color:#9A9A9E;margin-top:8px;line-height:1.9}
+  svg{display:block;width:100%;height:auto}
+
+  .spec{padding:0 26px 30px}
+  .spec .band{padding:26px 28px;border:1px solid #E4E4E1}
+  .spec h3{margin:0 0 12px;font-size:23px;font-weight:400;letter-spacing:-.016em;line-height:1.3}
+  .spec p{margin:0 0 10px;font-size:13.5px;line-height:1.72;max-width:64ch}
+  .spec .lbl{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;
+    letter-spacing:.15em;text-transform:uppercase;margin-bottom:9px}
+  .conf{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
+  .conf div{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.4px;
+    letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+  .conf i{width:22px;height:3px;display:block}
+</style>
+</head>
+<body>
+<div class="shell">
+  <h1>Four full brand palettes</h1>
+  <p class="lede">Each one is a complete spec, not a mood: interface roles, a sequential ramp, a diverging ramp, a categorical set, and the three confidence levels the brand needs in order to state confidence rather than imply it. Contrast ratios are computed against the ground and labelled pass or fail at WCAG AA, not asserted.</p>
+  <p class="lede">Every chart below is real. Same 2,186 SEC registrants, CY2024, median gross margin 38.8 percent. The palettes are being judged on data they will actually have to carry.</p>
+  <p class="note mono">Source: SEC XBRL frames API, us-gaap, CY2024 &middot; retrieved 2026-08-05 &middot; charts drawn from as-reported values</p>
+  <div id="out"></div>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05"};
+
+const PALETTES = [
+  {
+    id:'violet', name:'Violet Ink',
+    tag:'Most distinctive. Almost nobody in research or finance uses violet.',
+    verdict:'The strongest differentiator of the four and the one a competitor is least likely to land on independently. Violet also extends cleanly to a diverging scale, which single-hue palettes cannot. The risk is that it reads editorial or cultural rather than financial, and it is the furthest from what your buyers expect from a research vendor.',
+    ground:'#EDECEF', surface:'#FFFFFF', ink:'#17141C', muted:'#6B6676',
+    faint:'#9C97A6', rule:'#DAD6E0', accent:'#B02C86',
+    seq:['#E6E2EE','#BCA9D6','#8D68BA','#5D3692','#371760','#1D0A39'],
+    div:['#B02C86','#D79AC0','#EDECEF','#9A8CC4','#3B2A7A'],
+    cat:['#5D3692','#B02C86','#37175E','#8D68BA','#6B6676'],
+    conf:['#1D0A39','#5D3692','#BCA9D6'],
+  },
+  {
+    id:'claret', name:'Claret',
+    tag:'Academic press and law. Serious, warm, uncommon in this category.',
+    verdict:'Reads as a university press or a legal publisher, which suits decision-grade written analysis and puts distance between you and the consultancy blue. Warm without being terracotta. Its diverging scale has to run claret against a cool dark, which is a slightly awkward pairing and the weakest part of the set.',
+    ground:'#EEEDEA', surface:'#FFFFFF', ink:'#1B1215', muted:'#6F6165',
+    faint:'#A0949A', rule:'#DFDBD6', accent:'#A3122F',
+    seq:['#EFE3E5','#D5A9B1','#B3717F','#8A3E51','#5C1B2E','#310A17'],
+    div:['#A3122F','#D08B99','#EEEDEA','#8E86A8','#3B3560'],
+    cat:['#8A3E51','#A3122F','#5C1B2E','#B3717F','#6F6165'],
+    conf:['#310A17','#8A3E51','#D5A9B1'],
+  },
+  {
+    id:'petrol', name:'Petrol',
+    tag:'A single deep blue. The category default, executed better than the category.',
+    verdict:'Every research firm has a blue, and this is a considerably better one than most: deep, desaturated, closer to ink than to corporate. It is the safest choice here and the least memorable. Choose it if you want the site to be unarguable rather than distinctive.',
+    ground:'#EBEDEE', surface:'#FFFFFF', ink:'#101B21', muted:'#5F6E75',
+    faint:'#93A0A6', rule:'#D6DCDE', accent:'#0F5E7A',
+    seq:['#DFE8EB','#A7C1CA','#6B94A4','#3E657A','#234050','#0F212C'],
+    div:['#0F5E7A','#83AEBE','#EBEDEE','#D19B93','#9E3B2E'],
+    cat:['#3E657A','#0F5E7A','#234050','#6B94A4','#5F6E75'],
+    conf:['#0F212C','#3E657A','#A7C1CA'],
+  },
+  {
+    id:'graphite', name:'Graphite and One',
+    tag:'Achromatic interface, one signal red reserved for encoding.',
+    verdict:'The most disciplined and the closest to the restraint you originally asked for. Everything structural is grey, and the red only ever appears on something load-bearing. Its real weakness is categorical data: greys plus one red cannot separate four or five series honestly, so a brief with several comparable groups would need a second scheme.',
+    ground:'#EDEDEC', surface:'#FFFFFF', ink:'#131315', muted:'#6E6E72',
+    faint:'#9A9A9E', rule:'#DCDCDA', accent:'#C81E2E',
+    seq:['#E3E3E2','#B7B7B7','#868688','#585859','#2F2F31','#141416'],
+    div:['#C81E2E','#E09098','#EDEDEC','#8FA8C4','#1F4E8C'],
+    cat:['#585859','#C81E2E','#141416','#B7B7B7','#1F4E8C'],
+    conf:['#141416','#585859','#B7B7B7'],
+  },
+];
+
+/* ---------- WCAG ---------- */
+const srgb = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+function lum(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return 0.2126 * srgb(n >> 16 & 255) + 0.7152 * srgb(n >> 8 & 255) + 0.0722 * srgb(n & 255);
+}
+function ratio(a, b){
+  const l1 = lum(a), l2 = lum(b);
+  return ((Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05));
+}
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el = (t, a, h) => { const e = document.createElement(t); for (const k in a) e.setAttribute(k, a[k]); if (h != null) e.innerHTML = h; return e; };
+
+/* ---------- charts, all from real data ---------- */
+function figHist(P){
+  const H = DATA.hist, N = DATA.nbins, W = 340, Ht = 132, max = Math.max(...H);
+  let bars = '';
+  for (let i = 0; i < N; i++){
+    const t = i / (N - 1), h = (H[i] / max) * (Ht - 26);
+    const x = 30 + (i / N) * (W - 44), w = (W - 44) / N - 1.2;
+    const cIdx = Math.min(P.seq.length - 1, Math.floor(t * P.seq.length));
+    bars += `<rect x="${x.toFixed(1)}" y="${(Ht - 14 - h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${P.seq[cIdx]}"/>`;
+  }
+  const mx = 30 + ((DATA.median + 0.05) / 1.05) * (W - 44);
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    ${bars}
+    <line x1="${mx.toFixed(1)}" y1="6" x2="${mx.toFixed(1)}" y2="${Ht - 14}" stroke="${P.accent}" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="${(mx + 5).toFixed(1)}" y="14" fill="${P.accent}" font-family="Martian Mono, monospace" font-size="6.4" letter-spacing="0.6">MEDIAN 38.8%</text>
+    <line x1="30" y1="${Ht - 14}" x2="${W - 14}" y2="${Ht - 14}" stroke="${P.ink}" stroke-width="1"/>
+    <text x="30" y="${Ht - 4}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">0%</text>
+    <text x="${W - 34}" y="${Ht - 4}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">100%</text>
+  </svg>`;
+}
+
+function figDiverge(P){
+  const B = DATA.buckets, W = 340, Ht = 150;
+  const maxDev = Math.max(...B.map(b => Math.abs(b.dev)));
+  const mid = W * 0.52, rowH = (Ht - 24) / B.length;
+  let rows = '';
+  B.forEach((b, i) => {
+    const y = 10 + i * rowH, w = (Math.abs(b.dev) / maxDev) * (W * 0.40);
+    const t = b.dev >= 0 ? (b.dev / maxDev) : (-b.dev / maxDev);
+    const col = b.dev >= 0
+      ? (t > 0.55 ? P.div[4] : P.div[3])
+      : (t > 0.55 ? P.div[0] : P.div[1]);
+    rows += `<rect x="${(b.dev >= 0 ? mid : mid - w).toFixed(1)}" y="${(y + 1).toFixed(1)}" width="${w.toFixed(1)}" height="${(rowH - 2.4).toFixed(1)}" fill="${col}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    ${rows}
+    <line x1="${mid}" y1="6" x2="${mid}" y2="${Ht - 12}" stroke="${P.ink}" stroke-width="1"/>
+    <text x="${mid - 2}" y="${Ht - 3}" text-anchor="end" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">BELOW MEDIAN</text>
+    <text x="${mid + 3}" y="${Ht - 3}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">ABOVE</text>
+  </svg>`;
+}
+
+function figSeries(P){
+  const S = DATA.series, W = 340, Ht = 148;
+  let paths = '', key = '';
+  S.forEach((s, i) => {
+    let d = '';
+    s.deciles.forEach((v, k) => {
+      const x = 30 + (k / 10) * (W - 52), y = Ht - 24 - v * (Ht - 44);
+      d += (k ? ' L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    paths += `<path d="${d}" fill="none" stroke="${P.cat[i]}" stroke-width="1.7" stroke-linejoin="round"/>`;
+    key += `<text x="${30 + i * 78}" y="${Ht - 3}" fill="${P.cat[i]}" font-family="Martian Mono, monospace" font-size="6">${esc(s.label.toUpperCase())}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    <line x1="30" y1="${Ht - 24}" x2="${W - 18}" y2="${Ht - 24}" stroke="${P.ink}" stroke-width="1"/>
+    ${paths}${key}
+    <text x="8" y="20" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">100%</text>
+    <text x="12" y="${Ht - 27}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.4">0%</text>
+  </svg>`;
+}
+
+/* ---------- render ---------- */
+const out = document.getElementById('out');
+for (const P of PALETTES){
+  const roles = [
+    ['Ground', P.ground], ['Surface', P.surface], ['Ink', P.ink],
+    ['Muted', P.muted], ['Faint', P.faint], ['Rule', P.rule], ['Accent', P.accent],
+  ];
+  const roleHtml = roles.map(([k, v]) => {
+    const needsCr = ['Ink', 'Muted', 'Faint', 'Accent'].includes(k);
+    const r = ratio(v, P.ground);
+    const ok = k === 'Faint' ? r >= 3 : r >= 4.5;
+    return `<div class="role">
+      <span class="chip" style="background:${v}"></span>
+      <div class="meta"><div class="k">${k}</div><div class="h">${v.toUpperCase()}</div>
+      ${needsCr ? `<div class="cr ${ok ? 'pass' : 'fail'}">${r.toFixed(2)}:1 ${ok ? 'PASS' : 'FAIL'}</div>` : '<div class="cr">&nbsp;</div>'}</div>
+    </div>`;
+  }).join('');
+
+  const rampHtml = [
+    ['Sequential', P.seq], ['Diverging', P.div], ['Categorical', P.cat],
+  ].map(([k, arr]) => `<div class="ramp"><div class="k">${k}</div>
+      <div class="bar">${arr.map(c => `<i style="background:${c}"></i>`).join('')}</div>
+      <div class="hexes"><span>${arr[0].toUpperCase()}</span><span>${arr[arr.length - 1].toUpperCase()}</span></div>
+    </div>`).join('');
+
+  const card = el('div', { class: 'card' });
+  card.innerHTML = `
+    <div class="hd"><div class="nm">${P.name}</div><div class="tag mono">${esc(P.tag)}</div></div>
+    <div class="verdict">${esc(P.verdict)}</div>
+    <div class="roles">${roleHtml}</div>
+    <div class="ramps">${rampHtml}</div>
+    <div class="charts">
+      <div class="fig"><div class="k">Sequential on real data</div>${figHist(P)}
+        <div class="cap">Gross margin distribution, 2,186 registrants, CY2024</div></div>
+      <div class="fig"><div class="k">Diverging on real data</div>${figDiverge(P)}
+        <div class="cap">Median margin by revenue bucket, deviation from 38.8%</div></div>
+      <div class="fig"><div class="k">Categorical on real data</div>${figSeries(P)}
+        <div class="cap">Margin deciles by size cohort, four series</div></div>
+    </div>
+    <div class="spec">
+      <div class="band" style="background:${P.ground};border-color:${P.rule}">
+        <div class="lbl" style="color:${P.faint}">Specimen</div>
+        <h3 style="color:${P.ink}">Consensus is pricing an adoption curve the deployment data will not support.</h3>
+        <p style="color:${P.muted}">Twelve of the forty verticals under coverage carry implied margin structures that observed deployment cannot reach before 2028. Dispersion is widest where diligence is thinnest, and the gap is visible in filings that are already public.</p>
+        <div class="conf">
+          <div style="color:${P.conf[0]}"><i style="background:${P.conf[0]}"></i>High confidence</div>
+          <div style="color:${P.conf[1]}"><i style="background:${P.conf[1]}"></i>Moderate</div>
+          <div style="color:${P.conf[2]}"><i style="background:${P.conf[2]}"></i>Speculative</div>
+        </div>
+      </div>
+    </div>`;
+  out.appendChild(card);
+}
+</script>
+</body>
+</html>

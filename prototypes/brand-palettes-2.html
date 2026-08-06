@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eleven One Research — palettes from the gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#F4F3EF;color:#141414;
+    font-family:'Familjen Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Martian Mono',ui-monospace,monospace;font-weight:300;
+    letter-spacing:.09em;text-transform:uppercase}
+  .shell{max-width:1180px;margin:0 auto;padding:54px 24px 110px}
+  h1{font-size:27px;font-weight:500;letter-spacing:-.018em;margin:0 0 14px}
+  .lede{font-size:14.5px;line-height:1.75;color:#4A4A46;max-width:76ch;margin:0 0 11px}
+  .warn{font-size:13px;line-height:1.7;color:#8A3A16;background:#FBF0E6;border-left:2px solid #C15A2B;
+    padding:14px 18px;margin:22px 0 46px;max-width:80ch}
+
+  .pal{margin-bottom:64px}
+  .pal > .hd{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+    flex-wrap:wrap;padding-bottom:13px;border-bottom:1px solid #DAD8D1;margin-bottom:22px}
+  .pal .nm{font-family:'Anton',sans-serif;font-size:31px;letter-spacing:.012em;text-transform:uppercase}
+  .pal .prov{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.6px;
+    letter-spacing:.13em;text-transform:uppercase;color:#8A8880}
+  .verdict{font-size:13px;line-height:1.7;color:#54524C;max-width:78ch;margin:0 0 22px}
+
+  /* Digital Trade card format: heavy condensed name over a hex table, inside the swatch */
+  .bands{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:14px;margin-bottom:26px}
+  .band{padding:20px 20px 17px;box-shadow:0 6px 18px rgba(0,0,0,.09);position:relative;min-height:132px;
+    display:flex;flex-direction:column;justify-content:space-between}
+  .band .role{position:absolute;top:13px;right:16px;font-family:'Martian Mono',monospace;
+    font-weight:300;font-size:7.4px;letter-spacing:.17em;text-transform:uppercase;opacity:.72}
+  .band .bn{font-family:'Anton',sans-serif;font-size:29px;line-height:.98;text-transform:uppercase;
+    letter-spacing:.01em;margin-top:14px}
+  .band table{width:100%;border-collapse:collapse;margin-top:14px;font-family:'Martian Mono',monospace;
+    font-weight:300;font-size:7.6px;letter-spacing:.06em}
+  .band th{text-align:left;padding:4px 7px;border:1px solid currentColor;opacity:.6;font-weight:300;
+    text-transform:uppercase;letter-spacing:.13em}
+  .band td{padding:4px 7px;border:1px solid currentColor;opacity:.92}
+
+  .ramps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin-bottom:24px}
+  .ramp .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.15em;
+    text-transform:uppercase;color:#8A8880;margin-bottom:8px}
+  .ramp .bar{display:flex;height:24px}.ramp .bar i{flex:1}
+
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:22px}
+  .fig .k{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.15em;
+    text-transform:uppercase;color:#8A8880;margin-bottom:9px}
+  .fig .cap{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.1px;letter-spacing:.05em;
+    text-transform:uppercase;color:#9C9A93;margin-top:7px;line-height:1.9}
+  .fig .in{padding:12px 12px 8px;border:1px solid #DAD8D1}
+  svg{display:block;width:100%;height:auto}
+
+  .spec{padding:28px 30px;border:1px solid #DAD8D1}
+  .spec .lbl{font-family:'Martian Mono',monospace;font-weight:300;font-size:8px;letter-spacing:.16em;
+    text-transform:uppercase;margin-bottom:10px}
+  .spec h3{margin:0 0 12px;font-size:24px;font-weight:400;letter-spacing:-.017em;line-height:1.3;max-width:22ch}
+  .spec p{margin:0 0 10px;font-size:13.5px;line-height:1.72;max-width:62ch}
+  .conf{display:flex;gap:24px;margin-top:18px;flex-wrap:wrap}
+  .conf div{font-family:'Martian Mono',monospace;font-weight:300;font-size:8.2px;letter-spacing:.1em;
+    text-transform:uppercase;display:flex;align-items:center;gap:7px}
+  .conf i{width:24px;height:3px;display:block}
+  .cr{font-family:'Martian Mono',monospace;font-weight:300;font-size:7.6px;margin-top:12px}
+  .pass{color:#1F7A3D}.fail{color:#B3132A}
+</style>
+</head>
+<body>
+<div class="shell">
+  <h1>Five palettes, taken from your gallery</h1>
+  <p class="lede">Three of these are your own saved cards adopted verbatim, hex for hex. Two are derived from other items you saved. All five keep the structure your cards actually use: a very dark anchor, a light anchor, then named saturated secondaries out of earth and nature.</p>
+  <p class="lede">Sequential, diverging and categorical ramps are derived from each set by rule rather than by taste, so the comparison is about whether a named brand palette can carry real data honestly. Charts are the same 2,186 SEC registrants, CY2024.</p>
+
+  <p class="warn"><b>One conflict to resolve.</b> Your light anchors are Bone #F2EFEA and Sand Dune #EADBC8, which are warm off-white and cream. You told me earlier the substrate must never be off-white, cream or paper toned. Your saved palettes and your stated constraint disagree, and I have rendered these on their native warm grounds rather than quietly neutralising them. If the constraint still holds, every one of these needs its light anchor swapped for a neutral, which changes them considerably.</p>
+
+  <p class="lede mono" style="font-size:9px;color:#9C9A93;margin-bottom:44px">Swatch names are set in Anton for this sheet only, to match the Digital Trade card format. It is not a typeface proposal. CMYK is omitted deliberately: those values belong to a printer profile, not to me.</p>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const DATA = {"n": 2186, "median": 0.38813668600902645, "hist": [13, 12, 32, 36, 43, 57, 55, 62, 80, 93, 91, 95, 94, 90, 82, 96, 97, 86, 78, 63, 71, 63, 69, 42, 63, 46, 55, 55, 53, 45, 55, 43, 41, 27, 27, 26, 19, 6, 11, 14], "nbins": 40, "buckets": [{"rev_lo": 103177, "rev_hi": 1081615, "median": 0.5121829240488641, "dev": 0.12404623803983766, "n": 121}, {"rev_lo": 1117452, "rev_hi": 3415196, "median": 0.47161377389763137, "dev": 0.08347708788860492, "n": 121}, {"rev_lo": 3440101, "rev_hi": 8248108, "median": 0.4035868241078322, "dev": 0.015450138098805744, "n": 122}, {"rev_lo": 8257000, "rev_hi": 17121000, "median": 0.36151578947368423, "dev": -0.02662089653534222, "n": 121}, {"rev_lo": 17406185, "rev_hi": 29765205, "median": 0.3432310276382508, "dev": -0.04490565837077565, "n": 122}, {"rev_lo": 30000000, "rev_hi": 49401547, "median": 0.3142417472251565, "dev": -0.07389493878386993, "n": 121}, {"rev_lo": 49667000, "rev_hi": 89811240, "median": 0.39015418345380837, "dev": 0.0020174974447819127, "n": 122}, {"rev_lo": 90398000, "rev_hi": 169800000, "median": 0.36499581140049264, "dev": -0.023140874608533812, "n": 121}, {"rev_lo": 170461000, "rev_hi": 305448000, "median": 0.44648752710033196, "dev": 0.058350841091305505, "n": 122}, {"rev_lo": 305450000, "rev_hi": 458722000, "median": 0.5096527009396726, "dev": 0.12151601493064618, "n": 121}, {"rev_lo": 463330000, "rev_hi": 653336000, "median": 0.4242095754290876, "dev": 0.03607288942006115, "n": 121}, {"rev_lo": 653378000, "rev_hi": 918819000, "median": 0.44781003323462004, "dev": 0.05967334722559359, "n": 122}, {"rev_lo": 922720000, "rev_hi": 1360994000, "median": 0.3943247893371683, "dev": 0.006188103328141847, "n": 121}, {"rev_lo": 1362935000, "rev_hi": 2148816000, "median": 0.3729060285287815, "dev": -0.015230657480244936, "n": 122}, {"rev_lo": 2154700000, "rev_hi": 3586000000, "median": 0.36958639800409393, "dev": -0.018550288004932525, "n": 121}, {"rev_lo": 3608960000, "rev_hi": 5933450000, "median": 0.3545241705769435, "dev": -0.033612515432082934, "n": 122}, {"rev_lo": 5936000000, "rev_hi": 12076700000, "median": 0.35000498156819765, "dev": -0.038131704440828806, "n": 121}, {"rev_lo": 12142000000, "rev_hi": 391035000000, "median": 0.2917602748777587, "dev": -0.09637641113126777, "n": 122}], "series": [{"label": "Under $100m", "n": 868, "deciles": [-0.04904475288237916, 0.08778327975086812, 0.17231885209011727, 0.24310481706894885, 0.30997912738037464, 0.4035868241078322, 0.4749725924425614, 0.5727310648948215, 0.6708225108225109, 0.7982238605898123, 1.0]}, {"label": "$100m to $1bn", "n": 610, "deciles": [-0.03684792736208708, 0.14952470140861657, 0.24244554908757932, 0.30349814974564043, 0.3644356165205215, 0.42722532247735795, 0.5203177942777458, 0.6082470238509736, 0.6941610403590284, 0.769660867657964, 0.9832440769287115]}, {"label": "$1bn to $10bn", "n": 557, "deciles": [0.011629697373848122, 0.1603075660826117, 0.21679351448545253, 0.2683943185876881, 0.3247667012294475, 0.3695338759433106, 0.4196943758238894, 0.47933258722050254, 0.5728119524116941, 0.7264012595724089, 0.9698028450212128]}, {"label": "Over $10bn", "n": 151, "deciles": [-0.029932197784025137, 0.08364002634331538, 0.15366887548980054, 0.18353805148086708, 0.22352753773246783, 0.2917602748777587, 0.35000498156819765, 0.3912351472242803, 0.5079464898239195, 0.6106330082233696, 0.89035108114392]}], "source": "SEC XBRL frames API, us-gaap, CY2024", "retrieved": "2026-08-05"};
+
+const PALETTES = [
+  {
+    id:'onyx', name:'Onyx & Bone',
+    prov:'Your saved card, adopted verbatim',
+    verdict:'The card you saved, unchanged. Onyx and Bone carry the interface, Fern and Rust do the arguing, Slate and Honey stay in reserve. It is warm, high contrast and genuinely uncommon in research. The four secondaries also give you a real categorical set, which is the thing every palette I proposed before this failed at.',
+    ground:'#F2EFEA', ink:'#0D0D0D', muted:'#5C5A55', faint:'#918E86', rule:'#DDD9D1',
+    accent:'#C15A2B',
+    swatches:[
+      ['Onyx','#0D0D0D','Primary','#F2EFEA'],
+      ['Bone','#F2EFEA','Primary','#0D0D0D'],
+      ['Fern','#14532D','Secondary','#F2EFEA'],
+      ['Rust','#C15A2B','Secondary','#F2EFEA'],
+      ['Slate','#1E3A5F','Secondary','#F2EFEA'],
+      ['Honey','#E0A800','Secondary','#0D0D0D'],
+    ],
+    seqFrom:'#F2EFEA', seqVia:'#C15A2B', seqTo:'#0D0D0D',
+    divLo:'#1E3A5F', divHi:'#C15A2B',
+    cat:['#14532D','#C15A2B','#1E3A5F','#E0A800','#5C5A55'],
+    conf:['#0D0D0D','#C15A2B','#B5AFA3'],
+  },
+  {
+    id:'indigo', name:'Indigo Night',
+    prov:'Your saved card, adopted verbatim',
+    verdict:'The card you called the more useful set for decks. Softer and duskier than Onyx and Bone. Note that this is the palette behind the comp you rejected, so judge it here as a set you draw one or two colours from at a time, not as honeycomb against navy in a single frame, which is what I did to it before.',
+    ground:'#EADBC8', ink:'#0D1B2A', muted:'#4A5763', faint:'#8A8478', rule:'#D6C6B2',
+    accent:'#C9744F',
+    swatches:[
+      ['Indigo Night','#0D1B2A','Primary','#EADBC8'],
+      ['Sand Dune','#EADBC8','Primary','#0D1B2A'],
+      ['Moss Green','#2F4F3F','Secondary','#EADBC8'],
+      ['Copper Clay','#C9744F','Secondary','#0D1B2A'],
+      ['Slate','#3D4A59','Secondary','#EADBC8'],
+      ['Honeycomb','#D9A441','Secondary','#0D1B2A'],
+    ],
+    seqFrom:'#EADBC8', seqVia:'#C9744F', seqTo:'#0D1B2A',
+    divLo:'#3D4A59', divHi:'#C9744F',
+    cat:['#2F4F3F','#C9744F','#3D4A59','#D9A441','#7A6E5E'],
+    conf:['#0D1B2A','#C9744F','#B9A88E'],
+  },
+  {
+    id:'field', name:'Field',
+    prov:'Derived from Choose Nature, Leafora, MoleculaLab',
+    verdict:'Built from the olive poster you called the strongest single-idea composition in the corpus. One hue washes the whole thing, the way that poster washes its photograph, with clay as the only warm relief. Contains no blue at all, so the pairing you objected to cannot occur. The cost is that a single-hue palette struggles to hold four comparable series.',
+    ground:'#EFEEE4', ink:'#14140F', muted:'#575A44', faint:'#8E8F7C', rule:'#DBDACB',
+    accent:'#B5643C',
+    swatches:[
+      ['Ink','#14140F','Primary','#EFEEE4'],
+      ['Chalk','#EFEEE4','Primary','#14140F'],
+      ['Olive','#7C8446','Secondary','#14140F'],
+      ['Deep Olive','#3B4227','Secondary','#EFEEE4'],
+      ['Clay','#B5643C','Secondary','#EFEEE4'],
+      ['Ash','#9A9B87','Neutral','#14140F'],
+    ],
+    seqFrom:'#EFEEE4', seqVia:'#7C8446', seqTo:'#14140F',
+    divLo:'#3B4227', divHi:'#B5643C',
+    cat:['#7C8446','#B5643C','#3B4227','#9A9B87','#575A44'],
+    conf:['#14140F','#7C8446','#BFC0AC'],
+  },
+  {
+    id:'press', name:'Press',
+    prov:'Derived from the tree-ring woodcut, the 3D waveform, Formless, Union',
+    verdict:'The four items in your gallery that use exactly one colour: a woodcut in black ink, a waveform in a single red on paper, halftone hands, and Union with red only at the division points. Entirely warm, no green, no blue. This is the most disciplined option and the one closest to how your references actually behave, and it will fail the same categorical test that Graphite failed.',
+    ground:'#F0EDE6', ink:'#14120F', muted:'#5A564E', faint:'#938E83', rule:'#DCD7CC',
+    accent:'#C6402A',
+    swatches:[
+      ['Ink','#14120F','Primary','#F0EDE6'],
+      ['Paper','#F0EDE6','Primary','#14120F'],
+      ['Vermilion','#C6402A','Accent','#F0EDE6'],
+      ['Oxide','#7E2A1C','Secondary','#F0EDE6'],
+      ['Umber','#4A3A2A','Secondary','#F0EDE6'],
+      ['Putty','#C9C3B6','Neutral','#14120F'],
+    ],
+    seqFrom:'#F0EDE6', seqVia:'#C6402A', seqTo:'#14120F',
+    divLo:'#4A3A2A', divHi:'#C6402A',
+    cat:['#C6402A','#4A3A2A','#7E2A1C','#C9C3B6','#5A564E'],
+    conf:['#14120F','#C6402A','#C9C3B6'],
+  },
+  {
+    id:'teal', name:'Deep Teal',
+    prov:'Your saved card, adopted verbatim',
+    verdict:'Included because you saved it, and flagged because teal is a green blue, which is the family you told me you did not want. It is the only card of the three that leads with gradients, and you have said twice that you like the gradients. If this one lands, the useful read is that your objection was to flat complementary pairings rather than to green and blue as such.',
+    ground:'#E4EEF0', ink:'#16232B', muted:'#4E656B', faint:'#8AA1A6', rule:'#CBDCE0',
+    accent:'#FFC933',
+    swatches:[
+      ['Deep Teal','#042F34','Primary','#B5F2DB'],
+      ['Charcoal Teal','#16232B','Primary','#E4EEF0'],
+      ['Mint Green','#B5F2DB','Secondary','#042F34'],
+      ['Pale Blue Gray','#E4EEF0','Neutral','#16232B'],
+      ['White','#FFFFFF','Neutral','#16232B'],
+      ['Warm Yellow','#FFC933','Accent','#16232B'],
+    ],
+    seqFrom:'#E4EEF0', seqVia:'#B5F2DB', seqTo:'#042F34',
+    divLo:'#042F34', divHi:'#FFC933',
+    cat:['#042F34','#FFC933','#B5F2DB','#16232B','#4E656B'],
+    conf:['#042F34','#4E656B','#B5F2DB'],
+  },
+];
+
+/* ---------- colour helpers ---------- */
+const hx = h => parseInt(h.slice(1), 16);
+const rgbOf = h => [hx(h) >> 16 & 255, hx(h) >> 8 & 255, hx(h) & 255];
+const toHex = a => '#' + a.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+function mix(a, b, t){ const A = rgbOf(a), B = rgbOf(b); return toHex(A.map((v, i) => v + (B[i] - v) * t)); }
+function ramp3(from, via, to, n){
+  const out = [];
+  for (let i = 0; i < n; i++){
+    const t = i / (n - 1);
+    out.push(t < 0.5 ? mix(from, via, t * 2) : mix(via, to, (t - 0.5) * 2));
+  }
+  return out;
+}
+const srgb = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+function lum(h){ const [r, g, b] = rgbOf(h); return 0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b); }
+function ratio(a, b){ const l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- charts on real data ---------- */
+function figHist(P, seq){
+  const H = DATA.hist, N = DATA.nbins, W = 330, Ht = 128, max = Math.max(...H);
+  let bars = '';
+  for (let i = 0; i < N; i++){
+    const t = i / (N - 1), h = (H[i] / max) * (Ht - 28);
+    const x = 26 + (i / N) * (W - 40), w = (W - 40) / N - 1.2;
+    bars += `<rect x="${x.toFixed(1)}" y="${(Ht - 15 - h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${seq[Math.min(seq.length - 1, Math.floor(t * seq.length))]}"/>`;
+  }
+  const mx = 26 + ((DATA.median + 0.05) / 1.05) * (W - 40);
+  return `<svg viewBox="0 0 ${W} ${Ht}">${bars}
+    <line x1="${mx.toFixed(1)}" y1="5" x2="${mx.toFixed(1)}" y2="${Ht - 15}" stroke="${P.accent}" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="${(mx + 5).toFixed(1)}" y="13" fill="${P.accent}" font-family="Martian Mono, monospace" font-size="6.2">MEDIAN 38.8%</text>
+    <line x1="26" y1="${Ht - 15}" x2="${W - 12}" y2="${Ht - 15}" stroke="${P.ink}" stroke-width="1"/>
+    <text x="26" y="${Ht - 4}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">0%</text>
+    <text x="${W - 32}" y="${Ht - 4}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">100%</text></svg>`;
+}
+function figDiv(P){
+  const B = DATA.buckets, W = 330, Ht = 146;
+  const maxDev = Math.max(...B.map(b => Math.abs(b.dev)));
+  const mid = W * 0.5, rowH = (Ht - 22) / B.length;
+  let rows = '';
+  B.forEach((b, i) => {
+    const y = 8 + i * rowH, w = (Math.abs(b.dev) / maxDev) * (W * 0.42);
+    const t = Math.abs(b.dev) / maxDev;
+    const base = b.dev >= 0 ? P.divHi : P.divLo;
+    rows += `<rect x="${(b.dev >= 0 ? mid : mid - w).toFixed(1)}" y="${(y + 1).toFixed(1)}" width="${w.toFixed(1)}" height="${(rowH - 2.2).toFixed(1)}" fill="${mix(P.ground, base, 0.30 + t * 0.70)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">${rows}
+    <line x1="${mid}" y1="4" x2="${mid}" y2="${Ht - 12}" stroke="${P.ink}" stroke-width="1"/>
+    <text x="${mid - 3}" y="${Ht - 3}" text-anchor="end" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">BELOW MEDIAN</text>
+    <text x="${mid + 3}" y="${Ht - 3}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">ABOVE</text></svg>`;
+}
+function figCat(P){
+  const S = DATA.series, W = 330, Ht = 146;
+  let paths = '', key = '';
+  S.forEach((s, i) => {
+    let d = '';
+    s.deciles.forEach((v, k) => {
+      const x = 26 + (k / 10) * (W - 44), y = Ht - 26 - v * (Ht - 46);
+      d += (k ? ' L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    paths += `<path d="${d}" fill="none" stroke="${P.cat[i]}" stroke-width="1.9" stroke-linejoin="round"/>`;
+    key += `<text x="${26 + i * 76}" y="${Ht - 3}" fill="${P.cat[i]}" font-family="Martian Mono, monospace" font-size="5.9">${esc(s.label.toUpperCase())}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Ht}">
+    <line x1="26" y1="${Ht - 26}" x2="${W - 14}" y2="${Ht - 26}" stroke="${P.ink}" stroke-width="1"/>
+    ${paths}${key}
+    <text x="4" y="18" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">100%</text>
+    <text x="8" y="${Ht - 29}" fill="${P.faint}" font-family="Martian Mono, monospace" font-size="6.2">0%</text></svg>`;
+}
+
+/* ---------- render ---------- */
+const out = document.getElementById('out');
+for (const P of PALETTES){
+  const seq = ramp3(P.seqFrom, P.seqVia, P.seqTo, 6);
+  const div = [P.divLo, mix(P.ground, P.divLo, 0.45), P.ground, mix(P.ground, P.divHi, 0.45), P.divHi];
+
+  const bands = P.swatches.map(([n, h, role, fg]) => {
+    const [r, g, b] = rgbOf(h);
+    return `<div class="band" style="background:${h};color:${fg}">
+      <div class="role">${role}</div>
+      <div class="bn">${esc(n)}</div>
+      <table><tr><th>Hex</th><th>RGB</th></tr><tr><td>${h.toUpperCase()}</td><td>${r} ${g} ${b}</td></tr></table>
+    </div>`;
+  }).join('');
+
+  const rampHtml = [['Sequential', seq], ['Diverging', div], ['Categorical', P.cat]]
+    .map(([k, a]) => `<div class="ramp"><div class="k">${k}</div><div class="bar">${a.map(c => `<i style="background:${c}"></i>`).join('')}</div></div>`).join('');
+
+  const crInk = ratio(P.ink, P.ground), crMut = ratio(P.muted, P.ground), crAcc = ratio(P.accent, P.ground);
+  const mk = (label, v, min) => `<span class="${v >= min ? 'pass' : 'fail'}">${label} ${v.toFixed(2)}:1 ${v >= min ? 'PASS' : 'FAIL'}</span>`;
+
+  const card = document.createElement('div');
+  card.className = 'pal';
+  card.innerHTML = `
+    <div class="hd"><div class="nm">${esc(P.name)}</div><div class="prov">${esc(P.prov)}</div></div>
+    <p class="verdict">${esc(P.verdict)}</p>
+    <div class="bands">${bands}</div>
+    <div class="ramps">${rampHtml}</div>
+    <div class="charts">
+      <div class="fig"><div class="k">Sequential</div><div class="in" style="background:${P.ground}">${figHist(P, seq)}</div>
+        <div class="cap">Gross margin distribution, 2,186 registrants</div></div>
+      <div class="fig"><div class="k">Diverging</div><div class="in" style="background:${P.ground}">${figDiv(P)}</div>
+        <div class="cap">Median margin by revenue bucket, deviation from 38.8%</div></div>
+      <div class="fig"><div class="k">Categorical</div><div class="in" style="background:${P.ground}">${figCat(P)}</div>
+        <div class="cap">Margin deciles by size cohort, four series</div></div>
+    </div>
+    <div class="spec" style="background:${P.ground};border-color:${P.rule}">
+      <div class="lbl" style="color:${P.faint}">Specimen</div>
+      <h3 style="color:${P.ink}">Consensus is pricing an adoption curve the deployment data will not support.</h3>
+      <p style="color:${P.muted}">Twelve of the forty verticals under coverage carry implied margin structures that observed deployment cannot reach before 2028. Dispersion is widest where diligence is thinnest, and the gap is visible in filings that are already public.</p>
+      <div class="conf">
+        <div style="color:${P.conf[0]}"><i style="background:${P.conf[0]}"></i>High confidence</div>
+        <div style="color:${P.conf[1]}"><i style="background:${P.conf[1]}"></i>Moderate</div>
+        <div style="color:${P.conf[2]}"><i style="background:${P.conf[2]}"></i>Speculative</div>
+      </div>
+      <div class="cr">${mk('Ink', crInk, 4.5)} &nbsp; ${mk('Muted', crMut, 4.5)} &nbsp; ${mk('Accent', crAcc, 4.5)}</div>
+    </div>`;
+  out.appendChild(card);
+}
+</script>
+</body>
+</html>
