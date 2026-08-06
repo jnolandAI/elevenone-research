@@ -30,4 +30,22 @@ describe('body to frontmatter correspondence', () => {
     expect(problems[0]).toMatch(/A/);
     expect(problems[0]).toMatch(/2 times/);
   });
+
+  // A quoted id is legal YAML and passes the schema identically. If the parser
+  // cannot see it, the id lands in neither list and the orphan check reports
+  // nothing at all: a silent escape, which is the one failure mode worse than
+  // a false positive here.
+  it('sees a quoted, commented frontmatter id', () => {
+    const problems = checkBrief(load('quoted-id'), 'quoted-id.mdx');
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/B/);
+    expect(problems[0]).toMatch(/never marked/i);
+  });
+
+  it('counts a marking whose id is not the first attribute', () => {
+    const problems = checkBrief(load('doubled-reordered'), 'doubled-reordered.mdx');
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/A/);
+    expect(problems[0]).toMatch(/2 times/);
+  });
 });
