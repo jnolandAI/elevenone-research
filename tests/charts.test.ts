@@ -16,6 +16,12 @@ describe('dataset', () => {
   it('refuses a path outside the published data directory', () => {
     expect(() => loadDataset('/etc/passwd')).toThrow();
   });
+
+  it('refuses a path that starts inside it and then climbs out', () => {
+    // The prefix check alone passes this. Only the traversal clause stops it,
+    // so without this case that clause is dead code as far as the suite knows.
+    expect(() => loadDataset('/assets/data/../../etc/passwd')).toThrow();
+  });
 });
 
 describe('spline', () => {
@@ -35,9 +41,15 @@ describe('density figure', () => {
     expect(svg.trimEnd().endsWith('</svg>')).toBe(true);
   });
 
-  it('describes itself to a screen reader', () => {
+  it('describes itself to a screen reader with the figures it actually draws', () => {
     expect(svg).toContain('role="img"');
-    expect(svg).toMatch(/aria-label="[^"]{60,}"/);
+    const label = svg.match(/aria-label="([^"]+)"/)![1]!;
+    expect(label.length).toBeGreaterThan(60);
+    // A length check alone passes a stale accessible name. The description a
+    // screen reader hears has to carry the same numbers the sighted reader
+    // sees, or the two readings of the figure disagree.
+    expect(label).toContain((data.q.p50 * 100).toFixed(1) + ' percent');
+    expect(label).toContain(data.n_kept.toLocaleString('en-US'));
   });
 
   it('puts no drop shadow on any data mark', () => {
