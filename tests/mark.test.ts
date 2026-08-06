@@ -32,6 +32,8 @@ describe('the mark', () => {
   it('inverts only to the one inverse value, on dark grounds', async () => {
     const html = await render({ size: 40, inverse: true });
     expect(html).toContain('#FAFAF9');
+    // ink must be gone, not merely joined: there is no third value
+    expect(html).not.toContain('#131312');
   });
 
   it('is decorative when it sits beside the wordmark', async () => {
@@ -44,6 +46,9 @@ describe('the mark', () => {
     const html = await render({ size: 40, label: 'Eleven One Research' });
     expect(html).toContain('role="img"');
     expect(html).toContain('aria-label="Eleven One Research"');
+    // exactly one: the source file carries its own, and an assertion that the
+    // label is merely present passes with two
+    expect(html.match(/aria-label=/g)).toHaveLength(1);
   });
 
   it('is never put on a plate and never given a shadow', async () => {
