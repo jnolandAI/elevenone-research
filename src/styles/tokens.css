@@ -1,0 +1,38 @@
+:root {
+  /* Twelve-step spine, built in OKLCH, sub-families held under 0.007 chroma
+     so depth is available without introducing hue. */
+  --w: #FFFFFF;
+  --g05: #FAFAF9;
+  --g10: #F4F4F3;
+  --g20: #EBEBEA;
+  --g30: #DEDEDD;
+  --g40: #C9C9C7;
+  --g50: #AEAEAC;
+  --g60: #8C8C8A;
+  --g70: #6C6C6A;
+  --g80: #4A4A48;
+  --g90: #2B2B2A;
+  --ink: #131312;
+
+  --r-s: 12px;
+  --r-m: 18px;
+  --r-l: 26px;
+  --r-xl: 40px;
+  --pill: 999px;
+
+  /* Separation is elevation, not a 1px border. */
+  --e1: 0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
+  --e2: 0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);
+  --e3: 0 2px 6px rgba(20,20,18,.05), 0 20px 50px rgba(20,20,18,.08);
+  --e4: 0 4px 12px rgba(20,20,18,.06), 0 36px 84px rgba(20,20,18,.11);
+
+  --ez: cubic-bezier(.16,.9,.24,1);
+
+  /* Two widths in a brief and no others. --doc is the frame everything sits
+     inside; --read is the reading column. Figures take the column exactly.
+     Only the load path and the method block take the frame. */
+  --doc: 1044px;
+  --read: 624px;
+  --rail: 300px;
+  --gut: 60px;
+}
