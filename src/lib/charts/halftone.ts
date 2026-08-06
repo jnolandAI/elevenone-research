@@ -86,14 +86,9 @@ export function dotRamp(W: number, H: number, o: RampOpts = {}): string {
       t = Math.max(0, Math.min(1, (t - 0.10) / 0.90));
 
       // the engine's edge dissolve, gentler: the field thins at the frame
-      // rather than stopping against it. Width is 0.10 of each dimension,
-      // not 0.055: at 0.055 the fade band's outer edge (where fx/fy first
-      // reach 1, i.e. "no thinning") sits right where density is highest,
-      // so dots just inside the frame come out nearly as large as the
-      // interior max. Widening the band moves the true peak safely inside
-      // the open interior instead of at the seam.
-      const fx = Math.min(1, Math.min(x, W - x) / (0.10 * W));
-      const fy = Math.min(1, Math.min(y, H - y) / (0.10 * H));
+      // rather than stopping against it
+      const fx = Math.min(1, Math.min(x, W - x) / (0.055 * W));
+      const fy = Math.min(1, Math.min(y, H - y) / (0.055 * H));
       const r = rmax * Math.pow(t, 1.55) * Math.min(fx, fy);
       if (r < 0.3) continue;
 

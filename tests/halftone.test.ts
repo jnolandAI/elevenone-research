@@ -62,13 +62,22 @@ describe('dot ramp', () => {
 
   it('thins toward the frame rather than stopping against it', () => {
     // Asserting every radius clears 0.3 is tautological: the implementation
-    // skips anything smaller, so the assertion holds with the edge dissolve
-    // deleted entirely. Compare the frame to the interior instead.
+    // skips anything smaller, so it holds with the edge dissolve deleted.
+    //
+    // The comparison is frame-relative rather than a fixed pixel band, and
+    // deliberately so. A band equal to the fade width includes dots at the
+    // band's outer lip, where the fade has already returned to 1 and nothing
+    // is thinned, so the test fails against a correct implementation and
+    // invites someone to widen the brand's dissolve constant to satisfy it.
+    // Ranking by distance to the frame has no such coupling.
     const dots = [...svg.matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)"\/>/g)]
       .map((m) => ({ x: Number(m[1]), y: Number(m[2]), r: Number(m[3]) }));
+    expect(dots.length).toBeGreaterThan(100);
+    const toFrame = (d: { x: number; y: number }) =>
+      Math.min(d.x, 800 - d.x, d.y, 400 - d.y);
     const maxR = Math.max(...dots.map((d) => d.r));
-    const edge = dots.filter((d) => d.x < 44 || d.x > 756 || d.y < 22 || d.y > 378);
-    expect(edge.length).toBeGreaterThan(0);
-    expect(Math.max(...edge.map((d) => d.r))).toBeLessThan(maxR * 0.6);
+    const nearest = [...dots].sort((a, b) => toFrame(a) - toFrame(b)).slice(0, 20);
+    // measured: 0.32 with the dissolve, 1.00 without it
+    expect(Math.max(...nearest.map((d) => d.r))).toBeLessThan(maxR * 0.6);
   });
 });
