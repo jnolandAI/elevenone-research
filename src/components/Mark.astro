@@ -1,0 +1,45 @@
+---
+import { readFileSync } from 'node:fs';
+
+interface Props {
+  /** Rendered size in px. Chooses the cut. Minimum 16. */
+  size: number;
+  /** Dark grounds only. There is no third value. */
+  inverse?: boolean;
+  /**
+   * Set only when the mark stands alone. Beside the wordmark it is decorative
+   * and naming it twice makes a screen reader say the brand twice.
+   */
+  label?: string;
+}
+
+const { size, inverse = false, label } = Astro.props;
+
+// Rule 3 of docs/mark.md. Below 16px the small cut loses the scatter and the
+// idea goes with it, so this is an error rather than a clamp.
+if (size < 16) {
+  throw new Error(`Mark: minimum size is 16px, got ${size}px. See docs/mark.md.`);
+}
+
+// Two cuts, not one drawing scaled. A halftone changes line screen for
+// newsprint; a mark changes it for a favicon. Scaling the display cut down to
+// 16px turns 112 dots into mud.
+const cut = size >= 25 ? '' : '-small';
+const tone = inverse ? '-inverse' : '';
+const file = `public/assets/mark/mark${cut}${tone}.svg`;
+
+let svg = readFileSync(file, 'utf8');
+
+// The file carries role="img", an aria-label and a <title> for standalone use.
+// Strip all three first, then put back only what this instance needs: naming
+// the mark twice beside the wordmark makes a screen reader say the brand twice.
+svg = svg
+  .replace(/<title>.*?<\/title>/, '')
+  .replace(/\s*aria-label="[^"]*"/, '')
+  .replace('role="img"', label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"');
+
+// Sized inline rather than in a class, so the mark cannot be stretched by a
+// parent's layout. Rule 5: never rotated, stretched, outlined or shadowed.
+svg = svg.replace('<svg ', `<svg style="width:${size}px;height:${size}px;display:block;flex:none" `);
+---
+<Fragment set:html={svg} />
