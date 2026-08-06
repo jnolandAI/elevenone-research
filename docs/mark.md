@@ -24,12 +24,12 @@ silhouette.
 | Path                                | What it is                              |
 | ----------------------------------- | --------------------------------------- |
 | `scripts/render_mark.py`            | The generator. The mark lives here, not in a drawing application |
-| `assets/mark/mark.svg`              | Display cut, 25px and above             |
-| `assets/mark/mark-small.svg`        | Small cut, below 25px                   |
-| `assets/mark/mark-inverse.svg`      | Display cut for dark grounds            |
-| `assets/mark/mark-small-inverse.svg`| Small cut for dark grounds              |
-| `assets/mark/favicon-16.png` `-32`  | Raster favicons                         |
-| `assets/mark/icon-180.png` `-512`   | Touch icon and store icon               |
+| `public/assets/mark/mark.svg`              | Display cut, 25px and above             |
+| `public/assets/mark/mark-small.svg`        | Small cut, below 25px                   |
+| `public/assets/mark/mark-inverse.svg`      | Display cut for dark grounds            |
+| `public/assets/mark/mark-small-inverse.svg`| Small cut for dark grounds              |
+| `public/assets/mark/favicon-16.png` `-32`  | Raster favicons                         |
+| `public/assets/mark/icon-180.png` `-512`   | Touch icon and store icon               |
 
 ```bash
 python scripts/render_mark.py           # rebuild everything

@@ -11,14 +11,14 @@ prototypes/dot-engine.js and apply to every render.
     python scripts/render_dot.py --subject wind --role figure --mode contour
     python scripts/render_dot.py --all --role card
 
-Output lands in assets/dot/<subject>-<role>-<mode>.png unless --out is given.
+Output lands in public/assets/dot/<subject>-<role>-<mode>.png unless --out is given.
 """
 import argparse, base64, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAGE = os.path.join(ROOT, "prototypes", "dot-render.html")
 ENGINE = os.path.join(ROOT, "prototypes", "dot-engine.js")
-OUTDIR = os.path.join(ROOT, "assets", "dot")
+OUTDIR = os.path.join(ROOT, "public", "assets", "dot")
 
 
 def engine_facts():

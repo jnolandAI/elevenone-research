@@ -10,7 +10,7 @@ into order.
 The drawing is deterministic. The same constants always produce the same file,
 which is why the mark lives in a script rather than in a drawing application.
 
-    python scripts/render_mark.py            # writes assets/mark/
+    python scripts/render_mark.py            # writes public/assets/mark/
     python scripts/render_mark.py --check    # verifies nothing has drifted
 
 Raster output needs Playwright. Without it, the SVGs are still written.
@@ -20,7 +20,7 @@ from __future__ import annotations
 import argparse, json, math, pathlib, sys
 
 VERSION = "1.0"
-OUT = pathlib.Path(__file__).resolve().parents[1] / "assets" / "mark"
+OUT = pathlib.Path(__file__).resolve().parents[1].joinpath("public", "assets", "mark")
 
 # --------------------------------------------------------------------- constants
 # Shared with the imagery engine. A change here is a change to the mark and

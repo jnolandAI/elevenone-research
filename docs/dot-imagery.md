@@ -23,7 +23,7 @@ same house, because the screen does the work rather than the subject.
 | `prototypes/dot-render.html`    | Headless render page, built from the engine                    |
 | `scripts/build_dot_pages.py`    | Rebuilds both pages after any engine change                    |
 | `scripts/render_dot.py`         | Production CLI                                                 |
-| `assets/dot/`                   | Rendered output plus `manifest.json`                           |
+| `public/assets/dot/`            | Rendered output plus `manifest.json`                           |
 
 Both pages are generated from the same engine, so the foundry and the renderer
 cannot drift apart. After editing `dot-engine.js`, run
@@ -79,8 +79,8 @@ python scripts/render_dot.py --subject wind --role figure --mode contour
 python scripts/render_dot.py --all --role card
 ```
 
-Output lands in `assets/dot/<subject>-<role>-<mode>.png` and every render appends
-to `assets/dot/manifest.json` with its size, pitch, engine version and source
+Output lands in `public/assets/dot/<subject>-<role>-<mode>.png` and every render appends
+to `public/assets/dot/manifest.json` with its size, pitch, engine version and source
 type. The CLI reads subjects and roles out of the engine at runtime, so it can
 never disagree with it about what exists.
 
