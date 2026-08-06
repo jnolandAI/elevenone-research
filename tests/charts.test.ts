@@ -18,9 +18,11 @@ describe('dataset', () => {
   });
 
   it('refuses a path that starts inside it and then climbs out', () => {
-    // The prefix check alone passes this. Only the traversal clause stops it,
-    // so without this case that clause is dead code as far as the suite knows.
-    expect(() => loadDataset('/assets/data/../../etc/passwd')).toThrow();
+    // Pinned to the guard's own message. A bare .toThrow() passes either way:
+    // path.join collapses this to public/etc/passwd, which does not exist, so
+    // readFileSync's ENOENT masks the guard's absence entirely.
+    expect(() => loadDataset('/assets/data/../../etc/passwd'))
+      .toThrow(/must sit under/);
   });
 });
 
