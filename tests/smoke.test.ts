@@ -7,6 +7,8 @@ describe('project scaffold', () => {
     expect(Object.keys(pkg.dependencies).sort()).toEqual([
       '@astrojs/mdx',
       '@astrojs/sitemap',
+      '@fontsource-variable/familjen-grotesk',
+      '@fontsource-variable/martian-mono',
       'astro',
     ]);
   });
