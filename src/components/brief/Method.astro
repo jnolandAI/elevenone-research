@@ -1,0 +1,52 @@
+---
+import type { MethodSpec } from '../../content.config';
+
+interface Props { spec: MethodSpec; dataset: string; }
+const { spec, dataset } = Astro.props;
+const datasetName = dataset.split('/').pop();
+
+const rows = [
+  ['Source', spec.source],
+  ['Universe', spec.universe],
+  ['Computation', spec.computation],
+  ['Not done', spec.notDone],
+] as const;
+---
+<section class="wide">
+  <div class="method">
+    <h2>Method and sources</h2>
+    <p class="intro">Everything in this brief comes from one free, public, keyless source. No paid data was used and none is needed for this question.</p>
+    <dl>
+      {rows.map(([term, body]) => (<><dt>{term}</dt><dd>{body}</dd></>))}
+      <dt>Data</dt>
+      <dd>{spec.data} <a href={dataset}>{datasetName}</a></dd>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .wide { margin-top: 96px; }
+  .method {
+    border-radius: var(--r-l); padding: 32px 36px 34px; box-shadow: var(--e2);
+    background: linear-gradient(150deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  }
+  h2 { font-size: 16.5px; font-weight: 600; letter-spacing: -.018em; margin: 0 0 6px; }
+  .intro { font-size: 13px; line-height: 1.72; color: var(--g70); margin: 0; max-width: 74ch; }
+  dl { margin: 22px 0 0; display: grid; grid-template-columns: 132px 1fr; gap: 12px 24px; align-items: baseline; }
+  dt { font-size: 11.5px; color: var(--g70); line-height: 1.6; }
+  dd { margin: 0; font-size: 13px; line-height: 1.7; color: var(--g80); max-width: 72ch; }
+  dd a {
+    color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-thickness: 1px; text-decoration-color: var(--g40);
+  }
+  dd a:hover { text-decoration-color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .wide { margin-top: 76px; }
+    .method { padding: 24px 22px 26px; }
+    dl { grid-template-columns: 1fr; gap: 2px 0; }
+    dt { margin-top: 12px; }
+    dt:first-of-type { margin-top: 0; }
+  }
+</style>

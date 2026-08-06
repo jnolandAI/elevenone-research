@@ -1,0 +1,140 @@
+---
+import type { Claim, LoadPathSpec } from '../../content.config';
+import { capOf } from '../../lib/standing';
+
+interface Props { claims: Claim[]; spec: LoadPathSpec; }
+const { claims, spec } = Astro.props;
+
+const byId = new Map(claims.map((c) => [c.id, c]));
+const members = spec.members.map((id) => byId.get(id)!);
+
+// Rule 3. Derived, never authored. There is no prop that raises it, because
+// restyling the object is not one of the options for raising a conclusion.
+const { standing, cappedBy } = capOf(claims, spec.members);
+const capLabel = standing[0]!.toUpperCase() + standing.slice(1);
+---
+<section class="wide">
+  <div class="head">
+    <h2 id="s-path">The load path</h2>
+    <p>The conclusion and what it is entitled to rest on. It is rendered at the standing of the weakest claim carrying it.</p>
+  </div>
+
+  <div class="path" id="path">
+    <div class="screen" id="pathScreen"></div>
+    <svg class="wires" id="wires" aria-hidden="true"></svg>
+    <div class="inner">
+      <div class="tier">
+        <div class="concl" id="concl">
+          <p class="lab">Conclusion</p>
+          <p class="q">{spec.conclusion}</p>
+          <p class="cap" set:html={
+            `Rendered <b>${standing}</b>, capped by claim ` +
+            cappedBy.map((id) => `<b>${id}</b>`).join(' and ') + '.'
+          } />
+        </div>
+      </div>
+      <div class="tier claims" id="members">
+        {members.map((m, i) => (
+          <div class={`member ${m.standing}`} style={`--i:${i}`} data-stance={m.standing}>
+            <p class="id">Claim {m.id}</p>
+            <p class="q">{m.text}</p>
+            <p class="st"><b>{m.standing[0]!.toUpperCase() + m.standing.slice(1)}</b> &middot; {m.qualifier}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {spec.offPath && (
+    <div class="offpath">
+      <p class="h">Claim {spec.offPath.id} is not in the path</p>
+      <p>{spec.offPath.text}</p>
+    </div>
+  )}
+</section>
+
+<style>
+  .wide { margin-top: 96px; }
+  .head { max-width: var(--read); margin: 0 0 26px; }
+  .head p { font-size: 15px; line-height: 1.72; color: var(--g70); margin: 10px 0 0; }
+  h2 { font-size: 25px; font-weight: 600; letter-spacing: -.026em; line-height: 1.22; margin: 0; scroll-margin-top: 92px; }
+
+  /* Depth is drawn, not blurred. A blurred dark blob under a light panel reads
+     as a smudge; a halftone ramp on the same staggered lattice and 15 degree
+     screen angle as the imagery engine reads as a surface that was made. */
+  .path {
+    position: relative; border-radius: var(--r-xl); padding: 42px 42px 44px;
+    overflow: hidden; box-shadow: var(--e3);
+    background: linear-gradient(150deg, #FCFCFC 0%, #F8F8F7 54%, #F3F3F2 100%);
+  }
+  .screen { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .screen :global(svg) { height: 100%; }
+  .inner { position: relative; z-index: 1; }
+  .wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; }
+  .tier { position: relative; z-index: 1; }
+  .tier.claims {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px; margin-top: 104px; align-items: start;
+  }
+  .concl {
+    border-radius: var(--r-l); padding: 26px 30px 24px; max-width: 580px; margin: 0 auto;
+    text-align: center; background: linear-gradient(160deg, #FFFFFF 0%, #F5F5F4 100%);
+    box-shadow: var(--e2);
+    transition: transform .55s var(--ez), box-shadow .55s var(--ez), opacity .55s;
+  }
+  .concl .lab { font-size: 11.5px; color: var(--g70); margin: 0 0 10px; }
+  .concl .q { font-size: 21px; font-weight: 500; letter-spacing: -.024em; line-height: 1.4; margin: 0; color: var(--g80); }
+  .concl .cap { font-size: 12.5px; line-height: 1.7; color: var(--g70); margin: 15px auto 0; max-width: 52ch; }
+  .concl .cap :global(b) { color: var(--ink); font-weight: 600; }
+
+  .member {
+    border-radius: var(--r-m); padding: 20px 20px 18px;
+    background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%);
+    transition: transform .55s var(--ez), box-shadow .55s var(--ez);
+  }
+  .member .id { font-size: 11.5px; color: var(--g70); margin: 0 0 8px; }
+  .member .q { font-size: 15px; font-weight: 500; letter-spacing: -.016em; line-height: 1.46; margin: 0; }
+  .member .st { font-size: 11.5px; margin: 12px 0 0; color: var(--g70); }
+  .member .st b { color: var(--ink); font-weight: 600; }
+  .member.firm { box-shadow: var(--e3); }
+  .member.firm .q { color: var(--ink); }
+  .member.supported { box-shadow: var(--e2); }
+  .member.supported .q { color: var(--g80); }
+  .member.provisional { box-shadow: var(--e1); }
+  .member.provisional .q { color: var(--g70); font-weight: 400; }
+
+  .path .member { transform: translateY(16px); }
+  .path:global(.on) .member.firm { transform: translateY(-6px); }
+  .path:global(.on) .member.supported { transform: translateY(0); }
+  .path:global(.on) .member.provisional { transform: translateY(4px); }
+  .path:global(.on) .member { transition-delay: calc(160ms + var(--i, 0) * 120ms); }
+  .path .concl { transform: translateY(-9px); opacity: .74; }
+  .path:global(.on) .concl { transform: translateY(0); opacity: 1; transition-delay: 520ms; }
+  .wires :global(path) {
+    stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600);
+    transition: stroke-dashoffset 1s var(--ez);
+  }
+  .path:global(.on) .wires :global(path) { stroke-dashoffset: 0; transition-delay: 340ms; }
+
+  .offpath {
+    margin-top: 20px; border-radius: var(--r-m); padding: 19px 24px;
+    background: linear-gradient(160deg, rgba(255,255,255,.62), rgba(255,255,255,.34));
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--e1);
+  }
+  .offpath .h { font-size: 13px; font-weight: 600; color: var(--ink); margin: 0 0 6px; letter-spacing: -.01em; }
+  .offpath p { font-size: 12.5px; line-height: 1.72; color: var(--g70); margin: 0; }
+
+  @media (max-width: 900px) {
+    .wide { margin-top: 76px; }
+    .path { padding: 28px 20px 32px; }
+    .tier.claims { margin-top: 88px; padding-left: 34px; gap: 24px; }
+    .concl { padding: 22px 20px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .path .member, .path .concl { transform: none; }
+    .path .concl { opacity: 1; }
+    .wires :global(path) { stroke-dashoffset: 0; }
+  }
+</style>
