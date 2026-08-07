@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Every claim in a brief's frontmatter must be attached to exactly one
  * sentence in the body, and every marked sentence must have a claim behind it.

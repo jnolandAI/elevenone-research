@@ -1,0 +1,14 @@
+# Line endings are normalised in the repository and checked out as LF.
+#
+# Without this, a Windows checkout gets CRLF and scripts/check-briefs.mjs
+# stops loading under Vitest, so the suite passes in one working copy and
+# fails in another from the same commit. That is exactly the failure this
+# build hit at merge time, and it is invisible until someone checks out
+# fresh.
+* text=auto eol=lf
+
+# Binaries must never be touched.
+*.png binary
+*.zip binary
+*.woff binary
+*.woff2 binary
