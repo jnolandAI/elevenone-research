@@ -88,6 +88,9 @@ describe('the load path', () => {
     // implementation that slices by position rather than resolving by id,
     // which happens to pick A here for the wrong reason.
     expect(html).toContain('Claim A');
-    expect(html).not.toContain('<p class="id">Claim D</p>');
+    // Tolerant of the data-astro-cid-* attributes the container API injects.
+    // As a literal string this never occurs in rendered output at all, so the
+    // assertion would pass whether or not claim D were on the path.
+    expect(html).not.toMatch(/<p class="id"[^>]*>Claim D<\/p>/);
   });
 });
