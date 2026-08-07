@@ -1,11 +1,80 @@
 ---
-// Placeholder. Task 15 replaces this with the briefs index.
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { readTime } from '../lib/readtime';
+
+const all = await getCollection('briefs');
+const briefs = all
+  .filter(b => b.data.published !== null)
+  .sort((a, b) => b.data.published!.getTime() - a.data.published!.getTime())
+  .map((b) => ({
+    slug: b.id,
+    minutes: readTime(b.body ?? ''),
+    ...b.data,
+  }));
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Eleven One Research</title>
-  </head>
-  <body></body>
-</html>
+<Base
+  title="Briefs · Eleven One Research"
+  description="Independent research and analysis for decisions that are hard to reverse. Every brief shows what it rests on, what it assumes and what would make it wrong."
+  current="briefs"
+>
+  <div class="frame">
+    <header class="lede">
+      <h1>Briefs</h1>
+      <p>Research we publish because it is the proof. Every load-bearing claim carries its source, its assumption and its falsifier on the page, and every figure is recomputable from the dataset published beside it. Free to read, in full, and always will be.</p>
+    </header>
+
+    {briefs.length === 0 ? (
+      <p class="empty">Nothing is published yet. The first brief goes out when it is finished, not when the page looks empty.</p>
+    ) : (
+      <ol class="list">
+        {briefs.map((b) => (
+          <li>
+            <a href={`/briefs/${b.slug}`}>
+              <p class="kind"><b>Brief {b.number}</b> &middot; {b.kind}</p>
+              <h2>{b.title}</h2>
+              <p class="sub">{b.subtitle}</p>
+              <p class="stand">{b.standfirst}</p>
+              <p class="meta">
+                <span>{b.published!.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                <span><span class="num">{b.minutes}</span> min read</span>
+                <span>{b.claims.length} claims</span>
+              </p>
+            </a>
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
+</Base>
+
+<style>
+  .lede { max-width: var(--read); margin: 0 auto; padding: 84px 0 0; }
+  h1 { font-size: clamp(31px, 4.2vw, 46px); font-weight: 500; letter-spacing: -.036em; margin: 0; }
+  .lede p { font-size: 16.5px; line-height: 1.74; color: var(--g80); margin: 22px 0 0; }
+
+  .empty {
+    max-width: var(--read); margin: 60px auto 0; padding: 26px 28px;
+    border-radius: var(--r-l); background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%);
+    box-shadow: var(--e1); font-size: 15px; line-height: 1.72; color: var(--g70);
+  }
+
+  /* one column at the reading width. A grid with one card in it reads as a
+     grid that is missing cards. */
+  .list { list-style: none; margin: 60px auto 0; padding: 0; max-width: var(--read); }
+  .list li { margin-bottom: 18px; }
+  .list a {
+    display: block; padding: 28px 30px 26px; border-radius: var(--r-l);
+    text-decoration: none; color: inherit;
+    background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%);
+    box-shadow: var(--e1);
+    transition: transform .35s var(--ez), box-shadow .35s var(--ez);
+  }
+  .list a:hover { transform: translateY(-2px); box-shadow: var(--e2); }
+  .kind { font-size: 12.5px; color: var(--g70); margin: 0 0 12px; }
+  .kind b { color: var(--ink); font-weight: 600; }
+  h2 { font-size: 24px; font-weight: 600; letter-spacing: -.026em; line-height: 1.24; margin: 0; }
+  .sub { font-size: 16px; color: var(--g70); margin: 6px 0 0; line-height: 1.44; }
+  .stand { font-size: 14.5px; line-height: 1.72; color: var(--g80); margin: 16px 0 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 18px 0 0; font-size: 12px; color: var(--g70); }
+</style>
