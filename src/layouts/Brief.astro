@@ -1,0 +1,78 @@
+---
+import Base from './Base.astro';
+import BriefHero from '../components/brief/BriefHero.astro';
+import ClaimRail from '../components/brief/ClaimRail.astro';
+import LoadPath from '../components/brief/LoadPath.astro';
+import Method from '../components/brief/Method.astro';
+import type { Claim, LoadPathSpec, MethodSpec } from '../content.config';
+
+interface Props {
+  number: string;
+  title: string;
+  subtitle: string;
+  kind: string;
+  standfirst: string;
+  axisKey: string;
+  dataset: string;
+  published: Date | null;
+  claims: Claim[];
+  loadPath: LoadPathSpec;
+  method: MethodSpec;
+  minutes: number;
+}
+const p = Astro.props;
+---
+<Base
+  title={`${p.title} · Eleven One Research`}
+  description={p.standfirst}
+  current="briefs"
+  noindex={p.published === null}
+  print
+>
+  <BriefHero
+    number={p.number} kind={p.kind} title={p.title} subtitle={p.subtitle}
+    standfirst={p.standfirst} axisKey={p.axisKey} dataset={p.dataset}
+    published={p.published} minutes={p.minutes}
+  />
+
+  <div class="frame">
+    <div class="doc">
+      <article><slot /></article>
+      <ClaimRail claims={p.claims} dataset={p.dataset} />
+    </div>
+
+    <LoadPath claims={p.claims} spec={p.loadPath} />
+    <Method spec={p.method} dataset={p.dataset} />
+  </div>
+</Base>
+
+<style>
+  /* Two widths and no others. --read is the reading column, --doc is the frame
+     it sits inside. Figures take the column exactly. Only the load path and the
+     method block take the frame. Three or more widths down a scroll reads as
+     unfinished no matter how well each piece is made. */
+  .doc {
+    display: grid;
+    grid-template-columns: minmax(0, var(--read)) minmax(0, var(--rail));
+    gap: var(--gut);
+    justify-content: center;
+    align-items: start;
+  }
+  article { min-width: 0; }
+
+  /* Text does not wrap around figures. At a 624px column a wrapped figure
+     leaves roughly 300px for each, too narrow for the figure and below the
+     measure floor for the text. */
+  article :global(p) { font-size: 17px; line-height: 1.76; color: var(--g80); margin: 0 0 24px; }
+  article :global(p:last-child) { margin-bottom: 0; }
+  article :global(h2) {
+    font-size: 25px; font-weight: 600; letter-spacing: -.026em; line-height: 1.22;
+    margin: 76px 0 16px; scroll-margin-top: 92px; color: var(--ink);
+  }
+  article :global(h2:first-child) { margin-top: 0; }
+  article :global(.lede) { font-size: 18.5px; line-height: 1.66; color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .doc { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  }
+</style>

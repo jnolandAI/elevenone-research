@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from 'astro:content';
+import Brief from '../../layouts/Brief.astro';
+import Claim from '../../components/brief/Claim.astro';
+import DataFigure from '../../components/brief/DataFigure.astro';
+import Takeaways from '../../components/brief/Takeaways.astro';
+import { readTime } from '../../lib/readtime';
+
+export async function getStaticPaths() {
+  // Drafts build so they can be reviewed at their URL. They carry noindex and
+  // do not appear in the index.
+  const briefs = await getCollection('briefs');
+  return briefs.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const minutes = readTime(entry.body ?? '');
+---
+<Brief {...entry.data} minutes={minutes}>
+  <Content components={{ Claim, DataFigure, Takeaways }} />
+</Brief>

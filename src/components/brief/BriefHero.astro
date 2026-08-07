@@ -1,0 +1,84 @@
+---
+import { loadDataset } from '../../lib/dataset';
+import { dotField, HERO_WIDE, HERO_NARROW } from '../../lib/charts/halftone';
+
+interface Props {
+  number: string;
+  kind: string;
+  title: string;
+  subtitle: string;
+  standfirst: string;
+  axisKey: string;
+  dataset: string;
+  published: Date | null;
+  minutes: number;
+}
+const { number, kind, title, subtitle, standfirst, axisKey, dataset, published, minutes } = Astro.props;
+
+const data = loadDataset(dataset);
+// Both breakpoint variants are emitted at build and CSS picks one, so the
+// surface costs no client JavaScript.
+const wide = dotField(data, HERO_WIDE);
+const narrow = dotField(data, HERO_NARROW);
+
+const dateLabel = published
+  ? published.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  : null;
+---
+<div class="hero frame">
+  <div class="clearing"></div>
+  <p class="kind"><b>Brief {number}</b> &middot; {kind}</p>
+  <h1>{title}<b>{subtitle}</b></h1>
+  <p class="stand">{standfirst}</p>
+  <div class="surface">
+    <div class="wide" set:html={wide} />
+    <div class="narrow" set:html={narrow} />
+  </div>
+  <div class="meta">
+    {dateLabel
+      ? <span>Published <b>{dateLabel}</b></span>
+      : <span><b>Draft</b>, not published</span>}
+    <span><b class="num">{minutes}</b> min read</span>
+    <span>Universe <b class="num">{data.n_kept.toLocaleString('en-US')}</b> registrants</span>
+    <span>Free to read, in full</span>
+  </div>
+  <p class="axkey">{axisKey}</p>
+</div>
+
+<style>
+  .hero { position: relative; padding: 84px 0 58px; overflow: hidden; }
+  .surface { position: absolute; left: 38%; right: -8%; top: 15%; z-index: 0; pointer-events: none; }
+  /* the field fades out where the type sits, rather than the type fighting it
+     with a shadow */
+  .clearing {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse 52% 56% at 30% 44%,
+      rgba(247,247,246,.98) 0%, rgba(247,247,246,.92) 44%,
+      rgba(247,247,246,.48) 68%, rgba(247,247,246,0) 86%);
+  }
+  .hero > :global(*) { position: relative; z-index: 1; }
+  .narrow { display: none; }
+
+  .kind { font-size: 12.5px; color: var(--g70); margin: 0 0 18px; }
+  .kind b { color: var(--ink); font-weight: 600; }
+  h1 {
+    font-size: clamp(31px, 4.2vw, 52px); font-weight: 500; letter-spacing: -.036em;
+    line-height: 1.06; margin: 0; color: var(--g70); max-width: 17ch;
+  }
+  h1 b { display: block; font-weight: 500; color: var(--ink); }
+  .stand { font-size: 17.5px; line-height: 1.64; color: var(--g80); max-width: 50ch; margin: 26px 0 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 9px 24px; margin-top: 34px; font-size: 12.5px; color: var(--g70); }
+  .meta span { display: inline-flex; gap: 7px; }
+  .meta b { color: var(--g80); font-weight: 500; }
+  .axkey { font-size: 11.5px; color: var(--g70); margin: 24px 0 0; max-width: 56ch; line-height: 1.7; }
+
+  @media (max-width: 900px) {
+    .hero { padding: 60px 0 44px; }
+    .surface { position: static; left: auto; right: auto; top: auto; margin: 30px 0 4px; }
+    .clearing { display: none; }
+  }
+  @media (max-width: 560px) {
+    .wide { display: none; }
+    .narrow { display: block; }
+  }
+</style>

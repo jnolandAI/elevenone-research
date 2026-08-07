@@ -1,0 +1,187 @@
+---
+number: "001"
+title: Reported gross margin is not one distribution
+subtitle: The peer median sits between two of them
+kind: Cross-sector financial analysis
+standfirst: >-
+  We pulled every SEC registrant that reported both revenue and gross profit for
+  calendar 2024. The median is 38.8%. About one company in six sits within five
+  points of it, and almost exactly as many report above 70%.
+published: null
+dataset: /assets/data/margin-cy2024.json
+axisKey: >-
+  The halftone is the density of the universe, revenue increasing left to right
+  on a log scale, gross margin rising front to back, dot area standing for how
+  many companies fall in each cell. It is the surface the rest of this brief
+  describes, not a figure to read values from.
+claims:
+  - id: A
+    standing: firm
+    qualifier: n=2,186
+    text: >-
+      Half the universe spans 23.1% to 59.7%, and one company in six sits within
+      five points of the median.
+    restsOn: >-
+      SEC XBRL frames, us-gaap Revenues and GrossProfit, CY2024 annual. 2,186
+      registrants, retrieved 2026-08-05.
+    assumes: >-
+      As-reported gross profit is comparable across filers, which it is not
+      perfectly: cost-of-revenue policy varies. The one-in-six figure is
+      interpolated from 2.6-point bins and is good to about a point. The
+      percentiles are exact.
+    breaksIf: >-
+      The 221 excluded filers are not random with respect to margin. We have not
+      tested that.
+  - id: B
+    standing: firm
+    qualifier: 6 equal-count cohorts
+    text: >-
+      Dispersion narrows monotonically with revenue while the medians do not
+      decline in order.
+    restsOn: >-
+      p10 to p90 spread by cohort: 72.2, 67.9, 60.1, 59.1, 55.4, 52.7 points.
+      Cohorts hold 151 to 607 filers each.
+    assumes: >-
+      The cohort boundaries are not producing the pattern. They are equal-count
+      rather than chosen, which is the weaker of the two available assumptions.
+    breaksIf: >-
+      Monotonicity fails under a different number of cohorts. The top cohort
+      holds only 151 filers, so its percentiles move more easily than the others.
+  - id: C
+    standing: supported
+    qualifier: density feature
+    text: >-
+      A second concentration near 70% margin that a single median cannot
+      represent.
+    restsOn: >-
+      339 filers above 70% is an exact count. The ridge location and the 131 in
+      its cell come from a binned density surface, 72 by 96 cells.
+    assumes: >-
+      The feature is not an artefact of the grid or the kernel bandwidth. It
+      survives at the bandwidths we tried, but we did not run a formal test for
+      multimodality.
+    breaksIf: >-
+      A dip test or a finer grid dissolves the separation into one skewed mode.
+      That is the first thing we would check before pricing anything off this.
+  - id: D
+    standing: provisional
+    qualifier: not in the load path
+    text: >-
+      The high-margin concentration is a business-model population rather than
+      the tail of one population.
+    restsOn: Nothing yet. It is the reading we find most plausible.
+    assumes: >-
+      That sector composition explains the separation better than any other
+      available account of it.
+    breaksIf: >-
+      The concentration turns out to be spread across sectors. SIC codes sit in
+      the SEC submissions endpoint for every one of these filers, so this is
+      directly testable.
+    note: >-
+      Held but deliberately excluded from the conclusion. Nothing in this brief
+      depends on it.
+loadPath:
+  conclusion: >-
+    A peer median summarises a mixture, so distance from it is not by itself
+    evidence about a company.
+  members: [A, B, C]
+  offPath:
+    id: D
+    text: >-
+      We hold that the high-margin concentration is a business-model population,
+      and we left it out of the argument because it is untested. Nothing in the
+      conclusion depends on it. If we ran the sector split and it held, C would
+      promote and the conclusion would promote with it. Keeping an untested
+      belief out of the load path is the whole discipline: the alternative is a
+      conclusion that quietly rests on something we cannot show you.
+method:
+  source: >-
+    SEC XBRL frames API, us-gaap taxonomy, tags Revenues and GrossProfit, CY2024
+    annual frame. Retrieved 2026-08-05.
+  universe: >-
+    Every registrant appearing in both frames: 2,407 filers, of which 2,186 are
+    kept and 221 dropped for a missing, zero or negative revenue denominator. No
+    sector, exchange, size or listing-status filter was applied.
+  computation: >-
+    Gross margin is GrossProfit divided by Revenues, as reported, with no
+    adjustment or normalisation. Densities are Gaussian kernels with bandwidth by
+    Silverman's rule. Cohorts are equal-count by revenue, not chosen boundaries.
+    The surface is a 72 by 96 grid over log revenue and margin.
+  notDone: >-
+    No sector control, no formal test for multimodality, no test of whether the
+    excluded filers differ from the kept ones, and no adjustment for differences
+    in cost-of-revenue policy. Each of these is named in the claim it affects.
+  data: >-
+    The full dataset behind every figure is published alongside this brief.
+    Nothing here cannot be recomputed from it:
+---
+
+<p class="lede">Every diligence process we have worked inside anchors gross margin to a peer median. Pull a comparable set, take the middle, treat the distance from it as a finding. The method survives because it is fast and because the number it produces always looks like an answer.</p>
+
+We wanted to know what that median is actually summarising. So we took the universe instead of a comparable set: every SEC registrant that filed both revenue and gross profit on a CY2024 annual basis, which comes to 2,186 companies once filers with a missing or non-positive denominator are dropped.
+
+The short version is that the peer median is a summary of a mixture, and the mixture is wide enough that distance from the middle carries almost no information on its own.
+
+## The spread swamps the middle
+
+A benchmark is only useful when the distribution around it is tight enough that distance from it means something. This one is not. <Claim id="A">Half the universe reports a gross margin between 23.1% and 59.7%, and about one company in six sits within five points of the 38.8% median.</Claim> Eight companies in ten fall in a band 64 points wide.
+
+<DataFigure
+  kind="kde"
+  dataset="/assets/data/margin-cy2024.json"
+  title="Where reported gross margin concentrates"
+  meta="2,186 filers"
+  description="Gaussian kernel density across the whole universe, bandwidth 0.046 by Silverman's rule. Quartiles marked on the axis, median marked once on the curve."
+  footnote="SEC XBRL frames, us-gaap, CY2024. All values as reported."
+/>
+
+## There is a second population
+
+Read the curve above and the shape is the story. The main mass sits low and broad, and there is a distinct shoulder in the high seventies that a single summary statistic cannot see. On the revenue and margin surface at the top of this brief the same feature appears as a second ridge, well away from the main mode.
+
+The main mode falls at 27.8% margin around $1.44bn of revenue, where 200 companies land inside one cell of the grid. The second concentration falls at 70.1% margin around $654m of revenue, holding 131. <Claim id="C">Across the whole universe, 339 companies, 15.5%, report a gross margin above 70%, a second concentration that a single median cannot represent.</Claim> That is very close to the share sitting within five points of the median.
+
+## Size moves the spread, not the middle
+
+The intuition is that margin falls as companies get bigger. Split the universe into six equal-count revenue cohorts and that is not what happens. The medians run 40.8, 35.8, 44.1, 39.8, 36.6 and 29.2 percent from smallest to largest, which is not a decline. Only the largest cohort is clearly separated from the rest.
+
+What does move cleanly is dispersion. <Claim id="B">The gap between the tenth and ninetieth percentile falls from 72.2 points in the smallest cohort to 52.7 in the largest, with no reversal at any step, while the medians do not decline in order.</Claim> The largest filers carry both the lowest median and the tightest spread, which is the one place in this data where a peer median does most of the work you would want it to.
+
+<DataFigure
+  kind="ridge"
+  dataset="/assets/data/margin-cy2024.json"
+  title="Distribution by size cohort"
+  meta="6 cohorts"
+  description="One density per cohort on a shared scale, so the heights compare. Overlap is the point: it shows where the cohorts agree and where they separate."
+  footnote="Densities are normalised, so a taller ridge means tighter clustering, not more filers."
+/>
+
+<DataFigure
+  kind="range"
+  dataset="/assets/data/margin-cy2024.json"
+  title="Spread by size cohort"
+  meta="p10 to p90"
+  description="The same six cohorts as ranges rather than curves. Light track is the tenth to ninetieth percentile, the darker band is the interquartile range, the dot is the median."
+  footnote="Read the tracks rather than the dots. The dots move around; the tracks shorten in order."
+/>
+
+## What this does not show
+
+The obvious reading of a second high-margin population is that it is a business-model population: software, licensing, diagnostics, anything where cost of revenue is small by construction. <Claim id="D">We think that is probably right, and we have not tested it.</Claim> It is carrying no weight in anything below.
+
+## What follows
+
+<Takeaways items={[
+  {
+    lead: "Say which mode.",
+    body: "Before a gross margin comparison means anything, establish whether the target sits in the low broad mass or the high concentration. Those are different questions with different comparable sets, and averaging across them produces a number that describes neither."
+  },
+  {
+    lead: "Benchmark against the regime, not the size cohort.",
+    body: "Size buys you a tighter distribution at the top end and very little else. Below $10bn of revenue, a size-matched peer median is nearly as wide as the whole universe."
+  },
+  {
+    lead: "Treat distance from a peer median as a question.",
+    body: "A company 15 points off the median is unremarkable in this data. It is a prompt to ask which population the peer set was drawn from, not a finding to put in a paper."
+  }
+]} />
