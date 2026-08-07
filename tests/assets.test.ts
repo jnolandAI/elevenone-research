@@ -44,4 +44,46 @@ describe('asset layout', () => {
     expect(readFileSync('scripts/render_mark.py', 'utf8')).toContain('"public", "assets", "mark"');
     expect(readFileSync('scripts/render_dot.py', 'utf8')).toContain('"public", "assets", "dot"');
   });
+
+  it('ships a WebP beside every dot PNG the site can reference', () => {
+    const manifest = JSON.parse(readFileSync('public/assets/dot/manifest.json', 'utf8'));
+    const pngs = Object.keys(manifest).filter((k) => k.endsWith('.png'));
+    expect(pngs.length).toBeGreaterThan(0);
+    for (const png of pngs) {
+      const webp = png.replace(/\.png$/, '.webp');
+      expect(existsSync(join('public/assets/dot', webp)), webp).toBe(true);
+      expect(manifest[png].webp, png).toBe(webp);
+    }
+  });
+
+  // The 955 KB grid hero shipped unnoticed because nothing was watching. This
+  // is the thing that notices, and it watches the assets a browser actually
+  // requests: the homepage hero and the six coverage cards. The other hero
+  // renders live in public/ unreferenced, so their weight is repo size rather
+  // than page weight and a ceiling on them would guard nothing.
+  //
+  // SHIPPED_HERO is coupled to the homepage's hero subject on purpose. Changing
+  // which subject fronts the site is a deliberate act, and it should carry a
+  // deliberate update here.
+  //
+  // Fault injection: re-deriving either shipped asset without lossless WebP,
+  // or pointing SHIPPED_HERO at a busier subject, turns this red.
+  it('keeps every asset on the critical path under its byte ceiling', () => {
+    const SHIPPED_HERO = 'grid-hero-dot.png';
+    const HERO_CEILING_KB = 400;
+    const CARD_CEILING_KB = 160;
+    const manifest = JSON.parse(readFileSync('public/assets/dot/manifest.json', 'utf8'));
+
+    const hero = manifest[SHIPPED_HERO];
+    expect(hero?.webp, SHIPPED_HERO).toBeTruthy();
+    const heroKb = statSync(join('public/assets/dot', hero.webp)).size / 1024;
+    expect(heroKb, `${hero.webp} is ${heroKb.toFixed(0)} KB`).toBeLessThan(HERO_CEILING_KB);
+
+    const cards = Object.values<any>(manifest).filter((m) => m.role === 'card' && m.webp);
+    expect(cards).toHaveLength(6);
+    for (const c of cards) {
+      const kb = statSync(join('public/assets/dot', c.webp)).size / 1024;
+      expect(kb, `${c.webp} is ${kb.toFixed(0)} KB`).toBeLessThan(CARD_CEILING_KB);
+    }
+  });
 });

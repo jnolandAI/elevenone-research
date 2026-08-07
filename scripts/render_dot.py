@@ -16,6 +16,7 @@ Output lands in public/assets/dot/<subject>-<role>-<mode>.png unless --out is gi
 import argparse, base64, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
 PAGE = os.path.join(ROOT, "prototypes", "dot-render.html")
 ENGINE = os.path.join(ROOT, "prototypes", "dot-engine.js")
 OUTDIR = os.path.join(ROOT, "public", "assets", "dot")
@@ -117,6 +118,9 @@ def main():
                 "w": meta["w"], "h": meta["h"], "pitch": meta["pitch"],
                 "engine_version": meta["version"], "source": "procedural",
             }
+            if ext == "png":
+                from webp_derive import derive
+                manifest[os.path.basename(name)]["webp"] = derive(name)
             print(f"  {meta['w']}x{meta['h']}  pitch {meta['pitch']:<3} {size:8.0f} KB  "
                   f"{os.path.relpath(name, ROOT)}")
         b.close()
