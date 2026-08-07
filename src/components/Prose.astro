@@ -18,6 +18,12 @@ const { title, standfirst } = Astro.props;
     font-size: 22px; font-weight: 600; letter-spacing: -.024em; margin: 56px 0 14px; color: var(--ink);
   }
   article :global(p) { font-size: 16.5px; line-height: 1.76; color: var(--g80); margin: 0 0 22px; }
+  article :global(a) {
+    color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-thickness: 1px; text-decoration-color: var(--g40);
+    transition: text-decoration-color .25s;
+  }
+  article :global(a:hover) { text-decoration-color: var(--ink); }
   article :global(.tier) {
     padding: 26px 28px 24px; border-radius: var(--r-l); margin: 0 0 16px;
     background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%); box-shadow: var(--e1);
