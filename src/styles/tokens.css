@@ -28,6 +28,12 @@
 
   --ez: cubic-bezier(.16,.9,.24,1);
 
+  /* Single source for the mono stack. base.css:.mono and every component that
+     sets Martian Mono directly (Claim.astro, ClaimRail.astro) read this
+     rather than repeating the family list, so it cannot drift out of sync
+     with the fonts actually shipped (see base.css:9,21). */
+  --font-mono: 'Martian Mono Variable', 'Martian Mono', ui-monospace, monospace;
+
   /* Two widths in a brief and no others. --doc is the frame everything sits
      inside; --read is the reading column. Figures take the column exactly.
      Only the load path and the method block take the frame. */

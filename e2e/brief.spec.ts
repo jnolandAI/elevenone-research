@@ -119,3 +119,18 @@ test('/briefs redirects to the index', async ({ page }) => {
   // any trailing-slash URL satisfies /\/$/, including /reports/ and /about/
   await expect(page).toHaveURL('http://localhost:4321/');
 });
+
+test('the sitemap excludes the draft brief and lists a real page', async ({ request }) => {
+  // astro.config.mjs:29-31's draftSlugs() filter is the only thing keeping an
+  // unpublished brief out of the sitemap: @astrojs/sitemap builds its list
+  // from resolved routes and never reads the rendered HTML's noindex meta, so
+  // replacing the filter with a bare sitemap() call would still list
+  // 001-gross-margin. No unit test touches astro.config.mjs at all, so this
+  // was unguarded. Both conditions are checked together so an empty or
+  // missing sitemap cannot pass by vacuously excluding everything.
+  const res = await request.get('/sitemap-0.xml');
+  expect(res.ok()).toBeTruthy();
+  const xml = await res.text();
+  expect(xml).not.toContain('001-gross-margin');
+  expect(xml).toContain('/reports/');
+});

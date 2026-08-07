@@ -25,7 +25,13 @@ export function rangeFigure(d: MarginDataset): string {
       `<rect x="${X(c.p25).toFixed(1)}" y="${(y - 5).toFixed(1)}" ` +
       `width="${(X(c.p75) - X(c.p25)).toFixed(1)}" height="10" rx="5" fill="${TONES[7]}"/>`;
     out += `<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${INK}"/>`;
-    // knockout ring rather than a shadow: the dot has to read against the band
+    // knockout ring rather than a shadow: the dot has to read against the band.
+    // #FAFAF9 is chosen to disappear against Figure.astro's card gradient
+    // (#FFFFFF to #F7F7F6), which this figure is always drawn on; it is not a
+    // reference to the interface --g05 token even though the two literals
+    // are numerically identical. A literal is correct here rather than an
+    // import: this ring is picked to match a specific card's paint, not to
+    // track the interface ramp, and the two should be free to diverge.
     out += `<circle cx="${X(c.p50).toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="none" stroke="#FAFAF9" stroke-width="1.4"/>`;
     out +=
       `<text x="${L - 12}" y="${(y + 3.6).toFixed(1)}" text-anchor="end" fill="${TONES[8]}" ` +

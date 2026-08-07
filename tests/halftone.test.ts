@@ -52,8 +52,16 @@ describe('dot ramp', () => {
   });
 
   it('holds the engine screen angle of 15 degrees by default', () => {
-    const rotated = dotRamp(800, 400, { angle: 15 });
-    expect(svg).toBe(rotated);
+    // Matching the default against an explicit angle:15 alone is
+    // self-consistency, not proof: if the angle option were silently ignored
+    // and every call fell through to some other hardcoded rotation, the two
+    // calls would still be byte-identical, for the wrong reason. Asserting
+    // the default also differs from a genuinely different explicit angle
+    // (0 degrees) forces the option to be load-bearing, which closes that gap.
+    const rotated15 = dotRamp(800, 400, { angle: 15 });
+    const rotated0 = dotRamp(800, 400, { angle: 0 });
+    expect(svg).toBe(rotated15);
+    expect(svg).not.toBe(rotated0);
   });
 
   it('is deterministic, so the same panel always draws the same surface', () => {

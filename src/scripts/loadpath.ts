@@ -45,7 +45,10 @@ function draw(): void {
       `M ${fx.toFixed(1)} ${fy.toFixed(1)} C ${fx.toFixed(1)} ${(fy + 30).toFixed(1)}, ` +
       `${gx.toFixed(1)} ${(fy + 16).toFixed(1)}, ${gx.toFixed(1)} ${(fy + 52).toFixed(1)} ` +
       `L ${gx.toFixed(1)} ${lastY.toFixed(1)}`,
-      { w: 1.3, c: '#7D7D7D', o: 0.9 },
+      // The trunk before it branches carries no standing of its own, so it
+      // is drawn at the same tone as the weakest wire (WIRE.provisional.c)
+      // rather than a hardcoded literal that happened to already equal it.
+      { w: 1.3, c: WIRE.provisional.c, o: 0.9 },
     );
     members.forEach((m, i) => {
       const r = rects[i]!;

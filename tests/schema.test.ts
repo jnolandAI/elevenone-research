@@ -38,6 +38,7 @@ const brief = (over: Record<string, unknown> = {}) => ({
     offPath: null,
   },
   method: {
+    sourcing: 'Everything in this brief comes from one free, public source.',
     source: 'SEC XBRL frames API.',
     universe: 'Every registrant in both frames.',
     computation: 'GrossProfit divided by Revenues, as reported.',
@@ -83,8 +84,19 @@ describe('the working, enforced by the schema', () => {
   });
 
   it('rejects duplicate claim ids', () => {
+    // The default brief()'s loadPath.members is ['A', 'B', 'C']. With this
+    // fixture's claims ids A, A, C, that default leaves no claim B at all, so
+    // the separate "load path member does not resolve" issue also fires and
+    // the fixture fails validation regardless of whether the duplicate-id
+    // check itself is present: deleting content.config.ts:80-84 left this
+    // test green. Narrowing loadPath.members to ids the fixture actually has
+    // isolates the duplicate check as the only possible source of failure.
     const dup = [claim({ id: 'A' }), claim({ id: 'A' }), claim({ id: 'C' })];
-    expect(briefSchema.safeParse(brief({ claims: dup })).success).toBe(false);
+    const bad = brief({
+      claims: dup,
+      loadPath: { conclusion: CONCLUSION, members: ['A', 'C'], offPath: null },
+    });
+    expect(briefSchema.safeParse(bad).success).toBe(false);
   });
 
   // the load path can only be built from claims that exist

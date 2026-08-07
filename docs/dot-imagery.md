@@ -145,9 +145,24 @@ Two things keep this from becoming decoration:
   puts the dense corner around eight levels below the light one. If a reader
   notices the pattern before they notice the content, it is too strong.
 
-Dot area still carries the value and opacity never does, which is the same rule
-the imagery obeys. That is what makes the two read as one system rather than as
-a texture that happens to look similar.
+| Parameter     | Value | Controls                                      |
+| ------------- | ----- | ---------------------------------------------- |
+| Pitch         | 13    | Lattice spacing, `src/scripts/screen.ts`        |
+| Max radius    | 2.15  | Densest dot, at the corner the light turns from |
+| Group opacity | 0.44  | Fixed alpha on the whole ramp, not per dot      |
+| Edge dissolve | 0.055 | Fraction of the frame over which the ramp thins |
+
+These are `dotRamp()`'s call-site values (`src/scripts/screen.ts`), quieter than
+its own coded defaults (pitch 12, radius 2.6, opacity 0.5), because a panel
+surface has to stay in the background behind real type and figures in a way a
+full-bleed hero image does not.
+
+Dot area carries the value in both `dotField` and `dotRamp`: radius alone
+decides whether a dot exists. Opacity is not silent in `dotField`, though. It
+also rises with density, from 0.14 to 0.92, as a second channel layered on top
+of a decision area already made: reinforcing, not standing in for radius.
+`dotRamp` is the one place opacity truly never varies per dot, set once as the
+ramp's fixed group alpha above.
 
 ## Other sources
 

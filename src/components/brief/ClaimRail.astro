@@ -51,7 +51,7 @@ const datasetName = dataset.split('/').pop();
   .rail::-webkit-scrollbar { width: 6px; }
   .rail::-webkit-scrollbar-thumb { background: var(--g40); border-radius: 3px; }
   h2 { font-size: 13.5px; font-weight: 600; letter-spacing: -.012em; margin: 0 0 5px; }
-  .lead { font-size: 11.5px; line-height: 1.66; color: var(--g70); margin: 0 0 16px; }
+  .lead { font-size: 11.5px; line-height: 1.66; color: var(--g80); margin: 0 0 16px; }
   ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 
   /* Standing is carried on three channels at once and never on shadow alone:
@@ -61,20 +61,30 @@ const datasetName = dataset.split('/').pop();
     background: linear-gradient(160deg, #FFFFFF 0%, #F8F8F7 100%);
     transition: box-shadow .35s var(--ez), transform .35s var(--ez);
   }
-  .ci.firm { box-shadow: var(--e2); }
-  .ci.supported { box-shadow: var(--e1); }
+  /* Same three-step scale LoadPath.astro's members use (--e3/--e2/--e1), not
+     a second scale of its own: provisional at box-shadow:none dropped the
+     elevation channel entirely, leaving tone and the written standing to
+     carry it alone. */
+  .ci.firm { box-shadow: var(--e3); }
+  .ci.supported { box-shadow: var(--e2); }
   .ci.provisional {
-    box-shadow: none;
+    box-shadow: var(--e1);
     background: linear-gradient(160deg, rgba(252,252,253,.72), rgba(243,243,244,.72));
   }
-  .ci:global(.lit) { transform: translateY(-2px); box-shadow: var(--e3); }
+  /* --e4 rather than --e3: the standing scale tops out at --e3 (firm), so a
+     hover lift that also used --e3 would put any hovered claim, regardless
+     of standing, level with a resting firm claim and above every other
+     resting claim. That reads as the cursor outranking the argument. --e4 is
+     reserved for interaction and sits above the whole standing scale instead
+     of inside it. */
+  .ci:global(.lit) { transform: translateY(-2px); box-shadow: var(--e4); }
   .ci summary {
     list-style: none; cursor: pointer; padding: 14px 15px;
     display: grid; grid-template-columns: 18px 1fr 14px; gap: 9px; align-items: start;
   }
   .ci summary::-webkit-details-marker { display: none; }
   .let {
-    font-family: 'Martian Mono Variable', 'Martian Mono', ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px; font-weight: 400; color: var(--g70); padding-top: 2px;
   }
   .txt { font-size: 12.5px; line-height: 1.56; letter-spacing: -.006em; }
@@ -90,7 +100,7 @@ const datasetName = dataset.split('/').pop();
   dt { font-size: 10.5px; color: var(--g70); margin-top: 11px; }
   dd { margin: 3px 0 0; font-size: 12px; line-height: 1.62; color: var(--g80); }
   .note { font-size: 11px; line-height: 1.6; color: var(--g70); margin: 12px 0 0; }
-  .foot { font-size: 11px; line-height: 1.66; color: var(--g70); margin: 16px 0 0; }
+  .foot { font-size: 11px; line-height: 1.66; color: var(--g80); margin: 16px 0 0; }
   .foot a {
     color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
     text-decoration-color: var(--g40);

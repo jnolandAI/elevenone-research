@@ -52,8 +52,13 @@ export function loadDataset(publicPath: string): MarginDataset {
   return JSON.parse(readFileSync(file, 'utf8')) as MarginDataset;
 }
 
-export const SANS = 'Familjen Grotesk, sans-serif';
-export const MONO = 'Martian Mono, ui-monospace, monospace';
+// Must lead with the Variable family shipped in src/styles/base.css:9,21.
+// The static family names ('Familjen Grotesk', 'Martian Mono') are not
+// fontsource packages this site installs, so leading with them made every
+// chart text node fall through to the platform generic silently: no error,
+// just the wrong metrics. Verified by measuring rendered glyph widths.
+export const SANS = 'Familjen Grotesk Variable, Familjen Grotesk, sans-serif';
+export const MONO = 'Martian Mono Variable, Martian Mono, ui-monospace, monospace';
 
 /** Escape text destined for an SVG text node or attribute. */
 export const esc = (s: string) =>

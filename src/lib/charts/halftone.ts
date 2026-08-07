@@ -17,8 +17,10 @@ export const HERO_NARROW: FieldOpts =
 /**
  * The data surface: revenue increasing left to right on a log scale, gross
  * margin rising front to back, dot area standing for how many companies fall
- * in each cell. Dot area carries the value, never opacity, which is the rule
- * the imagery engine works to.
+ * in each cell. Radius alone decides whether a dot is drawn at all, which is
+ * the rule the imagery engine works to; opacity below reinforces that same
+ * density as a second channel rather than carrying the value on its own (see
+ * docs/dot-imagery.md).
  *
  * Decorative by intent. It is the surface the brief describes rather than a
  * figure to read values from, and the axis key in the prose carries the

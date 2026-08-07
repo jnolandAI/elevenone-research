@@ -46,6 +46,14 @@ const loadPathSchema = z
   .strict();
 
 const methodSchema = z.object({
+  /**
+   * The sourcing policy sentence rendered above the method table. Per brief,
+   * not shared: a claim about how many sources were used or whether any were
+   * paid is only true of the brief that states it, and was previously
+   * hardcoded into Method.astro where it silently applied to every future
+   * brief regardless of what that brief actually drew on.
+   */
+  sourcing: z.string().min(10),
   source: z.string().min(10),
   universe: z.string().min(10),
   computation: z.string().min(10),

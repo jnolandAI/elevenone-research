@@ -24,9 +24,16 @@ describe('the briefs index', () => {
   it('is a single column, not a card grid', () => {
     // forbidding only repeat() lets a literal three-column grid through, which
     // is the exact failure the one-brief-or-thirty constraint names; the
-    // `columns` multi-column shorthand is a third way to the same failure
-    const listRule = page.match(/\.list\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(listRule).not.toMatch(/grid-template-columns|column-count|columns\s*:/);
+    // `columns` multi-column shorthand is a third way to the same failure.
+    // Non-global .match() only ever returns the first `.list { ... }` block,
+    // so a second .list rule added inside a media query (a real three-column
+    // grid at a wide breakpoint, say) would stay invisible to a test built on
+    // that one match. Every .list block is collected and checked instead.
+    const listRules = [...page.matchAll(/\.list\s*\{[^}]*\}/g)].map((m) => m[0]);
+    expect(listRules.length).toBeGreaterThan(0);
+    for (const rule of listRules) {
+      expect(rule).not.toMatch(/grid-template-columns|column-count|columns\s*:/);
+    }
   });
 
   it('says plainly when nothing is published rather than showing an empty page', () => {

@@ -1,4 +1,4 @@
-import { AXIS, GUIDE, TICK, CURVE, INK } from '../chart-tones';
+import { AXIS, GUIDE, TICK, CURVE, INK, FILL_MID, FILL_EDGE } from '../chart-tones';
 import { SANS, esc, pct, type MarginDataset } from '../dataset';
 import { spline } from './spline';
 
@@ -51,8 +51,8 @@ export function densityFigure(d: MarginDataset): string {
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}"><defs>
 <linearGradient id="kde-fill" x1="0" y1="0" x2="0" y2="1">
 <stop offset="0%" stop-color="#3C3C3A" stop-opacity=".16"/>
-<stop offset="62%" stop-color="#6C6C6A" stop-opacity=".05"/>
-<stop offset="100%" stop-color="#8C8C8A" stop-opacity="0"/></linearGradient></defs>
+<stop offset="62%" stop-color="${FILL_MID}" stop-opacity=".05"/>
+<stop offset="100%" stop-color="${FILL_EDGE}" stop-opacity="0"/></linearGradient></defs>
 <path d="${area}" fill="url(#kde-fill)"/>${guides}
 <path d="${line}" fill="none" stroke="${CURVE}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="${AXIS}" stroke-width="1"/>

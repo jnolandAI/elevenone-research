@@ -32,15 +32,22 @@ describe('two widths and no others', () => {
 
   it('declares no width the token layer does not name', () => {
     // scoped to the rule that sets the columns: a stray var(--read) elsewhere
-    // in the file would satisfy a whole-file substring check
-    const docRule = layout.match(/\.doc\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(docRule).toContain('var(--read)');
-    expect(docRule).toContain('var(--rail)');
-    // No pixel value anywhere in the rule that sets the columns. Checking only
-    // for a `width: Npx` declaration misses how a third width would actually
-    // arrive: minmax(0, 220px) inside grid-template-columns satisfies both
-    // assertions above and introduces the third width regardless.
-    expect(docRule).not.toMatch(/\d+px/);
+    // in the file would satisfy a whole-file substring check.
+    // Non-global .match() only ever returns the FIRST `.doc { ... }` block,
+    // but .doc is declared twice: the base rule and its override inside
+    // @media (max-width: 900px). A third width added only to the media-query
+    // copy would satisfy every assertion built on the first match alone, so
+    // every .doc block is collected and checked.
+    const docRules = [...layout.matchAll(/\.doc\s*\{[^}]*\}/g)].map((m) => m[0]);
+    expect(docRules.length).toBeGreaterThan(1);
+    const baseDocRule = docRules[0]!;
+    expect(baseDocRule).toContain('var(--read)');
+    expect(baseDocRule).toContain('var(--rail)');
+    // No pixel value anywhere in any .doc rule that sets the columns. Checking
+    // only for a `width: Npx` declaration misses how a third width would
+    // actually arrive: minmax(0, 220px) inside grid-template-columns satisfies
+    // both assertions above and introduces the third width regardless.
+    for (const rule of docRules) expect(rule).not.toMatch(/\d+px/);
     // Excludes the 900px responsive breakpoint, which is a media feature
     // (terminated by `)`) rather than a CSS declaration (terminated by `;`)
     // and is not one of the two content widths this rule is about. Every

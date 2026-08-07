@@ -8,6 +8,13 @@ body {
   background: var(--g10);
   font-family: 'Familjen Grotesk Variable', 'Familjen Grotesk', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* The numerals rule (below) belongs on every surface that can carry a
+     number, not just article p: .hero .stand, the rail, the load path, the
+     method table and Prose.astro's own paragraphs all set figures too. Set
+     it once here instead of chasing each selector, and let .mono override
+     with its own value where a number stands alone as a value. */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
 }
 
 /* Numbers inside a sentence are prose: same face, tabular figures on, so
@@ -18,7 +25,7 @@ body {
 .num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
 
 .mono {
-  font-family: 'Martian Mono Variable', 'Martian Mono', ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-weight: 300;
   font-variant-numeric: tabular-nums;
   font-size: .92em;

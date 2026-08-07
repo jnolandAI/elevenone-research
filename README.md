@@ -6,7 +6,8 @@ Part of Eleven Hundred LLC.
 
 ## Layout
 
-- `Assets/` — brand imagery
+- `public/assets/` — shipped brand imagery: the mark, dot-engine renders, and brief datasets
+- `references/legacy-imagery/` — superseded AI-generated imagery, kept for reference only and never published
 
 ## Status
 

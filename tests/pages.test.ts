@@ -35,9 +35,14 @@ describe('the structural pages', () => {
       // Any whitespace, and a leading decimal point: $  500 and $.99 both
       // slip past one optional space followed by a digit.
       expect(p.src, p.name).not.toMatch(/[$£€]\s*[\d.]/);
-      // No word boundary before the unit, because 500USD has none: a digit
-      // and a letter are both word characters, so \b never fires between them.
-      expect(p.src, p.name).not.toMatch(/(dollars?|USD|EUR|GBP|pounds|euros)/i);
+      // No word boundary before the three-letter codes, because 500USD has
+      // none: a digit and a letter are both word characters, so \b never
+      // fires between them. But fully unanchored, this also matched inside
+      // Europe, European, compounds and neural. dollars/pounds/euros are real
+      // words, so \b works for them; USD/EUR/GBP instead use a negative
+      // lookaround that only excludes a letter on either side, which still
+      // allows a digit (500USD) while blocking European and neural.
+      expect(p.src, p.name).not.toMatch(/\b(dollars?|pounds|euros)\b|(?<![A-Za-z])(USD|EUR|GBP)(?![A-Za-z])/i);
     }
   });
 

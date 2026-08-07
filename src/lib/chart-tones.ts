@@ -39,3 +39,14 @@ export const GUIDE = TONES[2]!;  // dashed quartile guides
 export const TICK = TONES[6]!;   // tick label text
 export const CURVE = '#2B2B2A';  // the density line itself
 export const INK = '#131312';    // the one solid emphasis dot
+// The area-fill gradient under the density curve (kde.ts). These were
+// previously #6C6C6A and #8C8C8A: not TONES values at all, but the exact
+// literals of the interface --g70/--g60 tokens, typed straight from
+// tokens.css into a chart module. That is the leak the no-reconciliation
+// rule above exists to prevent: the fill happened to track the interface
+// ramp by coincidence of someone copying a hex rather than by design, so an
+// interface re-tint would have silently dragged this fill's contrast along
+// with it. Named from this ramp instead, at the two steps nearest the
+// originals.
+export const FILL_MID = TONES[6]!;
+export const FILL_EDGE = TONES[4]!;

@@ -8,6 +8,23 @@ import { TONES } from '../src/lib/chart-tones';
 
 const data = loadDataset('/assets/data/margin-cy2024.json');
 
+/**
+ * Every colour literal in an SVG string is neutral: R, G and B within 4 of
+ * each other. Widened to also catch rgba()/rgb(), not only 6-digit hex: a
+ * tinted colour introduced as rgba(60,60,58,.5) previously slipped past this
+ * check entirely, since the hex-only regex never looked for it.
+ */
+function assertGreyscale(svg: string, label = ''): void {
+  for (const hex of svg.match(/#[0-9A-Fa-f]{6}\b/g) ?? []) {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!), `${label}${hex}`).toBeLessThanOrEqual(4);
+  }
+  for (const m of svg.matchAll(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)/g)) {
+    const [r, g, b] = [1, 2, 3].map((i) => Number(m[i]));
+    expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!), `${label}${m[0]}`).toBeLessThanOrEqual(4);
+  }
+}
+
 describe('dataset', () => {
   it('reads the published file, not a copy of it', () => {
     expect(data.n_kept).toBe(2186);
@@ -17,7 +34,13 @@ describe('dataset', () => {
   });
 
   it('refuses a path outside the published data directory', () => {
-    expect(() => loadDataset('/etc/passwd')).toThrow();
+    // Pinned to the guard's own message, same reasoning as its sibling
+    // directly below. A bare .toThrow() cannot tell this guard's rejection
+    // apart from readFileSync's ENOENT on a path that just happens not to
+    // exist: '/etc/passwd' does not start with PUBLIC_DATA, so the guard
+    // throws, but deleting the guard leaves join('public', '/etc/passwd')
+    // resolving to a file that also does not exist, which throws too.
+    expect(() => loadDataset('/etc/passwd')).toThrow(/must sit under/);
   });
 
   it('refuses a path that starts inside it and then climbs out', () => {
@@ -74,10 +97,7 @@ describe('density figure', () => {
   });
 
   it('draws in greyscale only', () => {
-    for (const hex of svg.match(/#[0-9A-Fa-f]{6}/g) ?? []) {
-      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-      expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!)).toBeLessThanOrEqual(4);
-    }
+    assertGreyscale(svg);
   });
 });
 
@@ -168,12 +188,9 @@ describe('every figure draws in greyscale only', () => {
     ['range', rangeFigure(data)],
   ] as const) {
     it(`${name} introduces no colour`, () => {
-      const hexes = svg.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+      const hexes = svg.match(/#[0-9A-Fa-f]{6}\b/g) ?? [];
       expect(hexes.length).toBeGreaterThan(0);
-      for (const hex of hexes) {
-        const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-        expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!), `${name} ${hex}`).toBeLessThanOrEqual(4);
-      }
+      assertGreyscale(svg, `${name} `);
     });
   }
 });

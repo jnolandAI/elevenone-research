@@ -77,8 +77,13 @@ describe('the load path', () => {
   });
 
   it('leaves an off-path claim out of the object and says why', async () => {
+    // Claims deliberately ordered [D, A] with members ['A']: claims[0] was
+    // previously 'A', the same id as members[0], so an implementation that
+    // sliced claims.slice(0, members.length) instead of resolving by id
+    // would coincidentally produce the same [A] and pass every assertion
+    // below. With D first, a positional slice picks D and this test catches it.
     const html = await render(
-      [c('A', 'firm'), c('D', 'provisional')],
+      [c('D', 'provisional'), c('A', 'firm')],
       ['A'],
       { id: 'D', text: 'We hold it and we left it out because it is untested.' },
     );
