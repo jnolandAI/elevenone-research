@@ -66,8 +66,10 @@ describe('asset layout', () => {
   // which subject fronts the site is a deliberate act, and it should carry a
   // deliberate update here.
   //
-  // Fault injection: re-deriving either shipped asset without lossless WebP,
-  // or pointing SHIPPED_HERO at a busier subject, turns this red.
+  // Fault injection: pointing SHIPPED_HERO at a busier subject such as
+  // datacenter-hero-dot (628 KB) turns this red. This test cannot catch a
+  // switch away from lossless encoding: lossy WebP is smaller, not bigger, so
+  // it stays green. See the losslessness test below for that guard.
   it('keeps every asset on the critical path under its byte ceiling', () => {
     const SHIPPED_HERO = 'grid-hero-dot.png';
     const HERO_CEILING_KB = 400;
@@ -84,6 +86,29 @@ describe('asset layout', () => {
     for (const c of cards) {
       const kb = statSync(join('public/assets/dot', c.webp)).size / 1024;
       expect(kb, `${c.webp} is ${kb.toFixed(0)} KB`).toBeLessThan(CARD_CEILING_KB);
+    }
+  });
+
+  // A byte ceiling cannot catch losing losslessness, because lossy WebP is
+  // SMALLER: grid-hero re-encoded at quality 80 is 380 KB, comfortably under
+  // the 400 KB ceiling. It is also blurred, which on a halftone lattice means
+  // the dots smear into each other. That is the exact degradation this whole
+  // pipeline exists to prevent, so it needs its own guard.
+  //
+  // A WebP names its own encoding in the container: bytes 12-15 hold the first
+  // chunk tag, VP8L for lossless and "VP8 " for lossy. No image library needed.
+  //
+  // Fault injection: drop lossless=True from webp_derive.py, re-derive, and
+  // this turns red while the byte-ceiling test stays green.
+  it('encodes every derived WebP losslessly, since lossy blurs the dot lattice', () => {
+    const manifest = JSON.parse(readFileSync('public/assets/dot/manifest.json', 'utf8'));
+    const webps = Object.values<any>(manifest).map((m) => m.webp).filter(Boolean);
+    expect(webps.length).toBeGreaterThan(0);
+    for (const w of webps) {
+      const head = readFileSync(join('public/assets/dot', w)).subarray(0, 16);
+      expect(head.subarray(0, 4).toString('ascii'), w).toBe('RIFF');
+      expect(head.subarray(8, 12).toString('ascii'), w).toBe('WEBP');
+      expect(head.subarray(12, 16).toString('ascii'), `${w} is not lossless`).toBe('VP8L');
     }
   });
 });
