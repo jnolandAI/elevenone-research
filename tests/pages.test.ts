@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
-const pages = ['reports', 'method', 'about', '404'].map((p) => ({
+const pages = ['index', 'reports', 'method', 'about', '404'].map((p) => ({
   name: p,
   src: readFileSync(`src/pages/${p}.astro`, 'utf8'),
 }));

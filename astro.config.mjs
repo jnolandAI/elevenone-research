@@ -30,9 +30,6 @@ export default defineConfig({
       filter: (page) => !DRAFTS.some((slug) => new RegExp(`/briefs/${slug}/?$`).test(page)),
     }),
   ],
-  redirects: {
-    '/briefs': '/',
-  },
   build: {
     // one stylesheet rather than many small ones, so the ground and the
     // token layer are never painted in two passes

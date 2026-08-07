@@ -101,23 +101,29 @@ test('every rail claim is reachable by keyboard', async ({ page }) => {
 });
 
 test('a draft is not linked from the index and says it is a draft', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/briefs');
   await expect(page.locator(`a[href="${BRIEF}"]`)).toHaveCount(0);
   await page.goto(BRIEF);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 });
 
-test('the four routes exist and the nav marks the current one', async ({ page }) => {
-  for (const [path, label] of [['/', 'Briefs'], ['/reports', 'Reports'], ['/method', 'Method'], ['/about', 'About']]) {
+test('the five routes exist and the nav marks the current one', async ({ page }) => {
+  for (const [path, label] of [['/briefs', 'Briefs'], ['/reports', 'Reports'], ['/method', 'Method'], ['/about', 'About']]) {
     await page.goto(path!);
     await expect(page.locator(`nav a[aria-current="page"]`)).toHaveText(label!);
   }
 });
 
-test('/briefs redirects to the index', async ({ page }) => {
+test('/briefs serves the briefs list and does not redirect', async ({ page }) => {
   await page.goto('/briefs');
-  // any trailing-slash URL satisfies /\/$/, including /reports/ and /about/
+  await expect(page).toHaveURL('http://localhost:4321/briefs');
+  await expect(page.locator('h1')).toHaveText('Briefs');
+});
+
+test('/ serves the homepage, not the briefs list', async ({ page }) => {
+  await page.goto('/');
   await expect(page).toHaveURL('http://localhost:4321/');
+  await expect(page.locator('h1')).not.toHaveText('Briefs');
 });
 
 test('the sitemap excludes the draft brief and lists a real page', async ({ request }) => {

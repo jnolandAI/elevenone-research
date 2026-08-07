@@ -2,13 +2,13 @@
 import Mark from './Mark.astro';
 
 interface Props {
-  current?: 'briefs' | 'reports' | 'method' | 'about';
+  current?: 'home' | 'briefs' | 'reports' | 'method' | 'about';
   print?: boolean;
 }
 const { current, print = false } = Astro.props;
 
 const links = [
-  { key: 'briefs', label: 'Briefs', href: '/' },
+  { key: 'briefs', label: 'Briefs', href: '/briefs' },
   { key: 'reports', label: 'Reports', href: '/reports' },
   { key: 'method', label: 'Method', href: '/method' },
   { key: 'about', label: 'About', href: '/about' },

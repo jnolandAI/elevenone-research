@@ -10,7 +10,7 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description: string;
-  current?: 'briefs' | 'reports' | 'method' | 'about';
+  current?: 'home' | 'briefs' | 'reports' | 'method' | 'about';
   /** Drafts carry noindex. Setting a real published date is what publishes. */
   noindex?: boolean;
   /** Shown only on a brief, where printing is the PDF story. */

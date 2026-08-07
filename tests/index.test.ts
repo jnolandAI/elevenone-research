@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
-const page = readFileSync('src/pages/index.astro', 'utf8');
+const page = readFileSync('src/pages/briefs/index.astro', 'utf8');
 
 describe('the briefs index', () => {
   // Each assertion is tied to the construct that does the work, not to a
