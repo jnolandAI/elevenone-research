@@ -1,0 +1,28 @@
+---
+interface Props { title: string; standfirst: string; }
+const { title, standfirst } = Astro.props;
+---
+<div class="frame">
+  <article>
+    <h1>{title}</h1>
+    <p class="stand">{standfirst}</p>
+    <slot />
+  </article>
+</div>
+
+<style>
+  article { max-width: var(--read); margin: 0 auto; padding: 84px 0 0; }
+  h1 { font-size: clamp(31px, 4.2vw, 46px); font-weight: 500; letter-spacing: -.036em; margin: 0; line-height: 1.08; }
+  .stand { font-size: 17.5px; line-height: 1.66; color: var(--g80); margin: 24px 0 0; }
+  article :global(h2) {
+    font-size: 22px; font-weight: 600; letter-spacing: -.024em; margin: 56px 0 14px; color: var(--ink);
+  }
+  article :global(p) { font-size: 16.5px; line-height: 1.76; color: var(--g80); margin: 0 0 22px; }
+  article :global(.tier) {
+    padding: 26px 28px 24px; border-radius: var(--r-l); margin: 0 0 16px;
+    background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%); box-shadow: var(--e1);
+  }
+  article :global(.tier h3) { font-size: 17px; font-weight: 600; letter-spacing: -.018em; margin: 0 0 8px; }
+  article :global(.tier p) { font-size: 14.5px; margin: 0; color: var(--g80); }
+  article :global(.tier .status) { font-size: 12.5px; color: var(--g70); margin: 12px 0 0; }
+</style>
