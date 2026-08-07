@@ -11,7 +11,15 @@ const members = spec.members.map((id) => byId.get(id)!);
 // Rule 3. Derived, never authored. There is no prop that raises it, because
 // restyling the object is not one of the options for raising a conclusion.
 const { standing, cappedBy } = capOf(claims, spec.members);
-const capLabel = standing[0]!.toUpperCase() + standing.slice(1);
+
+// More than one claim can tie at the weakest standing, so the sentence has to
+// read properly at one, two or three. Joining with repeated "and" gives
+// "capped by claim A and B and C", which is both wrong in number and clumsy.
+const bold = (id: string) => `<b>${id}</b>`;
+const capNote =
+  cappedBy.length === 1
+    ? `capped by claim ${bold(cappedBy[0]!)}`
+    : `capped by claims ${cappedBy.slice(0, -1).map(bold).join(', ')} and ${bold(cappedBy.at(-1)!)}`;
 ---
 <section class="wide">
   <div class="head">
@@ -27,10 +35,7 @@ const capLabel = standing[0]!.toUpperCase() + standing.slice(1);
         <div class="concl" id="concl">
           <p class="lab">Conclusion</p>
           <p class="q">{spec.conclusion}</p>
-          <p class="cap" set:html={
-            `Rendered <b>${standing}</b>, capped by claim ` +
-            cappedBy.map((id) => `<b>${id}</b>`).join(' and ') + '.'
-          } />
+          <p class="cap" set:html={`Rendered <b>${standing}</b>, ${capNote}.`} />
         </div>
       </div>
       <div class="tier claims" id="members">
