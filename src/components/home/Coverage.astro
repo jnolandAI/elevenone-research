@@ -1,0 +1,47 @@
+---
+import { dotAsset, SUBJECTS } from '../../lib/dot';
+
+const cards = Object.entries(SUBJECTS).map(([id, meta]) => ({
+  id,
+  ...meta,
+  img: dotAsset(id, 'card'),
+}));
+---
+<section class="coverage frame" aria-labelledby="coverage-h">
+  <h2 id="coverage-h">Subjects the imagery covers</h2>
+  <p class="intro">Every brief is headed by a rendering built from the same halftone screen. These are the subjects the system can draw today. They describe coverage of the drawing system, not work delivered.</p>
+
+  <ul class="grid">
+    {cards.map((c) => (
+      <li>
+        <img src={c.img.src} width={c.img.width} height={c.img.height} alt={c.img.alt} loading="lazy" decoding="async" />
+        <p class="name">{c.name}</p>
+        <p class="covers">{c.covers}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .coverage { padding: 44px 0 30px; }
+  h2 { font-size: 18px; font-weight: 600; letter-spacing: -.02em; margin: 0; color: var(--ink); }
+  .intro { font-size: 13.5px; line-height: 1.7; color: var(--g70); margin: 10px 0 0; max-width: var(--read); }
+
+  .grid {
+    list-style: none; margin: 22px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px;
+  }
+  /* Native size, never resampled: the img box scales, the source does not. */
+  .grid img {
+    width: 100%; height: auto; display: block; border-radius: var(--r-s);
+    opacity: .82; filter: grayscale(1) contrast(.92);
+  }
+  .name { font-size: 11px; font-weight: 600; color: var(--g80); margin: 8px 0 0; letter-spacing: -.008em; }
+  .covers { font-size: 10.5px; line-height: 1.5; color: var(--g70); margin: 2px 0 0; }
+
+  @media (max-width: 860px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .covers { display: none; }
+  }
+</style>

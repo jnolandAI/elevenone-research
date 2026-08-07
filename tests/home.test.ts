@@ -52,3 +52,22 @@ describe('the working section', () => {
     expect(src).toMatch(/throw new Error/);
   });
 });
+
+const coverage = readFileSync('src/components/home/Coverage.astro', 'utf8');
+
+describe('the coverage strip', () => {
+  it('is driven by the shared subject table rather than a second hardcoded list', () => {
+    expect(coverage).toMatch(/from\s+['"]\.\.\/\.\.\/lib\/dot['"]/);
+    expect(coverage).toContain('SUBJECTS');
+  });
+
+  it('lazy-loads, because all six sit below the fold', () => {
+    expect(coverage).toMatch(/loading=["']lazy["']/);
+  });
+
+  // Six industrial images in a row is exactly the shape that implies a
+  // portfolio. PRODUCT.md forbids implying a track record.
+  it('frames subjects covered, never work delivered', () => {
+    expect(coverage).not.toMatch(/\b(client|clients|case study|case studies|portfolio|our work|engagements delivered)\b/i);
+  });
+});
