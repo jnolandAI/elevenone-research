@@ -160,12 +160,20 @@ test('the homepage hero ships a real image at explicit dimensions', async ({ pag
   expect(res.status(), src!).toBe(200);
 });
 
-test('the coverage strip renders six described images', async ({ page }) => {
+test('the coverage strip renders six described images', async ({ page, request }) => {
   await page.goto('/');
   const imgs = page.locator('section img[loading="lazy"]');
   await expect(imgs).toHaveCount(6);
   for (let i = 0; i < 6; i++) {
-    await expect(imgs.nth(i)).toHaveAttribute('alt', /.+/);
+    const img = imgs.nth(i);
+    await expect(img).toHaveAttribute('alt', /.+/);
+
+    // Same reasoning as the hero test: a 404 leaves width, height and alt
+    // structurally intact, so each src has to be fetched rather than merely
+    // asserted on.
+    const src = await img.getAttribute('src');
+    const res = await request.get(src!);
+    expect(res.status(), `coverage image ${i + 1} of 6, src ${src}`).toBe(200);
   }
 });
 
