@@ -3,6 +3,16 @@
   a rail and becomes part of the document. It is not dropped: it is the reason
   the document is worth printing.
 */
+/*
+  Every declaration below carries !important, and that is deliberate rather
+  than lazy. Astro compiles a component's scoped styles to
+  .fig[data-astro-cid-xxxx], which outranks a plain .fig, so an unqualified
+  print rule loses the cascade and does nothing at all while looking correct
+  and passing a test that checks it is present. Three rules in this file were
+  found inert that way. Nothing competes for these selectors at print time,
+  so uniform !important closes the whole class rather than the instances
+  found so far.
+*/
 @media print {
   @page { margin: 18mm 16mm; }
 
@@ -11,43 +21,43 @@
   .nav { display: none !important; }
   footer { display: none !important; }
 
-  html, body { background: #fff !important; color: #000; }
+  html, body { background: #fff !important; color: #000 !important; }
 
-  .frame { max-width: none; padding: 0; }
+  .frame { max-width: none !important; padding: 0 !important; }
 
   /* one column: the rail follows the prose rather than sitting beside it */
   .doc { display: block !important; }
 
-  article { max-width: none; }
-  article p { font-size: 10.5pt; line-height: 1.55; color: #1a1a19; }
-  article h2 { font-size: 14pt; margin-top: 22pt; break-after: avoid; }
+  article { max-width: none !important; }
+  article p { font-size: 10.5pt !important; line-height: 1.55 !important; color: #1a1a19 !important; }
+  article h2 { font-size: 14pt !important; margin-top: 22pt !important; break-after: avoid !important; }
 
   /* the hero surface is decorative and costs a page */
   .hero .surface, .hero .clearing { display: none !important; }
-  .hero { padding: 0 0 18pt; }
-  .hero h1 { font-size: 22pt; }
+  .hero { padding: 0 0 18pt !important; }
+  .hero h1 { font-size: 22pt !important; }
 
   /* figures print whole, at the width of the text */
   .fig {
-    break-inside: avoid;
-    box-shadow: none;
-    background: #fff;
-    padding: 0;
-    margin: 14pt 0;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 14pt 0 !important;
   }
-  .fig .t { font-size: 11pt; }
+  .fig .t { font-size: 11pt !important; }
 
   /* the apparatus, expanded and in the flow */
   .rail {
     position: static !important;
     max-height: none !important;
     overflow: visible !important;
-    margin-top: 24pt;
-    break-before: page;
+    margin-top: 24pt !important;
+    break-before: page !important;
   }
-  .rail ol { display: block; }
-  .rail li { break-inside: avoid; margin-bottom: 10pt; }
-  .rail details { box-shadow: none; background: #fff; }
+  .rail ol { display: block !important; }
+  .rail li { break-inside: avoid !important; margin-bottom: 10pt !important; }
+  .rail details { box-shadow: none !important; background: #fff !important; }
   /* Every claim open: a collapsed falsifier on paper is a falsifier withheld.
 
      display on the child is not sufficient and was verified insufficient in
@@ -61,29 +71,29 @@
     content-visibility: visible !important;
     display: block !important;
   }
-  .rail summary { list-style: none; }
-  .rail .chev { display: none; }
-  .rail dt { font-size: 8.5pt; color: #55554f; }
-  .rail dd { font-size: 9.5pt; color: #1a1a19; }
+  .rail summary { list-style: none !important; }
+  .rail .chev { display: none !important; }
+  .rail dt { font-size: 8.5pt !important; color: #55554f !important; }
+  .rail dd { font-size: 9.5pt !important; color: #1a1a19 !important; }
 
   /* the load path keeps its structure but not its animation or its screen */
   .path {
-    break-inside: avoid;
-    box-shadow: none;
-    background: #fff;
-    padding: 0;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
   }
   .path .screen, .path .wires { display: none !important; }
   .path .member, .path .concl {
     transform: none !important;
     opacity: 1 !important;
-    box-shadow: none;
-    background: #fff;
+    box-shadow: none !important;
+    background: #fff !important;
   }
-  .tier.claims { margin-top: 14pt; }
+  .tier.claims { margin-top: 14pt !important; }
 
-  .method { break-inside: avoid; box-shadow: none; background: #fff; padding: 0; }
+  .method { break-inside: avoid !important; box-shadow: none !important; background: #fff !important; padding: 0 !important; }
 
   /* a printed link that cannot be clicked should still be followable */
-  .method dd a::after, .rail .foot a::after { content: " (" attr(href) ")"; font-size: 8.5pt; }
+  .method dd a::after, .rail .foot a::after { content: " (" attr(href) ")"; font-size: 8.5pt !important; }
 }
