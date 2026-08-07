@@ -80,6 +80,10 @@ function draw(): void {
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (panel) {
+  // Opt the panel into the pre-reveal state only now that a script is running
+  // to take it back out again. Without this the CSS holds the conclusion dim
+  // forever for anyone with JavaScript off.
+  if (!reduced) panel.classList.add('reveal');
   if (reduced) {
     panel.classList.add('on');
   } else {

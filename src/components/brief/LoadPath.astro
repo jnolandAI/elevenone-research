@@ -108,13 +108,19 @@ const capNote =
   .member.provisional { box-shadow: var(--e1); }
   .member.provisional .q { color: var(--g70); font-weight: 400; }
 
-  .path .member { transform: translateY(16px); }
-  .path:global(.on) .member.firm { transform: translateY(-6px); }
-  .path:global(.on) .member.supported { transform: translateY(0); }
-  .path:global(.on) .member.provisional { transform: translateY(4px); }
-  .path:global(.on) .member { transition-delay: calc(160ms + var(--i, 0) * 120ms); }
-  .path .concl { transform: translateY(-9px); opacity: .74; }
-  .path:global(.on) .concl { transform: translateY(0); opacity: 1; transition-delay: 520ms; }
+  /* The pre-reveal state is gated on a class the script adds, so it exists
+     only where something will later remove it. Ungated, a reader with
+     JavaScript off gets the conclusion held at .74 opacity and the member
+     cards 16px off-position permanently, because nothing ever adds .on. The
+     conclusion is the sentence the whole object exists to qualify; it does
+     not get dimmed for the reader least able to do anything about it. */
+  .path:global(.reveal) .member { transform: translateY(16px); }
+  .path:global(.reveal.on) .member.firm { transform: translateY(-6px); }
+  .path:global(.reveal.on) .member.supported { transform: translateY(0); }
+  .path:global(.reveal.on) .member.provisional { transform: translateY(4px); }
+  .path:global(.reveal.on) .member { transition-delay: calc(160ms + var(--i, 0) * 120ms); }
+  .path:global(.reveal) .concl { transform: translateY(-9px); opacity: .74; }
+  .path:global(.reveal.on) .concl { transform: translateY(0); opacity: 1; transition-delay: 520ms; }
   .wires :global(path) {
     stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600);
     transition: stroke-dashoffset 1s var(--ez);
