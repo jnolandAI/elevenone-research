@@ -1,10 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
-const pages = ['index', 'reports', 'method', 'about', '404'].map((p) => ({
-  name: p,
-  src: readFileSync(`src/pages/${p}.astro`, 'utf8'),
-}));
+// src/components/home/* is unchecked otherwise: this file only reads
+// src/pages/*.astro directly, so a component mounted on a page (Working.astro
+// on index.astro, say) never has its own copy swept for an em dash, a first
+// person pronoun, or an invented track record.
+const homeComponents = readdirSync('src/components/home')
+  .filter((f) => f.endsWith('.astro'))
+  .map((f) => `src/components/home/${f}`);
+
+const pages = [
+  ...['index', 'reports', 'method', 'about', '404'].map((p) => ({
+    name: p,
+    src: readFileSync(`src/pages/${p}.astro`, 'utf8'),
+  })),
+  ...homeComponents.map((path) => ({ name: path, src: readFileSync(path, 'utf8') })),
+];
 
 describe('the structural pages', () => {
   it('never uses an em dash', () => {

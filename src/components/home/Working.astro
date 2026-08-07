@@ -1,17 +1,31 @@
 ---
+import { getEntry } from 'astro:content';
+
+// The apparatus this section demonstrates is a real claim from Brief 001, not
+// invented copy. It is derived from the brief's own frontmatter rather than
+// hardcoded, so it cannot drift the moment that brief is edited: a missing
+// brief or a brief with no claims fails the build loudly instead of falling
+// back to placeholder text, which would put invented working back on the page.
+const brief = await getEntry('briefs', '001-gross-margin');
+if (!brief) {
+  throw new Error(
+    'Working.astro: brief "001-gross-margin" was not found in the briefs collection. ' +
+      'This section shows real working from that brief and has nothing to fall back to.',
+  );
+}
+const claim = brief.data.claims[0];
+if (!claim) {
+  throw new Error(
+    'Working.astro: brief "001-gross-margin" has no claims. ' +
+      'This section shows the working behind claims[0] and has nothing to render without one.',
+  );
+}
+
 const rows = [
-  {
-    label: 'Source',
-    body: 'SEC XBRL company facts, CY2024 annual frames. Retrieved 2026-06-05.',
-  },
-  {
-    label: 'Assumption',
-    body: 'Gross margin is computed from tagged revenue and cost of revenue as reported, with no adjustment for one-time items.',
-  },
-  {
-    label: 'Falsifier',
-    body: 'A different tagging treatment of cost of revenue that moves the median by more than a point would undo this.',
-  },
+  { label: 'Claim', body: claim.text },
+  { label: 'Source', body: claim.restsOn },
+  { label: 'Assumption', body: claim.assumes },
+  { label: 'Falsifier', body: claim.breaksIf },
 ];
 ---
 <section class="working frame" aria-labelledby="working-h">
@@ -19,11 +33,9 @@ const rows = [
   <p class="intro">A brief marks the sentences it rests on. Each one shows where the number came from, what had to be true for it to mean anything, and what would prove it wrong. The conclusion is never rendered firmer than the weakest claim beneath it.</p>
 
   <div class="block">
-    <p class="lbl">Claim</p>
-    <p class="claim">Half the universe spans 23.1 to 59.7 per cent, and one company in six sits within five points of it.</p>
     <dl>
       {rows.map((r) => (
-        <div class="row">
+        <div class:list={['row', { claimrow: r.label === 'Claim' }]}>
           <dt>{r.label}</dt>
           <dd>{r.body}</dd>
         </div>
@@ -42,14 +54,20 @@ const rows = [
     background: linear-gradient(160deg, #FFFFFF 0%, #F7F7F6 100%);
     box-shadow: var(--e1); max-width: var(--doc);
   }
-  .lbl { font-size: 11.5px; color: var(--g70); line-height: 1.6; margin: 0 0 6px; }
-  .claim { font-size: 16px; line-height: 1.6; color: var(--ink); font-weight: 500; margin: 0 0 20px; max-width: 62ch; }
-  dl { margin: 0; display: grid; gap: 10px 24px; }
+  dl { margin: 0; display: grid; gap: 20px 24px; }
   .row { display: grid; grid-template-columns: 108px 1fr; gap: 24px; align-items: baseline; }
+  .row + .row { padding-top: 20px; border-top: 1px solid var(--g20); }
   dt { font-size: 11.5px; color: var(--g70); line-height: 1.6; }
   dd { margin: 0; font-size: 13.5px; line-height: 1.7; color: var(--g80); max-width: 70ch; }
 
+  /* The claim is the sentence the other three rows exist to support: it
+     carries the same 108px label column as everything else, so it reads as
+     a row in the apparatus rather than a caption bolted above it, but its
+     text is set larger and darker than the working beneath it. */
+  .claimrow dd { font-size: 16px; line-height: 1.6; color: var(--ink); font-weight: 500; max-width: 62ch; }
+
   @media (max-width: 620px) {
     .row { grid-template-columns: 1fr; gap: 3px; }
+    .row + .row { padding-top: 16px; }
   }
 </style>
