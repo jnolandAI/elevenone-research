@@ -1,0 +1,56 @@
+---
+import { dotAsset } from '../../lib/dot';
+
+interface Props {
+  /** The seam for later per-brief rotation. Never hardcode the path. */
+  subject?: string;
+  headline: string;
+  standfirst: string;
+}
+const { subject = 'grid', headline, standfirst } = Astro.props;
+const img = dotAsset(subject, 'hero');
+---
+<div class="hero frame">
+  <div class="clearing"></div>
+  <h1>{headline}</h1>
+  <p class="stand">{standfirst}</p>
+  <div class="surface">
+    <!-- Native size, never resampled. See scripts/webp_derive.py for why. -->
+    <img
+      src={img.src}
+      width={img.width}
+      height={img.height}
+      alt={img.alt}
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+</div>
+
+<style>
+  .hero { position: relative; padding: 84px 0 66px; overflow: hidden; }
+  .surface { position: absolute; left: 34%; right: -10%; top: 12%; z-index: 0; pointer-events: none; }
+  .surface img { display: block; width: 100%; height: auto; }
+  /* The field fades where the type sits, rather than the type fighting it with
+     a shadow. Same technique as BriefHero.astro:53-58. Grid's open upper left
+     is why it was the right subject for this. */
+  .clearing {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse 54% 58% at 28% 46%,
+      rgba(247,247,246,.98) 0%, rgba(247,247,246,.93) 44%,
+      rgba(247,247,246,.5) 68%, rgba(247,247,246,0) 86%);
+  }
+  .hero > :global(*) { position: relative; z-index: 1; }
+
+  h1 {
+    font-size: clamp(33px, 5vw, 58px); font-weight: 500; letter-spacing: -.036em;
+    line-height: 1.05; margin: 0; color: var(--ink); max-width: 15ch;
+  }
+  .stand { font-size: 17.5px; line-height: 1.66; color: var(--g80); max-width: 48ch; margin: 26px 0 0; }
+
+  @media (max-width: 900px) {
+    .hero { padding: 60px 0 44px; }
+    .surface { position: static; left: auto; right: auto; top: auto; margin: 34px 0 0; }
+    .clearing { display: none; }
+  }
+</style>
