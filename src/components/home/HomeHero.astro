@@ -11,7 +11,6 @@ const { subject = 'grid', headline, standfirst } = Astro.props;
 const img = dotAsset(subject, 'hero');
 ---
 <div class="hero frame">
-  <div class="clearing"></div>
   <h1>{headline}</h1>
   <p class="stand">{standfirst}</p>
   <div class="surface">
@@ -29,19 +28,37 @@ const img = dotAsset(subject, 'hero');
 
 <style>
   .hero { position: relative; padding: 84px 0 66px; overflow: hidden; }
-  .surface { position: absolute; left: 34%; right: -10%; top: 12%; z-index: 0; pointer-events: none; }
-  .surface img { display: block; width: 100%; height: auto; }
-  /* The field fades where the type sits, rather than the type fighting it with
-     a shadow. Same technique as BriefHero.astro:53-58. Grid's open upper left
-     is why it was the right subject for this. */
-  .clearing {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(ellipse 54% 58% at 28% 46%,
-      rgba(247,247,246,.98) 0%, rgba(247,247,246,.93) 44%,
-      rgba(247,247,246,.5) 68%, rgba(247,247,246,0) 86%);
-  }
-  .hero > :global(*) { position: relative; z-index: 1; }
+  /* left starts past both h1's and .stand's measured right edge (47.2% and
+     45.6% of the hero box, at this copy length) rather than the brief's 34%,
+     so the render never sits under the type at all. That decision is below,
+     next to .clearing's removal, because the two are the same finding. */
+  .surface { position: absolute; left: 50%; right: -10%; top: 12%; pointer-events: none; }
+  /* The render carries a flat #FCFCFB field, which the imagery doc says gives
+     images "no edge". That holds only on a matching surface, and the page
+     ground runs #F6F6F5 to #EAEAE9, so the field showed as a lighter
+     rectangle. `darken` takes the per-channel minimum: the field loses to the
+     ground and disappears, the dots win and stay. No stacking context on
+     .surface, or the blend has nothing to blend with.
 
+     A radial `.clearing` overlay was tried first, to fade the field under the
+     type the way BriefHero.astro:53-58 does. It cannot work here: `darken`
+     always keeps the darker of image and backdrop, so a dot pixel (~19) wins
+     against any lightening laid behind it, at any opacity. Softening the
+     dots under text needs the image to not be there, not a lighter backdrop
+     behind it. Moving .surface clear of both h1 and .stand fixes the actual
+     problem and makes the gradient unnecessary, so it was deleted rather
+     than kept as decoration with nothing left to fade. */
+  .surface img { display: block; width: 100%; height: auto; mix-blend-mode: darken; }
+
+  /* Deliberately no z-index on .surface. A z-index on a positioned element
+     opens a stacking context, and a stacking context is exactly what stops
+     .surface img's mix-blend-mode from reaching the page background behind
+     it: it was tried with one first and the field just sat there as a
+     rectangle. h1 and .stand carry z-index instead, which is enough on its
+     own to keep the type above the image without boxing it into a context,
+     and matters if a future subject or a longer headline brings them back
+     into range of each other. */
+  h1, .stand { position: relative; z-index: 1; }
   h1 {
     font-size: clamp(33px, 5vw, 58px); font-weight: 500; letter-spacing: -.036em;
     line-height: 1.05; margin: 0; color: var(--ink); max-width: 15ch;
@@ -51,6 +68,5 @@ const img = dotAsset(subject, 'hero');
   @media (max-width: 900px) {
     .hero { padding: 60px 0 44px; }
     .surface { position: static; left: auto; right: auto; top: auto; margin: 34px 0 0; }
-    .clearing { display: none; }
   }
 </style>

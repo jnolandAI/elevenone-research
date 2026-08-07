@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { dotAsset } from '../src/lib/dot';
 
 describe('dot asset resolution', () => {
@@ -31,5 +31,24 @@ describe('dot asset resolution', () => {
   // the webp step.
   it('throws when there is no dot-mode manifest entry for the role', () => {
     expect(() => dotAsset('wind', 'cover')).toThrow(/manifest entry/i);
+  });
+
+  // Every real manifest entry already carries a webp key (Task 1 ran to
+  // completion), so the "entry exists, webp missing" branch has no live
+  // fixture in public/assets/dot/manifest.json. Stub the manifest for just
+  // this test with a synthetic entry that has everything except webp, so
+  // the branch that fires when someone renders a new subject and forgets to
+  // run webp_derive.py actually gets exercised, not just written.
+  it('throws when a manifest entry exists but has no derived webp', async () => {
+    vi.resetModules();
+    vi.doMock('../public/assets/dot/manifest.json', () => ({
+      default: {
+        'urban-figure-dot.png': { w: 1440, h: 920, role: 'figure', subject: 'urban' },
+      },
+    }));
+    const { dotAsset: dotAssetStubbed } = await import('../src/lib/dot');
+    expect(() => dotAssetStubbed('urban', 'figure')).toThrow(/webp/i);
+    vi.doUnmock('../public/assets/dot/manifest.json');
+    vi.resetModules();
   });
 });
