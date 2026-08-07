@@ -23,9 +23,10 @@ describe('the briefs index', () => {
 
   it('is a single column, not a card grid', () => {
     // forbidding only repeat() lets a literal three-column grid through, which
-    // is the exact failure the one-brief-or-thirty constraint names
+    // is the exact failure the one-brief-or-thirty constraint names; the
+    // `columns` multi-column shorthand is a third way to the same failure
     const listRule = page.match(/\.list\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(listRule).not.toMatch(/grid-template-columns|column-count/);
+    expect(listRule).not.toMatch(/grid-template-columns|column-count|columns\s*:/);
   });
 
   it('says plainly when nothing is published rather than showing an empty page', () => {
