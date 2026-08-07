@@ -107,11 +107,16 @@ test('a draft is not linked from the index and says it is a draft', async ({ pag
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 });
 
-test('the five routes exist and the nav marks the current one', async ({ page }) => {
+test('the four routes exist and the nav marks the current one', async ({ page }) => {
   for (const [path, label] of [['/briefs', 'Briefs'], ['/reports', 'Reports'], ['/method', 'Method'], ['/about', 'About']]) {
     await page.goto(path!);
     await expect(page.locator(`nav a[aria-current="page"]`)).toHaveText(label!);
   }
+});
+
+test('the homepage marks no nav item current, since it has no nav link of its own', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('nav a[aria-current="page"]')).toHaveCount(0);
 });
 
 test('/briefs serves the briefs list and does not redirect', async ({ page }) => {

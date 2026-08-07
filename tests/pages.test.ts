@@ -52,3 +52,26 @@ describe('the structural pages', () => {
     }
   });
 });
+
+describe('site-wide navigation targets', () => {
+  // The briefs index moved from / to /briefs. Every link labelled Briefs has
+  // to move with it, and nothing did until a reviewer read the footer by hand.
+  // Fault injection: point either link back at "/" and this turns red.
+  it('sends the footer Briefs link to the briefs index, not the homepage', () => {
+    const src = readFileSync('src/components/Footer.astro', 'utf8');
+    const briefsLinks = [...src.matchAll(/href=["']([^"']+)["'][^>]*>\s*Briefs\s*</g)];
+    expect(briefsLinks.length, 'Footer.astro has no Briefs link').toBeGreaterThan(0);
+    for (const m of briefsLinks) expect(m[1], 'Footer.astro').toBe('/briefs');
+  });
+
+  it('sends the nav Briefs link to the briefs index, not the homepage', () => {
+    // Nav builds its links from a data array, not literal anchors, so the
+    // footer's text-based regex above has nothing to match here: the label
+    // and href never appear next to rendered markup in this file, only in
+    // the array entry. Match the entry itself instead.
+    const src = readFileSync('src/components/Nav.astro', 'utf8');
+    const entry = src.match(/key:\s*['"]briefs['"],\s*label:\s*['"]Briefs['"],\s*href:\s*['"]([^'"]+)['"]/);
+    expect(entry, 'Nav.astro has no briefs link entry').toBeTruthy();
+    expect(entry![1], 'Nav.astro').toBe('/briefs');
+  });
+});
