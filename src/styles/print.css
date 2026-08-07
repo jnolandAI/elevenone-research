@@ -1,1 +1,78 @@
-/* Written in full by Task 17. */
+/*
+  On paper there is no sticky column and no hover, so the apparatus stops being
+  a rail and becomes part of the document. It is not dropped: it is the reason
+  the document is worth printing.
+*/
+@media print {
+  @page { margin: 18mm 16mm; }
+
+  /* the drawn ground is a screen device and prints as a grey wash */
+  .ground, .noise, .skip { display: none !important; }
+  .nav { display: none !important; }
+  footer { display: none !important; }
+
+  html, body { background: #fff !important; color: #000; }
+
+  .frame { max-width: none; padding: 0; }
+
+  /* one column: the rail follows the prose rather than sitting beside it */
+  .doc { display: block !important; }
+
+  article { max-width: none; }
+  article p { font-size: 10.5pt; line-height: 1.55; color: #1a1a19; }
+  article h2 { font-size: 14pt; margin-top: 22pt; break-after: avoid; }
+
+  /* the hero surface is decorative and costs a page */
+  .hero .surface, .hero .clearing { display: none !important; }
+  .hero { padding: 0 0 18pt; }
+  .hero h1 { font-size: 22pt; }
+
+  /* figures print whole, at the width of the text */
+  .fig {
+    break-inside: avoid;
+    box-shadow: none;
+    background: #fff;
+    padding: 0;
+    margin: 14pt 0;
+  }
+  .fig .t { font-size: 11pt; }
+
+  /* the apparatus, expanded and in the flow */
+  .rail {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin-top: 24pt;
+    break-before: page;
+  }
+  .rail ol { display: block; }
+  .rail li { break-inside: avoid; margin-bottom: 10pt; }
+  .rail details { box-shadow: none; background: #fff; }
+  /* every claim open: a collapsed falsifier on paper is a falsifier withheld */
+  .rail details .body { display: block !important; }
+  .rail summary { list-style: none; }
+  .rail .chev { display: none; }
+  .rail dt { font-size: 8.5pt; color: #55554f; }
+  .rail dd { font-size: 9.5pt; color: #1a1a19; }
+
+  /* the load path keeps its structure but not its animation or its screen */
+  .path {
+    break-inside: avoid;
+    box-shadow: none;
+    background: #fff;
+    padding: 0;
+  }
+  .path .screen, .path .wires { display: none !important; }
+  .path .member, .path .concl {
+    transform: none !important;
+    opacity: 1 !important;
+    box-shadow: none;
+    background: #fff;
+  }
+  .tier.claims { margin-top: 14pt; }
+
+  .method { break-inside: avoid; box-shadow: none; background: #fff; padding: 0; }
+
+  /* a printed link that cannot be clicked should still be followable */
+  .method dd a::after, .rail .foot a::after { content: " (" attr(href) ")"; font-size: 8.5pt; }
+}
