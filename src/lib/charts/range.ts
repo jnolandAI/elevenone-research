@@ -44,8 +44,10 @@ export function rangeFigure(d: MarginDataset): string {
       `font-family="${MONO}" font-weight="300" font-size="9">${pct(v)}</text>`;
   }
 
+  const spanPct = (c: (typeof C)[number]) => ((c.p90 - c.p10) * 100).toFixed(1);
   const label = esc(
-    'Percentile ranges by revenue cohort. The tenth to ninetieth percentile track shortens in order from the smallest cohort to the largest.',
+    'Percentile ranges by revenue cohort. The tenth to ninetieth percentile span runs ' +
+    `${spanPct(C[0]!)} percent in the smallest cohort to ${spanPct(C[C.length - 1]!)} percent in the largest.`,
   );
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${out}</svg>`;
 }

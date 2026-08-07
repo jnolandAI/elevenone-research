@@ -58,8 +58,10 @@ export function ridgeFigure(d: MarginDataset): string {
     `<text x="${R}" y="${H - 3}" text-anchor="end" fill="${TICK}" font-family="${SANS}" ` +
     `font-size="9.5">tick marks each median</text>`;
 
+  const medians = C.map((c) => (c.p50 * 100).toFixed(1)).join('%, ');
   const label = esc(
-    'One density curve per revenue cohort on a shared scale. The largest cohort sits lowest and narrowest.',
+    `One density curve per revenue cohort on a shared scale, ${C.length} cohorts from ` +
+    `${C[0]!.label} to ${C[C.length - 1]!.label}. Median gross margin by cohort: ${medians}%.`,
   );
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${out}</svg>`;
 }

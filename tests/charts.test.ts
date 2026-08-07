@@ -94,6 +94,15 @@ describe('ridge figure', () => {
     for (const c of data.cohorts) expect(svg).toContain(c.label);
   });
 
+  it('describes itself to a screen reader with the figures it actually draws', () => {
+    // A generic caption ("one density curve per cohort") passes a length
+    // check and says nothing a screen reader user could act on: the visible
+    // ticks carry real medians, so the accessible name has to carry them too.
+    const label = svg.match(/aria-label="([^"]+)"/)![1]!;
+    expect(label).toContain((data.cohorts[0]!.p50 * 100).toFixed(1) + '%');
+    expect(label).toContain((data.cohorts.at(-1)!.p50 * 100).toFixed(1) + '%');
+  });
+
   it('sets axis ticks in mono, because a tick is a value standing alone', () => {
     // Counted, not merely present. A bare substring check stays green if the
     // ticks regress to SANS while any other element still carries MONO.
@@ -136,6 +145,16 @@ describe('range figure', () => {
     // substring check stays green if the readout regresses to SANS.
     const readouts = svg.match(/font-family="Martian Mono[^"]*" font-size="9.5" font-weight="400"/g) ?? [];
     expect(readouts).toHaveLength(data.cohorts.length);
+  });
+
+  it('describes itself to a screen reader with the figures it actually draws', () => {
+    // Same defect class as the ridge figure: a caption naming the encoding
+    // ("tenth to ninetieth percentile track") without a number is stale
+    // boilerplate, not a description of what this dataset actually shows.
+    const label = svg.match(/aria-label="([^"]+)"/)![1]!;
+    const span = (c: (typeof data.cohorts)[number]) => ((c.p90 - c.p10) * 100).toFixed(1);
+    expect(label).toContain(span(data.cohorts[0]!) + ' percent');
+    expect(label).toContain(span(data.cohorts.at(-1)!) + ' percent');
   });
 });
 
