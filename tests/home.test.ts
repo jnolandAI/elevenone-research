@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Working from '../src/components/home/Working.astro';
+import Coverage from '../src/components/home/Coverage.astro';
+import { SUBJECTS } from '../src/lib/dot';
 
 const src = readFileSync('src/components/home/Working.astro', 'utf8');
 
@@ -56,9 +58,23 @@ describe('the working section', () => {
 const coverage = readFileSync('src/components/home/Coverage.astro', 'utf8');
 
 describe('the coverage strip', () => {
-  it('is driven by the shared subject table rather than a second hardcoded list', () => {
+  // A substring check on the import line would still pass if SUBJECTS were
+  // imported and left unused beside a second, hardcoded card list: the
+  // Working-section test above shows the fix for that, rendering through the
+  // container and asserting a real value from the source of truth reaches the
+  // output. Do the same here: every subject's display name in SUBJECTS has to
+  // actually appear in the rendered markup, which a hardcoded list beside an
+  // unused import would not reproduce unless it happened to duplicate all six
+  // names verbatim.
+  it('is driven by the shared subject table rather than a second hardcoded list', async () => {
     expect(coverage).toMatch(/from\s+['"]\.\.\/\.\.\/lib\/dot['"]/);
     expect(coverage).toContain('SUBJECTS');
+
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Coverage);
+    const names = Object.values(SUBJECTS).map((s) => s.name);
+    expect(names.length).toBeGreaterThan(0);
+    for (const name of names) expect(html, name).toContain(name);
   });
 
   it('lazy-loads, because all six sit below the fold', () => {

@@ -31,11 +31,15 @@ const cards = Object.entries(SUBJECTS).map(([id, meta]) => ({
     list-style: none; margin: 22px 0 0; padding: 0;
     display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px;
   }
-  /* Native size, never resampled: the img box scales, the source does not. */
-  .grid img {
-    width: 100%; height: auto; display: block; border-radius: var(--r-s);
-    opacity: .82; filter: grayscale(1) contrast(.92);
-  }
+  /* Native size, never resampled: the img box scales, the source does not.
+     `darken` for the same reason as HomeHero: the render's flat #FCFCFB field
+     would otherwise show as a light rectangle against .ground, and .ground is
+     fixed, so the band behind these cards changes with scroll. Taking the
+     per-channel minimum makes the field lose to the ground everywhere and
+     keeps the dot at its exact ink. Quieting is done with scale, never by
+     dimming the ink: opacity and contrast filters push #131312 up into the
+     g80 range and make it drift card to card. */
+  .grid img { width: 100%; height: auto; display: block; border-radius: var(--r-s); mix-blend-mode: darken; }
   .name { font-size: 11px; font-weight: 600; color: var(--g80); margin: 8px 0 0; letter-spacing: -.008em; }
   .covers { font-size: 10.5px; line-height: 1.5; color: var(--g70); margin: 2px 0 0; }
 
