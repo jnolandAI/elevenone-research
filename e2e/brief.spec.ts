@@ -145,3 +145,32 @@ test('the sitemap excludes the draft brief and lists a real page', async ({ requ
   expect(xml).not.toContain('001-gross-margin');
   expect(xml).toContain('/reports/');
 });
+
+test('the homepage hero ships a real image at explicit dimensions', async ({ page, request }) => {
+  await page.goto('/');
+  const img = page.locator('main img').first();
+  await expect(img).toHaveAttribute('alt', /.+/);
+  await expect(img).toHaveAttribute('width', /^\d+$/);
+  await expect(img).toHaveAttribute('height', /^\d+$/);
+
+  // A hero that 404s still renders a structurally correct page, so the src
+  // has to be fetched rather than merely asserted on.
+  const src = await img.getAttribute('src');
+  const res = await request.get(src!);
+  expect(res.status(), src!).toBe(200);
+});
+
+test('the coverage strip renders six described images', async ({ page }) => {
+  await page.goto('/');
+  const imgs = page.locator('section img[loading="lazy"]');
+  await expect(imgs).toHaveCount(6);
+  for (let i = 0; i < 6; i++) {
+    await expect(imgs.nth(i)).toHaveAttribute('alt', /.+/);
+  }
+});
+
+test('the sitemap lists the briefs index and still excludes the draft', async ({ request }) => {
+  const xml = await (await request.get('/sitemap-0.xml')).text();
+  expect(xml).toContain('/briefs');
+  expect(xml).not.toContain('001-gross-margin');
+});

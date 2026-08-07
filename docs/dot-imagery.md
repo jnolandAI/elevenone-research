@@ -23,7 +23,9 @@ same house, because the screen does the work rather than the subject.
 | `prototypes/dot-render.html`    | Headless render page, built from the engine                    |
 | `scripts/build_dot_pages.py`    | Rebuilds both pages after any engine change                    |
 | `scripts/render_dot.py`         | Production CLI                                                 |
-| `public/assets/dot/`            | Rendered output plus `manifest.json`                           |
+| `scripts/webp_derive.py`        | Derives a lossless WebP delivery asset beside each PNG, at native size |
+| `public/assets/dot/`            | Rendered output: PNGs, their derived WebPs, plus `manifest.json` |
+| `src/components/home/`          | First production consumer: `HomeHero.astro` and `Coverage.astro` |
 
 Both pages are generated from the same engine, so the foundry and the renderer
 cannot drift apart. After editing `dot-engine.js`, run
@@ -77,12 +79,19 @@ python scripts/render_dot.py --list
 python scripts/render_dot.py --subject port --role hero
 python scripts/render_dot.py --subject wind --role figure --mode contour
 python scripts/render_dot.py --all --role card
+python scripts/webp_derive.py --all
 ```
 
 Output lands in `public/assets/dot/<subject>-<role>-<mode>.png` and every render appends
 to `public/assets/dot/manifest.json` with its size, pitch, engine version and source
 type. The CLI reads subjects and roles out of the engine at runtime, so it can
 never disagree with it about what exists.
+
+`webp_derive.py` is a separate, required second step: it derives a lossless
+WebP beside each PNG at native size and records it under that entry's `webp`
+key. `src/lib/dot.ts`'s `dotAsset()`, the site's only reader of this manifest,
+resolves to the WebP and throws if a role has been rendered but never derived,
+rather than silently falling back to the PNG.
 
 The foundry's sliders do not affect the CLI. They exist to decide the constants,
 not to produce assets, and the page says so.
@@ -195,6 +204,20 @@ Whatever the source, the caption names the subject and says *rendered*.
    are already out. A dated brief is a document of record, and silently
    restyling its imagery is the same category of act as silently restyling its
    numbers.
+7. **Never resample a render.** The lattice sits at a fixed 15 degree screen
+   angle and any resampling grid beats against it and moires: dots clump,
+   adjacent structures lose separation, and the file gets larger because clean
+   dots become intermediate greys. Measured on `grid-hero-dot`: 2880px wide is
+   328 KB, resampled to 1920px wide is 401 KB. This bars `astro:assets` and any
+   generated `srcset` for this imagery. If something smaller is needed, render
+   it at that size, where role-specific pitch keeps the perceived dot size
+   right. Delivery format is WebP lossless at native size, derived by
+   `scripts/webp_derive.py`.
+
+The homepage carries seven images, one hero and the six-card coverage strip.
+That is a considered exception to rule 1, resolved on weight rather than count:
+the hero is the only image with scale and contrast behind it, and the strip sits
+below the fold at card size.
 
 ## Library
 
