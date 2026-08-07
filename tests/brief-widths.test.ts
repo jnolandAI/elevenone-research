@@ -36,6 +36,11 @@ describe('two widths and no others', () => {
     const docRule = layout.match(/\.doc\s*\{[^}]*\}/)?.[0] ?? '';
     expect(docRule).toContain('var(--read)');
     expect(docRule).toContain('var(--rail)');
+    // No pixel value anywhere in the rule that sets the columns. Checking only
+    // for a `width: Npx` declaration misses how a third width would actually
+    // arrive: minmax(0, 220px) inside grid-template-columns satisfies both
+    // assertions above and introduces the third width regardless.
+    expect(docRule).not.toMatch(/\d+px/);
     // Excludes the 900px responsive breakpoint, which is a media feature
     // (terminated by `)`) rather than a CSS declaration (terminated by `;`)
     // and is not one of the two content widths this rule is about. Every

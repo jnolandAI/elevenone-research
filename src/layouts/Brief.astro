@@ -63,7 +63,10 @@ const p = Astro.props;
   /* Text does not wrap around figures. At a 624px column a wrapped figure
      leaves roughly 300px for each, too narrow for the figure and below the
      measure floor for the text. */
-  article :global(p) { font-size: 17px; line-height: 1.76; color: var(--g80); margin: 0 0 24px; }
+  article :global(p) {
+    font-size: 17px; line-height: 1.76; color: var(--g80); margin: 0 0 24px;
+    font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1;
+  }
   article :global(p:last-child) { margin-bottom: 0; }
   article :global(h2) {
     font-size: 25px; font-weight: 600; letter-spacing: -.026em; line-height: 1.22;
