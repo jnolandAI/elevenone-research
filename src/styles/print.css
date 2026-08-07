@@ -48,8 +48,19 @@
   .rail ol { display: block; }
   .rail li { break-inside: avoid; margin-bottom: 10pt; }
   .rail details { box-shadow: none; background: #fff; }
-  /* every claim open: a collapsed falsifier on paper is a falsifier withheld */
+  /* Every claim open: a collapsed falsifier on paper is a falsifier withheld.
+
+     display on the child is not sufficient and was verified insufficient in
+     headless Chromium. A closed <details> withholds its content through the
+     UA's rendering of ::details-content, not through a display property on
+     the child, so with the first rule alone the child gets a box, the
+     <details> element does not grow, and the printed page carries the summary
+     and nothing else. Both rules are needed. */
   .rail details .body { display: block !important; }
+  .rail details::details-content {
+    content-visibility: visible !important;
+    display: block !important;
+  }
   .rail summary { list-style: none; }
   .rail .chev { display: none; }
   .rail dt { font-size: 8.5pt; color: #55554f; }

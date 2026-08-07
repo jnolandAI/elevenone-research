@@ -20,6 +20,9 @@ describe('the print register', () => {
   it('expands every claim, so nothing is collapsed on paper', () => {
     // the rule that actually opens them; "details" appears in styling rules too
     expect(css).toMatch(/\.rail\s+details\s+\.body\s*\{[^}]*display:\s*block\s*!important/);
+    // and the one that makes it take effect. Without this the assertion above
+    // passes while the printed page carries only the summary line.
+    expect(css).toMatch(/::details-content\s*\{[^}]*content-visibility:\s*visible/);
   });
 
   it('keeps the load path and the method block', () => {
