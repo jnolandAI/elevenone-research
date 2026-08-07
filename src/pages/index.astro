@@ -5,7 +5,7 @@ import { readTime } from '../lib/readtime';
 
 const all = await getCollection('briefs');
 const briefs = all
-  .filter(b => b.data.published !== null)
+  .filter((b) => b.data.published !== null)
   .sort((a, b) => b.data.published!.getTime() - a.data.published!.getTime())
   .map((b) => ({
     slug: b.id,

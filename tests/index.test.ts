@@ -9,7 +9,11 @@ describe('the briefs index', () => {
   it('shows only published briefs', () => {
     // the predicate has to be applied, not merely present: a filter computed
     // and never called leaves the literal text in the file
-    expect(page).toMatch(/\.filter\([^)]*published\s*!==?\s*null[^)]*\)/);
+    // Tolerant of both `(b) =>` and `b =>`. The [^)] form cannot match the
+    // parenthesised parameter style the rest of this codebase uses, because
+    // the parameter's own ) closes before `published` appears, which would
+    // force the source to change arrow style to satisfy a test.
+    expect(page).toMatch(/\.filter\(\s*\(?\w+\)?\s*=>\s*\w+\.data\.published\s*!==?\s*null\s*\)/);
   });
 
   it('sorts newest first', () => {
