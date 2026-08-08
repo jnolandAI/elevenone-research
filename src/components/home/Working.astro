@@ -1,36 +1,32 @@
 ---
-import { getEntry } from 'astro:content';
-
-// The apparatus this section demonstrates is a real claim from Brief 001, not
-// invented copy. It is derived from the brief's own frontmatter rather than
-// hardcoded, so it cannot drift the moment that brief is edited: a missing
-// brief or a brief with no claims fails the build loudly instead of falling
-// back to placeholder text, which would put invented working back on the page.
-const brief = await getEntry('briefs', '001-gross-margin');
-if (!brief) {
-  throw new Error(
-    'Working.astro: brief "001-gross-margin" was not found in the briefs collection. ' +
-      'This section shows real working from that brief and has nothing to fall back to.',
-  );
-}
-const claim = brief.data.claims[0];
-if (!claim) {
-  throw new Error(
-    'Working.astro: brief "001-gross-margin" has no claims. ' +
-      'This section shows the working behind claims[0] and has nothing to render without one.',
-  );
-}
-
+// No claim, source, assumption or falsifier is shown here. Nothing is
+// published yet, so there is no brief to draw one from, and a filled-in
+// example on the indexed homepage would assert a finding a reader has no way
+// to check. This teaches the device instead of demonstrating it: what each
+// row is for, and why leaving one out would make the claim above it
+// unreadable.
 const rows = [
-  { label: 'Claim', body: claim.text },
-  { label: 'Source', body: claim.restsOn },
-  { label: 'Assumption', body: claim.assumes },
-  { label: 'Falsifier', body: claim.breaksIf },
+  {
+    label: 'Claim',
+    body: 'One sentence built to be checked, never a hedge worded to survive any challenge.',
+  },
+  {
+    label: 'Source',
+    body: 'Names where the underlying data came from, specific enough that a reader could go verify it directly rather than take the claim on trust.',
+  },
+  {
+    label: 'Assumption',
+    body: 'States the condition that has to hold for the claim to mean anything, including the situations where that condition runs thin, since an assumption nobody names is an assumption nobody can challenge.',
+  },
+  {
+    label: 'Falsifier',
+    body: 'States what would prove the claim wrong and says plainly whether that test has actually been run.',
+  },
 ];
 ---
 <section class="working frame" aria-labelledby="working-h">
   <h2 id="working-h">Every claim carries its working</h2>
-  <p class="intro">A brief marks the sentences it rests on. Each one shows where the number came from, what had to be true for it to mean anything, and what would prove it wrong. The conclusion is never rendered firmer than the weakest claim beneath it.</p>
+  <p class="intro">A brief marks the sentences it rests on. Below is what the four rows carry, and why each one has to be there. The conclusion is never rendered firmer than the weakest claim beneath it.</p>
 
   <div class="block">
     <dl>

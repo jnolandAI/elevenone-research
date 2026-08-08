@@ -24,15 +24,23 @@ describe('the working section', () => {
     }
   });
 
-  // Ties the row's value to the brief's data, not to copy typed into the
-  // component. A regression back to hardcoded strings has no reason to
-  // reproduce this exact fragment, so this is the case that turns red if the
-  // derivation is ever removed. Cross-check against
-  // src/content/briefs/001-gross-margin.mdx, claim A's breaksIf.
-  it('draws its Falsifier row from brief 001, not from copy typed into the component', async () => {
+  // Brief 001 is published: null and excluded from the sitemap, but / is
+  // canonical and indexed. A filled-in figure here would put a finding on the
+  // page a reader has no way to check, which is the exact failure the device
+  // exists to prevent. Each row's own rendered value, not just the source
+  // text, has to carry no digit: a percentage, a sample size or a date would
+  // all read as the regression this guards against.
+  it('presents no numeric finding, since nothing is published to back one', async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Working);
-    expect(html).toContain('221 excluded filers are not random');
+    for (const label of ['Claim', 'Source', 'Assumption', 'Falsifier']) {
+      const match = html.match(new RegExp(`<dt[^>]*>${label}</dt>\\s*<dd[^>]*>([^<]+)</dd>`));
+      expect(match, label).toBeTruthy();
+      expect(match![1], label).not.toMatch(/\d/);
+    }
+    const intro = html.match(/<p[^>]*class="intro"[^>]*>([\s\S]*?)<\/p>/);
+    expect(intro, 'intro').toBeTruthy();
+    expect(intro![1], 'intro').not.toMatch(/\d/);
   });
 
   // Claim.astro links to #c-{id} on the brief's claim rail and depends on the
@@ -47,11 +55,13 @@ describe('the working section', () => {
     expect(src).not.toMatch(/\b(client|clients|case study|case studies|testimonial)\b/i);
   });
 
-  // A missing brief or a claimless brief must fail the build loudly rather
-  // than fall back to placeholder text: a silent fallback is how invented
-  // apparatus got onto the page the first time.
-  it('has no fallback text for a missing brief or claim', () => {
-    expect(src).toMatch(/throw new Error/);
+  // The section used to derive its rows from Brief 001 via getEntry, which
+  // put a real but unpublished finding on the indexed homepage. There is no
+  // longer any data to derive: a regression back to a content dependency
+  // would reintroduce that same failure by a different route.
+  it('has no dependency on brief content', () => {
+    expect(src).not.toMatch(/getEntry/);
+    expect(src).not.toMatch(/astro:content/);
   });
 });
 
