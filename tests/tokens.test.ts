@@ -24,6 +24,10 @@ function walk(dir: string): string[] {
 // just as much in scope for "greyscale absolutely" and were previously
 // unchecked by any automated test.
 const otherSources: Record<string, string> = { 'base.css': readFileSync('src/styles/base.css', 'utf8') };
+// Full file text, keyed the same way as otherSources, minus base.css (no
+// markup to walk). Only the contrast sweep below needs this: it has to know
+// what a rule's markup sits inside, not just what the rule says.
+const rawSources: Record<string, string> = {};
 for (const file of walk('src/components').concat(walk('src/layouts'), walk('src/pages'))) {
   if (file.endsWith('.astro')) {
     const src = readFileSync(file, 'utf8');
@@ -31,7 +35,10 @@ for (const file of walk('src/components').concat(walk('src/layouts'), walk('src/
     // non-neutral value inside inline SVG paths that were computed
     // elsewhere and aren't a design-system colour choice at all.
     const blocks = [...src.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]!);
-    if (blocks.length) otherSources[file] = blocks.join('\n');
+    if (blocks.length) {
+      otherSources[file] = blocks.join('\n');
+      rawSources[file] = src;
+    }
   }
 }
 
@@ -77,5 +84,225 @@ describe('design tokens', () => {
         expect(spread, `${name}: #${h} is not neutral`).toBeLessThanOrEqual(4);
       }
     }
+  });
+
+  // Commit 47fd661 swept the whole site moving every sub-18px --g70-over-
+  // the-ground text to --g80, for WCAG failures in exactly this range. That
+  // sweep was a one-off script and never became a test, so the homepage
+  // branch put Coverage's .covers and .intro straight back into the failing
+  // set and nothing caught it. This makes the sweep permanent.
+  //
+  // It is not enough to flag every sub-18px --g70-or-lighter rule against
+  // .ground: plenty of the codebase's small grey text (ClaimRail's .let and
+  // .std, Working's own dt, every LoadPath/Prose/Method card) sits inside an
+  // opaque local card, not on the bare page background, and is already
+  // compliant there. Flagging those would be a false positive on sight,
+  // exactly the kind of noisy test nobody would keep green. So this walks
+  // each file's actual markup with a small tag-stack parser and only holds a
+  // rule to the .ground floor where at least one element it matches is NOT
+  // nested inside a selector that establishes its own opaque-ish background
+  // (a hex colour or a gradient) elsewhere in the same file.
+  it('keeps sized text on the bare page ground at its WCAG floor, worst-case', () => {
+    const greys: Record<string, string> = {
+      w: '#FFFFFF', g05: '#FAFAF9', g10: '#F4F4F3', g20: '#EBEBEA',
+      g30: '#DEDEDD', g40: '#C9C9C7', g50: '#AEAEAC', g60: '#8C8C8A',
+      g70: '#6C6C6A', g80: '#4A4A48', g90: '#2B2B2A', ink: '#131312',
+    };
+    // base.css's .ground runs a linear gradient from #F6F6F5 to #EAEAE9,
+    // under three radial highlights layered on top. Every one of those
+    // radials is lighter than the linear gradient beneath it except the
+    // last, #E3E3E1 at 70% 106%, which is darker than every linear stop and
+    // paints at full opacity at its own centre. That is the single darkest
+    // point .ground ever reaches, and dark text loses contrast as its
+    // backdrop darkens, so it is the case that has to hold.
+    const worstGround = '#E3E3E1';
+
+    const toLinear = (c: number) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    };
+    const luminance = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      return 0.2126 * toLinear(r!) + 0.7152 * toLinear(g!) + 0.0722 * toLinear(b!);
+    };
+    const contrast = (hexA: string, hexB: string) => {
+      const [la, lb] = [luminance(hexA), luminance(hexB)];
+      const [lighter, darker] = la > lb ? [la, lb] : [lb, la];
+      return (lighter + 0.05) / (darker + 0.05);
+    };
+
+    // Every class a style block gives its own background, hex or gradient.
+    // A plain colour keyword or a shadow-only rule doesn't count: those
+    // don't lighten what sits on top of them.
+    const surfaceClasses = (styleSrc: string): Set<string> => {
+      const set = new Set<string>();
+      for (const m of styleSrc.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        const decls = m[2]!;
+        if (/(?<![\w-])background(?:-color)?:\s*[^;]*(#[0-9A-Fa-f]{6}|gradient\()/.test(decls)) {
+          for (const cls of m[1]!.matchAll(/\.([\w-]+)/g)) set.add(cls[1]!);
+        }
+      }
+      return set;
+    };
+
+    // A set:html={...} value is a JS string, not markup: LoadPath.astro's
+    // is a template literal that happens to contain a literal `<b>...</b>`,
+    // which would otherwise read to the tag walker below as a real element
+    // opening before the `<p>` carrying it ever does, losing the `<p>` entirely.
+    // Strips the whole attribute with real brace balancing, since the braces
+    // inside it nest (`${standing}` inside the outer `{...}`).
+    const stripBracedAttr = (text: string, attrName: string) => {
+      const marker = `${attrName}={`;
+      let out = '';
+      let i = 0;
+      while (i < text.length) {
+        const idx = text.indexOf(marker, i);
+        if (idx === -1) {
+          out += text.slice(i);
+          break;
+        }
+        out += text.slice(i, idx);
+        let depth = 1;
+        let j = idx + marker.length;
+        while (j < text.length && depth > 0) {
+          if (text[j] === '{') depth++;
+          else if (text[j] === '}') depth--;
+          j++;
+        }
+        i = j;
+      }
+      return out;
+    };
+
+    // Strip frontmatter and <style>/<script> so the tag walk below only
+    // sees real markup: JS frontmatter's own `<`/`>` (generics, comparisons)
+    // and the CSS itself would otherwise feed the tag-stack parser noise.
+    const bodyMarkup = (rawSrc: string) =>
+      stripBracedAttr(
+        rawSrc
+          .replace(/^---[\s\S]*?---/, '')
+          .replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/g, ''),
+        'set:html',
+      );
+
+    // A compound selector token ("p", ".offpath", ".ci.firm") split into an
+    // optional tag requirement and zero or more class requirements, so a
+    // descendant selector like ".offpath p" can be checked as "a <p> that
+    // has some .offpath ancestor", not just "any <p> anywhere in the file".
+    // Without this, a bare tag as the rightmost token (very common here:
+    // "dt", "dd", "p") would match every such tag in the whole component,
+    // including unrelated ones the rule never touches.
+    const parseCompound = (token: string) => {
+      const dot = token.indexOf('.');
+      const tag = dot === -1 ? token : dot > 0 ? token.slice(0, dot) : null;
+      const classes = dot === -1 ? [] : token.slice(dot).split('.').filter(Boolean);
+      return { tag, classes };
+    };
+    const compoundMatches = (c: { tag: string | null; classes: string[] }, tagName: string, wholeTagText: string) => {
+      if (c.tag && c.tag !== tagName) return false;
+      return c.classes.every((cls) => new RegExp(`\\b${cls}\\b`).test(wholeTagText));
+    };
+
+    // Walks a file's markup with a tag stack so nesting is real, not just
+    // textual proximity, and checks the FULL descendant chain (not just the
+    // rightmost token) so a bare-tag selector like ".offpath p" only counts
+    // <p> elements that actually have an .offpath ancestor. Returns null if
+    // the selector's target never appears validly in the markup at all (an
+    // unused rule, or a selector this simple matcher can't resolve), which
+    // the caller treats as "cannot verify, don't fail on it".
+    const sitsOnBareGround = (rawSrc: string, styleSrc: string, selector: string): boolean | null => {
+      // :global(...) unwraps to its inner selector rather than being
+      // dropped: "article :global(.tier .status)" still needs to require
+      // both .tier and .status, it just isn't scoped to this component.
+      const tokens = selector
+        .replace(/:global\(([^)]*)\)/g, '$1')
+        .replace(/>/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(parseCompound);
+      if (tokens.length === 0) return null;
+      const target = tokens[tokens.length - 1]!;
+      const ancestorsRequired = tokens.slice(0, -1);
+      if (target.tag && !/^[a-zA-Z][\w-]*$/.test(target.tag)) return null; // pseudo etc, not a real tag
+
+      const markup = bodyMarkup(rawSrc);
+      const surfaces = surfaceClasses(styleSrc);
+      const stack: { tag: string; whole: string; onSurface: boolean }[] = [];
+      const tagRe = /<\/?([a-zA-Z][\w-]*)((?:\s+[^<>]*)?)\/?>/g;
+      const voidTags = new Set(['img', 'br', 'hr', 'input', 'meta', 'link', 'path', 'circle', 'rect']);
+      let sawTarget = false;
+      let anyOffGround = false;
+      let m: RegExpExecArray | null;
+      while ((m = tagRe.exec(markup))) {
+        const whole = m[0]!;
+        const tag = m[1]!;
+        const isClose = whole.startsWith('</');
+        if (isClose) {
+          stack.pop();
+          continue;
+        }
+        const selfClose = whole.endsWith('/>') || voidTags.has(tag.toLowerCase());
+        const onSurface =
+          (stack.length > 0 && stack[stack.length - 1]!.onSurface) ||
+          [...surfaces].some((c) => new RegExp(`\\b${c}\\b`).test(whole));
+        const selfMatches = compoundMatches(target, tag, whole);
+        const ancestorsOk = ancestorsRequired.every((req) => stack.some((s) => compoundMatches(req, s.tag, s.whole)));
+        if (selfMatches && ancestorsOk) {
+          sawTarget = true;
+          if (!onSurface) anyOffGround = true;
+        }
+        if (!selfClose) stack.push({ tag, whole, onSurface });
+      }
+      if (!sawTarget) return null;
+      return anyOffGround;
+    };
+
+    let checked = 0;
+    for (const [name, src] of Object.entries(otherSources)) {
+      const rawSrc = rawSources[name]; // undefined for base.css, which has no markup and no such rules
+      // Innermost `{ ... }` blocks only. This CSS is flat, at most one
+      // level of @media nesting, so a global scan for non-nested brace
+      // pairs finds every declaration block whether or not it sits inside
+      // a media query, without needing to track nesting depth.
+      for (const m of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        const selector = m[1]!.trim();
+        const decls = m[2]!;
+        // Excludes background-color, border-color, outline-color etc: a
+        // standalone "color" property is never preceded by a letter or
+        // hyphen.
+        const sizeMatch = decls.match(/(?<![\w-])font-size:\s*(?:clamp\(\s*)?(\d+(?:\.\d+)?)px/);
+        const colorMatch = decls.match(/(?<![\w-])color:\s*var\(--([a-zA-Z0-9]+)\)/);
+        if (!sizeMatch || !colorMatch) continue;
+        const hex = greys[colorMatch[1]!];
+        if (!hex) continue; // not one of the twelve interface greys
+
+        if (rawSrc) {
+          const verdict = sitsOnBareGround(rawSrc, src, selector);
+          // false: every match sits on its own opaque surface, compliant there.
+          // null: the selector's target never resolved in this file's own
+          // markup (cross-file :global() reaching into a consumer page's
+          // slot content, most often), so this walker cannot see it either
+          // way. Skip rather than assume the worst: a rule this sweep can't
+          // verify is not the same thing as a rule it caught failing.
+          if (verdict === false || verdict === null) continue;
+        }
+
+        checked++;
+        const px = parseFloat(sizeMatch[1]!);
+        const floor = px >= 18 ? 3 : 4.5;
+        const ratio = contrast(hex, worstGround);
+        expect(
+          ratio,
+          `${name} "${selector}" sets ${px}px text in --${colorMatch[1]} directly on .ground ` +
+            `(${ratio.toFixed(2)}:1 against ${worstGround}, needs ${floor}:1)`,
+        ).toBeGreaterThanOrEqual(floor);
+      }
+    }
+    // Guards the sweep itself: if the regex ever stops matching anything
+    // (a markup change moves colour out of scoped style blocks, say), this
+    // test would otherwise pass by finding nothing to check.
+    expect(checked).toBeGreaterThan(0);
   });
 });

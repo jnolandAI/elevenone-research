@@ -86,4 +86,17 @@ describe('the coverage strip', () => {
   it('frames subjects covered, never work delivered', () => {
     expect(coverage).not.toMatch(/\b(client|clients|case study|case studies|portfolio|our work|engagements delivered)\b/i);
   });
+
+  // The negative check above only proves forbidden words are absent, which
+  // stays green even if the disclaimer sentence itself is deleted outright:
+  // "not testimonial" is true of a blank page too. That sentence is the
+  // only thing standing between six industrial renders in a row and a
+  // portfolio implication, so its presence gets its own assertion, on the
+  // rendered HTML rather than a source substring, matching the pattern the
+  // Working section's test above already uses.
+  it('actually carries the coverage-not-delivery disclaimer, not just the absence of forbidden words', async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Coverage);
+    expect(html).toContain('They describe coverage of the drawing system, not work delivered.');
+  });
 });
