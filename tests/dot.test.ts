@@ -46,9 +46,17 @@ describe('dot asset resolution', () => {
         'urban-figure-dot.png': { w: 1440, h: 920, role: 'figure', subject: 'urban' },
       },
     }));
-    const { dotAsset: dotAssetStubbed } = await import('../src/lib/dot');
-    expect(() => dotAssetStubbed('urban', 'figure')).toThrow(/webp/i);
-    vi.doUnmock('../public/assets/dot/manifest.json');
-    vi.resetModules();
+    try {
+      const { dotAsset: dotAssetStubbed } = await import('../src/lib/dot');
+      expect(() => dotAssetStubbed('urban', 'figure')).toThrow(/webp/i);
+    } finally {
+      // In try/finally rather than after the assertion: a failed toThrow
+      // above would otherwise skip this and leave the stubbed manifest
+      // mocked for whatever test runs next. This is the last test in the
+      // file today, so nothing leaks yet, but that is an accident of file
+      // order, not a guarantee.
+      vi.doUnmock('../public/assets/dot/manifest.json');
+      vi.resetModules();
+    }
   });
 });
