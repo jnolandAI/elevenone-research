@@ -17,13 +17,32 @@ const pages = [
   ...homeComponents.map((path) => ({ name: path, src: readFileSync(path, 'utf8') })),
 ];
 
+// Working.astro's four visible rows come from a brief's own frontmatter
+// (src/content/briefs), not from copy typed into the component, so the
+// sweep above never sees the actual words that reach the homepage. An em
+// dash, a first person pronoun or invented track-record language in a
+// brief's claims renders straight through Working.astro and nothing above
+// would have caught it.
+//
+// Kept out of `pages` rather than folded in: a research brief legitimately
+// reports dollar figures as data ("$1.44bn of revenue"), which is not the
+// same claim as the site quoting a price for its own services. Folding
+// briefs into `pages` would make the price check below fail on real,
+// wanted content. Every other register rule (em dash, first person, the
+// firm's own name, track record) applies to a brief exactly as it does to
+// any other page, so briefs join those checks specifically.
+const briefFiles = readdirSync('src/content/briefs')
+  .filter((f) => f.endsWith('.mdx'))
+  .map((f) => ({ name: `src/content/briefs/${f}`, src: readFileSync(`src/content/briefs/${f}`, 'utf8') }));
+const withBriefs = [...pages, ...briefFiles];
+
 describe('the structural pages', () => {
   it('never uses an em dash', () => {
-    for (const p of pages) expect(p.src, p.name).not.toContain('—');
+    for (const p of withBriefs) expect(p.src, p.name).not.toContain('—');
   });
 
   it('never says I: the site speaks as a firm', () => {
-    for (const p of pages) {
+    for (const p of withBriefs) {
       expect(p.src.match(/\bI\b/g) ?? [], p.name).toHaveLength(0);
       // "I" alone is not the whole of the first person singular. A regression
       // phrased as "my analysis" or "trust me" passes a check for the pronoun
@@ -36,12 +55,13 @@ describe('the structural pages', () => {
     // Also catches the unspaced domain form. The constraint is about what a
     // reader sees, and a reader sees the brand name inside
     // john@nolandadvisory.com whether or not a space happens to separate it.
-    for (const p of pages) expect(p.src, p.name).not.toMatch(/noland\s*advisory/i);
+    for (const p of withBriefs) expect(p.src, p.name).not.toMatch(/noland\s*advisory/i);
   });
 
   it('claims no price, because no real price exists yet', () => {
-    // Every page, not just Reports, and a price written in words is still a
-    // price: requiring a dollar sign lets "five hundred dollars" ship.
+    // Every structural page, not just Reports, and a price written in words
+    // is still a price: requiring a dollar sign lets "five hundred dollars"
+    // ship. Briefs are deliberately excluded, see `withBriefs` above.
     for (const p of pages) {
       // Any whitespace, and a leading decimal point: $  500 and $.99 both
       // slip past one optional space followed by a digit.
@@ -58,7 +78,7 @@ describe('the structural pages', () => {
   });
 
   it('claims no client, testimonial or track record', () => {
-    for (const p of pages) {
+    for (const p of withBriefs) {
       expect(p.src, p.name).not.toMatch(/testimonial|case study|trusted by|our clients/i);
     }
   });
