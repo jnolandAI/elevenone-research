@@ -182,3 +182,48 @@ test('the sitemap lists the briefs index and still excludes the draft', async ({
   expect(xml).toContain('/briefs');
   expect(xml).not.toContain('001-gross-margin');
 });
+
+// The brief hero lays a halftone field of the brief's own dataset behind the
+// type, and a radial `.clearing` gradient over that field so the type reads
+// against clear space rather than fighting the dots with a shadow. Both
+// depend on being absolutely positioned, and the clearing has to paint ABOVE
+// the field, since a gradient underneath the dots cannot fade them.
+//
+// Both properties were silently lost. `.hero > *` and `.surface` carry equal
+// specificity once Astro scopes them, so the later blanket rule won and
+// pushed `.surface` into normal flow: the field stacked below the standfirst
+// instead of behind it, and `.clearing` collapsed to height 0 and painted
+// nothing. Nothing noticed, because the page still rendered.
+//
+// Fault injection: restore a `.hero > :global(*) { position: relative }` rule
+// in BriefHero.astro and this turns red on the first assertion.
+test('the brief hero field sits behind the type, with the clearing above it', async ({ page }) => {
+  await page.goto(BRIEF);
+  const m = await page.evaluate(() => {
+    const s = document.querySelector('.hero .surface')!;
+    const c = document.querySelector('.hero .clearing')!;
+    const cs = getComputedStyle(s);
+    const cc = getComputedStyle(c);
+    return {
+      surfacePosition: cs.position,
+      clearingPosition: cc.position,
+      clearingHeight: Math.round(c.getBoundingClientRect().height),
+      surfaceTop: Math.round(s.getBoundingClientRect().top),
+      standfirstBottom: Math.round(document.querySelector('.hero .stand')!.getBoundingClientRect().bottom),
+      surfaceZ: Number(cs.zIndex) || 0,
+      clearingZ: Number(cc.zIndex) || 0,
+    };
+  });
+
+  expect(m.surfacePosition).toBe('absolute');
+  expect(m.clearingPosition).toBe('absolute');
+
+  // a collapsed clearing paints nothing while still existing in the DOM
+  expect(m.clearingHeight).toBeGreaterThan(0);
+
+  // the field belongs behind the type, not stacked underneath it
+  expect(m.surfaceTop).toBeLessThan(m.standfirstBottom);
+
+  // a clearing below the field cannot fade the field
+  expect(m.clearingZ).toBeGreaterThan(m.surfaceZ);
+});

@@ -47,16 +47,31 @@ const dateLabel = published
 
 <style>
   .hero { position: relative; padding: 84px 0 58px; overflow: hidden; }
+
+  /* Three deliberate layers: the field at 0, the clearing over it at 1, the
+     type over both at 2.
+
+     The clearing has to sit ABOVE the field. Its whole job is to fade the
+     dots where the type sits, and a gradient painted underneath them fades
+     nothing. Both used to sit at z-index 0, so the field, being later in the
+     document, covered the gradient meant to soften it.
+
+     None of this was visible, because a blanket `.hero > :global(*)` rule
+     used to carry `position: relative` here. Astro scopes both that rule and
+     `.surface` with the same attribute, so their specificity ties and the
+     later one won: `.surface` fell into normal flow and stacked the field
+     below the standfirst instead of behind it, and `.clearing` collapsed to
+     height 0 and painted nothing at all. Lifting the type is now done by
+     naming the elements that need lifting, which cannot reach into the two
+     that must stay absolute. */
   .surface { position: absolute; left: 38%; right: -8%; top: 15%; z-index: 0; pointer-events: none; }
-  /* the field fades out where the type sits, rather than the type fighting it
-     with a shadow */
   .clearing {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(ellipse 52% 56% at 30% 44%,
       rgba(247,247,246,.98) 0%, rgba(247,247,246,.92) 44%,
       rgba(247,247,246,.48) 68%, rgba(247,247,246,0) 86%);
   }
-  .hero > :global(*) { position: relative; z-index: 1; }
+  .kind, h1, .stand, .meta, .axkey { position: relative; z-index: 2; }
   .narrow { display: none; }
 
   .kind { font-size: 12.5px; color: var(--g80); margin: 0 0 18px; }
