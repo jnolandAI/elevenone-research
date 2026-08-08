@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 function walk(dir: string): string[] {
   const out: string[] = [];
@@ -111,4 +112,40 @@ describe('asset layout', () => {
       expect(head.subarray(12, 16).toString('ascii'), `${w} is not lossless`).toBe('VP8L');
     }
   });
+
+  // Node has no image decoder, and a WebP's container is always ARGB, so
+  // "single-channel greyscale" cannot be asserted from the bytes. What can:
+  // the derived WebP is not resampled from its source PNG (same pixel
+  // dimensions), and for dot-mode assets, the darkest pixel is exactly
+  // (19, 19, 18): the interface ink at #131312, decoded. This is the check
+  // that would have caught webp_derive.py's "L" conversion rounding that
+  // ink to (19, 19, 19), see scripts/webp_derive.py and
+  // scripts/verify_dot_assets.py.
+  //
+  // Fault injection: reintroduce `im = im.convert("L")` in webp_derive.py,
+  // re-derive, and this turns red while the byte-ceiling and losslessness
+  // tests above stay green.
+  it(
+    'never resamples a derived WebP and never drifts the dot ink off #131312',
+    () => {
+      const raw = execFileSync('python', ['scripts/verify_dot_assets.py'], { encoding: 'utf8' });
+      const report = JSON.parse(raw) as Record<
+        string,
+        { png_size: [number, number]; webp_size: [number, number]; mode: string; darkest?: [number, number, number] }
+      >;
+      const keys = Object.keys(report);
+      expect(keys.length).toBeGreaterThan(0);
+      for (const key of keys) {
+        const entry = report[key]!;
+        expect(entry.webp_size, key).toEqual(entry.png_size);
+        if (entry.mode === 'dot') {
+          expect(entry.darkest, key).toEqual([19, 19, 18]);
+        }
+      }
+    },
+    // Spawns a Python process that decodes every derived WebP, including
+    // three 2880x1200 heroes: past vitest's 5000ms default on a loaded CI
+    // box even after darkest_pixel() moved off a per-pixel scan.
+    15000,
+  );
 });
