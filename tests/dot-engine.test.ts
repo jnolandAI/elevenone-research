@@ -163,3 +163,26 @@ describe('fog constants', () => {
     expect((E as any).FOG).toBeUndefined();
   });
 });
+
+describe('ground forms', () => {
+  const source = () =>
+    readFileSync(fileURLToPath(new URL('../prototypes/dot-engine.js', import.meta.url)), 'utf8');
+
+  it('exposes the shared helper', () => {
+    const E = loadEngine();
+    expect(typeof E.ground).toBe('function');
+  });
+
+  // Five subjects each added a single thin box as ground. docs/dot-imagery.md
+  // lists "a ground plane filling a third of the frame with flat mid-grey" as a
+  // standard cause of a failed recognition test, so leaving one behind is a
+  // known defect, not a style preference.
+  it('leaves no subject standing on a bare slab', () => {
+    expect(source()).not.toMatch(/box\(\s*\d+\s*,\s*\.4\s*,\s*\d+/);
+  });
+
+  it('is called once by every subject', () => {
+    const calls = source().match(/^\s*ground\(g, TONE, rnd, \{/gm) ?? [];
+    expect(calls).toHaveLength(6);
+  });
+});

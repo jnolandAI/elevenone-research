@@ -102,6 +102,56 @@ const camFor = (id, role) => CAM_ROLE[id + ':' + role] || CAM[id];
    ground forms then have something to work with. */
 const TONES = ['#D6D6D4', '#B8B8B6', '#9C9C9A', '#7A7A78', '#565654'];
 
+/* One ground for every subject, so five hand-rolled slabs cannot drift into
+   five different landscapes. Three parts: a displaced plane, a ridge silhouette
+   at the far edge, and a sparse scatter between the two. All primitives, all
+   driven by the subject's seeded rnd, so scenes stay deterministic. */
+function ground(g, TONE, rnd, o){
+  const amp = o.amp != null ? o.amp : 1.0;
+  const flat = o.flat != null ? o.flat : 26;
+  if (o.plane !== false){
+    const geo = new THREE.PlaneGeometry(o.w, o.d, 60, 44);
+    geo.rotateX(-Math.PI/2);
+    const p = geo.attributes.position;
+    for (let i=0;i<p.count;i++){
+      const x = p.getX(i), z = p.getZ(i);
+      /* Displacement is held at zero across the subject's footprint and ramps
+         in beyond it. Without this, a container yard sitting at y = 0 sinks
+         into a trough or floats over a crest and the scene reads as broken. */
+      const k = Math.min(1, Math.max(0, (Math.hypot(x, z) - flat) / 14));
+      const n = Math.sin(x*.09)*0.9 + Math.cos(z*.11)*0.7 + Math.sin((x+z)*.05)*1.1;
+      p.setY(i, n * amp * k);
+    }
+    geo.computeVertexNormals();
+    const plane = new THREE.Mesh(geo, TONE[1]);
+    plane.position.y = -0.2;
+    plane.receiveShadow = true;
+    g.add(plane);
+  }
+
+  if (o.ridge){
+    /* The far horizon, in the lightest tone so it reads as distance rather than
+       as a second subject. Fog thins it further at render time. */
+    const far = -o.d/2 + 4;
+    for (let i=0;i<26;i++){
+      const w = o.w/26;
+      const h = o.ridge * (0.45 + rnd()*0.55);
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w*1.35, h, 6), TONE[0]);
+      m.position.set(-o.w/2 + i*w + w/2, h/2 - 1, far + (rnd()-.5)*5);
+      g.add(m);
+    }
+  }
+
+  for (let i=0;i<(o.scatter||0);i++){
+    const a = rnd()*Math.PI*2;
+    const r = flat + 6 + rnd()*(o.d/2 - flat - 8);
+    const h = 1.2 + rnd()*3.4;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(1.6+rnd()*2.2, h, 1.6+rnd()*2.2), TONE[0]);
+    m.position.set(Math.cos(a)*r, h/2, Math.sin(a)*r - o.d*0.12);
+    g.add(m);
+  }
+}
+
 function buildScene(id){
   const s = new THREE.Scene();
   s.background = new THREE.Color(0xffffff);
@@ -151,7 +201,7 @@ function buildScene(id){
     }
     for (let i=0;i<18;i++) for (let k=0;k<3;k++)
       box(2.6,1.25,1.4, -24+i*2.6, 5.6+k*1.32, 24+(rnd()-.5)*2.6, rnd()>.5?dark:mat);
-    box(96,.4,54, 0,-.2,4, mat);
+    ground(g, TONE, rnd, { w: 150, d: 120, amp: 1.0, flat: 44, ridge: 5.5, scatter: 22 });
   }
 
   if (id === 'datacenter'){
@@ -160,7 +210,7 @@ function buildScene(id){
       box(1.9,6.4,2.0, x, 3.2, z, rnd()>.7?dark:mat);
       box(1.9,.28,2.0, x, 6.5, z, dark);
     }
-    box(60,.4,50, 0,-.2,0, mat);
+    ground(g, TONE, rnd, { w: 120, d: 110, amp: 0.8, flat: 30, ridge: 4.0, scatter: 16 });
   }
 
   if (id === 'wind'){
@@ -172,6 +222,7 @@ function buildScene(id){
     }
     terr.computeVertexNormals();
     const t = new THREE.Mesh(terr, mat); t.receiveShadow = true; g.add(t);
+    ground(g, TONE, rnd, { w: 160, d: 130, plane: false, ridge: 6.0, scatter: 20 });
     for (let i=0;i<14;i++){
       const x = -34 + (i%5)*17 + (rnd()-.5)*6, z = -22 + Math.floor(i/5)*16 + (rnd()-.5)*6;
       const yb = Math.sin(x*.13)*1.5 + Math.cos(z*.16)*1.2 + Math.sin((x+z)*.07)*1.8;
@@ -189,7 +240,7 @@ function buildScene(id){
   }
 
   if (id === 'robotics'){
-    box(58,.4,40, 0,-.2,0, mat);
+    ground(g, TONE, rnd, { w: 90, d: 80, amp: 0.5, flat: 32, ridge: 0, scatter: 0 });
     /* a segment pivots at its own base and hands back a group at its tip, which
        is the only way an articulated silhouette reads as a robot rather than a post */
     const limb = (parent, len, w, angle) => {
@@ -223,7 +274,7 @@ function buildScene(id){
   }
 
   if (id === 'grid'){
-    box(90,.4,50, 0,-.2,0, mat);
+    ground(g, TONE, rnd, { w: 190, d: 150, amp: 1.2, flat: 12, ridge: 7.0, scatter: 30 });
     const tops = [];
     for (let i=0;i<5;i++){
       const x = -34 + i*17, base = 0;
@@ -264,7 +315,7 @@ function buildScene(id){
       const h = Math.max(1.2, (1-dist)*rnd()*26 + rnd()*3);
       box(2.7,h,2.7, cx, h/2, cz, rnd()>.72?dark:mat);
     }
-    box(80,.4,60, 0,-.2,0, mat);
+    ground(g, TONE, rnd, { w: 140, d: 120, amp: 0.9, flat: 36, ridge: 5.0, scatter: 18 });
   }
 
   s.add(g);
@@ -471,6 +522,6 @@ function renderRole(renderer, stage, id, role, mode, overrides){
 global.DotFoundry = {
   CONST, ROLES, MODES, SUBJECTS, CAM, EDGE_ROLE, TONES,
   buildScene, renderSource, luminanceField, sample, boxAvg, edge, fadeSet, screen, asciiOf,
-  renderRole, camFor, CAM_ROLE, fadeFor,
+  renderRole, camFor, CAM_ROLE, fadeFor, ground,
 };
 })(window);
