@@ -147,3 +147,19 @@ describe('the tone scale', () => {
     }
   });
 });
+
+describe('fog constants', () => {
+  it('are declared as multipliers of camera distance, not as world units', () => {
+    const E = loadEngine();
+    expect(E.CONST.fogNear).toBe(0.55);
+    expect(E.CONST.fogFar).toBe(1.9);
+  });
+
+  // Fog is deliberately not a per-subject table. If one subject needs its own
+  // fog its camera is wrong, and a table would hide that rather than fix it.
+  it('are not overridable per subject', () => {
+    const E = loadEngine();
+    expect((E as any).FOG_ROLE).toBeUndefined();
+    expect((E as any).FOG).toBeUndefined();
+  });
+});

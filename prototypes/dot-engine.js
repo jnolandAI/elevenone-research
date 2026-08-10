@@ -17,6 +17,11 @@ const CONST = {
   gamma: 1.00,       /* curve from luminance to dot area */
   angle: 15,         /* screen angle in degrees, the classic halftone rotation */
   fade: 0.16,        /* fraction of the frame over which the field thins out */
+  fogNear: 0.55,     /* fog start, as a multiple of camera-to-subject distance */
+  fogFar: 1.90,      /* fog full, same units. Far geometry lifts to the field
+                        and drops out of the screen instead of competing with
+                        the subject, which is what makes a scene read as space
+                        rather than as a flat elevation drawing. */
   dot: '#131312',    /* the interface ink exactly; a cooler dot read as a
                         different black next to type on the same page */
   field: '#FCFCFB',
@@ -288,6 +293,12 @@ function renderSource(renderer, canvas, id, w, h, distMul, role){
   const d = distMul || 1;
   cam.position.set(c[0]*d, c[1]*d, c[2]*d);
   cam.lookAt(c[3], c[4], c[5]);
+  /* Derived from the camera rather than declared per subject, so a role that
+     pulls the camera back gets a correspondingly deeper fog with nobody
+     maintaining a table. The fog colour is the scene background, so far
+     geometry lifts to white and the screen simply stops drawing dots for it. */
+  const dist = Math.hypot(cam.position.x - c[3], cam.position.y - c[4], cam.position.z - c[5]);
+  scene.fog = new THREE.Fog(0xffffff, dist * CONST.fogNear, dist * CONST.fogFar);
   renderer.render(scene, cam);
   return { w, h };
 }
