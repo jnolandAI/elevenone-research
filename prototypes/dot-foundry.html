@@ -53444,13 +53444,27 @@ function buildScene(id){
       const x = xRaw - xOff;
       for (let i=0;i<cabs;i++){
         const z = i*2.4 - zOff;
-        box(depth,rackH,1.9, x, rackH/2+0.5, z, rnd()>.7?TONE[2]:TONE[1]);
-        box(depth,.28,1.9, x, rackH+0.64, z, TONE[0]);
+        /* Rack bodies sit on the two adjacent mass tones at the dark end and
+           the 0.28-unit cap rail takes TONE[4], the deepest step. The rail is
+           the thinnest element in the scene and the one that says "row of
+           cabinets" rather than "block": it is what gives each corridor a
+           per-cabinet cadence along its top edge instead of one unbroken
+           silhouette. Reserving the deepest step for the thinnest defining
+           element is the same call port makes for a gantry beam and grid
+           makes for a conductor. Before this the racks drew from TONE[1] and
+           TONE[2] and the rail from TONE[0], which left the subject spanning
+           58 levels against every other subject's 128. */
+        box(depth,rackH,1.9, x, rackH/2+0.5, z, rnd()>.7?TONE[3]:TONE[2]);
+        box(depth,.28,1.9, x, rackH+0.64, z, TONE[4]);
       }
     }
     /* A wall at the far end of the corridors, in a tone the racks never
        reach, so the aisles resolve into an interior instead of open space —
-       the envelope that says hall rather than a field of freestanding masses. */
+       the envelope that says hall rather than a field of freestanding masses.
+       It sits lighter than the racks now rather than level with them, which is
+       the correct direction: a lit surface at the end of a corridor read
+       against dark mass in front of it, the same relationship the TONE[1]
+       floor has with the aisles. */
     box(x0[x0.length-1] - xOff + 6, rackH + 2.4, 0.6, 0, (rackH + 2.4)/2 + 0.5, -zOff - 1.5, TONE[1]);
     ground(g, TONE, rnd, { w: 120, d: 110, amp: 0.8, flat: 30, ridge: 4.0, ridgeDist: 17, scatter: 16 });
   }
