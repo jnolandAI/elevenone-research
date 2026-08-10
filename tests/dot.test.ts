@@ -1,5 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { dotAsset } from '../src/lib/dot';
+import { dotAsset, manifestEngineVersion } from '../src/lib/dot';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 describe('dot asset resolution', () => {
   it('resolves a known subject and role to the WebP the site ships', () => {
@@ -58,5 +60,27 @@ describe('dot asset resolution', () => {
       vi.doUnmock('../public/assets/dot/manifest.json');
       vi.resetModules();
     }
+  });
+});
+
+describe('the manifest is not split across engine versions', () => {
+  it('agrees on one version across every asset', () => {
+    expect(() => manifestEngineVersion()).not.toThrow();
+  });
+
+  // A partial re-render is easy to do and invisible on the page: half the
+  // library at 1.1 and half at 1.2 looks fine one image at a time. This is the
+  // only thing that catches it.
+  it('reports the version the whole library was rendered at', () => {
+    expect(manifestEngineVersion()).toMatch(/^\d+\.\d+$/);
+  });
+
+  it('matches the version declared in the engine', () => {
+    const src = readFileSync(
+      fileURLToPath(new URL('../prototypes/dot-engine.js', import.meta.url)),
+      'utf8',
+    );
+    const declared = /version:\s*'([^']+)'/.exec(src)?.[1];
+    expect(manifestEngineVersion()).toBe(declared);
   });
 });
