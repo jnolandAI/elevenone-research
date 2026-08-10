@@ -53276,7 +53276,7 @@ const SUBJECTS = [
    wider role naturally shows more landscape rather than cropping the subject */
 const CAM = {
   port:       [6, 40, 96, 0, 7, 2],
-  datacenter: [34, 25, 44, 0, 4, 0],
+  datacenter: [6, 11, 38, 0, 3, -2],
   wind:       [0, 26, 62, 0, 8, 0],
   robotics:   [4, 26, 74, 0, 9, 0],
   grid:       [0, 20, 64, 0, 10, 0],
@@ -53292,7 +53292,7 @@ const CAM_ROLE = {
   'wind:hero':       [0, 17, 48, 0, 9, 0],
   'grid:hero':       [0, 15, 52, 0, 11, 0],
   'robotics:hero':   [4, 17, 56, 0, 10, 0],
-  'datacenter:hero': [29, 18, 36, 0, 4, 0],
+  'datacenter:hero': [5, 9, 32, 0, 3, -1],
   'port:cover':      [8, 30, 78, 0, 9, 4],
   'urban:cover':     [0, 30, 60, 0, 7, 0],
 };
@@ -53429,12 +53429,30 @@ function buildScene(id){
   }
 
   if (id === 'datacenter'){
-    for (let row=0; row<7; row++) for (let i=0;i<16;i++){
-      const z = -14 + row*4.6, x = -18 + i*2.4;
-      box(1.9,6.4,2.0, x, 3.2, z, rnd()>.7?TONE[2]:TONE[1]);
-      box(1.9,.28,2.0, x, 6.5, z, TONE[4]);
+    /* Racks stand in back-to-back pairs: a tight gap within a pair (the hot
+       aisle) and a wide gap between pairs (the cold aisle). A data hall reads
+       through that repeating gap, not through the racks themselves — compare
+       port's skipped haulage-lane column, the one part of this file that
+       already passed the recognition test on a rack-like subject. */
+    const cabs = 9, depth = 2.0, rackH = 5.0, within = 1.2, between = 6.5;
+    const gaps = [within, between, within, between, within, between, within];
+    const x0 = [0];
+    for (const gap of gaps) x0.push(x0[x0.length-1] + gap + depth);
+    const xOff = x0[x0.length-1] / 2;
+    const zOff = (cabs - 1) * 2.4 / 2;
+    for (const xRaw of x0){
+      const x = xRaw - xOff;
+      for (let i=0;i<cabs;i++){
+        const z = i*2.4 - zOff;
+        box(depth,rackH,1.9, x, rackH/2+0.5, z, rnd()>.7?TONE[2]:TONE[1]);
+        box(depth,.28,1.9, x, rackH+0.64, z, TONE[0]);
+      }
     }
-    ground(g, TONE, rnd, { w: 120, d: 110, amp: 0.8, flat: 30, ridge: 4.0, ridgeDist: 24, scatter: 16 });
+    /* A wall at the far end of the corridors, in a tone the racks never
+       reach, so the aisles resolve into an interior instead of open space —
+       the envelope that says hall rather than a field of freestanding masses. */
+    box(x0[x0.length-1] - xOff + 6, rackH + 2.4, 0.6, 0, (rackH + 2.4)/2 + 0.5, -zOff - 1.5, TONE[1]);
+    ground(g, TONE, rnd, { w: 120, d: 110, amp: 0.8, flat: 30, ridge: 4.0, ridgeDist: 17, scatter: 16 });
   }
 
   if (id === 'wind'){
