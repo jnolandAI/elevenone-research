@@ -106,3 +106,26 @@ describe('site-wide navigation targets', () => {
     expect(entry![1], 'Nav.astro').toBe('/briefs');
   });
 });
+
+describe('the contact address', () => {
+  const about = readFileSync('src/pages/about.astro', 'utf8');
+
+  // About carries the site's only route to a human. Nothing guarded it, and
+  // it has already changed once. The failure that matters is silent: an
+  // address that reads correctly on the page while the mailto behind it
+  // points somewhere else, so mail is lost with nothing to notice it.
+  //
+  // Fault injection: change either the href or the link text alone and this
+  // turns red; change both together and it stays green, which is correct,
+  // since that is a deliberate address change rather than a drift.
+  it('matches its own link text, so the href cannot drift from what is shown', () => {
+    const link = about.match(/href="mailto:([^"]+)"\s*>([^<]+)</);
+    expect(link, 'about.astro has no mailto link').toBeTruthy();
+    expect(link![1].trim()).toBe(link![2].trim());
+  });
+
+  it('is on this brand, not a personal or other-brand domain', () => {
+    const link = about.match(/href="mailto:([^"]+)"/);
+    expect(link![1]).toMatch(/@elevenoneresearch\.com$/);
+  });
+});
