@@ -16,7 +16,18 @@
 const CONST = {
   gamma: 1.00,       /* curve from luminance to dot area */
   angle: 15,         /* screen angle in degrees, the classic halftone rotation */
-  fade: 0.16,        /* fraction of the frame over which the field thins out */
+  fade: 0.16,        /* Last-resort fallback only, and nothing shipped reaches
+                        it. It described the pre-1.2 symmetric ramp: one
+                        fraction, applied horizontally and at 0.9 of itself
+                        vertically, which is still the shape fadeSet() gives a
+                        scalar. Since 1.2 every role declares its own per-edge
+                        set, so fadeFor() never falls through, renderRole()
+                        always passes a resolved set down, and the foundry
+                        resolves through fadeFor() too. What is left is the
+                        answer for a bare screen(), asciiOf() or fadeSet() call
+                        that names no fade at all. Do not reintroduce it as a
+                        default anywhere: a scalar here expands to four
+                        dissolving sides, and production dissolves two. */
   fogNear: 0.55,     /* fog start, as a multiple of camera-to-subject distance */
   fogFar: 1.90,      /* fog full, same units. Far geometry lifts to the field
                         and drops out of the screen instead of competing with

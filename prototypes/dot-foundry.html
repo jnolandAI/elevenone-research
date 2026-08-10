@@ -47,6 +47,11 @@
   .ctl label{display:block;font-size:11.5px;color:var(--g70);margin-bottom:7px}
   .ctl input[type=range]{width:140px;accent-color:#131312}
   .ctl .v{font-size:11.5px;color:var(--ink);margin-left:7px}
+  .edges{display:flex;gap:6px}
+  .edges label{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--g60);
+    margin:0;font-family:'Martian Mono',monospace;font-weight:300}
+  .edges input{width:52px;border:1px solid var(--g30);border-radius:8px;padding:5px 6px;
+    font-family:'Martian Mono',monospace;font-weight:300;font-size:11px;color:var(--ink);background:#fff}
   .modes{display:flex;gap:7px;flex-wrap:wrap}
   .modes button{border:none;border-radius:var(--pill);padding:8px 15px;font-size:12.5px;
     font-family:inherit;cursor:pointer;background:var(--g20);color:var(--g80);transition:.2s}
@@ -116,15 +121,15 @@
     <h2>Library</h2>
     <p class="sub">Previewed at card scale. Use the export button for a one-off, or the CLI for anything going into a brief.</p>
     <div class="controls">
-      <div class="warn">These sliders are for deciding the constants, not for producing assets. Whatever you leave them on does not affect the CLI.</div>
+      <div class="warn">These controls are for deciding the constants, not for producing assets. Whatever you leave them on does not affect the CLI. The four edge boxes start on the shipped per-edge default for the <span class="num">card</span> role, which is the crop these previews are; edit any of them and every preview switches to that override until you reset.</div>
       <div class="ctl"><label>Dot pitch <span class="v num" id="vPitch">6</span></label>
         <input type="range" id="pitch" min="3" max="14" step="0.5" value="6"></div>
       <div class="ctl"><label>Gamma <span class="v num" id="vGamma">1.00</span></label>
         <input type="range" id="gamma" min="0.5" max="2.2" step="0.05" value="1"></div>
       <div class="ctl"><label>Screen angle <span class="v num" id="vAngle">15</span>&deg;</label>
         <input type="range" id="angle" min="0" max="45" step="1" value="15"></div>
-      <div class="ctl"><label>Edge dissolve <span class="v num" id="vFade">0.16</span></label>
-        <input type="range" id="fade" min="0" max="0.4" step="0.01" value="0.16"></div>
+      <div class="ctl"><label>Edge dissolve <span class="v num" id="vFade">shipped</span></label>
+        <div class="edges" id="edges"></div></div>
       <div class="ctl"><label>Rendering</label>
         <div class="modes" id="modes">
           <button data-m="dot" class="on">Dot</button>
@@ -53219,7 +53224,18 @@ window.THREE = {ACESFilmicToneMapping, AddEquation, AddOperation, AdditiveAnimat
 const CONST = {
   gamma: 1.00,       /* curve from luminance to dot area */
   angle: 15,         /* screen angle in degrees, the classic halftone rotation */
-  fade: 0.16,        /* fraction of the frame over which the field thins out */
+  fade: 0.16,        /* Last-resort fallback only, and nothing shipped reaches
+                        it. It described the pre-1.2 symmetric ramp: one
+                        fraction, applied horizontally and at 0.9 of itself
+                        vertically, which is still the shape fadeSet() gives a
+                        scalar. Since 1.2 every role declares its own per-edge
+                        set, so fadeFor() never falls through, renderRole()
+                        always passes a resolved set down, and the foundry
+                        resolves through fadeFor() too. What is left is the
+                        answer for a bare screen(), asciiOf() or fadeSet() call
+                        that names no fade at all. Do not reintroduce it as a
+                        default anywhere: a scalar here expands to four
+                        dissolving sides, and production dissolves two. */
   fogNear: 0.55,     /* fog start, as a multiple of camera-to-subject distance */
   fogFar: 1.90,      /* fog full, same units. Far geometry lifts to the field
                         and drops out of the screen instead of competing with
@@ -53792,15 +53808,36 @@ global.DotFoundry = {
 <script>
 const D = DotFoundry;
 const PREVIEW = { w: 740, h: 491 };
+/* The preview canvas is 740 x 491, the card role's crop. Naming the role
+   matters because the dissolve is declared per role, so "what ships" is only
+   answerable against one. */
+const PREVIEW_ROLE = 'card';
 const OVR = { pitch: D.CONST.pitchPreview || 6, gamma: D.CONST.gamma,
-              angle: D.CONST.angle, fade: D.CONST.fade, mode: 'dot' };
+              angle: D.CONST.angle, mode: 'dot' };
 const LOCKED = { ...OVR };
+
+/* Production resolves the dissolve through renderRole, which asks fadeFor for
+   a per-edge set keyed by subject and role. This page calls D.screen directly,
+   so it has to do that same resolution itself. It used to pass CONST.fade, a
+   scalar, which fadeSet expands to all four sides: the rig faded four edges
+   while production faded two, and the page was the one place the two could
+   disagree without the generator noticing, because this shell is hand-written
+   below the engine rather than produced from it.
+   fadeOverride is null until one of the four boxes is edited. While it is null
+   every preview asks fadeFor for its own answer, subject by subject, exactly
+   as production does. */
+const SIDES = ['top', 'right', 'bottom', 'left'];
+let fadeOverride = null;
+const shippedFade = () => D.fadeSet(D.ROLES[PREVIEW_ROLE].fade);
+const fadeFor = id => fadeOverride || D.fadeFor(id, PREVIEW_ROLE);
+const fmtFade = v => SIDES.map(s =>
+  s[0].toUpperCase() + ' ' + String(+(+v[s]).toFixed(2)).replace(/^0\./, '.')).join(' ');
 
 document.getElementById('ver').textContent = D.CONST.version;
 document.getElementById('lockedVals').innerHTML = [
   ['Gamma', D.CONST.gamma.toFixed(2)],
   ['Screen angle', D.CONST.angle + '°'],
-  ['Edge dissolve', D.CONST.fade.toFixed(2)],
+  ['Edge dissolve · ' + PREVIEW_ROLE, fmtFade(shippedFade())],
   ['Dot', D.CONST.dot],
   ['Field', D.CONST.field],
 ].map(([k,v]) => `<div>${k}<b>${v}</b></div>`).join('');
@@ -53843,16 +53880,17 @@ function renderAll(){
 }
 function paintAll(){
   for (const rec of cards){
+    const o = Object.assign({}, OVR, { fade: fadeFor(rec.s.id) });
     if (OVR.mode === 'ascii'){
       rec.canvas = null;
-      const txt = D.asciiOf(rec.L, OVR.pitch, OVR);
+      const txt = D.asciiOf(rec.L, OVR.pitch, o);
       rec.art.innerHTML = '<pre>' + txt.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])) + '</pre>';
     } else {
       let cv = rec.art.querySelector('canvas');
       if (!cv){ rec.art.innerHTML=''; cv = document.createElement('canvas');
         cv.width=PREVIEW.w; cv.height=PREVIEW.h; rec.art.appendChild(cv); }
       rec.canvas = cv;
-      D.screen(rec.L, cv, OVR.mode, OVR.pitch, OVR);
+      D.screen(rec.L, cv, OVR.mode, OVR.pitch, o);
     }
   }
 }
@@ -53867,7 +53905,24 @@ const binds = {
   pitch: bind('pitch','pitch', v=>v),
   gamma: bind('gamma','gamma', v=>v.toFixed(2)),
   angle: bind('angle','angle', v=>v),
-  fade:  bind('fade','fade',  v=>v.toFixed(2)),
+};
+
+/* Four boxes rather than one slider, because the shipped dissolve is a
+   per-edge set and a scalar cannot express it. They start on the card role's
+   default and read "shipped" until one is edited. */
+const edgeEls = {};
+const edgeBox = document.getElementById('edges');
+edgeBox.innerHTML = SIDES.map(s =>
+  `<label title="${s}">${s[0].toUpperCase()}<input type="number" id="fade-${s}"
+     min="0" max="0.5" step="0.01"></label>`).join('');
+for (const s of SIDES) edgeEls[s] = document.getElementById('fade-' + s);
+const setEdgeInputs = v => { for (const s of SIDES) edgeEls[s].value = v[s]; };
+setEdgeInputs(shippedFade());
+edgeBox.oninput = () => {
+  fadeOverride = {};
+  for (const s of SIDES) fadeOverride[s] = parseFloat(edgeEls[s].value) || 0;
+  document.getElementById('vFade').textContent = 'override';
+  paintAll();
 };
 document.getElementById('modes').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -53875,11 +53930,14 @@ document.getElementById('modes').onclick = e => {
   OVR.mode = b.dataset.m; paintAll();
 };
 document.getElementById('reset').onclick = () => {
-  for (const k of ['pitch','gamma','angle','fade']){
+  for (const k of ['pitch','gamma','angle']){
     OVR[k] = LOCKED[k];
     binds[k].el.value = LOCKED[k];
     binds[k].out.textContent = binds[k].fmt(LOCKED[k]);
   }
+  fadeOverride = null;
+  setEdgeInputs(shippedFade());
+  document.getElementById('vFade').textContent = 'shipped';
   paintAll();
 };
 
