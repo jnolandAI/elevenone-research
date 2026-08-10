@@ -53161,6 +53161,18 @@ const camFor = (id, role) => CAM_ROLE[id + ':' + role] || CAM[id];
    ground forms then have something to work with. */
 const TONES = ['#D6D6D4', '#B8B8B6', '#9C9C9A', '#7A7A78', '#565654'];
 
+/* Radial placement for the scatter field, pulled out of ground() so it can be
+   tested without THREE. The annulus runs from flat+6 (just past the subject's
+   own footprint) out to d/2-2 (just inside the ground's far edge). A small or
+   aggressively-cut d can push that far bound inside the near one — clamping
+   the span at 0 collapses the annulus to its near edge instead of inverting,
+   which keeps every scatter box outside flat and the result monotonic in t
+   no matter how tight d gets. */
+function scatterRadius(flat, d, t){
+  const span = Math.max(0, d/2 - flat - 8);
+  return flat + 6 + t * span;
+}
+
 /* One ground for every subject, so five hand-rolled slabs cannot drift into
    five different landscapes. Three parts: a displaced plane, a ridge silhouette
    at the far edge, and a sparse scatter between the two. All primitives, all
@@ -53204,7 +53216,7 @@ function ground(g, TONE, rnd, o){
 
   for (let i=0;i<(o.scatter||0);i++){
     const a = rnd()*Math.PI*2;
-    const r = flat + 6 + rnd()*(o.d/2 - flat - 8);
+    const r = scatterRadius(flat, o.d, rnd());
     const h = 1.2 + rnd()*3.4;
     const m = new THREE.Mesh(new THREE.BoxGeometry(1.6+rnd()*2.2, h, 1.6+rnd()*2.2), TONE[0]);
     m.position.set(Math.cos(a)*r, h/2, Math.sin(a)*r - o.d*0.12);
@@ -53297,7 +53309,7 @@ function buildScene(id){
         bl.translateY(4.75); g.add(bl);
       }
     }
-    ground(g, TONE, rnd, { w: 160, d: 130, plane: false, ridge: 6.0, scatter: 20 });
+    ground(g, TONE, rnd, { w: 59, d: 48, plane: false, ridge: 6.0, scatter: 20 });
   }
 
   if (id === 'robotics'){
@@ -53335,7 +53347,7 @@ function buildScene(id){
   }
 
   if (id === 'grid'){
-    ground(g, TONE, rnd, { w: 190, d: 150, amp: 1.2, flat: 12, ridge: 7.0, scatter: 30 });
+    ground(g, TONE, rnd, { w: 63, d: 50, amp: 1.2, flat: 12, ridge: 7.0, scatter: 30 });
     const tops = [];
     for (let i=0;i<5;i++){
       const x = -34 + i*17, base = 0;
@@ -53376,7 +53388,7 @@ function buildScene(id){
       const h = Math.max(1.2, (1-dist)*rnd()*26 + rnd()*3);
       box(2.7,h,2.7, cx, h/2, cz, rnd()>.72?dark:mat);
     }
-    ground(g, TONE, rnd, { w: 140, d: 120, amp: 0.9, flat: 36, ridge: 5.0, scatter: 18 });
+    ground(g, TONE, rnd, { w: 62, d: 53, amp: 0.9, flat: 36, ridge: 5.0, scatter: 18 });
   }
 
   s.add(g);
@@ -53583,7 +53595,7 @@ function renderRole(renderer, stage, id, role, mode, overrides){
 global.DotFoundry = {
   CONST, ROLES, MODES, SUBJECTS, CAM, EDGE_ROLE, TONES,
   buildScene, renderSource, luminanceField, sample, boxAvg, edge, fadeSet, screen, asciiOf,
-  renderRole, camFor, CAM_ROLE, fadeFor, ground,
+  renderRole, camFor, CAM_ROLE, fadeFor, ground, scatterRadius,
 };
 })(window);
 </script>

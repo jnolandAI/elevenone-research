@@ -186,3 +186,59 @@ describe('ground forms', () => {
     expect(calls).toHaveLength(6);
   });
 });
+
+// A prior review flagged flat + 6 + t*(d/2 - flat - 8) as an unguarded edge
+// case: once d is cut small enough relative to flat, the span goes negative,
+// the near/far gradient inverts, and scatter boxes land inside flat, the one
+// radius the option exists to keep clear. scatterRadius is the same formula
+// with the span clamped at 0, pulled out so this is checkable without THREE.
+describe('scatterRadius', () => {
+  it('exposes the helper', () => {
+    const E = loadEngine();
+    expect(typeof E.scatterRadius).toBe('function');
+  });
+
+  it('spans the annulus from flat+6 to d/2-2 when the annulus is wide', () => {
+    const E = loadEngine();
+    // grid: flat 12, d 150 -> span from 18 to 73
+    expect(E.scatterRadius(12, 150, 0)).toBeCloseTo(18);
+    expect(E.scatterRadius(12, 150, 1)).toBeCloseTo(73);
+    expect(E.scatterRadius(12, 150, 0.5)).toBeCloseTo(45.5);
+  });
+
+  it("collapses to flat+6 for port's actual flat/d, where the raw span is -4.5", () => {
+    const E = loadEngine();
+    expect(E.scatterRadius(44, 95, 0)).toBeCloseTo(50);
+    expect(E.scatterRadius(44, 95, 0.5)).toBeCloseTo(50);
+    expect(E.scatterRadius(44, 95, 1)).toBeCloseTo(50);
+  });
+
+  it("collapses to flat+6 for datacenter's actual flat/d, where the raw span is -10.5", () => {
+    const E = loadEngine();
+    expect(E.scatterRadius(30, 55, 0)).toBeCloseTo(36);
+    expect(E.scatterRadius(30, 55, 0.5)).toBeCloseTo(36);
+    expect(E.scatterRadius(30, 55, 1)).toBeCloseTo(36);
+  });
+
+  it('never returns a radius inside flat, across a spread of flat/d/t combinations', () => {
+    const E = loadEngine();
+    const flats = [0, 12, 26, 30, 36, 44];
+    const ds = [20, 55, 80, 95, 120, 150];
+    const ts = [0, 0.25, 0.5, 0.75, 1];
+    for (const flat of flats) for (const d of ds) for (const t of ts) {
+      expect(E.scatterRadius(flat, d, t)).toBeGreaterThanOrEqual(flat);
+    }
+  });
+
+  it('is monotonic non-decreasing in t for a fixed flat and d', () => {
+    const E = loadEngine();
+    for (const [flat, d] of [[12, 150], [44, 95], [30, 55], [36, 120]]) {
+      let prev = -Infinity;
+      for (let t = 0; t <= 1; t += 0.1) {
+        const r = E.scatterRadius(flat, d, t);
+        expect(r).toBeGreaterThanOrEqual(prev);
+        prev = r;
+      }
+    }
+  });
+});
