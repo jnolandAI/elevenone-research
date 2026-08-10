@@ -242,3 +242,32 @@ describe('scatterRadius', () => {
     }
   });
 });
+
+describe('scenes use the whole tone scale', () => {
+  const body = () => {
+    const src = readFileSync(
+      fileURLToPath(new URL('../prototypes/dot-engine.js', import.meta.url)),
+      'utf8',
+    );
+    // comments discuss `mat` and `dark` by name on purpose; strip them so the
+    // assertions below are about code rather than about prose
+    return src.slice(src.indexOf('function buildScene')).replace(/\/\*[\s\S]*?\*\//g, '');
+  };
+
+  it('has deleted the migration aliases', () => {
+    expect(body()).not.toMatch(/const mat\s+=\s+TONE\[1\]/);
+    expect(body()).not.toMatch(/const dark\s+=\s+TONE\[3\]/);
+  });
+
+  it('leaves no scene referring to the removed names', () => {
+    expect(body()).not.toMatch(/\b(mat|dark)\b/);
+  });
+
+  // Two of five steps is the flatness this whole plan exists to fix. Four is the
+  // bar: a scene needs near mass, far mass, structure and deep structure before
+  // depth is available at all.
+  it('reaches at least four of the five steps', () => {
+    const used = new Set(body().match(/TONE\[\d\]/g) ?? []);
+    expect(used.size).toBeGreaterThanOrEqual(4);
+  });
+});

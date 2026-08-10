@@ -53377,18 +53377,11 @@ function buildScene(id){
     roughness: 0.78 + i * 0.02,
     metalness: 0.04 - i * 0.005,
   }));
-  /* Aliases so scenes migrate one at a time rather than in one commit. Both are
-     deleted once the last subject is migrated: two names for one material is
-     how a system becomes a folder. Note that `dark` is TONE[3] at #7A7A78,
-     darker than the #8A8A88 it replaces, so unmigrated scenes darken slightly
-     the moment this lands. That is intended, not a migration bug. */
-  const mat  = TONE[1];
-  const dark = TONE[3];
   const rnd = (seed => () => (seed = (seed*1103515245+12345)&0x7fffffff) / 0x7fffffff)(id.length*977 + 13);
   const g = new THREE.Group();
-  const box = (w,h,d2,x,y,z,m) => { const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d2), m||mat);
+  const box = (w,h,d2,x,y,z,m) => { const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d2), m||TONE[1]);
     b.position.set(x,y,z); b.castShadow=b.receiveShadow=true; g.add(b); return b; };
-  const cyl = (rt,rb,h,x,y,z,m,seg) => { const c=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||14), m||mat);
+  const cyl = (rt,rb,h,x,y,z,m,seg) => { const c=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||14), m||TONE[1]);
     c.position.set(x,y,z); c.castShadow=c.receiveShadow=true; g.add(c); return c; };
 
   if (id === 'port'){
@@ -53397,35 +53390,35 @@ function buildScene(id){
       for (let j=0;j<11;j++){
         const n = Math.floor(rnd()*5);
         for (let k=0;k<n;k++)
-          box(2.9,1.25,1.4, -34+i*2.75, .63+k*1.32, -12+j*1.6, rnd()>.55?dark:mat);
+          box(2.9,1.25,1.4, -34+i*2.75, .63+k*1.32, -12+j*1.6, rnd()>.55?TONE[2]:TONE[1]);
       }
     }
     for (let c=0;c<4;c++){
       const x = -24 + c*16;
       for (const z of [12.5,-4.5]){
-        box(.55,21,.55, x-5.5, 10.5, z, dark);
-        box(.55,21,.55, x+5.5, 10.5, z, dark);
-        box(12,.7,.7,  x, 21, z, dark);
+        box(.55,21,.55, x-5.5, 10.5, z, TONE[3]);
+        box(.55,21,.55, x+5.5, 10.5, z, TONE[3]);
+        box(12,.7,.7,  x, 21, z, TONE[4]);
       }
-      box(.8,.7,19, x-5.5, 21, 4, dark);
-      box(.8,.7,19, x+5.5, 21, 4, dark);
-      box(13,.9,.9, x, 24.4, 4, dark);
-      box(1.1,3.4,1.1, x, 22.6, 4, dark);
+      box(.8,.7,19, x-5.5, 21, 4, TONE[3]);
+      box(.8,.7,19, x+5.5, 21, 4, TONE[3]);
+      box(13,.9,.9, x, 24.4, 4, TONE[4]);
+      box(1.1,3.4,1.1, x, 22.6, 4, TONE[4]);
     }
     for (let i=0;i<22;i++){
       const t2 = i/21, w = 2.9 * (t2 > .82 ? (1-t2)/.18 : 1);
-      box(2.6, 5.0, w*2.6, -26+i*2.6, 2.5, 24, dark);
+      box(2.6, 5.0, w*2.6, -26+i*2.6, 2.5, 24, TONE[3]);
     }
     for (let i=0;i<18;i++) for (let k=0;k<3;k++)
-      box(2.6,1.25,1.4, -24+i*2.6, 5.6+k*1.32, 24+(rnd()-.5)*2.6, rnd()>.5?dark:mat);
+      box(2.6,1.25,1.4, -24+i*2.6, 5.6+k*1.32, 24+(rnd()-.5)*2.6, rnd()>.5?TONE[2]:TONE[1]);
     ground(g, TONE, rnd, { w: 119, d: 95, amp: 1.0, flat: 44, ridge: 5.5, scatter: 22 });
   }
 
   if (id === 'datacenter'){
     for (let row=0; row<7; row++) for (let i=0;i<16;i++){
       const z = -14 + row*4.6, x = -18 + i*2.4;
-      box(1.9,6.4,2.0, x, 3.2, z, rnd()>.7?dark:mat);
-      box(1.9,.28,2.0, x, 6.5, z, dark);
+      box(1.9,6.4,2.0, x, 3.2, z, rnd()>.7?TONE[2]:TONE[1]);
+      box(1.9,.28,2.0, x, 6.5, z, TONE[4]);
     }
     ground(g, TONE, rnd, { w: 60, d: 55, amp: 0.8, flat: 30, ridge: 4.0, scatter: 16 });
   }
@@ -53438,16 +53431,16 @@ function buildScene(id){
       p.setY(i, Math.sin(x*.13)*1.5 + Math.cos(z*.16)*1.2 + Math.sin((x+z)*.07)*1.8);
     }
     terr.computeVertexNormals();
-    const t = new THREE.Mesh(terr, mat); t.receiveShadow = true; g.add(t);
+    const t = new THREE.Mesh(terr, TONE[1]); t.receiveShadow = true; g.add(t);
     for (let i=0;i<14;i++){
       const x = -34 + (i%5)*17 + (rnd()-.5)*6, z = -22 + Math.floor(i/5)*16 + (rnd()-.5)*6;
       const yb = Math.sin(x*.13)*1.5 + Math.cos(z*.16)*1.2 + Math.sin((x+z)*.07)*1.8;
-      cyl(.28,.5,15, x, yb+7.5, z, dark);
-      const hub = new THREE.Mesh(new THREE.SphereGeometry(.62,14,14), dark);
+      cyl(.28,.5,15, x, yb+7.5, z, TONE[2]);
+      const hub = new THREE.Mesh(new THREE.SphereGeometry(.62,14,14), TONE[4]);
       hub.position.set(x, yb+15, z); g.add(hub);
       const spin = rnd()*Math.PI*2;
       for (let b=0;b<3;b++){
-        const bl = new THREE.Mesh(new THREE.BoxGeometry(.34,9.5,.12), dark);
+        const bl = new THREE.Mesh(new THREE.BoxGeometry(.34,9.5,.12), TONE[3]);
         bl.position.set(x, yb+15, z);
         bl.rotation.z = spin + b*Math.PI*2/3;
         bl.translateY(4.75); g.add(bl);
@@ -53462,28 +53455,28 @@ function buildScene(id){
        is the only way an articulated silhouette reads as a robot rather than a post */
     const limb = (parent, len, w, angle) => {
       const piv = new THREE.Group(); piv.rotation.z = angle; parent.add(piv);
-      const seg = new THREE.Mesh(new THREE.BoxGeometry(w, len, w*.92), dark);
+      const seg = new THREE.Mesh(new THREE.BoxGeometry(w, len, w*.92), TONE[3]);
       seg.position.y = len/2; seg.castShadow = true; piv.add(seg);
-      const knuckle = new THREE.Mesh(new THREE.SphereGeometry(w*.62, 14, 14), dark);
+      const knuckle = new THREE.Mesh(new THREE.SphereGeometry(w*.62, 14, 14), TONE[4]);
       knuckle.castShadow = true; piv.add(knuckle);
       const tip = new THREE.Group(); tip.position.y = len; piv.add(tip);
       return tip;
     };
     for (let i=0;i<3;i++){
       const x = -17 + i*17, z = (i%2)*6 - 3;
-      box(13,1.8,7.5, x, .9, z, mat);
-      cyl(2.4,3.0,2.6, x, 3.1, z, dark, 20);
+      box(13,1.8,7.5, x, .9, z, TONE[1]);
+      cyl(2.4,3.0,2.6, x, 3.1, z, TONE[2], 20);
       const yaw = new THREE.Group();
       yaw.position.set(x, 4.4, z);
       yaw.rotation.y = (rnd()-.5)*.9;
       g.add(yaw);
-      const sh = new THREE.Mesh(new THREE.BoxGeometry(3.0,3.2,3.0), dark);
+      const sh = new THREE.Mesh(new THREE.BoxGeometry(3.0,3.2,3.0), TONE[3]);
       sh.position.set(0,1.6,0); sh.castShadow = true; yaw.add(sh);
       const base = new THREE.Group(); base.position.y = 3.0; yaw.add(base);
       let t2 = limb(base, 8.4, 1.9, -0.62 - rnd()*.22);
       t2 = limb(t2, 6.8, 1.5,  1.55 + rnd()*.3);
       t2 = limb(t2, 2.4, 1.0,  0.55);
-      const gA = new THREE.Mesh(new THREE.BoxGeometry(.42,1.9,.42), dark);
+      const gA = new THREE.Mesh(new THREE.BoxGeometry(.42,1.9,.42), TONE[4]);
       const gB = gA.clone();
       gA.position.set(-.62,.95,0); gB.position.set(.62,.95,0);
       gA.castShadow = gB.castShadow = true; t2.add(gA); t2.add(gB);
@@ -53499,17 +53492,17 @@ function buildScene(id){
         const legs = 9;
         for (let k=0;k<legs;k++){
           const t2 = k/legs, w = 3.2*(1-t2*.72);
-          box(.28,2.2,.28, x + s2*w, base+1.1+k*2.2, s3*w, dark);
+          box(.28,2.2,.28, x + s2*w, base+1.1+k*2.2, s3*w, TONE[3]);
         }
       }
       for (let k=0;k<9;k++){
         const t2=k/9, w=3.2*(1-t2*.72);
-        box(w*2,.2,.2, x, base+k*2.2, -w, dark);
-        box(w*2,.2,.2, x, base+k*2.2,  w, dark);
-        box(.2,.2,w*2, x-w, base+k*2.2, 0, dark);
-        box(.2,.2,w*2, x+w, base+k*2.2, 0, dark);
+        box(w*2,.2,.2, x, base+k*2.2, -w, TONE[2]);
+        box(w*2,.2,.2, x, base+k*2.2,  w, TONE[2]);
+        box(.2,.2,w*2, x-w, base+k*2.2, 0, TONE[2]);
+        box(.2,.2,w*2, x+w, base+k*2.2, 0, TONE[2]);
       }
-      for (const yy of [15.5,18.2,20.6]) box(13,.34,.34, x, yy, 0, dark);
+      for (const yy of [15.5,18.2,20.6]) box(13,.34,.34, x, yy, 0, TONE[3]);
       tops.push(x);
     }
     for (let i=0;i<tops.length-1;i++){
@@ -53519,7 +53512,7 @@ function buildScene(id){
         for (let k=0;k<=18;k++){ const t2=k/18, x=x0+(x1-x0)*t2;
           pts.push(new THREE.Vector3(x, yy - Math.sin(t2*Math.PI)*2.1, off)); }
         const cv = new THREE.CatmullRomCurve3(pts);
-        g.add(new THREE.Mesh(new THREE.TubeGeometry(cv,20,.075,6,false), dark));
+        g.add(new THREE.Mesh(new THREE.TubeGeometry(cv,20,.075,6,false), TONE[4]));
       }
     }
   }
@@ -53530,7 +53523,8 @@ function buildScene(id){
       const cx = -30+i*3.7, cz = -22+j*3.7;
       const dist = Math.hypot(cx*.6, cz*.9)/26;
       const h = Math.max(1.2, (1-dist)*rnd()*26 + rnd()*3);
-      box(2.7,h,2.7, cx, h/2, cz, rnd()>.72?dark:mat);
+      const tone = cz < -8 ? 0 : cz < 2 ? 1 : (rnd() > .6 ? 3 : 2);
+      box(2.7,h,2.7, cx, h/2, cz, TONE[tone]);
     }
     ground(g, TONE, rnd, { w: 62, d: 53, amp: 0.9, flat: 36, ridge: 5.0, scatter: 18 });
   }
