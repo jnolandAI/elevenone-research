@@ -27,12 +27,20 @@ const img = dotAsset(subject, 'hero');
 </div>
 
 <style>
-  .hero { position: relative; padding: 84px 0 66px; overflow: hidden; }
+  /* No overflow clip. The render's own per-edge dissolve is the only edge
+     treatment the imagery gets, and a clip here cuts it off before a reader
+     sees it. e2e/dot-imagery.spec.ts holds this line, because a future layout
+     problem is very likely to be solved the way this one originally was. */
+  .hero { position: relative; padding: 84px 0 66px; }
   /* left starts past both h1's and .stand's measured right edge (47.2% and
      45.6% of the hero box, at this copy length) rather than the brief's 34%,
      so the render never sits under the type at all. That decision is below,
-     next to .clearing's removal, because the two are the same finding. */
-  .surface { position: absolute; left: 50%; right: -10%; top: 12%; pointer-events: none; }
+     next to .clearing's removal, because the two are the same finding.
+
+     right is 0, not the -10% this shipped with. The bleed existed to push the
+     render's hard frame edge out of view, which the 1.2 dissolve now handles
+     inside the image itself. */
+  .surface { position: absolute; left: 50%; right: 0; top: 12%; pointer-events: none; }
   /* The render carries a flat #FCFCFB field, which the imagery doc says gives
      images "no edge". That holds only on a matching surface, and the page
      ground runs #F6F6F5 to #EAEAE9, so the field showed as a lighter
