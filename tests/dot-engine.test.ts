@@ -177,13 +177,24 @@ describe('ground forms', () => {
   // lists "a ground plane filling a third of the frame with flat mid-grey" as a
   // standard cause of a failed recognition test, so leaving one behind is a
   // known defect, not a style preference.
+  //
+  // The pattern is a wide, deep, very shallow box: two dimensions of at least
+  // two integer digits either side of a fractional height. That is broader than
+  // the literal `.4` this used to require, which only ever caught the exact
+  // spelling the five deleted slabs happened to share. What it still does not
+  // catch: a slab whose dimensions are named constants or expressions rather
+  // than literals, one built through `new THREE.Mesh(new THREE.BoxGeometry(...))`
+  // instead of the `box()` helper, or one made from a flat PlaneGeometry. A
+  // source scan cannot close those; the depth test in docs/dot-imagery.md is
+  // what covers them.
   it('leaves no subject standing on a bare slab', () => {
-    expect(source()).not.toMatch(/box\(\s*\d+\s*,\s*\.4\s*,\s*\d+/);
+    expect(source()).not.toMatch(/box\(\s*\d{2,}\s*,\s*0?\.\d+\s*,\s*\d{2,}\s*,/);
   });
 
   it('is called once by every subject', () => {
+    const E = loadEngine();
     const calls = source().match(/^\s*ground\(g, TONE, rnd, \{/gm) ?? [];
-    expect(calls).toHaveLength(6);
+    expect(calls).toHaveLength(E.SUBJECTS.length);
   });
 });
 
@@ -295,31 +306,249 @@ describe('scatterRadius', () => {
   });
 });
 
-describe('scenes use the whole tone scale', () => {
-  const body = () => {
-    const src = readFileSync(
-      fileURLToPath(new URL('../prototypes/dot-engine.js', import.meta.url)),
-      'utf8',
-    );
-    // comments discuss `mat` and `dark` by name on purpose; strip them so the
-    // assertions below are about code rather than about prose
-    return src.slice(src.indexOf('function buildScene')).replace(/\/\*[\s\S]*?\*\//g, '');
-  };
+const engineSource = () =>
+  readFileSync(fileURLToPath(new URL('../prototypes/dot-engine.js', import.meta.url)), 'utf8');
 
+// comments discuss `mat` and `dark` by name on purpose, and they name TONE
+// steps in prose; strip them so every assertion below is about code
+const sceneBody = () =>
+  engineSource().slice(engineSource().indexOf('function buildScene')).replace(/\/\*[\s\S]*?\*\//g, '');
+
+describe('scenes use the whole tone scale', () => {
   it('has deleted the migration aliases', () => {
-    expect(body()).not.toMatch(/const mat\s+=\s+TONE\[1\]/);
-    expect(body()).not.toMatch(/const dark\s+=\s+TONE\[3\]/);
+    expect(sceneBody()).not.toMatch(/const mat\s+=\s+TONE\[1\]/);
+    expect(sceneBody()).not.toMatch(/const dark\s+=\s+TONE\[3\]/);
   });
 
   it('leaves no scene referring to the removed names', () => {
-    expect(body()).not.toMatch(/\b(mat|dark)\b/);
+    expect(sceneBody()).not.toMatch(/\b(mat|dark)\b/);
+  });
+});
+
+/**
+ * Per-subject tone coverage.
+ *
+ * This replaces a single `used.size >= 4` taken across the whole `buildScene`
+ * body. That form was satisfied by one compliant subject on behalf of all six,
+ * which is exactly how datacenter regressed to TONE[0..2] for a whole commit
+ * without a test noticing. The scoring below is per subject and nothing else
+ * can stand in for a subject that has gone flat.
+ *
+ * A subject's tones are the `TONE[n]` literals inside its own
+ * `if (id === '<subject>')` block, plus the tones `ground()` itself draws for
+ * the parts that subject switches on. `ground()` is where most subjects' light
+ * end comes from (the ridge and the scatter are both TONE[0]), so scoring the
+ * block alone would score half the scene and mark grid, which draws nothing
+ * lighter than TONE[2] itself, as flat when it is not.
+ */
+describe('every subject draws from the dark end of the tone scale', () => {
+  const level = (hex: string) => parseInt(hex.slice(1, 3), 16);
+
+  // ground()'s own three tones, in the order it draws them: the displaced
+  // plane, the ridge silhouette, the scatter. Read as an ordered list rather
+  // than restated as constants, so retuning the helper fails this loudly
+  // instead of quietly scoring subjects against tones it no longer draws.
+  const groundTones = () => {
+    const src = engineSource();
+    const body = src
+      .slice(src.indexOf('function ground('), src.indexOf('function buildScene('))
+      .replace(/\/\*[\s\S]*?\*\//g, '');
+    const found = (body.match(/TONE\[(\d)\]/g) ?? []).map((m) => Number(m.slice(5, 6)));
+    return { plane: found[0], ridge: found[1], scatter: found[2], all: found };
+  };
+
+  // The block runs from this subject's `if (id === ...)` to the next subject's,
+  // or to `s.add(g)` where the last subject ends.
+  const blockOf = (id: string, ids: string[]) => {
+    const body = sceneBody();
+    const start = body.indexOf(`if (id === '${id}')`);
+    expect(start, `no buildScene branch for ${id}`).toBeGreaterThan(-1);
+    let end = body.indexOf('s.add(g);');
+    for (const other of ids) {
+      if (other === id) continue;
+      const i = body.indexOf(`if (id === '${other}')`);
+      if (i > start && i < end) end = i;
+    }
+    return body.slice(start, end);
+  };
+
+  const stepsFor = (id: string, ids: string[]) => {
+    const block = blockOf(id, ids);
+    const steps = new Set([...block.matchAll(/TONE\[(\d)\]/g)].map((m) => Number(m[1])));
+    const g = groundTones();
+    const opts = block.match(/ground\(g, TONE, rnd, \{([^}]*)\}\)/);
+    expect(opts, `${id} does not call ground()`).not.toBeNull();
+    const num = (key: string) => {
+      const m = opts![1].match(new RegExp(`${key}:\\s*([\\d.]+)`));
+      return m ? parseFloat(m[1]) : 0;
+    };
+    if (!/plane:\s*false/.test(opts![1])) steps.add(g.plane);
+    if (num('ridge') > 0) steps.add(g.ridge);
+    if (num('scatter') > 0) steps.add(g.scatter);
+    return steps;
+  };
+
+  it('reads three tones out of ground(), in the order plane, ridge, scatter', () => {
+    // If this fails the scoring below is measuring the wrong thing, so it is
+    // asserted separately rather than folded into the per-subject cases.
+    expect(groundTones().all).toHaveLength(3);
   });
 
-  // Two of five steps is the flatness this whole plan exists to fix. Four is the
-  // bar: a scene needs near mass, far mass, structure and deep structure before
-  // depth is available at all.
-  it('reaches at least four of the five steps', () => {
-    const used = new Set(body().match(/TONE\[\d\]/g) ?? []);
-    expect(used.size).toBeGreaterThanOrEqual(4);
+  /**
+   * The bar. Four of five steps, and at least 96 levels between a subject's
+   * lightest tone and its darkest.
+   *
+   * 96 is set just under the 98 that TONE[1] to TONE[4] gives, which is the
+   * narrowest span a subject can have while still reaching the darkest step,
+   * and it is more than double the 46 levels the two materials this version
+   * replaced sat apart. It is also unreachable without TONE[4]: the lightest
+   * step is 214 and TONE[3] is 122, a span of 92. The darkest step is asserted
+   * separately anyway, because "span too narrow" is a worse failure message
+   * than "never reaches the darkest step".
+   */
+  const MIN_STEPS = 4;
+  const MIN_SPAN = 96;
+
+  /**
+   * Urban is the one legitimate exception and is named here with its reason
+   * rather than handled by lowering the bar for everyone. It is a field of
+   * massing seen from above with no fine structure in it at all: no leg, no
+   * conductor, no cap rail, nothing thin enough to earn the deepest step. Its
+   * blocks are graded by depth (TONE[0] at the back through TONE[2]/TONE[3] at
+   * the front), so it uses the scale for recession rather than for structure,
+   * and TONE[4] on a 2.7-unit-wide massing block would read as a hole rather
+   * than as detail. It still has to reach TONE[3] and span 90.
+   */
+  const EXCEPTIONS: Record<string, { maxStep: number; minSpan: number; why: string }> = {
+    urban: {
+      maxStep: 3,
+      minSpan: 90,
+      why: 'a field of massing with no fine structure, so nothing earns the deepest step',
+    },
+  };
+
+  const E = loadEngine();
+  const ids: string[] = E.SUBJECTS.map((s: any) => s.id);
+
+  for (const id of ids) {
+    const exception = EXCEPTIONS[id];
+
+    it(`${id} reaches at least ${MIN_STEPS} distinct steps`, () => {
+      expect(stepsFor(id, ids).size).toBeGreaterThanOrEqual(MIN_STEPS);
+    });
+
+    it(
+      exception
+        ? `${id} reaches TONE[${exception.maxStep}] (${exception.why})`
+        : `${id} reaches TONE[4], the structure the eye should land on first`,
+      () => {
+        const steps = [...stepsFor(id, ids)];
+        expect(Math.max(...steps)).toBe(exception ? exception.maxStep : 4);
+      },
+    );
+
+    it(`${id} spans at least ${exception ? exception.minSpan : MIN_SPAN} levels`, () => {
+      const steps = [...stepsFor(id, ids)];
+      const levels = steps.map((s) => level(E.TONES[s]));
+      const span = Math.max(...levels) - Math.min(...levels);
+      expect(span).toBeGreaterThanOrEqual(exception ? exception.minSpan : MIN_SPAN);
+    });
+  }
+});
+
+/**
+ * The ridge in its fog band.
+ *
+ * Five subjects once had ridges past fogFar, rendering as pure white with
+ * nobody noticing, and the fix for that was a hand-solved `ridgeDist` per
+ * subject. Nothing tested it. That solve depends on CAM and CAM_ROLE, and a
+ * camera change is the most likely next edit to this file, so this is the
+ * assertion that turns a silent dead horizon back into a failing test.
+ *
+ * The equivalent assertion for the scatter field is deliberately absent. The
+ * scatter currently sits mostly past fogFar on the hero crops (measured: 94%
+ * of datacenter hero's in-frame scatter boxes at a fog factor of 0.98 or
+ * above, 97% for its card, 75% for port hero, 63% urban, 61% wind, 41% grid),
+ * so writing it would commit a knowingly failing test. Moving that geometry
+ * changes every asset in the library and is deferred to its own pass. Add the
+ * scatter case in that pass, not before.
+ */
+describe('every ridge sits inside its fog band', () => {
+  const E = loadEngine();
+  const src = engineSource();
+  const body = src.slice(src.indexOf('function buildScene')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const ids: string[] = E.SUBJECTS.map((s: any) => s.id);
+
+  // The roles a subject actually renders at, read from the shipped manifest
+  // rather than from a list here: the point is to cover what is published.
+  const manifest = JSON.parse(
+    readFileSync(fileURLToPath(new URL('../public/assets/dot/manifest.json', import.meta.url)), 'utf8'),
+  ) as Record<string, { subject: string; role: string }>;
+  const rolesOf = (id: string) =>
+    [...new Set(Object.values(manifest).filter((a) => a.subject === id).map((a) => a.role))].sort();
+
+  const groundCall = (id: string) => {
+    const start = body.indexOf(`if (id === '${id}')`);
+    let end = body.indexOf('s.add(g);');
+    for (const other of ids) {
+      if (other === id) continue;
+      const i = body.indexOf(`if (id === '${other}')`);
+      if (i > start && i < end) end = i;
+    }
+    const m = body.slice(start, end).match(/ground\(g, TONE, rnd, \{([^}]*)\}\)/);
+    const num = (key: string) => {
+      const v = m![1].match(new RegExp(`${key}:\\s*([\\d.]+)`));
+      return v ? parseFloat(v[1]) : 0;
+    };
+    return { ridge: num('ridge'), ridgeDist: num('ridgeDist') };
+  };
+
+  // Same solve the ridgeDist values were derived under: the fog band is
+  // camDist * fogNear to camDist * fogFar, camDist measured to the camera's
+  // look-at point, and the ridge is scored at its centre-line box, whose
+  // average height is ridge * 0.725 (the midpoint of ground()'s 0.45 + rnd()
+  // * 0.55 height factor) and whose centre therefore sits at that / 2 - 1.
+  const fogAt = (id: string, role: string) => {
+    const R = E.ROLES[role];
+    const c = E.camFor(id, role);
+    const d = R.dist;
+    const cam = [c[0] * d, c[1] * d, c[2] * d];
+    const camDist = Math.hypot(cam[0] - c[3], cam[1] - c[4], cam[2] - c[5]);
+    const near = camDist * E.CONST.fogNear;
+    const far = camDist * E.CONST.fogFar;
+    const { ridge, ridgeDist } = groundCall(id);
+    const y = (ridge * 0.725) / 2 - 1;
+    const dist = Math.hypot(cam[0], y - cam[1], -ridgeDist - cam[2]);
+    return { near, far, dist, fraction: (dist - near) / (far - near) };
+  };
+
+  const bearers = ids.filter((id) => groundCall(id).ridge > 0);
+
+  it('covers every subject that has a ridge at all', () => {
+    // robotics is the one subject with ridge: 0, so five of six is right.
+    expect(bearers).toEqual(['port', 'datacenter', 'wind', 'grid', 'urban']);
   });
+
+  for (const id of bearers) {
+    for (const role of rolesOf(id)) {
+      it(`${id} at ${role} lands between fogNear and fogFar`, () => {
+        const f = fogAt(id, role);
+        expect(f.dist).toBeGreaterThan(f.near);
+        expect(f.dist).toBeLessThan(f.far);
+      });
+
+      // Inside the band is the hard requirement, but a ridge at a fog fraction
+      // of 0.98 is inside it and still functionally erased, which is what the
+      // dead ridges measured at (0.92 to 1.00). The target when ridgeDist was
+      // solved was 0.55 to 0.70; port straddles it at 0.516 and 0.707 because
+      // its two cameras differ by nearly 2x and no single value satisfies
+      // both. 0.35 to 0.85 is that target with the straddle allowed for, and
+      // it still fails anything approaching a dead ridge.
+      it(`${id} at ${role} is faded but not erased`, () => {
+        const f = fogAt(id, role);
+        expect(f.fraction).toBeGreaterThan(0.35);
+        expect(f.fraction).toBeLessThan(0.85);
+      });
+    }
+  }
 });

@@ -53569,8 +53569,14 @@ function buildScene(id){
       const cx = -30+i*3.7, cz = -22+j*3.7;
       const dist = Math.hypot(cx*.6, cz*.9)/26;
       const h = Math.max(1.2, (1-dist)*rnd()*26 + rnd()*3);
-      const tone = cz < -8 ? 0 : cz < 2 ? 1 : (rnd() > .6 ? 3 : 2);
-      box(2.7,h,2.7, cx, h/2, cz, TONE[tone]);
+      /* Written out as materials rather than as an index computed into TONE,
+         so the per-subject tone scan in tests/dot-engine.test.ts can see which
+         steps this subject draws from. Same materials in the same order, and
+         rnd() is still reached in exactly one branch, so the render is
+         byte-identical to the index form: verified against the shipped
+         urban-card-dot.png before this landed. */
+      const tone = cz < -8 ? TONE[0] : cz < 2 ? TONE[1] : (rnd() > .6 ? TONE[3] : TONE[2]);
+      box(2.7,h,2.7, cx, h/2, cz, tone);
     }
     ground(g, TONE, rnd, { w: 140, d: 120, amp: 0.9, flat: 36, ridge: 5.0, ridgeDist: 23, scatter: 18 });
   }
