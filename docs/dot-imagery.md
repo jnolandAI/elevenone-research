@@ -26,6 +26,7 @@ same house, because the screen does the work rather than the subject.
 | `scripts/webp_derive.py`        | Derives a lossless WebP delivery asset beside each PNG, at native size |
 | `public/assets/dot/`            | Rendered output: PNGs, their derived WebPs, plus `manifest.json` |
 | `src/components/home/`          | First production consumer: `HomeHero.astro` and `Coverage.astro` |
+| `tests/dot-engine.test.ts`      | Unit tests for the engine's pure functions, loaded without a browser |
 
 Both pages are generated from the same engine, so the foundry and the renderer
 cannot drift apart. After editing `dot-engine.js`, run
@@ -33,19 +34,42 @@ cannot drift apart. After editing `dot-engine.js`, run
 
 ## Constants
 
-Brand values, version **1.1**. Not per-image choices.
+Brand values, version **1.2**. Not per-image choices.
 
-| Parameter     | Value     | Controls                                             |
-| ------------- | --------- | ---------------------------------------------------- |
-| Gamma         | 1.00      | Curve from luminance to dot area                     |
-| Screen angle  | 15°       | Rotation of the lattice, the classic halftone angle  |
-| Edge dissolve | 0.16      | Fraction of the frame over which the field thins out |
-| Grid          | Staggered | Offset rows, not a square lattice                    |
-| Dot           | `#131312` | The interface ink exactly. Never a grey, never a hue |
-| Field         | `#FCFCFB` | Matches the card surface, so images have no edge     |
+| Parameter     | Value              | Controls                                                     |
+| ------------- | ------------------ | -------------------------------------------------------------- |
+| Gamma         | 1.00               | Curve from luminance to dot area                              |
+| Screen angle  | 15°                | Rotation of the lattice, the classic halftone angle           |
+| Edge dissolve | Per edge, per role | Fraction of the frame over which each side thins              |
+| Fog near      | 0.55               | Fog start, as a multiple of camera-to-subject distance        |
+| Fog far       | 1.90               | Fog full, same units                                          |
+| Tone scale    | 5 steps            | `#D6D6D4` to `#565654`. Scene materials                       |
+| Grid          | Staggered          | Offset rows, not a square lattice                              |
+| Dot           | `#131312`          | The interface ink exactly. Never a grey, never a hue           |
+| Field         | `#FCFCFB`          | Matches the card surface, so images have no edge               |
+
+Fog near and far are multipliers of the camera's distance to its look-at
+point, not fixed depths. A role that pulls the camera back gets a
+proportionally deeper fog with no table to maintain per subject.
 
 ### Version history
 
+- **1.2** Depth and edges. The two scene materials, 46 levels apart, became a
+  five-step tone scale spanning 128, because two tones cannot describe depth
+  however the scene is built. Distance fog now lifts far geometry toward the
+  field, derived from camera distance rather than declared per subject. Five
+  subjects that stood on a flat slab now call one shared `ground()` helper for a
+  displaced plane, a ridge silhouette and a distant scatter. The ridge's
+  distance is its own option, `ridgeDist`, rather than derived from ground
+  depth: deriving it from `-d/2 + 4` tied how far the horizon reads to how
+  large the ground plane happened to be, and pulling the ridge inside the fog
+  band then meant shrinking the ground until its scatter collapsed to a single
+  ring. `ground()` throws if `ridge` is set and `ridgeDist` is absent, because
+  a silent fallback is exactly what produced the dead ridges in the first
+  place. Edge dissolve became a per-edge declaration on a smoothstep curve:
+  left and right dissolve at 0.18, top and bottom hold. Nothing had published,
+  so the whole library was re-rendered rather than left split across two
+  versions.
 - **1.1** Dot changed from `#17171A` to `#131312`. The old value was cool where
   the interface ink is warm, so an image's black did not match the type's black
   on the same page. No brief had published, so the whole library of 15
@@ -71,6 +95,26 @@ output size.
 Four renderings share the constants: **dot** (the default), **hatch** (better in
 print at small sizes), **contour** (marching squares, for anything geographic or
 surface-like), and **ascii** (loudest, use sparingly, outputs `.txt`).
+
+### Edge dissolve
+
+Each role declares which of its four sides thin out and by how much, as a
+fraction of the frame. `EDGE_ROLE` overrides a role default for one
+`<subject>:<role>` pair and is kept sparse for the same reason `CAM_ROLE` is: a
+table that grows past a handful of entries means the role defaults are wrong.
+It ships empty. Every role currently uses its own default, no subject has
+needed an exception, and a reader should be able to tell that the emptiness is
+the discipline rather than a table nobody has gotten to yet.
+
+| Side   | Default | Why                                               |
+| ------ | ------- | -------------------------------------------------- |
+| Left   | 0.18    | The scene is genuinely cut off mid-subject here    |
+| Right  | 0.18    | The same                                           |
+| Top    | 0.00    | Empty field. There is nothing there to dissolve    |
+| Bottom | 0.00    | Fading the ground makes the scene float            |
+
+The falloff is smoothstep, not linear. A linear ramp begins abruptly at the
+fraction boundary and that onset reads as an edge of its own.
 
 ## Production
 
@@ -114,10 +158,11 @@ single-camera.
 Only step one is subject-specific, which is why a new industry is an afternoon
 rather than a commission.
 
-1. **Model.** Add a branch to `buildScene()` in `dot-engine.js`. Primitives only.
-   Two materials: `mat` for lighter mass, `dark` for structure. The `rnd()`
-   helper is seeded per subject, so scenes are deterministic and re-render
-   identically.
+1. **Model.** Add a branch to `buildScene()` in `dot-engine.js`. Primitives only,
+   drawn from the five-step `TONE` scale: `TONE[0]` for anything meant to read
+   as distant, `TONE[4]` for the structure the eye should land on first. The
+   `rnd()` helper is seeded per subject, so scenes are deterministic and
+   re-render identically.
 2. **Frame.** Add an entry to `CAM`. Frame wide. Add a `CAM_ROLE` entry for
    `hero` if the wide crop needs its own framing, which it usually does.
 3. **Build.** `python scripts/build_dot_pages.py`
@@ -135,6 +180,37 @@ screen. The usual causes, in order of frequency:
 - A ground plane is filling a third of the frame with flat mid-grey.
 - Structure and mass are the same tone, so nothing separates.
 - The subject is too small in frame and the screen has eaten the detail.
+
+**Data centre is a known exception.** Judged by three readers, it does not
+pass the recognition test at card size. Four scene variants were tried,
+including pair-grouped rows at two elevations and a dedicated floor plate, and
+the camera was reframed twice. Rebuilding the scene into depth-axis corridors
+with a back wall fixed the corrugated dune-field failure the earlier layouts
+had, but the subject still reads as rows of blocks rather than unmistakably as
+a data centre. Rack-unit texture is unrecoverable at a 12px halftone pitch
+displayed at roughly 200px, which makes this a limit of the screen rather than
+a defect in the scene. It stands as the best version tried, not as solved.
+
+### The depth test
+
+Recognition asks whether the subject reads. Depth asks whether it occupies
+space. Both have to pass, and a scene can pass the first while failing the
+second, which is what every render did before 1.2.
+
+At full size: can three distinct depth planes be named, and does far geometry
+sit lighter than near geometry?
+
+The levers, in the order to reach for them: `ground()`'s `amp` and `ridge` for a
+scene with no horizon, `scatter` for an empty middle plane, and the camera for a
+scene where nothing is near. Fog is not a lever. It is derived from camera
+distance, so a subject that seems to need its own fog has the wrong camera.
+
+**Known case: port.** The hero carries a ridge at `ridgeDist` 22 and a scatter
+of 22, which gives it a horizon and a middle plane. The far plane still does
+not read against the crane row: `buildScene('port')` draws exactly four
+identical cranes from the same two tones, so there is no size or tone gradient
+among them to signal that they recede. Two depth planes pass at the hero crop,
+not three.
 
 ## The screen as a surface treatment
 
@@ -213,6 +289,14 @@ Whatever the source, the caption names the subject and says *rendered*.
    it at that size, where role-specific pitch keeps the perceived dot size
    right. Delivery format is WebP lossless at native size, derived by
    `scripts/webp_derive.py`.
+8. **No component clips a render.** The render's own per-edge dissolve is the
+   only edge treatment the imagery gets, and a container that clips cuts it off
+   before a reader sees it. `HomeHero` did exactly this, with `overflow: hidden`
+   and the image pushed to `right: -10%`, and no amount of dissolve inside the
+   render survived it. `e2e/dot-imagery.spec.ts` holds the line, because the
+   next layout problem is very likely to be solved the same way. This does not
+   cover `BriefHero`, whose surface is `dotField()` from
+   `src/lib/charts/halftone.ts` rather than an imagery-engine render.
 
 The homepage carries seven images, one hero and the six-card coverage strip.
 That is a considered exception to rule 1, resolved on weight rather than count:
