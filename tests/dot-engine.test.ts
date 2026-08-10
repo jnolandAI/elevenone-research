@@ -187,6 +187,31 @@ describe('ground forms', () => {
   });
 });
 
+// The ridge used to derive its distance from -d/2 + 4, tying how far the
+// horizon sits to how large the ground plane was, and a silent fallback there
+// is exactly what let five subjects' ridges land past fogFar and render as
+// pure white with nobody noticing. ridgeDist replaces the derivation and is
+// required whenever ridge is set, with no fallback: ground() throws instead.
+// Passing plane: false and scatter: 0 (or leaving scatter at its 0 default)
+// means these calls never reach a THREE.* constructor, so the throw path is
+// exercised with no THREE stub at all — the throw is the first statement
+// inside the `if (o.ridge)` branch, ahead of any geometry construction.
+describe("ground() requires ridgeDist whenever ridge is set", () => {
+  it('throws when ridge is non-zero and ridgeDist is absent', () => {
+    const E = loadEngine();
+    expect(() =>
+      E.ground({}, [], () => 0.5, { plane: false, ridge: 5.5 }),
+    ).toThrow(/ridgeDist/);
+  });
+
+  it('does not throw for ridge: 0 even without ridgeDist, as robotics relies on', () => {
+    const E = loadEngine();
+    expect(() =>
+      E.ground({}, [], () => 0.5, { plane: false, scatter: 0, ridge: 0 }),
+    ).not.toThrow();
+  });
+});
+
 // A prior review flagged flat + 6 + t*(d/2 - flat - 8) as an unguarded edge
 // case: once d is cut small enough relative to flat, the span goes negative,
 // the near/far gradient inverts, and scatter boxes land inside flat, the one
@@ -239,6 +264,33 @@ describe('scatterRadius', () => {
         expect(r).toBeGreaterThanOrEqual(prev);
         prev = r;
       }
+    }
+  });
+
+  // Task 5 shrank d on five subjects to pull their ridges inside the fog band,
+  // which pushed d/2 below flat + 8 on four of them and collapsed their scatter
+  // annulus to a ring at flat+6 (the two collapse cases above). ridgeDist now
+  // carries that job instead, so Task 7b restores every subject's w/d to Task
+  // 5's original, larger values. These cases prove the span is a real range
+  // again — t=0 and t=1 must land at different radii, not the same one — at
+  // the actual flat/d each subject ships with post-restore.
+  it('is non-degenerate again at the restored w/d values, unlike the shrunk ones above', () => {
+    const E = loadEngine();
+    // [flat, d, expected span = d/2 - flat - 8]
+    const restored: Array<[number, number, number]> = [
+      [44, 120, 8],   // port
+      [30, 110, 17],  // datacenter
+      [26, 130, 31],  // wind (flat defaults to 26 — wind passes no flat)
+      [12, 150, 55],  // grid
+      [36, 120, 16],  // urban
+    ];
+    for (const [flat, d, span] of restored) {
+      const near = E.scatterRadius(flat, d, 0);
+      const far = E.scatterRadius(flat, d, 1);
+      expect(near).toBeCloseTo(flat + 6);
+      expect(far).toBeCloseTo(flat + 6 + span);
+      // non-degenerate: t=0 and t=1 must differ, i.e. a real range, not a ring
+      expect(far).toBeGreaterThan(near);
     }
   });
 });

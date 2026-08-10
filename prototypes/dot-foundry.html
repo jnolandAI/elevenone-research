@@ -53276,7 +53276,7 @@ const SUBJECTS = [
    wider role naturally shows more landscape rather than cropping the subject */
 const CAM = {
   port:       [6, 40, 96, 0, 7, 2],
-  datacenter: [26, 20, 34, 0, 4, 0],
+  datacenter: [34, 25, 44, 0, 4, 0],
   wind:       [0, 26, 62, 0, 8, 0],
   robotics:   [4, 26, 74, 0, 9, 0],
   grid:       [0, 20, 64, 0, 10, 0],
@@ -53292,7 +53292,7 @@ const CAM_ROLE = {
   'wind:hero':       [0, 17, 48, 0, 9, 0],
   'grid:hero':       [0, 15, 52, 0, 11, 0],
   'robotics:hero':   [4, 17, 56, 0, 10, 0],
-  'datacenter:hero': [22, 15, 28, 0, 4, 0],
+  'datacenter:hero': [29, 18, 36, 0, 4, 0],
   'port:cover':      [8, 30, 78, 0, 9, 4],
   'urban:cover':     [0, 30, 60, 0, 7, 0],
 };
@@ -53345,9 +53345,23 @@ function ground(g, TONE, rnd, o){
   }
 
   if (o.ridge){
+    /* far used to derive from -o.d/2 + 4, which tied how distant the horizon
+       reads to how large the ground plane happened to be. That coupling is
+       what let five subjects' ridges drift past fogFar and render as pure
+       white: shrinking d to save one subject's ridge silently broke another's
+       scatter span. ridgeDist is solved per subject against that subject's
+       own camera and fog band, so it is required outright — a fallback here
+       is exactly the silent behaviour that produced the dead ridges. */
+    if (o.ridgeDist == null){
+      throw new Error(
+        'ground(): ridge is set (' + o.ridge + ') but ridgeDist is missing. ' +
+        'Solve ridgeDist against this subject\'s camera and fog band ' +
+        '(target fog fraction roughly 0.55–0.70) rather than deriving it from d.'
+      );
+    }
     /* The far horizon, in the lightest tone so it reads as distance rather than
        as a second subject. Fog thins it further at render time. */
-    const far = -o.d/2 + 4;
+    const far = -o.ridgeDist;
     for (let i=0;i<26;i++){
       const w = o.w/26;
       const h = o.ridge * (0.45 + rnd()*0.55);
@@ -53411,7 +53425,7 @@ function buildScene(id){
     }
     for (let i=0;i<18;i++) for (let k=0;k<3;k++)
       box(2.6,1.25,1.4, -24+i*2.6, 5.6+k*1.32, 24+(rnd()-.5)*2.6, rnd()>.5?TONE[2]:TONE[1]);
-    ground(g, TONE, rnd, { w: 119, d: 95, amp: 1.0, flat: 44, ridge: 5.5, scatter: 22 });
+    ground(g, TONE, rnd, { w: 150, d: 120, amp: 1.0, flat: 44, ridge: 5.5, ridgeDist: 22, scatter: 22 });
   }
 
   if (id === 'datacenter'){
@@ -53420,7 +53434,7 @@ function buildScene(id){
       box(1.9,6.4,2.0, x, 3.2, z, rnd()>.7?TONE[2]:TONE[1]);
       box(1.9,.28,2.0, x, 6.5, z, TONE[4]);
     }
-    ground(g, TONE, rnd, { w: 60, d: 55, amp: 0.8, flat: 30, ridge: 4.0, scatter: 16 });
+    ground(g, TONE, rnd, { w: 120, d: 110, amp: 0.8, flat: 30, ridge: 4.0, ridgeDist: 24, scatter: 16 });
   }
 
   if (id === 'wind'){
@@ -53446,7 +53460,7 @@ function buildScene(id){
         bl.translateY(4.75); g.add(bl);
       }
     }
-    ground(g, TONE, rnd, { w: 59, d: 48, plane: false, ridge: 6.0, scatter: 20 });
+    ground(g, TONE, rnd, { w: 160, d: 130, plane: false, ridge: 6.0, ridgeDist: 21, scatter: 20 });
   }
 
   if (id === 'robotics'){
@@ -53484,7 +53498,7 @@ function buildScene(id){
   }
 
   if (id === 'grid'){
-    ground(g, TONE, rnd, { w: 63, d: 50, amp: 1.2, flat: 12, ridge: 7.0, scatter: 30 });
+    ground(g, TONE, rnd, { w: 190, d: 150, amp: 1.2, flat: 12, ridge: 7.0, ridgeDist: 21, scatter: 30 });
     const tops = [];
     for (let i=0;i<5;i++){
       const x = -34 + i*17, base = 0;
@@ -53526,7 +53540,7 @@ function buildScene(id){
       const tone = cz < -8 ? 0 : cz < 2 ? 1 : (rnd() > .6 ? 3 : 2);
       box(2.7,h,2.7, cx, h/2, cz, TONE[tone]);
     }
-    ground(g, TONE, rnd, { w: 62, d: 53, amp: 0.9, flat: 36, ridge: 5.0, scatter: 18 });
+    ground(g, TONE, rnd, { w: 140, d: 120, amp: 0.9, flat: 36, ridge: 5.0, ridgeDist: 23, scatter: 18 });
   }
 
   s.add(g);
