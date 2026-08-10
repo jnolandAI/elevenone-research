@@ -8,15 +8,34 @@ import { test, expect } from '@playwright/test';
  *
  * Scoped to /assets/dot/ deliberately. BriefHero also clips, but what it clips
  * is dotField() output from src/lib/charts/halftone.ts, which is the brief's own
- * dataset drawn as halftone rather than an imagery-engine render.
+ * dataset drawn as halftone rather than an imagery-engine render. That output
+ * goes through set:html as an inline element, never an <img>, so the selector
+ * below cannot match it regardless of BriefHero's own overflow: hidden.
+ *
+ * Each page below carries an exact expected count rather than a bare presence
+ * check. A page with zero renders is a recorded expectation, not a silent
+ * skip: without the count, a selector that matches nothing lets the clip loop
+ * pass vacuously, which is exactly what happened on /briefs before this file
+ * asserted a count for it.
  */
-const PAGES = ['/', '/briefs'];
+const PAGES: { path: string; count: number }[] = [
+  // The hero from HomeHero.astro (1) plus the six subject cards from
+  // Coverage.astro (port, datacenter, wind, robotics, grid, urban).
+  { path: '/', count: 7 },
+  // The briefs index lists brief metadata only; it renders no dotAsset image.
+  { path: '/briefs', count: 0 },
+  // The brief detail page is where BriefHero, Figure and DataFigure live, and
+  // the plausible place a future component starts calling dotAsset. BriefHero
+  // clips deliberately, but it renders dotField() through set:html as inline
+  // markup rather than an <img>, so it cannot trip this selector either way.
+  { path: '/briefs/001-gross-margin', count: 0 },
+];
 
-for (const path of PAGES) {
-  test(`no dot render is clipped by an ancestor on ${path}`, async ({ page }) => {
+for (const { path, count } of PAGES) {
+  test(`${path} carries exactly ${count} dot render(s), none clipped by an ancestor`, async ({ page }) => {
     await page.goto(path);
     const renders = page.locator('img[src^="/assets/dot/"]');
-    const count = await renders.count();
+    await expect(renders).toHaveCount(count);
 
     for (let i = 0; i < count; i++) {
       const img = renders.nth(i);
@@ -40,8 +59,3 @@ for (const path of PAGES) {
     }
   });
 }
-
-test('the homepage actually carries a render, so the check above is not vacuous', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('img[src^="/assets/dot/"]').first()).toBeVisible();
-});
