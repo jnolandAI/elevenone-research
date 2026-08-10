@@ -138,6 +138,7 @@ function ground(g, TONE, rnd, o){
       const h = o.ridge * (0.45 + rnd()*0.55);
       const m = new THREE.Mesh(new THREE.BoxGeometry(w*1.35, h, 6), TONE[0]);
       m.position.set(-o.w/2 + i*w + w/2, h/2 - 1, far + (rnd()-.5)*5);
+      m.castShadow = m.receiveShadow = true;
       g.add(m);
     }
   }
@@ -148,6 +149,7 @@ function ground(g, TONE, rnd, o){
     const h = 1.2 + rnd()*3.4;
     const m = new THREE.Mesh(new THREE.BoxGeometry(1.6+rnd()*2.2, h, 1.6+rnd()*2.2), TONE[0]);
     m.position.set(Math.cos(a)*r, h/2, Math.sin(a)*r - o.d*0.12);
+    m.castShadow = m.receiveShadow = true;
     g.add(m);
   }
 }
@@ -222,7 +224,6 @@ function buildScene(id){
     }
     terr.computeVertexNormals();
     const t = new THREE.Mesh(terr, mat); t.receiveShadow = true; g.add(t);
-    ground(g, TONE, rnd, { w: 160, d: 130, plane: false, ridge: 6.0, scatter: 20 });
     for (let i=0;i<14;i++){
       const x = -34 + (i%5)*17 + (rnd()-.5)*6, z = -22 + Math.floor(i/5)*16 + (rnd()-.5)*6;
       const yb = Math.sin(x*.13)*1.5 + Math.cos(z*.16)*1.2 + Math.sin((x+z)*.07)*1.8;
@@ -237,6 +238,7 @@ function buildScene(id){
         bl.translateY(4.75); g.add(bl);
       }
     }
+    ground(g, TONE, rnd, { w: 160, d: 130, plane: false, ridge: 6.0, scatter: 20 });
   }
 
   if (id === 'robotics'){
