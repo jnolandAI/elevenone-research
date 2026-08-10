@@ -123,3 +123,27 @@ describe('fadeFor resolves in the documented order', () => {
     expect(Object.keys(E.EDGE_ROLE)).toEqual([]);
   });
 });
+
+describe('the tone scale', () => {
+  it('runs five steps from lightest to darkest', () => {
+    const E = loadEngine();
+    expect(E.TONES).toEqual(['#D6D6D4', '#B8B8B6', '#9C9C9A', '#7A7A78', '#565654']);
+  });
+
+  // The two materials this replaces were #B8B8B6 and #8A8A88: 46 levels apart
+  // out of 255. That gap is why every render read flat, so the span widening is
+  // the actual deliverable and is worth asserting rather than eyeballing.
+  it('spans at least 120 levels, against the 46 it replaces', () => {
+    const E = loadEngine();
+    const lum = (h: string) => parseInt(h.slice(1, 3), 16);
+    expect(lum(E.TONES[0]) - lum(E.TONES[4])).toBeGreaterThanOrEqual(120);
+  });
+
+  it('keeps every step neutral, since rule 5 is greyscale absolutely', () => {
+    const E = loadEngine();
+    for (const h of E.TONES) {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+      expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeLessThanOrEqual(4);
+    }
+  });
+});

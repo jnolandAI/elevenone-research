@@ -90,11 +90,28 @@ const CAM_ROLE = {
 };
 const camFor = (id, role) => CAM_ROLE[id + ':' + role] || CAM[id];
 
+/* Five steps, lightest to darkest. The two materials this replaces sat 46
+   levels apart out of 255, which is why a tower leg, a tower body and the
+   conductor it carries all reached the screen at one of two densities. Widening
+   the span to 128 is the change that makes depth possible at all; fog and
+   ground forms then have something to work with. */
+const TONES = ['#D6D6D4', '#B8B8B6', '#9C9C9A', '#7A7A78', '#565654'];
+
 function buildScene(id){
   const s = new THREE.Scene();
   s.background = new THREE.Color(0xffffff);
-  const mat  = new THREE.MeshStandardMaterial({ color:0xB8B8B6, roughness:.78, metalness:.04 });
-  const dark = new THREE.MeshStandardMaterial({ color:0x8A8A88, roughness:.85, metalness:.02 });
+  const TONE = TONES.map((hex, i) => new THREE.MeshStandardMaterial({
+    color: parseInt(hex.slice(1), 16),
+    roughness: 0.78 + i * 0.02,
+    metalness: 0.04 - i * 0.005,
+  }));
+  /* Aliases so scenes migrate one at a time rather than in one commit. Both are
+     deleted once the last subject is migrated: two names for one material is
+     how a system becomes a folder. Note that `dark` is TONE[3] at #7A7A78,
+     darker than the #8A8A88 it replaces, so unmigrated scenes darken slightly
+     the moment this lands. That is intended, not a migration bug. */
+  const mat  = TONE[1];
+  const dark = TONE[3];
   const rnd = (seed => () => (seed = (seed*1103515245+12345)&0x7fffffff) / 0x7fffffff)(id.length*977 + 13);
   const g = new THREE.Group();
   const box = (w,h,d2,x,y,z,m) => { const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d2), m||mat);
@@ -441,7 +458,7 @@ function renderRole(renderer, stage, id, role, mode, overrides){
 }
 
 global.DotFoundry = {
-  CONST, ROLES, MODES, SUBJECTS, CAM, EDGE_ROLE,
+  CONST, ROLES, MODES, SUBJECTS, CAM, EDGE_ROLE, TONES,
   buildScene, renderSource, luminanceField, sample, boxAvg, edge, fadeSet, screen, asciiOf,
   renderRole, camFor, CAM_ROLE, fadeFor,
 };
