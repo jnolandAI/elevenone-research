@@ -41,11 +41,16 @@ describe('dot asset resolution', () => {
   // this test with a synthetic entry that has everything except webp, so
   // the branch that fires when someone renders a new subject and forgets to
   // run webp_derive.py actually gets exercised, not just written.
+  //
+  // engine_version is set here (Task 7) so this single-entry stub passes
+  // manifestEngineVersion()'s own checks and isolates the branch this test
+  // is actually about; without it, the missing-engine_version throw would
+  // fire first and this test would stop exercising the webp branch at all.
   it('throws when a manifest entry exists but has no derived webp', async () => {
     vi.resetModules();
     vi.doMock('../public/assets/dot/manifest.json', () => ({
       default: {
-        'urban-figure-dot.png': { w: 1440, h: 920, role: 'figure', subject: 'urban' },
+        'urban-figure-dot.png': { w: 1440, h: 920, role: 'figure', subject: 'urban', engine_version: '1.1' },
       },
     }));
     try {
@@ -82,5 +87,39 @@ describe('the manifest is not split across engine versions', () => {
     );
     const declared = /version:\s*'([^']+)'/.exec(src)?.[1];
     expect(manifestEngineVersion()).toBe(declared);
+  });
+});
+
+// These exercise the throw paths directly, against hand-built manifests
+// passed to the optional parameter, since the real shipped manifest is
+// already consistent and never fires them.
+describe('manifestEngineVersion() against constructed manifests', () => {
+  it('throws naming both versions when the library is split', () => {
+    const split = {
+      'a-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'a', engine_version: '1.1' },
+      'b-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'b', engine_version: '1.2' },
+    };
+    expect(() => manifestEngineVersion(split)).toThrow(/1\.1/);
+    expect(() => manifestEngineVersion(split)).toThrow(/1\.2/);
+  });
+
+  it('throws when every entry is missing engine_version', () => {
+    const allMissing = {
+      'a-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'a' },
+      'b-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'b' },
+    };
+    expect(() => manifestEngineVersion(allMissing)).toThrow(/engine_version/i);
+  });
+
+  it('throws when only some entries are missing engine_version', () => {
+    const partlyMissing = {
+      'a-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'a', engine_version: '1.1' },
+      'b-hero-dot.png': { w: 1, h: 1, role: 'hero', subject: 'b' },
+    };
+    expect(() => manifestEngineVersion(partlyMissing)).toThrow(/engine_version/i);
+  });
+
+  it('throws on an empty manifest', () => {
+    expect(() => manifestEngineVersion({})).toThrow(/empty/i);
   });
 });

@@ -17,22 +17,41 @@ export interface DotAsset { src: string; width: number; height: number; alt: str
 /**
  * The single engine version the whole library was rendered at.
  *
- * Throws when assets disagree. `docs/dot-imagery.md` rule 6 permits a version
- * bump but not a library split across two of them, and a half-finished
- * re-render is invisible when images are looked at one at a time.
+ * Throws when assets disagree, or when one is missing the field outright.
+ * `docs/dot-imagery.md` rule 6 says published work keeps the look it shipped
+ * with when the version bumps; a library split across two versions, or an
+ * asset that silently lost the field, is this function's reading of what
+ * that rule requires it to catch, since a half-finished re-render is
+ * invisible when images are looked at one at a time.
+ *
+ * Takes the manifest as an optional parameter, defaulting to the one the
+ * site ships, so tests can exercise the throw paths against a hand-built
+ * manifest instead of only the real, already-consistent one.
  */
-export function manifestEngineVersion(): string {
-  const seen = new Map<string, string[]>();
-  for (const [name, entry] of Object.entries(manifest as Record<string, Entry>)) {
-    const v = entry.engine_version ?? 'missing';
-    seen.set(v, [...(seen.get(v) ?? []), name]);
+export function manifestEngineVersion(
+  entries: Record<string, Entry> = manifest as Record<string, Entry>,
+): string {
+  const names = Object.keys(entries);
+  if (names.length === 0) {
+    throw new Error(
+      'public/assets/dot/manifest.json is empty. Render the library: python scripts/render_dot.py --all --role <role>, once per role.',
+    );
   }
-  if (seen.size === 0) {
-    throw new Error('public/assets/dot/manifest.json is empty. Run: python scripts/render_dot.py --all --role hero');
+  const missing = names.filter((name) => !entries[name].engine_version);
+  if (missing.length > 0) {
+    throw new Error(
+      `${missing.length} of ${names.length} manifest entries have no engine_version, e.g. ${missing[0]}. ` +
+        'Re-render to record it: python scripts/render_dot.py --all --role <role>',
+    );
+  }
+  const seen = new Map<string, string[]>();
+  for (const name of names) {
+    const v = entries[name].engine_version!;
+    seen.set(v, [...(seen.get(v) ?? []), name]);
   }
   if (seen.size > 1) {
     const split = [...seen.entries()]
-      .map(([v, names]) => `  ${v}: ${names.length} asset(s), e.g. ${names[0]}`)
+      .map(([v, group]) => `  ${v}: ${group.length} asset(s), e.g. ${group[0]}`)
       .join('\n');
     throw new Error(
       `The dot library is split across engine versions:\n${split}\n` +
