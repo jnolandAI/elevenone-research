@@ -50,8 +50,11 @@
   .edges{display:flex;gap:6px}
   .edges label{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--g60);
     margin:0;font-family:'Martian Mono',monospace;font-weight:300}
-  .edges input{width:52px;border:1px solid var(--g30);border-radius:8px;padding:5px 6px;
-    font-family:'Martian Mono',monospace;font-weight:300;font-size:11px;color:var(--ink);background:#fff}
+  .edges input{width:56px;border:1px solid var(--g30);border-radius:8px;padding:5px 7px;
+    font-family:'Martian Mono',monospace;font-weight:300;font-size:11px;color:var(--ink);background:#fff;
+    -moz-appearance:textfield}
+  .edges input::-webkit-outer-spin-button,
+  .edges input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .modes{display:flex;gap:7px;flex-wrap:wrap}
   .modes button{border:none;border-radius:var(--pill);padding:8px 15px;font-size:12.5px;
     font-family:inherit;cursor:pointer;background:var(--g20);color:var(--g80);transition:.2s}
