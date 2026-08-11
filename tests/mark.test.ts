@@ -109,3 +109,29 @@ describe('the micro cut', () => {
     expect(circles(svg('mark-small-inverse.svg'))).toBe(23);
   });
 });
+
+describe('the icon family', () => {
+  it('carries a full-bleed ground, because an icon slot is an opaque square', () => {
+    const icon = svg('icon.svg');
+    // one rect, reaching the frame: nothing is drawn around the mark, the file
+    // simply has a ground. The browser or OS applies its own rounding.
+    expect((icon.match(/<rect/g) ?? []).length).toBe(1);
+    expect(icon).toMatch(/<rect width="100" height="100" fill="#131312"\/>/);
+  });
+
+  it('inverts its dots so the ground is the ink, not a third value', () => {
+    expect(svg('icon.svg')).toContain('#FAFAF9');
+  });
+
+  it('uses the micro cut, which is what a 16px tab strip gets', () => {
+    expect(circles(svg('icon.svg'))).toBe(circles(svg('mark-micro-inverse.svg')));
+  });
+
+  it('is never served onto a page by the component', async () => {
+    // the page family and the icon family must not share a path: rule 1 holds
+    // on a page and the ground is scoped to icon files
+    for (const size of [16, 19, 20, 21, 32, 33, 64]) {
+      expect(await render({ size })).not.toContain('<rect');
+    }
+  });
+});

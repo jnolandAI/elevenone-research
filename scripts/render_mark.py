@@ -222,7 +222,7 @@ number is outside the bar. The bar is a filter, not the decision.</p>
     print(f"  {SHEET.relative_to(SHEET.parents[1])}  {len(CANDIDATES)} candidates")
 
 
-def svg(cut: str, ink: str = INK) -> str:
+def svg(cut: str, ink: str = INK, ground: str | None = None) -> str:
     c = CUTS[cut]
     inverse = ink == INK_INVERSE
     rmax = c.get("rmax_inv", c["rmax"]) if inverse else c["rmax"]
@@ -231,25 +231,37 @@ def svg(cut: str, ink: str = INK) -> str:
         f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{r:.2f}"/>'
         for x, y, r in dots(c["pitch"], rmax, **over)
     )
+    # full bleed to the file's edge. Nothing is drawn around the mark and there
+    # is no inset shape it sits inside, so rule 1 survives: the file has a
+    # ground, the mark is not on a plate.
+    plate = f'<rect width="{S:.0f}" height="{S:.0f}" fill="{ground}"/>' if ground else ''
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {S:.0f} {S:.0f}" '
         f'role="img" aria-label="Eleven One Research">'
         f'<title>Eleven One Research</title>'
-        f'<g fill="{ink}">{body}</g></svg>'
+        f'{plate}<g fill="{ink}">{body}</g></svg>'
     )
 
 
+# name, cut, ink, ground. A ground is an icon-file property and never a page one.
 FILES = [
-    ("mark.svg",               "display", INK),
-    ("mark-small.svg",         "small",   INK),
-    ("mark-micro.svg",         "micro",   INK),
-    ("mark-inverse.svg",       "display", INK_INVERSE),
-    ("mark-small-inverse.svg", "small",   INK_INVERSE),
-    ("mark-micro-inverse.svg", "micro",   INK_INVERSE),
+    ("mark.svg",               "display", INK,         None),
+    ("mark-small.svg",         "small",   INK,         None),
+    ("mark-micro.svg",         "micro",   INK,         None),
+    ("mark-inverse.svg",       "display", INK_INVERSE, None),
+    ("mark-small-inverse.svg", "small",   INK_INVERSE, None),
+    ("mark-micro-inverse.svg", "micro",   INK_INVERSE, None),
+    ("icon.svg",               "micro",   INK_INVERSE, INK),
 ]
 
-RASTER = [("favicon-16.png", "small", 16), ("favicon-32.png", "small", 32),
-          ("icon-180.png", "small", 180), ("icon-512.png", "display", 512)]
+# Raster icons are the icon family: light dots on an ink ground, full bleed.
+# icon-180 was drawn from the small cut, which the doc reserves for below 25px:
+# 23 dots at 180px was the sparse-specks problem at large size, on the home
+# screen and in the store.
+RASTER = [("favicon-16.png", "micro",   16),
+          ("favicon-32.png", "small",   32),
+          ("icon-180.png",   "display", 180),
+          ("icon-512.png",   "display", 512)]
 
 
 def rasterise(verbose: bool = True) -> bool:
@@ -265,10 +277,11 @@ def rasterise(verbose: bool = True) -> bool:
             pg = b.new_page(viewport={"width": px, "height": px},
                             device_scale_factor=1)
             pg.set_content(
-                f'<body style="margin:0;background:transparent">'
-                f'<div style="width:{px}px;height:{px}px">{svg(cut)}</div></body>')
+                f'<body style="margin:0;background:{INK}">'
+                f'<div style="width:{px}px;height:{px}px">'
+                f'{svg(cut, INK_INVERSE, INK)}</div></body>')
             pg.wait_for_timeout(80)
-            pg.screenshot(path=str(OUT / name), omit_background=True)
+            pg.screenshot(path=str(OUT / name))
             pg.close()
             if verbose:
                 print(f"  {name:18s} {px}x{px}")
@@ -290,7 +303,7 @@ def main() -> int:
         write_sheet()
         return 0
 
-    built = {name: svg(cut, ink) for name, cut, ink in FILES}
+    built = {name: svg(cut, ink, ground) for name, cut, ink, ground in FILES}
 
     if args.check:
         bad = []
@@ -320,6 +333,7 @@ def main() -> int:
         "angle": ANGLE, "jitter": JITTER, "gamma": GAMMA, "edge": EDGE,
         "ink": INK, "ink_inverse": INK_INVERSE,
         "cuts": CUTS,
+        "raster_ground": INK,
         "files": sorted(list(built) + [n for n, _, _ in RASTER]),
     }, indent=2), encoding="utf-8")
     print(f"  manifest.json")

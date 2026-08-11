@@ -27,11 +27,13 @@
       "edge": 0.06
     }
   },
+  "raster_ground": "#131312",
   "files": [
     "favicon-16.png",
     "favicon-32.png",
     "icon-180.png",
     "icon-512.png",
+    "icon.svg",
     "mark-inverse.svg",
     "mark-micro-inverse.svg",
     "mark-micro.svg",
