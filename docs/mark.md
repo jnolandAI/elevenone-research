@@ -56,9 +56,10 @@ mark that quietly changes.
 | Ink           | `#131312` | The interface ink exactly                       |
 | Inverse       | `#FAFAF9` | On dark grounds only                            |
 
-These four are what `display` and `small` draw from unmodified. `micro`
-carries its own values for all four except screen angle, for the reason
-given below.
+Screen angle, jitter, gamma and edge dissolve are what `display` and `small`
+draw from unmodified. `micro` carries its own values for all four except
+screen angle, for the reason given below. Ink and inverse are global under
+rule 4 and are never per-cut.
 
 ## Version history
 
@@ -69,7 +70,7 @@ given below.
   count combined with three settings that each removed dots at the wrong
   moment: jitter scattered the open end into what read as dirt, gamma pulled
   mid-field dots below `RMIN` so they were never drawn, and the edge dissolve
-  removed an outer ring of a drawing five dots across. `micro` is a coarser
+  removed an outer ring of a drawing four dots across. `micro` is a coarser
   drawing of the same field with its own settings for all three. The icon
   family also gained a full-bleed ink ground, and `icon-180.png` moved off
   the small cut, which the doc had always reserved for below 25px. The
