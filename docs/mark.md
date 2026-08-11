@@ -80,9 +80,9 @@ Global, true of every cut:
 | Ink           | `#131312` | The interface ink exactly                            |
 | Inverse       | `#FAFAF9` | On dark grounds only                                 |
 
-Per cut. `display` and `small` name neither, so both take the module default
-shown here, which is what keeps them byte-identical to 1.0. `micro` names all
-five:
+Per cut, and this is where the three cuts differ. `display` and `small` name
+none of these five, so both take the module default shown in the first column,
+which is what keeps them byte-identical to 1.0. `micro` names all five:
 
 | Parameter        | `display`, `small` | `micro` | Controls                                        |
 | ---------------- | ------------------ | ------- | ----------------------------------------------- |
@@ -195,7 +195,7 @@ it is not deleted: `mark-small.svg` and `mark-small-inverse.svg` are two of
 the four files a checksum test pins, and deleting the cut would delete the
 baseline the display cut's own guard is measured beside. It is a preserved
 drawing rather than a live one. If a consumer ever lands in that band, read
-the note above the cuts table first: the 20-to-21 boundary hands it a worse
+the note under the cuts table first: the 20-to-21 boundary hands it a worse
 drawing than the size below.
 
 The display floor moved from 25px to 33px at 1.1. Nothing rendered the mark
