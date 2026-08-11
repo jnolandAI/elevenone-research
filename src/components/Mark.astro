@@ -22,10 +22,11 @@ if (size < 16) {
   throw new Error(`Mark: minimum size is 16px, got ${size}px. See docs/mark.md.`);
 }
 
-// Two cuts, not one drawing scaled. A halftone changes line screen for
+// Three cuts, not one drawing scaled. A halftone changes line screen for
 // newsprint; a mark changes it for a favicon. Scaling the display cut down to
-// 16px turns 112 dots into mud.
-const cut = size >= 25 ? '' : '-small';
+// 16px turns 112 dots into mud, and the small cut's 23 dots turn to specks
+// below 21px, which is exactly where Nav and Footer sit.
+const cut = size >= 33 ? '' : size >= 21 ? '-small' : '-micro';
 const tone = inverse ? '-inverse' : '';
 // Resolved against this file, not the working directory. A cwd-relative path
 // works only while the build and the tests are both launched from the repo

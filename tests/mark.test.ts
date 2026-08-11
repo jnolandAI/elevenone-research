@@ -12,15 +12,28 @@ const svg = (name: string) => readFileSync(`public/assets/mark/${name}`, 'utf8')
 const circles = (s: string) => (s.match(/<circle/g) ?? []).length;
 
 describe('the mark', () => {
-  it('uses the small cut below 25px', async () => {
-    const html = await render({ size: 19 });
-    // the small cut is 23 dots; the display cut is 112
-    expect((html.match(/<circle/g) ?? []).length).toBe(23);
+  it('uses the micro cut from 16 to 20px, where the nav and the footer sit', async () => {
+    // Nav.astro renders at 19 and Footer.astro at 17: the two places a reader
+    // actually meets the mark, and the band the small cut was failing in
+    const micro = (readFileSync('public/assets/mark/mark-micro.svg', 'utf8')
+      .match(/<circle/g) ?? []).length;
+    expect((await render({ size: 16 })).match(/<circle/g)).toHaveLength(micro);
+    expect((await render({ size: 19 })).match(/<circle/g)).toHaveLength(micro);
+    expect((await render({ size: 20 })).match(/<circle/g)).toHaveLength(micro);
   });
 
-  it('uses the display cut at 25px and above', async () => {
-    const html = await render({ size: 25 });
-    expect((html.match(/<circle/g) ?? []).length).toBe(112);
+  it('uses the small cut from 21 to 32px', async () => {
+    for (const size of [21, 32]) {
+      expect((await render({ size })).match(/<circle/g)).toHaveLength(23);
+    }
+  });
+
+  it('uses the display cut at 33px and above', async () => {
+    // the floor moved from 25 to 33: 112 dots need that much room before the
+    // drawing muddies, and nothing rendered between 25 and 32 anyway
+    for (const size of [33, 64]) {
+      expect((await render({ size })).match(/<circle/g)).toHaveLength(112);
+    }
   });
 
   it('refuses to render below 16px, where the scatter is lost', async () => {

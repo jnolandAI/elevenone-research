@@ -17,8 +17,11 @@ describe('asset layout', () => {
   it('serves the mark, the dot renders and the datasets from public/assets', () => {
     expect(existsSync('public/assets/mark/mark.svg')).toBe(true);
     expect(existsSync('public/assets/mark/mark-small.svg')).toBe(true);
+    expect(existsSync('public/assets/mark/mark-micro.svg')).toBe(true);
     expect(existsSync('public/assets/mark/mark-inverse.svg')).toBe(true);
     expect(existsSync('public/assets/mark/mark-small-inverse.svg')).toBe(true);
+    expect(existsSync('public/assets/mark/mark-micro-inverse.svg')).toBe(true);
+    expect(existsSync('public/assets/mark/icon.svg')).toBe(true);
     expect(existsSync('public/assets/dot/manifest.json')).toBe(true);
     expect(existsSync('public/assets/data/margin-cy2024.json')).toBe(true);
   });
@@ -148,4 +151,14 @@ describe('asset layout', () => {
     // box even after darkest_pixel() moved off a per-pixel scan.
     15000,
   );
+
+  it('ships every icon the layout links, since a renamed raster leaves a blank tab', () => {
+    const layout = readFileSync('src/layouts/Base.astro', 'utf8');
+    const hrefs = [...layout.matchAll(/href="(\/assets\/mark\/[^"]+)"/g)].map((m) => m[1]);
+    // four link tags: the svg favicon, two png favicons, the touch icon
+    expect(hrefs).toHaveLength(4);
+    for (const href of hrefs) {
+      expect(existsSync(`public${href}`)).toBe(true);
+    }
+  });
 });
