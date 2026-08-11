@@ -22,15 +22,25 @@ same house, because the screen does the work rather than the subject.
 | `prototypes/dot-foundry.html`   | Tuning rig and library viewer, built from the engine           |
 | `prototypes/dot-render.html`    | Headless render page, built from the engine                    |
 | `scripts/build_dot_pages.py`    | Rebuilds both pages after any engine change                    |
+| `scripts/templates/*.tpl.html`  | The hand-written shell of each page. Edit here, never the generated output |
 | `scripts/render_dot.py`         | Production CLI                                                 |
 | `scripts/webp_derive.py`        | Derives a lossless WebP delivery asset beside each PNG, at native size |
 | `public/assets/dot/`            | Rendered output: PNGs, their derived WebPs, plus `manifest.json` |
 | `src/components/home/`          | First production consumer: `HomeHero.astro` and `Coverage.astro` |
 | `tests/dot-engine.test.ts`      | Unit tests for the engine's pure functions, loaded without a browser |
 
-Both pages are generated from the same engine, so the foundry and the renderer
-cannot drift apart. After editing `dot-engine.js`, run
+Both pages inline the same engine, so no scene, role or constant can differ
+between them. After editing `dot-engine.js`, run
 `python scripts/build_dot_pages.py`.
+
+That guarantee covers the engine and stops at the marker. Each page's driver
+sits below `<!--__ENGINE__-->` in its template and is written by hand, so the
+two can still call the engine differently, and once did: the foundry passed
+`CONST.fade`, a scalar that `fadeSet()` expands to four sides, while the
+renderer went through `renderRole()` and got the shipped two. Regenerating the
+pages never fixed it, because regeneration only replaces the engine payload.
+Anything the foundry shows as "what ships" has to route through the same call
+production makes.
 
 ## Constants
 
@@ -116,6 +126,20 @@ the discipline rather than a table nobody has gotten to yet.
 The falloff is smoothstep, not linear. A linear ramp begins abruptly at the
 fraction boundary and that onset reads as an edge of its own.
 
+The dissolve ends as a hard stop, not at zero, and it stops sooner for light
+geometry than for dark. `screen()` culls a cell at `t < 0.015` and a dot at
+`rad < 0.18`, so a dot is dropped before it gets small, and the fainter the
+element the earlier in the band it crosses that floor. Measured across
+`grid-hero-dot.png`, whose left and right both dissolve at 0.18: the conductor
+and crossarm band, the darkest thing in the frame, draws to x 0.024 and 0.975,
+where the dissolve factor is already down to 0.05. The horizon band gives up at
+x 0.036 and 0.964, at a factor of 0.10. The ground bands between them land at
+0.033 to 0.035. Nothing reaches the frame edge, the outer 2.4% is empty on
+every band, and a light element terminates roughly 1.2% of the frame inside a
+dark one. Usually that is what you want, since a horizon trailing off before
+the structure does reads as atmosphere, but the dissolve fraction on its own
+does not tell you where a given element stops.
+
 ## Production
 
 ```bash
@@ -137,8 +161,10 @@ key. `src/lib/dot.ts`'s `dotAsset()`, the site's only reader of this manifest,
 resolves to the WebP and throws if a role has been rendered but never derived,
 rather than silently falling back to the PNG.
 
-The foundry's sliders do not affect the CLI. They exist to decide the constants,
-not to produce assets, and the page says so.
+The foundry's controls do not affect the CLI. They exist to decide the
+constants, not to produce assets, and the page says so. They start on the
+shipped values, including the per-edge dissolve, which the page resolves
+through the same `fadeFor()` call `renderRole()` makes.
 
 ## Two things the engine does that are worth knowing
 
@@ -155,20 +181,99 @@ single-camera.
 
 ## Making a new subject
 
-Only step one is subject-specific, which is why a new industry is an afternoon
-rather than a commission.
+Modelling, ground and framing are the subject-specific parts. Everything after
+them is two commands, which is why a new industry is an afternoon rather than a
+commission.
 
 1. **Model.** Add a branch to `buildScene()` in `dot-engine.js`. Primitives only,
    drawn from the five-step `TONE` scale: `TONE[0]` for anything meant to read
    as distant, `TONE[4]` for the structure the eye should land on first. The
    `rnd()` helper is seeded per subject, so scenes are deterministic and
-   re-render identically.
-2. **Frame.** Add an entry to `CAM`. Frame wide. Add a `CAM_ROLE` entry for
+   re-render identically. Two adjacent steps for the subject's mass and the
+   deepest step for its thinnest defining element is the shape that works: a
+   gantry beam, a conductor, a rack's cap rail. `tests/dot-engine.test.ts`
+   scores each subject on its own, so a branch that stays inside three steps
+   or spans under 96 levels fails. Urban is the only exception and is named as
+   one in that test: it is a field of massing with no fine structure, so it
+   grades `TONE[0]` to `TONE[3]` for recession and never reaches the deepest
+   step. A new subject that wants the same treatment argues for it there rather
+   than quietly stopping at `TONE[3]`.
+2. **Ground.** End the branch with one call to `ground(g, TONE, rnd, {...})`.
+   Every subject makes exactly one, and a test enforces it, because five
+   hand-rolled slabs became five different landscapes the last time they were
+   left to the subject. It gives a displaced plane, a ridge silhouette at the
+   far edge and a sparse scatter between them. Options are below. If the
+   subject has a ridge it must also carry `ridgeDist`, and solving that is the
+   one part of this step that is not a default.
+3. **Frame.** Add an entry to `CAM`. Frame wide. Add a `CAM_ROLE` entry for
    `hero` if the wide crop needs its own framing, which it usually does.
-3. **Build.** `python scripts/build_dot_pages.py`
-4. **Render.** `python scripts/render_dot.py --subject <id> --role <role>`
+4. **Build.** `python scripts/build_dot_pages.py`
+5. **Render.** `python scripts/render_dot.py --subject <id> --role <role>`
+6. **Derive.** `python scripts/webp_derive.py --all`
 
 Then apply the recognition test.
+
+### `ground()` options
+
+| Option      | Default | What it sets                                                                 |
+| ----------- | ------- | ---------------------------------------------------------------------------- |
+| `w`         | none    | Plane width, and the ridge's total width. The ridge is 26 boxes of `w/26`     |
+| `d`         | none    | Plane depth, the scatter's radial span, and the scatter's z bias              |
+| `amp`       | `1.0`   | Height of the plane's displacement. Inert when `plane: false`                 |
+| `flat`      | `26`    | Radius held undisplaced around the subject, and the scatter's inner radius    |
+| `plane`     | `true`  | Pass `false` when the subject models its own terrain, as wind does            |
+| `ridge`     | `0`     | Height of the far horizon silhouette. `0` means no ridge and no `ridgeDist`   |
+| `ridgeDist` | none    | How far in front of the origin the ridge sits. Required whenever `ridge` is set |
+| `scatter`   | `0`     | Number of small boxes in the annulus between the subject and the ridge. Mostly past `fogFar` today: see the depth test |
+
+Three of those couple to more than their name suggests, and a caller cannot see
+it from the call site:
+
+- **`flat` gates two things.** It holds plane displacement at zero across the
+  subject's footprint, and it is also the scatter's inner radius, which applies
+  even when `plane: false`. Wind passes no plane and still inherits the default
+  26 as the radius its scatter must clear.
+- **`d` gates three.** Plane depth, the scatter's radial span
+  (`scatterRadius()` runs the annulus from `flat + 6` to `d/2 - 2`), and the
+  scatter's z bias (`-d * 0.12`). Cutting `d` to fix the plane silently
+  collapses the scatter: once `d/2` drops below `flat + 8` the annulus becomes
+  a single ring at `flat + 6`. That is exactly what happened to four subjects
+  before `ridgeDist` existed.
+- **`w` gates two.** Plane width and ridge width.
+
+### Solving `ridgeDist`
+
+`ground()` throws if `ridge` is set and `ridgeDist` is absent, with no
+fallback, because the fallback it used to have (`-d/2 + 4`) tied how distant
+the horizon reads to how large the ground plane happened to be, and five
+subjects' ridges drifted past `fogFar` and rendered as pure white with nobody
+noticing.
+
+Target: a fog fraction of **0.55 to 0.70** at every role the subject renders.
+Below that the ridge competes with the subject; above it the ridge is
+functionally erased. Compute it against the subject's own camera:
+
+```
+camPos   = camFor(id, role) position, each component times ROLES[role].dist
+camDist  = |camPos - lookAt|
+fogNear  = camDist * 0.55        fogFar = camDist * 1.90
+ridgePt  = (0, ridge * 0.725 / 2 - 1, -ridgeDist)
+fraction = (|ridgePt - camPos| - fogNear) / (fogFar - fogNear)
+```
+
+`0.725` is the midpoint of `ground()`'s `0.45 + rnd() * 0.55` height factor, so
+`ridgePt` is the average ridge box rather than a tall one. Solve for the
+`ridgeDist` that lands every role inside the band and take the midpoint of the
+overlap. A subject whose hero and default cameras sit at very different
+distances may have no simultaneous solution: port's differ by nearly 2x and it
+straddles the band at 0.516 and 0.707. `tests/dot-engine.test.ts` asserts every
+ridge stays inside its fog band, at every role in the manifest, and fails
+anything outside 0.35 to 0.85.
+
+That fraction is linear in depth. Three.js puts a smoothstep on it before
+painting, so the shipped ridges, linear 0.51 to 0.71, render at 0.52 to 0.79.
+The band is stated linearly because that is what every current `ridgeDist` was
+solved against; convert before comparing it with a measured fog factor.
 
 ## The recognition test
 
@@ -181,15 +286,31 @@ screen. The usual causes, in order of frequency:
 - Structure and mass are the same tone, so nothing separates.
 - The subject is too small in frame and the screen has eaten the detail.
 
-**Data centre is a known exception.** Judged by three readers, it does not
-pass the recognition test at card size. Four scene variants were tried,
-including pair-grouped rows at two elevations and a dedicated floor plate, and
-the camera was reframed twice. Rebuilding the scene into depth-axis corridors
-with a back wall fixed the corrugated dune-field failure the earlier layouts
-had, but the subject still reads as rows of blocks rather than unmistakably as
-a data centre. Rack-unit texture is unrecoverable at a 12px halftone pitch
-displayed at roughly 200px, which makes this a limit of the screen rather than
-a defect in the scene. It stands as the best version tried, not as solved.
+**Data centre is a known exception, at `card` only.** Four scene variants were
+tried, including pair-grouped rows at two elevations and a dedicated floor
+plate, and the camera was reframed twice. Rebuilding the scene into depth-axis
+corridors with a back wall fixed the corrugated dune-field failure the earlier
+layouts had, and pulling the racks onto `TONE[2]`/`TONE[3]` with the cap rail
+at `TONE[4]` gave the scene a dark end it had been missing: the corridor
+rework had left it drawing from `TONE[0]` to `TONE[2]` only, a 58-level span
+against every other subject's 128.
+
+That changed the verdict at three of the four roles and not at the fourth.
+`hero`, `figure` and `social` now read as rows of identical tall cabinets in an
+interior, with an aisle, a floor and a back wall, where before they read as
+pale ghost blocks. That is not the same as unmistakable: a reader without the
+caption could still land on lockers or switchgear rather than on servers.
+`card` still fails. At 920px and a 12px pitch shown at the 249px the coverage
+grid uses, the halftone lattice itself aliases and the scene collapses to two
+dark lumps; alongside port's cranes and grid's towers at the same size, the
+difference is not close.
+
+The original diagnosis holds as written. Rack-unit texture is unrecoverable at
+a 12px pitch displayed at roughly 200px, and no tone assignment recovers it.
+What the dark end recovered is one step coarser: cabinet-level cadence and real
+figure-ground separation. That is enough at the roles whose native width is
+large enough to survive the downsample and not enough at `card`, where the
+downsample is only 3.7x and the lattice is still visible when it lands.
 
 ### The depth test
 
@@ -201,16 +322,50 @@ At full size: can three distinct depth planes be named, and does far geometry
 sit lighter than near geometry?
 
 The levers, in the order to reach for them: `ground()`'s `amp` and `ridge` for a
-scene with no horizon, `scatter` for an empty middle plane, and the camera for a
-scene where nothing is near. Fog is not a lever. It is derived from camera
-distance, so a subject that seems to need its own fog has the wrong camera.
+scene with no horizon, and the camera for a scene where nothing is near. Fog is
+not a lever. It is derived from camera distance, so a subject that seems to
+need its own fog has the wrong camera.
 
-**Known case: port.** The hero carries a ridge at `ridgeDist` 22 and a scatter
-of 22, which gives it a horizon and a middle plane. The far plane still does
-not read against the crane row: `buildScene('port')` draws exactly four
-identical cranes from the same two tones, so there is no size or tone gradient
-among them to signal that they recede. Two depth planes pass at the hero crop,
-not three.
+**`scatter` is not currently a working lever, and this is the one place the doc
+used to say otherwise.** Most of it sits far enough back to be painted the fog
+colour and never reach the screen. Three.js linear fog is
+`smoothstep(fogNear, fogFar, -mvPosition.z)`, and at a factor of 1.0 the
+fragment is exactly the fog colour whatever the shading says. Measured on each
+scatter box's centre, counting only the boxes whose centre falls inside the
+frustum:
+
+| Subject and role  | Boxes in frame | At factor ≥ 0.98 | Median factor |
+| ----------------- | -------------- | ---------------- | ------------- |
+| datacenter hero   | 6 of 16        | 100%             | 1.00          |
+| datacenter card   | 5 of 16        | 100%             | 1.00          |
+| urban hero        | 10 of 18       | 70%              | 1.00          |
+| grid hero         | 24 of 30       | 67%              | 1.00          |
+| wind hero         | 14 of 20       | 64%              | 1.00          |
+| port hero         | 13 of 22       | 62%              | 1.00          |
+| grid card         | 21 of 30       | 57%              | 0.99          |
+| urban card        | 7 of 18        | 57%              | 0.98          |
+| wind card         | 11 of 20       | 36%              | 0.97          |
+| wind cover        | 10 of 20       | 0%               | 0.82          |
+| port card         | 16 of 22       | 0%               | 0.73          |
+
+Every hero crop is majority-invisible and datacenter is entirely so, which
+means raising the count buys nothing on the roles that most want a middle
+plane. The ridge is unaffected: it lands between 0.52 and 0.79 at every subject
+and role, which is `ridgeDist` doing exactly its job. Moving the scatter
+forward changes every asset in the library, so it is deferred to its own pass
+rather than folded into a fix wave. Until that lands, reach for `amp`, `ridge`
+or the camera.
+
+**Known case: port.** The hero carries a ridge at `ridgeDist` 22, which gives
+it a horizon. It does not have a middle plane: 8 of the 13 scatter boxes in
+frame are at a fog factor of 0.98 or above and the median is 1.00, so what the
+hero actually shows is a near plane and a horizon with nothing between them.
+Port's card is the one crop where the scatter does read, which is why it is the
+subject to look at if the deferred pass needs a reference. The far
+plane also does not read against the crane row: `buildScene('port')` draws
+exactly four identical cranes from the same two tones, so there is no size or
+tone gradient among them to signal that they recede. Two depth planes pass at
+the hero crop, not three.
 
 ## The screen as a surface treatment
 
@@ -296,7 +451,12 @@ Whatever the source, the caption names the subject and says *rendered*.
    render survived it. `e2e/dot-imagery.spec.ts` holds the line, because the
    next layout problem is very likely to be solved the same way. This does not
    cover `BriefHero`, whose surface is `dotField()` from
-   `src/lib/charts/halftone.ts` rather than an imagery-engine render.
+   `src/lib/charts/halftone.ts` rather than an imagery-engine render. One
+   render is also its own exception: the contour branch of `screen()`
+   (`dot-engine.js:486-513`) never calls `edge()`, so `contour` mode has no
+   dissolve at all and `wind-cover-contour.png` ships with hard edges on all
+   four sides. Treat that as a gap in `screen()` rather than as licence to clip
+   it, and if a second contour asset is ever commissioned, close the gap first.
 
 The homepage carries seven images, one hero and the six-card coverage strip.
 That is a considered exception to rule 1, resolved on weight rather than count:
