@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { readFileSync } from 'node:fs';
 import Mark from '../src/components/Mark.astro';
 
 const render = async (props: Record<string, unknown>) => {
   const container = await AstroContainer.create();
   return container.renderToString(Mark, { props });
 };
+
+const svg = (name: string) => readFileSync(`public/assets/mark/${name}`, 'utf8');
+const circles = (s: string) => (s.match(/<circle/g) ?? []).length;
 
 describe('the mark', () => {
   it('uses the small cut below 25px', async () => {
@@ -70,5 +74,38 @@ describe('the mark', () => {
     // the clear space rule becomes unenforceable by the caller
     expect(html).toContain('display:block');
     expect(html).toContain('flex:none');
+  });
+});
+
+describe('the micro cut', () => {
+  it('is a coarser drawing of the same field, not a smaller copy', () => {
+    const micro = circles(svg('mark-micro.svg'));
+    // the small cut is 23 and the display cut is 112. A halftone changes line
+    // screen for newsprint; a mark changes it for a favicon.
+    expect(micro).toBeGreaterThanOrEqual(9);
+    expect(micro).toBeLessThanOrEqual(16);
+    expect(micro).toBeLessThan(23);
+  });
+
+  it('draws the inverse a shade smaller, because light on dark reads larger', () => {
+    // same lattice, so the same dot count, but less ink
+    expect(circles(svg('mark-micro-inverse.svg'))).toBe(circles(svg('mark-micro.svg')));
+    const r = (s: string) =>
+      Math.max(...[...s.matchAll(/r="([\d.]+)"/g)].map((m) => Number(m[1])));
+    expect(r(svg('mark-micro-inverse.svg'))).toBeLessThan(r(svg('mark-micro.svg')));
+  });
+
+  it('carries no ground, because rule 1 holds everywhere the mark sits on a page', () => {
+    for (const f of ['mark.svg', 'mark-small.svg', 'mark-micro.svg',
+                     'mark-inverse.svg', 'mark-small-inverse.svg', 'mark-micro-inverse.svg']) {
+      expect(svg(f)).not.toMatch(/<rect/);
+    }
+  });
+
+  it('leaves the display and small drawings exactly as they shipped', () => {
+    expect(circles(svg('mark.svg'))).toBe(112);
+    expect(circles(svg('mark-small.svg'))).toBe(23);
+    expect(circles(svg('mark-inverse.svg'))).toBe(112);
+    expect(circles(svg('mark-small-inverse.svg'))).toBe(23);
   });
 });

@@ -19,7 +19,7 @@ Raster output needs Playwright. Without it, the SVGs are still written.
 from __future__ import annotations
 import argparse, json, math, pathlib, sys
 
-VERSION = "1.0"
+VERSION = "1.1"
 OUT = pathlib.Path(__file__).resolve().parents[1].joinpath("public", "assets", "mark")
 
 # --------------------------------------------------------------------- constants
@@ -35,11 +35,16 @@ RMIN = 0.22             # below this radius a dot is not drawn at all
 INK = "#131312"
 INK_INVERSE = "#FAFAF9"
 
-# Two cuts, not one drawing scaled. A halftone changes line screen for
-# newsprint; a mark changes it for a favicon.
+# Three cuts, not one drawing scaled. A halftone changes line screen for
+# newsprint; a mark changes it for a favicon. display and small carry only a
+# pitch and a radius, so they draw from the module constants and stay
+# byte-identical to what shipped at 1.0.
 CUTS = {
-    "display": dict(pitch=9.50, rmax=3.70),   # 25px and above
-    "small":   dict(pitch=21.38, rmax=7.77),  # below 25px
+    "display": dict(pitch=9.50, rmax=3.70),    # 33px and above
+    "small":   dict(pitch=21.38, rmax=7.77),   # 21 to 32px
+    "micro":   dict(pitch=30.0, rmax=11.0, rmax_inv=9.68,
+                    gamma=1.20, jitter=0.45,
+                    lo=0.00, span=0.78, edge=0.06),  # 16 to 20px
 }
 
 # Candidates for the micro cut, for prototypes/marks-micro.html. Not shipped.
@@ -219,9 +224,12 @@ number is outside the bar. The bar is a filter, not the decision.</p>
 
 def svg(cut: str, ink: str = INK) -> str:
     c = CUTS[cut]
+    inverse = ink == INK_INVERSE
+    rmax = c.get("rmax_inv", c["rmax"]) if inverse else c["rmax"]
+    over = {k: c[k] for k in ("gamma", "jitter", "edge", "lo", "span") if k in c}
     body = "".join(
         f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{r:.2f}"/>'
-        for x, y, r in dots(c["pitch"], c["rmax"])
+        for x, y, r in dots(c["pitch"], rmax, **over)
     )
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {S:.0f} {S:.0f}" '
@@ -232,10 +240,12 @@ def svg(cut: str, ink: str = INK) -> str:
 
 
 FILES = [
-    ("mark.svg",            "display", INK),
-    ("mark-small.svg",      "small",   INK),
-    ("mark-inverse.svg",    "display", INK_INVERSE),
-    ("mark-small-inverse.svg", "small", INK_INVERSE),
+    ("mark.svg",               "display", INK),
+    ("mark-small.svg",         "small",   INK),
+    ("mark-micro.svg",         "micro",   INK),
+    ("mark-inverse.svg",       "display", INK_INVERSE),
+    ("mark-small-inverse.svg", "small",   INK_INVERSE),
+    ("mark-micro-inverse.svg", "micro",   INK_INVERSE),
 ]
 
 RASTER = [("favicon-16.png", "small", 16), ("favicon-32.png", "small", 32),
