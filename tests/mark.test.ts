@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import Mark from '../src/components/Mark.astro';
 
 const render = async (props: Record<string, unknown>) => {
@@ -17,6 +19,25 @@ const circles = (s: string) => (s.match(/<circle/g) ?? []).length;
 // future retune that happened to land on another cut's dot count would still
 // pass a count check. Comparing the full geometry proves the file.
 const circleTags = (s: string) => s.match(/<circle[^>]*\/>/g) ?? [];
+
+// SHA-256 of each file's text with CRLF folded to LF, so a checkout that
+// normalises line endings does not read as a changed drawing. The generator
+// emits these four as a single line with no newline in it at all, so the fold
+// is a guard against a future format change rather than something in play now.
+const PROTECTED = ['mark.svg', 'mark-small.svg', 'mark-inverse.svg', 'mark-small-inverse.svg'];
+const digests = (names: string[]) =>
+  Object.fromEntries(
+    names.map((n) => [
+      n,
+      createHash('sha256').update(svg(n).replace(/\r\n/g, '\n'), 'utf8').digest('hex'),
+    ]),
+  );
+const SHIPPED_AT_1_0: Record<string, string> = {
+  'mark.svg': '619f4b9d68d43b071101d0a442b332ac6b9e8609df4f687ed2a894a7a95b2441',
+  'mark-small.svg': '77ff40da92104f024444f748d72ab11009ea0158da54986abde2a79dc14aa275',
+  'mark-inverse.svg': '6241d7fbb1b0ac6217454fdb7acd39812b637e27782a8c0abb5db496c05f7a33',
+  'mark-small-inverse.svg': '70ef43b2ede479864d7f5123065f677db448d8cb140e995806a36f392ae6dc8f',
+};
 
 describe('the mark', () => {
   it('uses the micro cut from 16 to 20px, where the nav and the footer sit', async () => {
@@ -124,10 +145,31 @@ describe('the micro cut', () => {
   });
 
   it('leaves the display and small drawings exactly as they shipped', () => {
-    expect(circles(svg('mark.svg'))).toBe(112);
-    expect(circles(svg('mark-small.svg'))).toBe(23);
-    expect(circles(svg('mark-inverse.svg'))).toBe(112);
-    expect(circles(svg('mark-small-inverse.svg'))).toBe(23);
+    // These four files are the 1.0 drawings. Rule 7: a mark that exists in
+    // two versions in the wild is two marks, so 1.1 adding a cut must not
+    // move them by so much as a hundredth of a unit.
+    //
+    // Until this landed the assertion was a circle count, and a count does
+    // not prove a drawing. GAMMA 1.20 to 1.15, JITTER to 0.60, JITTER to
+    // 1.10, EDGE to 0.11 and SPAN to 0.88 each move every dot on the page
+    // while leaving all four counts untouched, so five of six perturbations
+    // of the shared constants passed a count check.
+    //
+    // The invariant was really being held by running `git diff --stat main`
+    // by hand at each task on this branch. That stops working the moment
+    // this merges and main becomes the new baseline. `--check` does not
+    // close it either: it compares disk against what the current code
+    // generates, so changing GAMMA and re-rendering makes --check green on
+    // the new drawing. A committed digest is the only guard that survives
+    // both. scripts/render_mark.py says these constants are shared with the
+    // imagery engine and that a change there is expected to move the mark,
+    // so the trigger is live rather than hypothetical.
+    //
+    // If this test goes red, the drawing changed. That is either a mistake,
+    // or it is a new version of the mark: bump VERSION, re-export
+    // everything, and only then update these digests. Updating them to make
+    // a red test green is the failure this test exists to catch.
+    expect(digests(PROTECTED)).toEqual(SHIPPED_AT_1_0);
   });
 });
 
@@ -145,7 +187,29 @@ describe('the icon family', () => {
   });
 
   it('uses the micro cut, which is what a 16px tab strip gets', () => {
-    expect(circles(svg('icon.svg'))).toBe(circles(svg('mark-micro-inverse.svg')));
+    // Full geometry, not a count. icon.svg and mark-micro-inverse.svg are the
+    // same call with and without a ground, so every cx, cy and r has to match
+    // to the hundredth. A count check passes on any cut that happens to draw
+    // eleven dots, which is the same weakness the 1.0 drawings had.
+    expect(circleTags(svg('icon.svg'))).toEqual(circleTags(svg('mark-micro-inverse.svg')));
+    expect(circleTags(svg('icon.svg')).length).toBeGreaterThan(0);
+  });
+
+  it('shows the same drawing as favicon-32.png, which shares its slot', () => {
+    // Chromium and Firefox take the SVG favicon, Safari falls back to the
+    // 32px PNG. Rule 7: two drawings in one slot, split by browser, is two
+    // marks. The PNG is a raster and cannot be compared dot for dot, so the
+    // agreement is asserted where it is decided, in the generator's tables.
+    const gen = readFileSync('scripts/render_mark.py', 'utf8');
+    const cutOf = (file: string) =>
+      gen.match(new RegExp(`\\("${file.replace('.', '\\.')}",\\s*"(\\w+)"`))?.[1];
+    expect(cutOf('icon.svg')).toBe('micro');
+    expect(cutOf('favicon-32.png')).toBe('micro');
+    expect(cutOf('favicon-16.png')).toBe('micro');
+    // and the published record of what was drawn from what agrees
+    const manifest = JSON.parse(readFileSync('public/assets/mark/manifest.json', 'utf8'));
+    expect(manifest.drawn_from['icon.svg']).toBe('micro');
+    expect(manifest.drawn_from['favicon-32.png']).toBe('micro');
   });
 
   it('is never served onto a page by the component', async () => {
@@ -155,4 +219,44 @@ describe('the icon family', () => {
       expect(await render({ size })).not.toContain('<rect');
     }
   });
+});
+
+describe('the generator', () => {
+  it('scores every shipped cut, not only the ones that spell out every parameter', () => {
+    // CUTS['display'] and CUTS['small'] carry a pitch and a radius and nothing
+    // else; CUTS['micro'] and every CANDIDATES entry carry all eight. Those
+    // two shapes used to be read by two different rules, so metrics() raised
+    // KeyError: 'gamma' on two of the three cuts that ship, and the obvious
+    // thing to do with a retuned cut, score it the way the candidates were
+    // scored, did not work. resolve() gives both families one contract.
+    const out = execFileSync('python', ['scripts/render_mark.py', '--metrics'], {
+      encoding: 'utf8',
+    });
+    const scored = Object.fromEntries(
+      [...out.matchAll(/^ +(display|small|micro) +dots (\d+)/gm)].map((m) => [m[1], Number(m[2])]),
+    );
+    // the counts the doc's cuts table publishes, from the code path that used
+    // to raise on two of these three
+    expect(scored).toEqual({ display: 112, small: 23, micro: 11 });
+  });
+
+  it('checks every generated file it tracks, and counts only what it checked', () => {
+    // --check built its set from the SVG table alone and reported "7 files
+    // match" while the docstring claimed it verified everything. The four
+    // PNGs were the gap that mattered: the generator runs without Playwright,
+    // so a retune on a machine with no browser rewrote the SVGs, left the
+    // rasters on the previous drawing, and still reported no drift.
+    const all = execFileSync('python', ['scripts/render_mark.py', '--check'], {
+      encoding: 'utf8',
+    });
+    expect(all).toMatch(/mark 1\.1: 13 files match$/m);
+
+    // and --no-raster is an opt-out that says what it opted out of, rather
+    // than a flag that changed nothing because --check returned before the
+    // raster block was reached
+    const text = execFileSync('python', ['scripts/render_mark.py', '--check', '--no-raster'], {
+      encoding: 'utf8',
+    });
+    expect(text).toMatch(/mark 1\.1: 9 files match, 4 rasters not checked/);
+  }, 60000);
 });
