@@ -2,19 +2,29 @@
   "version": "1.1",
   "field": "diagonal ramp, jitter decaying with density",
   "angle": 15.0,
-  "jitter": 0.85,
-  "gamma": 1.2,
-  "edge": 0.13,
+  "rmin": 0.22,
   "ink": "#131312",
   "ink_inverse": "#FAFAF9",
   "cuts": {
     "display": {
       "pitch": 9.5,
-      "rmax": 3.7
+      "rmax": 3.7,
+      "rmax_inv": 3.7,
+      "gamma": 1.2,
+      "jitter": 0.85,
+      "edge": 0.13,
+      "lo": 0.06,
+      "span": 0.9
     },
     "small": {
       "pitch": 21.38,
-      "rmax": 7.77
+      "rmax": 7.77,
+      "rmax_inv": 7.77,
+      "gamma": 1.2,
+      "jitter": 0.85,
+      "edge": 0.13,
+      "lo": 0.06,
+      "span": 0.9
     },
     "micro": {
       "pitch": 30.0,
@@ -22,9 +32,9 @@
       "rmax_inv": 9.68,
       "gamma": 1.2,
       "jitter": 0.45,
+      "edge": 0.06,
       "lo": 0.0,
-      "span": 0.78,
-      "edge": 0.06
+      "span": 0.78
     }
   },
   "raster_ground": "#131312",

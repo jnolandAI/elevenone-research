@@ -10,17 +10,26 @@ into order.
 The drawing is deterministic. The same constants always produce the same file,
 which is why the mark lives in a script rather than in a drawing application.
 
-    python scripts/render_mark.py            # writes public/assets/mark/
-    python scripts/render_mark.py --check    # verifies nothing has drifted
+    python scripts/render_mark.py              # writes public/assets/mark/
+    python scripts/render_mark.py --check      # re-derives every tracked file and
+                                               # compares it against what is on disk
+    python scripts/render_mark.py --metrics    # scores the shipped cuts against BAR
 
-Raster output needs Playwright. Without it, the SVGs are still written.
+--check covers every generated file this repo tracks: the seven SVGs, the four
+PNGs, manifest.json and prototypes/marks-micro.html, thirteen in all. Adding
+--no-raster drops the four PNGs and says so in the output, so the count printed
+is always the count verified.
+
+Raster output needs Playwright. Without it the SVGs are still written, and
+--check without --no-raster fails rather than passing on a partial verification.
 """
 
 from __future__ import annotations
-import argparse, json, math, pathlib, sys
+import argparse, json, math, pathlib, shutil, sys, tempfile
 
 VERSION = "1.1"
-OUT = pathlib.Path(__file__).resolve().parents[1].joinpath("public", "assets", "mark")
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+OUT = ROOT.joinpath("public", "assets", "mark")
 
 # --------------------------------------------------------------------- constants
 # Shared with the imagery engine. A change here is a change to the mark and
@@ -38,7 +47,9 @@ INK_INVERSE = "#FAFAF9"
 # Three cuts, not one drawing scaled. A halftone changes line screen for
 # newsprint; a mark changes it for a favicon. display and small carry only a
 # pitch and a radius, so they draw from the module constants and stay
-# byte-identical to what shipped at 1.0.
+# byte-identical to what shipped at 1.0. A cut dict and a candidate dict are
+# the same contract: pitch and rmax are required, everything else falls back
+# to the module constant, so dots_for() and metrics() accept either family.
 CUTS = {
     "display": dict(pitch=9.50, rmax=3.70),    # 33px and above
     "small":   dict(pitch=21.38, rmax=7.77),   # 21 to 32px
@@ -135,13 +146,26 @@ def dots(pitch: float, rmax: float, *, gamma: float = GAMMA, jitter: float = JIT
     return out
 
 
+def resolve(c: dict) -> dict:
+    """Every parameter the drawing needs, with the module constant standing in
+    wherever the cut is silent. CUTS['display'] and CANDIDATES[0] are the same
+    kind of thing read through this: a cut that omits gamma draws at GAMMA,
+    which is exactly what svg() has always done for display and small."""
+    return dict(pitch=c['pitch'], rmax=c['rmax'],
+                rmax_inv=c.get('rmax_inv', c['rmax']),
+                gamma=c.get('gamma', GAMMA), jitter=c.get('jitter', JITTER),
+                edge=c.get('edge', EDGE),
+                lo=c.get('lo', LO), span=c.get('span', SPAN))
+
+
 def dots_for(c: dict, rmax: float | None = None):
-    """The candidate's drawing. rmax is separable so the inverse polarity can
-    be drawn a shade smaller: light dots on a dark ground read visually larger
-    than dark on light at the same radius."""
-    return dots(c['pitch'], rmax if rmax is not None else c['rmax'],
-                gamma=c['gamma'], jitter=c['jitter'], edge=c['edge'],
-                lo=c['lo'], span=c['span'])
+    """The cut's or candidate's drawing. rmax is separable so the inverse
+    polarity can be drawn a shade smaller: light dots on a dark ground read
+    visually larger than dark on light at the same radius."""
+    p = resolve(c)
+    return dots(p['pitch'], rmax if rmax is not None else p['rmax'],
+                gamma=p['gamma'], jitter=p['jitter'], edge=p['edge'],
+                lo=p['lo'], span=p['span'])
 
 
 def metrics(c: dict) -> dict:
@@ -159,7 +183,7 @@ def metrics(c: dict) -> dict:
     }
 
 
-SHEET = pathlib.Path(__file__).resolve().parents[1].joinpath("prototypes", "marks-micro.html")
+SHEET = ROOT.joinpath("prototypes", "marks-micro.html")
 
 # What a winner has to do. Printed beside every candidate so the choice is
 # argued rather than asserted.
@@ -180,7 +204,7 @@ def _cells(c: dict, ink: str, ground: str | None, rmax: float | None, tag: str) 
             f'<div class="zoom" style="width:96px;height:96px">{art}</div></div>')
 
 
-def write_sheet() -> None:
+def sheet_html() -> str:
     rows = []
     for c in CANDIDATES:
         m = metrics(c)
@@ -195,8 +219,7 @@ def write_sheet() -> None:
             f'{_cells(c, INK, None, None, "pos")}'
             f'{_cells(c, INK_INVERSE, INK, c["rmax"] * 0.92, "inv")}'
             f'</div></section>')
-    SHEET.parent.mkdir(parents=True, exist_ok=True)
-    SHEET.write_text(f"""<!doctype html><meta charset="utf-8">
+    return f"""<!doctype html><meta charset="utf-8">
 <title>Mark: micro cut candidates</title>
 <style>
  body{{font:13px/1.5 ui-sans-serif,system-ui;margin:40px;color:#131312;background:#FAFAF9}}
@@ -218,18 +241,22 @@ def write_sheet() -> None:
 radius. Judge at true size: every one of these looks resolved at 6x. A boxed
 number is outside the bar. The bar is a filter, not the decision.</p>
 {''.join(rows)}
-""", encoding="utf-8")
-    print(f"  {SHEET.relative_to(SHEET.parents[1])}  {len(CANDIDATES)} candidates")
+"""
+
+
+def write_sheet(path: pathlib.Path = SHEET) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(sheet_html(), encoding="utf-8")
+    print(f"  {path}  {len(CANDIDATES)} candidates")
 
 
 def svg(cut: str, ink: str = INK, ground: str | None = None) -> str:
     c = CUTS[cut]
     inverse = ink == INK_INVERSE
-    rmax = c.get("rmax_inv", c["rmax"]) if inverse else c["rmax"]
-    over = {k: c[k] for k in ("gamma", "jitter", "edge", "lo", "span") if k in c}
+    rmax = resolve(c)["rmax_inv"] if inverse else c["rmax"]
     body = "".join(
         f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{r:.2f}"/>'
-        for x, y, r in dots(c["pitch"], rmax, **over)
+        for x, y, r in dots_for(c, rmax)
     )
     # full bleed to the file's edge. Nothing is drawn around the mark and there
     # is no inset shape it sits inside, so rule 1 survives: the file has a
@@ -264,13 +291,22 @@ RASTER = [("favicon-16.png", "micro",   16),
           ("icon-512.png",   "display", 512)]
 
 
-def rasterise(verbose: bool = True) -> bool:
+def have_playwright() -> bool:
+    try:
+        import playwright.sync_api  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def rasterise(dest: pathlib.Path = OUT, verbose: bool = True) -> bool:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
         if verbose:
             print("  playwright not installed, skipping raster output")
         return False
+    dest.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         b = p.chromium.launch()
         for name, cut, px in RASTER:
@@ -281,7 +317,7 @@ def rasterise(verbose: bool = True) -> bool:
                 f'<div style="width:{px}px;height:{px}px">'
                 f'{svg(cut, INK_INVERSE, INK)}</div></body>')
             pg.wait_for_timeout(80)
-            pg.screenshot(path=str(OUT / name))
+            pg.screenshot(path=str(dest / name))
             pg.close()
             if verbose:
                 print(f"  {name:18s} {px}x{px}")
@@ -289,37 +325,126 @@ def rasterise(verbose: bool = True) -> bool:
     return True
 
 
+def manifest_json() -> str:
+    """A machine-readable record of which drawing a deployed file is. Rule 7
+    turns on being able to tell one version of the mark from another in the
+    wild, and this is the only artifact that carries the parameters.
+
+    Every cut is written out resolved. Jitter, gamma, edge, lo and span were
+    top-level keys at 1.0, when all three cuts drew from them; micro carries
+    its own from 1.1, so a top-level jitter would read as the mark's jitter
+    while being untrue of the cut a reader most often sees. Only what is
+    genuinely global stays at the top."""
+    return json.dumps({
+        "version": VERSION,
+        "field": "diagonal ramp, jitter decaying with density",
+        "angle": ANGLE,
+        "rmin": RMIN,
+        "ink": INK, "ink_inverse": INK_INVERSE,
+        "cuts": {name: resolve(c) for name, c in CUTS.items()},
+        "raster_ground": INK,
+        "files": sorted([n for n, _, _, _ in FILES] + [n for n, _, _ in RASTER]),
+    }, indent=2)
+
+
+def tracked() -> dict[str, str]:
+    """Every generated text file that is committed, keyed by repo path."""
+    out = {str(OUT / name): svg(cut, ink, ground) for name, cut, ink, ground in FILES}
+    out[str(OUT / "manifest.json")] = manifest_json()
+    out[str(SHEET)] = sheet_html()
+    return out
+
+
+def check(no_raster: bool) -> int:
+    """Re-derive every tracked generated file and compare it against disk.
+
+    The rasters matter here more than they look. render_mark.py runs without
+    Playwright, so retuning a cut on a machine with no browser writes the SVGs
+    and the manifest and silently leaves the PNGs on the previous drawing. That
+    is the exact failure this branch is about: favicon-16.png and icon.svg both
+    serve the tab strip and must agree. So a raster check that cannot run is an
+    error, never a pass."""
+    bad, n = [], 0
+    for path, content in tracked().items():
+        p = pathlib.Path(path)
+        n += 1
+        if not p.exists() or p.read_text(encoding="utf-8") != content:
+            bad.append(p.relative_to(ROOT).as_posix())
+
+    note = ""
+    if no_raster:
+        note = f", {len(RASTER)} rasters not checked (--no-raster)"
+    elif not have_playwright():
+        print("CANNOT CHECK: the rasters need Playwright. Install it, or pass "
+              "--no-raster to verify the text files only.")
+        return 1
+    else:
+        tmp = pathlib.Path(tempfile.mkdtemp(prefix="mark-check-"))
+        try:
+            rasterise(tmp, verbose=False)
+            for name, _, _ in RASTER:
+                n += 1
+                p = OUT / name
+                if not p.exists() or p.read_bytes() != (tmp / name).read_bytes():
+                    bad.append(p.relative_to(ROOT).as_posix())
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    if bad:
+        print("DRIFT: " + ", ".join(bad))
+        print("  rebuild with: python scripts/render_mark.py"
+              "   (the contact sheet needs --sheet)")
+        return 1
+    print(f"mark {VERSION}: {n} files match{note}")
+    return 0
+
+
+def print_metrics() -> int:
+    """Score the shipped cuts the way the candidates were scored. The bar was
+    written for the micro cut at 16px, so display and small are expected to
+    miss it: the point is that a maintainer retuning any cut can measure it."""
+    print(f"mark {VERSION}: shipped cuts against the micro bar")
+    for name, c in CUTS.items():
+        m = metrics(c)
+        cells = "  ".join(
+            f'{label} {m[k]:.3g}{"" if BAR[k][0] <= m[k] <= BAR[k][1] else "*"}'
+            for k, label in (('count', 'dots'), ('max_d_ratio', 'densest'),
+                             ('coverage', 'coverage'), ('legible_at_16', 'legible at 16')))
+        print(f"  {name:9s} {cells}")
+    print("  * outside the bar, which was set for micro at 16px")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true",
-                    help="fail if the written files would differ from what is on disk")
-    ap.add_argument("--no-raster", action="store_true")
+                    help="fail if any tracked generated file differs from what "
+                         "the current code produces")
+    ap.add_argument("--no-raster", action="store_true",
+                    help="skip the four PNGs, when writing and when checking")
     ap.add_argument("--sheet", action="store_true",
-                    help="write prototypes/marks-micro.html and exit")
+                    help="write the micro-cut contact sheet and exit")
+    ap.add_argument("--out", type=pathlib.Path, default=SHEET,
+                    help="with --sheet, write somewhere other than prototypes/")
+    ap.add_argument("--metrics", action="store_true",
+                    help="score the three shipped cuts against BAR and exit")
     args = ap.parse_args()
 
     if args.sheet:
         print(f"mark {VERSION} candidates")
-        write_sheet()
+        write_sheet(args.out)
         return 0
 
-    built = {name: svg(cut, ink, ground) for name, cut, ink, ground in FILES}
+    if args.metrics:
+        return print_metrics()
 
     if args.check:
-        bad = []
-        for name, content in built.items():
-            p = OUT / name
-            if not p.exists() or p.read_text(encoding="utf-8") != content:
-                bad.append(name)
-        if bad:
-            print("DRIFT: " + ", ".join(bad))
-            return 1
-        print(f"mark {VERSION}: {len(built)} files match")
-        return 0
+        return check(args.no_raster)
 
     OUT.mkdir(parents=True, exist_ok=True)
     print(f"mark {VERSION}")
-    for name, content in built.items():
+    for name, cut, ink, ground in FILES:
+        content = svg(cut, ink, ground)
         (OUT / name).write_text(content, encoding="utf-8")
         n = content.count("<circle")
         print(f"  {name:24s} {n:4d} dots  {len(content)/1024:5.1f} KB")
@@ -327,16 +452,8 @@ def main() -> int:
     if not args.no_raster:
         rasterise()
 
-    (OUT / "manifest.json").write_text(json.dumps({
-        "version": VERSION,
-        "field": "diagonal ramp, jitter decaying with density",
-        "angle": ANGLE, "jitter": JITTER, "gamma": GAMMA, "edge": EDGE,
-        "ink": INK, "ink_inverse": INK_INVERSE,
-        "cuts": CUTS,
-        "raster_ground": INK,
-        "files": sorted(list(built) + [n for n, _, _ in RASTER]),
-    }, indent=2), encoding="utf-8")
-    print(f"  manifest.json")
+    (OUT / "manifest.json").write_text(manifest_json(), encoding="utf-8")
+    print("  manifest.json")
     return 0
 
 
