@@ -285,8 +285,15 @@ FILES = [
 # icon-180 was drawn from the small cut, which the doc reserves for below 25px:
 # 23 dots at 180px was the sparse-specks problem at large size, on the home
 # screen and in the store.
+#
+# favicon-32 is drawn from micro, not from small, even though 32px sits in the
+# small cut's band. It shares the tab-icon slot with icon.svg, and which of the
+# two a reader gets is the browser's decision, not ours: Chromium and Firefox
+# take the SVG, Safari falls back to the PNG. Rule 7 says a mark that exists in
+# two versions in the wild is two marks, so the slot gets one drawing. This is
+# what leaves the small cut with no icon consumer.
 RASTER = [("favicon-16.png", "micro",   16),
-          ("favicon-32.png", "small",   32),
+          ("favicon-32.png", "micro",   32),
           ("icon-180.png",   "display", 180),
           ("icon-512.png",   "display", 512)]
 
@@ -343,6 +350,10 @@ def manifest_json() -> str:
         "ink": INK, "ink_inverse": INK_INVERSE,
         "cuts": {name: resolve(c) for name, c in CUTS.items()},
         "raster_ground": INK,
+        # which cut each file was drawn from. icon.svg and favicon-32.png share
+        # the tab-icon slot, so a reader can check here that they agree.
+        "drawn_from": {**{n: cut for n, cut, _, _ in FILES},
+                       **{n: cut for n, cut, _ in RASTER}},
         "files": sorted([n for n, _, _, _ in FILES] + [n for n, _, _ in RASTER]),
     }, indent=2)
 

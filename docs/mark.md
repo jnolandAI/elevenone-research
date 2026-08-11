@@ -33,33 +33,69 @@ silhouette.
 | `public/assets/mark/mark-small-inverse.svg` | Small cut for dark grounds                                        |
 | `public/assets/mark/mark-micro-inverse.svg` | Micro cut for dark grounds                                        |
 | `public/assets/mark/icon.svg`               | Micro cut, inverse dots on a full-bleed ground: the SVG favicon   |
-| `public/assets/mark/favicon-16.png` `-32`   | Raster favicons                                                   |
+| `public/assets/mark/favicon-16.png` `-32`   | Raster favicons, both drawn from the micro cut                    |
 | `public/assets/mark/icon-180.png` `-512`    | Touch icon and store icon                                         |
+| `public/assets/mark/manifest.json`          | The parameters every file above was drawn from, machine-readable  |
 
 ```bash
-python scripts/render_mark.py           # rebuild everything
-python scripts/render_mark.py --check   # fail if anything has drifted
+python scripts/render_mark.py             # rebuild everything
+python scripts/render_mark.py --check     # fail if any generated file has drifted
+python scripts/render_mark.py --check --no-raster   # the same, minus the four PNGs
+python scripts/render_mark.py --sheet     # rebuild the contact sheet
+python scripts/render_mark.py --metrics   # score the three shipped cuts
 ```
 
 The drawing is deterministic: the PRNG is seeded on lattice position, so the
-same constants always produce the same file. `--check` is the guard against a
-mark that quietly changes.
+same constants always produce the same file. `--check` re-derives all thirteen
+generated files, the seven SVGs and the four PNGs and `manifest.json` and the
+contact sheet, and compares each against disk. `--no-raster` drops the four
+PNGs and says so in the output, so the count printed is always the count
+verified. The rasters need Playwright; without it `--check` fails rather than
+reporting a pass it did not earn.
+
+`--check` compares disk against what the current code generates, so it catches
+a hand-edited file and not a changed constant. The guard against a changed
+constant is `tests/mark.test.ts`, which holds the four 1.0 drawings against
+committed SHA-256 digests.
+
+Nothing reads `manifest.json` at runtime. It exists because rule 7 turns on
+being able to tell one version of the mark from another once files are in the
+wild, and it is the only artifact that carries the parameters a given file was
+drawn from. Every cut is written out resolved. Jitter, gamma and edge were
+top-level keys at 1.0, when all three cuts drew from them; they are not
+top-level now, because a `jitter` beside `cuts` would read as the mark's
+jitter while being untrue of the cut a reader most often sees.
 
 ## Constants
 
-| Parameter     | Value     | Controls                                        |
-| ------------- | --------- | ----------------------------------------------- |
-| Screen angle  | 15°       | Shared with the imagery engine                  |
-| Jitter        | 0.85      | Disorder at the open end, in units of pitch     |
-| Gamma         | 1.20      | Curve from field value to dot area              |
-| Edge dissolve | 0.13      | Fraction of the frame over which the field thins |
-| Ink           | `#131312` | The interface ink exactly                       |
-| Inverse       | `#FAFAF9` | On dark grounds only                            |
+Two kinds of value live in the generator, and the difference is the whole
+reason there are three cuts.
 
-Screen angle, jitter, gamma and edge dissolve are what `display` and `small`
-draw from unmodified. `micro` carries its own values for all four except
-screen angle, for the reason given below. Ink and inverse are global under
-rule 4 and are never per-cut.
+Global, true of every cut:
+
+| Parameter     | Value     | Controls                                             |
+| ------------- | --------- | ---------------------------------------------------- |
+| Screen angle  | 15°       | Shared with the imagery engine                       |
+| `RMIN`        | 0.22      | Below this radius a dot is not drawn at all          |
+| Ink           | `#131312` | The interface ink exactly                            |
+| Inverse       | `#FAFAF9` | On dark grounds only                                 |
+
+Per cut. `display` and `small` name neither, so both take the module default
+shown here, which is what keeps them byte-identical to 1.0. `micro` names all
+five:
+
+| Parameter        | `display`, `small` | `micro` | Controls                                        |
+| ---------------- | ------------------ | ------- | ----------------------------------------------- |
+| Jitter           | 0.85               | 0.45    | Disorder at the open end, in units of pitch     |
+| Gamma            | 1.20               | 1.20    | Curve from field value to dot area              |
+| Edge dissolve    | 0.13               | 0.06    | Fraction of the frame over which the field thins |
+| `LO`, field ramp | 0.06               | 0.00    | The diagonal ramp's foot                        |
+| `SPAN`           | 0.90               | 0.78    | The diagonal ramp's range                       |
+
+Screen angle is global because it is a brand constant under rule 5. Ink and
+inverse are global under rule 4. `RMIN` is global because it is a property of
+the renderer rather than of a cut: a dot smaller than that is not a smaller
+dot, it is a speck.
 
 ## Version history
 
@@ -76,6 +112,17 @@ rule 4 and are never per-cut.
   the small cut, which the doc had always reserved for below 25px. The
   display and small drawings ship byte-identical, so there is one display
   mark in the wild, not two.
+
+  `favicon-32.png` moved to `micro` as well. It and `icon.svg` serve the same
+  tab-icon slot, and which of the two a reader gets is the browser's decision:
+  Chromium and Firefox take the SVG, Safari falls back to the PNG. Drawing
+  them from different cuts would have put two versions of the mark in the wild
+  and split them by browser, which is what rule 7 forbids. The consequence is
+  that `small` now has no consumer. Nothing renders the mark between 21 and
+  32px and every icon file is drawn from `micro` or `display`, so the cut
+  exists to hold the 1.0 drawing byte-identical rather than because anything
+  reads it, in the same way `icon-512.png` stays in the build without being
+  wired up.
 - **1.0** Initial. Four directions, thirteen variations on the two that held,
   six derivations of the one that held best.
 
@@ -87,12 +134,33 @@ rule 4 and are never per-cut.
 | `small`   | 21.38 | 7.77       | 21 to 32px     | 23   |
 | `micro`   | 30.0  | 11.0       | 16 to 20px     | 11   |
 
+The ladder is not monotonic at the 20-to-21 boundary. Measured by the
+generator's own criterion, a dot whose diameter reaches one device pixel:
+`micro` at 20px draws 11 dots, 10 of which clear a pixel, the largest 4.4px
+across. `small` at 21px draws 23, only 12 of which clear a pixel, the largest
+2.4px. Crossing that boundary upward makes the mark worse, not better.
+Nothing renders in 21 to 32 today, which is the only reason this costs
+nothing. Anyone writing `<Mark size={24} />` should expect a thinner drawing
+than at 20px, and should treat that as a reason to reopen the boundary rather
+than a surprise.
+
 The micro cut also carries its own gamma, jitter, edge dissolve and field
 ramp, because at roughly a dozen dots the settings that serve 23 do not serve
 11: the scatter reads as dirt, the mid-field dots fall below `RMIN` and are
 never drawn, and dissolving 13 percent of a four-dot-wide drawing removes an
 entire ring. `display` and `small` carry only a pitch and a radius, so they
 draw from the module constants and are byte-identical to what shipped at 1.0.
+
+`icon.svg` is the one place in the system where "three cuts, not one drawing
+scaled" cannot hold. It is resolution-independent and it carries exactly one
+cut, so whichever cut it is pinned to is the drawing a browser scales to every
+size it wants a favicon at, from a 16px tab strip to a bookmark bar to a
+pinned tile. It is pinned to `micro`, because the tab strip is where it is
+almost always seen and because `favicon-32.png` shares that slot. The cost is
+real: a browser rendering `icon.svg` large gets 11 dots at large size, which
+is the sparse-specks problem that moved `icon-180.png` off the small cut. The
+raster icons at 180 and 512 exist so that the large slots have a display-cut
+file to prefer.
 
 The micro cut's inverse is drawn at 9.68, a shade under its 11.0 radius,
 rather than reusing the same radius the way `display` and `small` do for
@@ -106,17 +174,29 @@ A halftone changes line screen for newsprint. A mark changes it for a
 favicon. All three cuts read as the same mark, which is the test that
 matters.
 
-| Cut       | Consumers                                                    |
-| --------- | ------------------------------------------------------------ |
-| `micro`   | `Nav` at 19px, `Footer` at 17px, `favicon-16.png`, `icon.svg` |
-| `small`   | `favicon-32.png`                                              |
-| `display` | `icon-180.png`, `icon-512.png`                                |
+| Cut       | Consumers                                                                        |
+| --------- | --------------------------------------------------------------------------------- |
+| `micro`   | `Nav` at 19px, `Footer` at 17px, `favicon-16.png`, `favicon-32.png`, `icon.svg` |
+| `small`   | none                                                                              |
+| `display` | `icon-180.png`, `icon-512.png`                                                    |
 
 `display`'s live consumer is `icon-180.png`. `icon-512.png` is generated
 alongside it as a store icon, sized for a web app manifest this site does
 not currently ship, so nothing in `src/` references the file. It stays in
 the build because generating it is cheap and having it ready is correct;
 it is not wired up, and this table should not be read as claiming it is.
+
+`small` has no consumer at all, which is worth saying plainly rather than
+leaving to be inferred from an empty cell. `favicon-32.png` was its last one
+until 1.1 moved it to `micro`, and nothing in the site renders the mark in
+the 21-to-32px band the cut is named for. What `small` does now is hold the
+1.0 drawing byte-identical, which is a real job under rule 7 and the reason
+it is not deleted: `mark-small.svg` and `mark-small-inverse.svg` are two of
+the four files a checksum test pins, and deleting the cut would delete the
+baseline the display cut's own guard is measured beside. It is a preserved
+drawing rather than a live one. If a consumer ever lands in that band, read
+the note above the cuts table first: the 20-to-21 boundary hands it a worse
+drawing than the size below.
 
 The display floor moved from 25px to 33px at 1.1. Nothing rendered the mark
 between 25 and 32px, so no consumer moved.

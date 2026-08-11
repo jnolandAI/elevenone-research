@@ -38,6 +38,19 @@
     }
   },
   "raster_ground": "#131312",
+  "drawn_from": {
+    "mark.svg": "display",
+    "mark-small.svg": "small",
+    "mark-micro.svg": "micro",
+    "mark-inverse.svg": "display",
+    "mark-small-inverse.svg": "small",
+    "mark-micro-inverse.svg": "micro",
+    "icon.svg": "micro",
+    "favicon-16.png": "micro",
+    "favicon-32.png": "micro",
+    "icon-180.png": "display",
+    "icon-512.png": "display"
+  },
   "files": [
     "favicon-16.png",
     "favicon-32.png",
