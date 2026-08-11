@@ -240,20 +240,21 @@ describe('the generator', () => {
     expect(scored).toEqual({ display: 112, small: 23, micro: 11 });
   });
 
-  it('checks every generated file it tracks, and counts only what it checked', () => {
+  it('checks the text files it tracks, and counts only what it checked', () => {
     // --check built its set from the SVG table alone and reported "7 files
     // match" while the docstring claimed it verified everything. The four
     // PNGs were the gap that mattered: the generator runs without Playwright,
     // so a retune on a machine with no browser rewrote the SVGs, left the
     // rasters on the previous drawing, and still reported no drift.
-    const all = execFileSync('python', ['scripts/render_mark.py', '--check'], {
-      encoding: 'utf8',
-    });
-    expect(all).toMatch(/mark 1\.1: 13 files match$/m);
-
-    // and --no-raster is an opt-out that says what it opted out of, rather
-    // than a flag that changed nothing because --check returned before the
-    // raster block was reached
+    //
+    // --no-raster is an opt-out that says what it opted out of, rather than a
+    // flag that changed nothing because --check returned before the raster
+    // block was reached. This suite asserts that half only: the nine text
+    // files (SVGs, manifest.json, the contact sheet) need no browser to
+    // verify. Full --check renders the four PNGs through Playwright, which
+    // would give this vitest suite a browser dependency it never had before
+    // this branch; that assertion lives in e2e/mark.spec.ts, the suite that
+    // already owns Playwright.
     const text = execFileSync('python', ['scripts/render_mark.py', '--check', '--no-raster'], {
       encoding: 'utf8',
     });
