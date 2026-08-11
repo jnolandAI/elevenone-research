@@ -10,29 +10,37 @@ const render = async (props: Record<string, unknown>) => {
 
 const svg = (name: string) => readFileSync(`public/assets/mark/${name}`, 'utf8');
 const circles = (s: string) => (s.match(/<circle/g) ?? []).length;
+// The full cx/cy/r geometry of every dot, in file order. Mark.astro never
+// touches a <circle> element, only the <svg> tag's title/aria-label/role, so
+// a correctly-loaded cut's rendered circles are byte-identical to the source
+// file's. Comparing a count alone proves nothing about which file loaded: a
+// future retune that happened to land on another cut's dot count would still
+// pass a count check. Comparing the full geometry proves the file.
+const circleTags = (s: string) => s.match(/<circle[^>]*\/>/g) ?? [];
 
 describe('the mark', () => {
   it('uses the micro cut from 16 to 20px, where the nav and the footer sit', async () => {
     // Nav.astro renders at 19 and Footer.astro at 17: the two places a reader
     // actually meets the mark, and the band the small cut was failing in
-    const micro = (readFileSync('public/assets/mark/mark-micro.svg', 'utf8')
-      .match(/<circle/g) ?? []).length;
-    expect((await render({ size: 16 })).match(/<circle/g)).toHaveLength(micro);
-    expect((await render({ size: 19 })).match(/<circle/g)).toHaveLength(micro);
-    expect((await render({ size: 20 })).match(/<circle/g)).toHaveLength(micro);
+    const micro = circleTags(svg('mark-micro.svg'));
+    for (const size of [16, 19, 20]) {
+      expect(circleTags(await render({ size }))).toEqual(micro);
+    }
   });
 
   it('uses the small cut from 21 to 32px', async () => {
+    const small = circleTags(svg('mark-small.svg'));
     for (const size of [21, 32]) {
-      expect((await render({ size })).match(/<circle/g)).toHaveLength(23);
+      expect(circleTags(await render({ size }))).toEqual(small);
     }
   });
 
   it('uses the display cut at 33px and above', async () => {
     // the floor moved from 25 to 33: 112 dots need that much room before the
     // drawing muddies, and nothing rendered between 25 and 32 anyway
+    const display = circleTags(svg('mark.svg'));
     for (const size of [33, 64]) {
-      expect((await render({ size })).match(/<circle/g)).toHaveLength(112);
+      expect(circleTags(await render({ size }))).toEqual(display);
     }
   });
 

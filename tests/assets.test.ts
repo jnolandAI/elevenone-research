@@ -161,4 +161,15 @@ describe('asset layout', () => {
       expect(existsSync(`public${href}`)).toBe(true);
     }
   });
+
+  it('points the SVG favicon at the icon family, never the page family', () => {
+    // mark-small.svg still exists on disk and resolves fine, so the four-href
+    // check above would stay green even if this link reverted to it. The page
+    // family and the icon family must not share a path: rule 1 holds on a
+    // page, and the ground is scoped to icon files, so the primary favicon
+    // has to be icon.svg specifically, not merely a valid file.
+    const layout = readFileSync('src/layouts/Base.astro', 'utf8');
+    const match = layout.match(/<link rel="icon" type="image\/svg\+xml" href="([^"]+)"/);
+    expect(match?.[1]).toBe('/assets/mark/icon.svg');
+  });
 });
