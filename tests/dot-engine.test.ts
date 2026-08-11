@@ -466,12 +466,16 @@ describe('every subject draws from the dark end of the tone scale', () => {
  * assertion that turns a silent dead horizon back into a failing test.
  *
  * The equivalent assertion for the scatter field is deliberately absent. The
- * scatter currently sits mostly past fogFar on the hero crops (measured: 94%
- * of datacenter hero's in-frame scatter boxes at a fog factor of 0.98 or
- * above, 97% for its card, 75% for port hero, 63% urban, 61% wind, 41% grid),
- * so writing it would commit a knowingly failing test. Moving that geometry
- * changes every asset in the library and is deferred to its own pass. Add the
- * scatter case in that pass, not before.
+ * scatter currently sits mostly past fogFar, so writing it would commit a
+ * knowingly failing test. Share of in-frame scatter boxes at a fog factor of
+ * 1.00, measured against this engine's own geometry and cameras: datacenter
+ * hero 100% and card 100%, urban hero 70%, grid hero 67%, wind hero 64%,
+ * port hero 62%, grid card 57%, urban card 57%, wind card 36%, and both
+ * wind cover and port card at 0%. Those last two are the only crops where the
+ * scatter reads at all. Moving that geometry changes every asset in the
+ * library and is deferred to its own pass. Add the scatter case in that pass,
+ * not before, and see the same figures in docs/dot-imagery.md, which is the
+ * other place they are recorded.
  */
 describe('every ridge sits inside its fog band', () => {
   const E = loadEngine();

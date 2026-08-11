@@ -453,7 +453,7 @@ Whatever the source, the caption names the subject and says *rendered*.
    cover `BriefHero`, whose surface is `dotField()` from
    `src/lib/charts/halftone.ts` rather than an imagery-engine render. One
    render is also its own exception: the contour branch of `screen()`
-   (`dot-engine.js:486-513`) never calls `edge()`, so `contour` mode has no
+   (`dot-engine.js:517-544`) never calls `edge()`, so `contour` mode has no
    dissolve at all and `wind-cover-contour.png` ships with hard edges on all
    four sides. Treat that as a gap in `screen()` rather than as licence to clip
    it, and if a second contour asset is ever commissioned, close the gap first.
