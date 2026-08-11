@@ -16,8 +16,8 @@ interface Props {
 
 const { size, inverse = false, label } = Astro.props;
 
-// Rule 3 of docs/mark.md. Below 16px the small cut loses the scatter and the
-// idea goes with it, so this is an error rather than a clamp.
+// Rule 3 of docs/mark.md. 16px is the micro cut's floor: below it the scatter
+// is lost and the idea goes with it, so this is an error rather than a clamp.
 if (size < 16) {
   throw new Error(`Mark: minimum size is 16px, got ${size}px. See docs/mark.md.`);
 }
@@ -26,6 +26,12 @@ if (size < 16) {
 // newsprint; a mark changes it for a favicon. Scaling the display cut down to
 // 16px turns 112 dots into mud, and the small cut's 23 dots turn to specks
 // below 21px, which is exactly where Nav and Footer sit.
+//
+// The 20-to-21 step is the one place the ladder does not improve as it climbs:
+// micro at 20px puts 10 of its 11 dots over a device pixel, small at 21px puts
+// 12 of its 23 over one. Nothing renders in 21 to 32 today, so nothing pays
+// for it. See the note under the cuts table in docs/mark.md before adding a
+// consumer there.
 const cut = size >= 33 ? '' : size >= 21 ? '-small' : '-micro';
 const tone = inverse ? '-inverse' : '';
 // Resolved against this file, not the working directory. A cwd-relative path
