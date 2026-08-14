@@ -152,7 +152,7 @@ describe('fog constants', () => {
   it('are declared as multipliers of camera distance, not as world units', () => {
     const E = loadEngine();
     expect(E.CONST.fogNear).toBe(0.55);
-    expect(E.CONST.fogFar).toBe(1.9);
+    expect(E.CONST.fogFar).toBe(3.2);
   });
 
   // Fog is deliberately not a per-subject table. If one subject needs its own
@@ -465,19 +465,22 @@ describe('every subject draws from the dark end of the tone scale', () => {
  * camera change is the most likely next edit to this file, so this is the
  * assertion that turns a silent dead horizon back into a failing test.
  *
- * The equivalent assertion for the scatter field is deliberately absent. The
- * scatter currently sits mostly past fogFar, so writing it would commit a
- * knowingly failing test. Share of in-frame scatter boxes at a fog factor of
- * 1.00, measured against this engine's own geometry and cameras: datacenter
- * hero 100% and card 100%, urban hero 70%, grid hero 67%, wind hero 64%,
- * port hero 62%, grid card 57%, urban card 57%, wind card 36%, and both
- * wind cover and port card at 0%. Those last two are the only crops where the
- * scatter reads at all. Moving that geometry changes every asset in the
- * library and is deferred to its own pass. Add the scatter case in that pass,
- * not before, and see the same figures in docs/dot-imagery.md, which is the
- * other place they are recorded.
+ * The band these fractions are measured against changed at 1.3. fogFar went
+ * from 1.90 to 3.20 because the old far plane saturated inside the scene:
+ * anything past roughly twice the camera distance reached the field colour and
+ * stopped being drawn at all, which is depth implemented as deletion. Widening
+ * it moved every fraction down without moving any geometry. The ridgeDist
+ * values are unchanged. They were never the thing that was wrong.
+ *
+ * The scatter assertion below could not be written at 1.2, and this docblock
+ * used to record why: the scatter sat mostly past fogFar, at 36 to 100 percent
+ * of boxes fully erased depending on subject and role, so the test would have
+ * been a knowingly failing one and was deferred to its own pass. Widening the
+ * band closed it without that pass. The farthest box the geometry can produce
+ * anywhere in the library now reaches a fog fraction of 0.891, so no scatter
+ * box in any published crop is erased, and the assertion is simply true.
  */
-describe('every ridge sits inside its fog band', () => {
+describe('the fog band holds both ridge and scatter', () => {
   const E = loadEngine();
   const src = engineSource();
   const body = src.slice(src.indexOf('function buildScene')).replace(/\/\*[\s\S]*?\*\//g, '');
@@ -504,7 +507,22 @@ describe('every ridge sits inside its fog band', () => {
       const v = m![1].match(new RegExp(`${key}:\\s*([\\d.]+)`));
       return v ? parseFloat(v[1]) : 0;
     };
-    return { ridge: num('ridge'), ridgeDist: num('ridgeDist') };
+    return {
+      d: num('d'),
+      flat: num('flat') || 26,
+      ridge: num('ridge'),
+      ridgeDist: num('ridgeDist'),
+      scatter: num('scatter'),
+    };
+  };
+
+  // The band itself, independent of what is being scored against it.
+  const bandFor = (id: string, role: string) => {
+    const c = E.camFor(id, role);
+    const d = E.ROLES[role].dist;
+    const cam = [c[0] * d, c[1] * d, c[2] * d];
+    const camDist = Math.hypot(cam[0] - c[3], cam[1] - c[4], cam[2] - c[5]);
+    return { cam, near: camDist * E.CONST.fogNear, far: camDist * E.CONST.fogFar };
   };
 
   // Same solve the ridgeDist values were derived under: the fog band is
@@ -513,13 +531,7 @@ describe('every ridge sits inside its fog band', () => {
   // average height is ridge * 0.725 (the midpoint of ground()'s 0.45 + rnd()
   // * 0.55 height factor) and whose centre therefore sits at that / 2 - 1.
   const fogAt = (id: string, role: string) => {
-    const R = E.ROLES[role];
-    const c = E.camFor(id, role);
-    const d = R.dist;
-    const cam = [c[0] * d, c[1] * d, c[2] * d];
-    const camDist = Math.hypot(cam[0] - c[3], cam[1] - c[4], cam[2] - c[5]);
-    const near = camDist * E.CONST.fogNear;
-    const far = camDist * E.CONST.fogFar;
+    const { cam, near, far } = bandFor(id, role);
     const { ridge, ridgeDist } = groundCall(id);
     const y = (ridge * 0.725) / 2 - 1;
     const dist = Math.hypot(cam[0], y - cam[1], -ridgeDist - cam[2]);
@@ -543,15 +555,46 @@ describe('every ridge sits inside its fog band', () => {
 
       // Inside the band is the hard requirement, but a ridge at a fog fraction
       // of 0.98 is inside it and still functionally erased, which is what the
-      // dead ridges measured at (0.92 to 1.00). The target when ridgeDist was
-      // solved was 0.55 to 0.70; port straddles it at 0.516 and 0.707 because
-      // its two cameras differ by nearly 2x and no single value satisfies
-      // both. 0.35 to 0.85 is that target with the straddle allowed for, and
-      // it still fails anything approaching a dead ridge.
+      // dead ridges measured at (0.92 to 1.00). Against the 3.20 band every
+      // shipped ridge lands between 0.260 and 0.360, so the window below is
+      // that measured spread with room either side. It is deliberately not
+      // centred: a ridge has to read as distance rather than as a second
+      // subject, and the fraction that does that is low now that the far plane
+      // sits outside the scene instead of inside it. A ridge drifting back
+      // above 0.55 is the early warning that the old erasure is returning.
       it(`${id} at ${role} is faded but not erased`, () => {
         const f = fogAt(id, role);
-        expect(f.fraction).toBeGreaterThan(0.35);
-        expect(f.fraction).toBeLessThan(0.85);
+        expect(f.fraction).toBeGreaterThan(0.15);
+        expect(f.fraction).toBeLessThan(0.55);
+      });
+    }
+  }
+
+  const scatterers = ids.filter((id) => groundCall(id).scatter > 0);
+
+  it('covers every subject that has a scatter field at all', () => {
+    expect(scatterers).toEqual(['port', 'datacenter', 'wind', 'grid', 'urban']);
+  });
+
+  for (const id of scatterers) {
+    for (const role of rolesOf(id)) {
+      // Bounding the worst case needs no rnd stream. scatterRadius(flat, d, 1)
+      // is the outermost radius the annulus can produce, and the tallest box
+      // ground() draws is 1.2 + 3.4, so sweeping the angle at that radius gives
+      // the farthest box the geometry admits rather than the farthest one seed
+      // happened to draw. Asserting on the bound rather than on a sample is
+      // what makes this survive a change to the seed or the draw order.
+      it(`${id} at ${role} cannot place a scatter box past the far plane`, () => {
+        const { cam, near, far } = bandFor(id, role);
+        const g = groundCall(id);
+        const r = E.scatterRadius(g.flat, g.d, 1);
+        let worst = 0;
+        for (let i = 0; i < 720; i++) {
+          const a = (i / 720) * Math.PI * 2;
+          const p = [Math.cos(a) * r, 4.6 / 2, Math.sin(a) * r - g.d * 0.12];
+          worst = Math.max(worst, Math.hypot(p[0] - cam[0], p[1] - cam[1], p[2] - cam[2]));
+        }
+        expect((worst - near) / (far - near)).toBeLessThan(1);
       });
     }
   }

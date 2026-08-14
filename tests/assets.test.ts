@@ -74,9 +74,17 @@ describe('asset layout', () => {
   // datacenter-hero-dot (628 KB) turns this red. This test cannot catch a
   // switch away from lossless encoding: lossy WebP is smaller, not bigger, so
   // it stays green. See the losslessness test below for that guard.
+  // The hero ceiling moved once, at 1.3, from 400 to 440. Widening the fog band
+  // put the far ground and the tower lattice back into the grid render, and the
+  // lossless WebP went from 280 KB to 402 KB for it. That is a 44% rise in the
+  // weight of the homepage's LCP image, which is served at its full 2880px with
+  // fetchpriority="high" and no srcset, and it was spent knowingly rather than
+  // discovered later. 440 leaves 38 KB of headroom and is not a number to nudge
+  // again: the next render that breaches it should be answered with a srcset and
+  // a narrower role rendered from the engine, not with a larger ceiling.
   it('keeps every asset on the critical path under its byte ceiling', () => {
     const SHIPPED_HERO = 'grid-hero-dot.png';
-    const HERO_CEILING_KB = 400;
+    const HERO_CEILING_KB = 440;
     const CARD_CEILING_KB = 160;
     const manifest = JSON.parse(readFileSync('public/assets/dot/manifest.json', 'utf8'));
 

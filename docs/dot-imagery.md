@@ -44,7 +44,7 @@ production makes.
 
 ## Constants
 
-Brand values, version **1.2**. Not per-image choices.
+Brand values, version **1.3**. Not per-image choices.
 
 | Parameter     | Value              | Controls                                                     |
 | ------------- | ------------------ | -------------------------------------------------------------- |
@@ -52,7 +52,7 @@ Brand values, version **1.2**. Not per-image choices.
 | Screen angle  | 15°                | Rotation of the lattice, the classic halftone angle           |
 | Edge dissolve | Per edge, per role | Fraction of the frame over which each side thins              |
 | Fog near      | 0.55               | Fog start, as a multiple of camera-to-subject distance        |
-| Fog far       | 1.90               | Fog full, same units                                          |
+| Fog far       | 3.20               | Fog full, same units. Sits outside the scene by design         |
 | Tone scale    | 5 steps            | `#D6D6D4` to `#565654`. Scene materials                       |
 | Grid          | Staggered          | Offset rows, not a square lattice                              |
 | Dot           | `#131312`          | The interface ink exactly. Never a grey, never a hue           |
@@ -62,7 +62,26 @@ Fog near and far are multipliers of the camera's distance to its look-at
 point, not fixed depths. A role that pulls the camera back gets a
 proportionally deeper fog with no table to maintain per subject.
 
+**The far plane belongs outside the scene.** Fog on this substrate runs toward
+the field, so a far plane inside the scene does not push geometry back, it
+deletes it. At 1.90 everything past roughly twice the camera distance reached
+pure white and stopped being drawn, and the result read as flatness rather than
+as space. 3.20 keeps the same gradient and never saturates inside the frame. If
+a horizon needs to recede further, move the ridge, never pull the far plane in.
+
 ### Version history
+
+- **1.3** One constant. `fogFar` 1.90 to 3.20, no geometry moved. 1.2's depth
+  pass had implemented recession as erasure, and measured against the
+  pre-depth-pass renders it made four of six subjects flatter rather than
+  deeper. Local tonal modulation on the hero crops, pre-1.2 to 1.2 to 1.3:
+  robotics 0.116, 0.074, 0.110; port 0.166, 0.153, 0.178; grid 0.057, 0.054,
+  0.084; wind 0.078, 0.067, 0.086; datacenter 0.141, 0.198, 0.229; urban 0.149,
+  0.182, 0.213. Every subject now sits at or above where it was before the depth
+  pass. The `ridgeDist` values are untouched: they were solved correctly against
+  a band that was itself wrong, and every ridge now lands between 0.260 and
+  0.360 rather than 0.516 to 0.707. This also closed the scatter limitation 1.2
+  recorded and deferred, with no pass of its own. See the depth test.
 
 - **1.2** Depth and edges. The two scene materials, 46 levels apart, became a
   five-step tone scale spanning 128, because two tones cannot describe depth
@@ -224,7 +243,7 @@ Then apply the recognition test.
 | `plane`     | `true`  | Pass `false` when the subject models its own terrain, as wind does            |
 | `ridge`     | `0`     | Height of the far horizon silhouette. `0` means no ridge and no `ridgeDist`   |
 | `ridgeDist` | none    | How far in front of the origin the ridge sits. Required whenever `ridge` is set |
-| `scatter`   | `0`     | Number of small boxes in the annulus between the subject and the ridge. Mostly past `fogFar` today: see the depth test |
+| `scatter`   | `0`     | Number of small boxes in the annulus between the subject and the ridge. Reads at every role since 1.3: see the depth test |
 
 Three of those couple to more than their name suggests, and a caller cannot see
 it from the call site:
@@ -249,14 +268,14 @@ the horizon reads to how large the ground plane happened to be, and five
 subjects' ridges drifted past `fogFar` and rendered as pure white with nobody
 noticing.
 
-Target: a fog fraction of **0.55 to 0.70** at every role the subject renders.
-Below that the ridge competes with the subject; above it the ridge is
-functionally erased. Compute it against the subject's own camera:
+Target: a fog fraction of **0.25 to 0.40** at every role the subject renders.
+Below that the ridge competes with the subject; above it the ridge starts
+lifting toward the field. Compute it against the subject's own camera:
 
 ```
 camPos   = camFor(id, role) position, each component times ROLES[role].dist
 camDist  = |camPos - lookAt|
-fogNear  = camDist * 0.55        fogFar = camDist * 1.90
+fogNear  = camDist * 0.55        fogFar = camDist * 3.20
 ridgePt  = (0, ridge * 0.725 / 2 - 1, -ridgeDist)
 fraction = (|ridgePt - camPos| - fogNear) / (fogFar - fogNear)
 ```
@@ -264,14 +283,14 @@ fraction = (|ridgePt - camPos| - fogNear) / (fogFar - fogNear)
 `0.725` is the midpoint of `ground()`'s `0.45 + rnd() * 0.55` height factor, so
 `ridgePt` is the average ridge box rather than a tall one. Solve for the
 `ridgeDist` that lands every role inside the band and take the midpoint of the
-overlap. A subject whose hero and default cameras sit at very different
-distances may have no simultaneous solution: port's differ by nearly 2x and it
-straddles the band at 0.516 and 0.707. `tests/dot-engine.test.ts` asserts every
-ridge stays inside its fog band, at every role in the manifest, and fails
-anything outside 0.35 to 0.85.
+overlap. Against the 3.20 band the shipped values land between 0.260 and 0.360,
+tightly enough that port no longer straddles anything: its two cameras differ by
+nearly 2x and both now sit inside, at 0.263 and 0.360.
+`tests/dot-engine.test.ts` asserts every ridge stays inside its fog band, at
+every role in the manifest, and fails anything outside 0.15 to 0.55.
 
 That fraction is linear in depth. Three.js puts a smoothstep on it before
-painting, so the shipped ridges, linear 0.51 to 0.71, render at 0.52 to 0.79.
+painting, so the shipped ridges, linear 0.26 to 0.36, render at 0.17 to 0.30.
 The band is stated linearly because that is what every current `ridgeDist` was
 solved against; convert before comparing it with a measured fog factor.
 
@@ -326,46 +345,45 @@ scene with no horizon, and the camera for a scene where nothing is near. Fog is
 not a lever. It is derived from camera distance, so a subject that seems to
 need its own fog has the wrong camera.
 
-**`scatter` is not currently a working lever, and this is the one place the doc
-used to say otherwise.** Most of it sits far enough back to be painted the fog
-colour and never reach the screen. Three.js linear fog is
+**`scatter` became a working lever at 1.3, and this is the one place the doc
+used to say otherwise.** At 1.2 most of it sat far enough back to be painted the
+fog colour and never reach the screen, and this section recorded that as a
+limitation deferred to a pass of its own. Widening the far plane closed it
+without that pass and without moving any geometry. Three.js linear fog is
 `smoothstep(fogNear, fogFar, -mvPosition.z)`, and at a factor of 1.0 the
-fragment is exactly the fog colour whatever the shading says. Measured on each
-scatter box's centre, counting only the boxes whose centre falls inside the
-frustum:
+fragment is exactly the fog colour whatever the shading says. Measured over the
+annulus `ground()` draws from, uniform in angle and in `t`, restricted to what
+each role's frustum shows, so the figures describe the distribution rather than
+one seed's draw:
 
-| Subject and role  | Boxes in frame | At factor ≥ 0.98 | Median factor |
-| ----------------- | -------------- | ---------------- | ------------- |
-| datacenter hero   | 6 of 16        | 100%             | 1.00          |
-| datacenter card   | 5 of 16        | 100%             | 1.00          |
-| urban hero        | 10 of 18       | 70%              | 1.00          |
-| grid hero         | 24 of 30       | 67%              | 1.00          |
-| wind hero         | 14 of 20       | 64%              | 1.00          |
-| port hero         | 13 of 22       | 62%              | 1.00          |
-| grid card         | 21 of 30       | 57%              | 0.99          |
-| urban card        | 7 of 18        | 57%              | 0.98          |
-| wind card         | 11 of 20       | 36%              | 0.97          |
-| wind cover        | 10 of 20       | 0%               | 0.82          |
-| port card         | 16 of 22       | 0%               | 0.73          |
+| Subject and role  | In frame | ≥ 0.98 at 1.2 | ≥ 0.98 at 1.3 | Median at 1.2 | Median at 1.3 |
+| ----------------- | -------- | ------------- | ------------- | ------------- | ------------- |
+| datacenter hero   | 39%      | 100%          | 0%            | 1.00          | 0.83          |
+| datacenter card   | 29%      | 100%          | 0%            | 1.00          | 0.71          |
+| datacenter figure | 30%      | 100%          | 0%            | 1.00          | 0.71          |
+| datacenter social | 35%      | 99%           | 0%            | 1.00          | 0.69          |
+| port hero         | 47%      | 94%           | 0%            | 1.00          | 0.67          |
+| urban hero        | 48%      | 84%           | 0%            | 1.00          | 0.59          |
+| wind hero         | 54%      | 75%           | 0%            | 1.00          | 0.60          |
+| urban card        | 37%      | 62%           | 0%            | 0.99          | 0.47          |
+| wind card         | 46%      | 52%           | 0%            | 0.98          | 0.46          |
+| grid hero         | 66%      | 51%           | 0%            | 0.98          | 0.46          |
+| grid card         | 59%      | 36%           | 0%            | 0.89          | 0.36          |
+| wind cover        | 34%      | 5%            | 0%            | 0.84          | 0.33          |
+| port card         | 68%      | 0%            | 0%            | 0.79          | 0.29          |
 
-Every hero crop is majority-invisible and datacenter is entirely so, which
-means raising the count buys nothing on the roles that most want a middle
-plane. The ridge is unaffected: it lands between 0.52 and 0.79 at every subject
-and role, which is `ridgeDist` doing exactly its job. Moving the scatter
-forward changes every asset in the library, so it is deferred to its own pass
-rather than folded into a fix wave. Until that lands, reach for `amp`, `ridge`
-or the camera.
+Nothing in the library is erased any more. Datacenter's hero is the most faded
+crop at a median of 0.83 and is the one to watch if the cameras move again.
+`tests/dot-engine.test.ts` now asserts the bound directly: the farthest box the
+annulus can produce, at every subject and role, stays inside the band.
 
-**Known case: port.** The hero carries a ridge at `ridgeDist` 22, which gives
-it a horizon. It does not have a middle plane: 8 of the 13 scatter boxes in
-frame are at a fog factor of 0.98 or above and the median is 1.00, so what the
-hero actually shows is a near plane and a horizon with nothing between them.
-Port's card is the one crop where the scatter does read, which is why it is the
-subject to look at if the deferred pass needs a reference. The far
-plane also does not read against the crane row: `buildScene('port')` draws
-exactly four identical cranes from the same two tones, so there is no size or
-tone gradient among them to signal that they recede. Two depth planes pass at
-the hero crop, not three.
+**Known case: port.** The hero carries a ridge at `ridgeDist` 22 for its
+horizon, and since 1.3 its scatter reads as well, at a median factor of 0.67,
+so the middle plane the 1.2 doc said was missing is now there. What is still
+missing is a gradient across the subject itself: `buildScene('port')` draws
+exactly four identical cranes, so no size or tone difference among them signals
+that they recede. That is a geometry matter rather than a fog one, and the fog
+band cannot fix it.
 
 ## The screen as a surface treatment
 

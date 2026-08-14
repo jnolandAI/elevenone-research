@@ -53240,14 +53240,21 @@ const CONST = {
                         default anywhere: a scalar here expands to four
                         dissolving sides, and production dissolves two. */
   fogNear: 0.55,     /* fog start, as a multiple of camera-to-subject distance */
-  fogFar: 1.90,      /* fog full, same units. Far geometry lifts to the field
-                        and drops out of the screen instead of competing with
-                        the subject, which is what makes a scene read as space
-                        rather than as a flat elevation drawing. */
+  fogFar: 3.20,      /* fog full, same units. Recession is carried by a gradient
+                        that never reaches the field inside the frame. 1.90
+                        saturated well within the scene, so everything past
+                        roughly twice the camera distance lifted to pure white
+                        and stopped being drawn at all: depth was implemented as
+                        deletion, and it read as flatness rather than as space.
+                        Measured on robotics at hero, going to 3.20 raised local
+                        tonal modulation from 0.074 to 0.110 against 0.116 for
+                        the pre-depth-pass render. Keep the far plane outside the
+                        scene depth; do not tune it back down to make a ridge
+                        recede, move the ridge. */
   dot: '#131312',    /* the interface ink exactly; a cooler dot read as a
                         different black next to type on the same page */
   field: '#FCFCFB',
-  version: '1.2',    /* bump when a constant changes; published work keeps its own */
+  version: '1.3',    /* bump when a constant changes; published work keeps its own */
 };
 
 /* ------------------------------------------------------------------- roles
@@ -53375,7 +53382,7 @@ function ground(g, TONE, rnd, o){
       throw new Error(
         'ground(): ridge is set (' + o.ridge + ') but ridgeDist is missing. ' +
         'Solve ridgeDist against this subject\'s camera and fog band ' +
-        '(target fog fraction roughly 0.55–0.70) rather than deriving it from d.'
+        '(target fog fraction roughly 0.25 to 0.40) rather than deriving it from d.'
       );
     }
     /* The far horizon, in the lightest tone so it reads as distance rather than
