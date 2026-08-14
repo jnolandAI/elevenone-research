@@ -30,8 +30,14 @@ node_modules/
 # Brainstorming session scratch
 .superpowers/
 
-# Reference material, explicitly not binding (see PRODUCT.md)
+# Reference material, explicitly not binding
 *.zip
+
+# Working documents. Local only: they carry commercial positioning and
+# unlaunched pricing, which do not belong in a public repository.
+PRODUCT.md
+docs/superpowers/
+docs/dns-cutover.md
 
 # Prototype review screenshots, regenerable from the prototypes
 prototypes/png/

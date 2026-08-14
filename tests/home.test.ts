@@ -51,7 +51,7 @@ describe('the working section', () => {
     expect(src).not.toMatch(/href=\{?["'`]#c-/);
   });
 
-  it('claims no track record, which PRODUCT.md forbids implying', () => {
+  it('claims no track record, which the brand rules forbid implying', () => {
     expect(src).not.toMatch(/\b(client|clients|case study|case studies|testimonial)\b/i);
   });
 
@@ -92,7 +92,7 @@ describe('the coverage strip', () => {
   });
 
   // Six industrial images in a row is exactly the shape that implies a
-  // portfolio. PRODUCT.md forbids implying a track record.
+  // portfolio. The brand rules forbid implying a track record.
   it('frames subjects covered, never work delivered', () => {
     expect(coverage).not.toMatch(/\b(client|clients|case study|case studies|portfolio|our work|engagements delivered)\b/i);
   });
