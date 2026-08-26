@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { makeClassifier, deckOf, pageOf } from '../research-kit/census/corpus.mjs';
+import { describe, it, expect, afterEach } from 'vitest';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { makeClassifier, deckOf, pageOf, loadPatterns } from '../research-kit/census/corpus.mjs';
 
 /* Synthetic patterns of the same shape as the real ones. The real patterns name
    client engagements and live with the corpus, outside this repository. */
@@ -24,7 +27,7 @@ describe('corpus split', () => {
   });
 
   it('leaves ambiguous decks unplaced rather than guessing', () => {
-    expect(classifyDeck('theendofmanagement')).toBe('unplaced');
+    expect(classifyDeck('untitled-deck-2019')).toBe('unplaced');
     expect(classifyDeck('speaker-name-2018')).toBe('unplaced');
   });
 
@@ -35,8 +38,8 @@ describe('corpus split', () => {
 
   it('strict is published only; broad is everything not client', () => {
     expect(population('sector-outlook-2022', 'strict')).toBe(true);
-    expect(population('theendofmanagement', 'strict')).toBe(false);
-    expect(population('theendofmanagement', 'broad')).toBe(true);
+    expect(population('untitled-deck-2019', 'strict')).toBe(false);
+    expect(population('untitled-deck-2019', 'broad')).toBe(true);
     expect(population('firm-alpha-corp-scm-vshare', 'broad')).toBe(false);
   });
 
@@ -47,5 +50,36 @@ describe('corpus split', () => {
   it('parses tag keys', () => {
     expect(deckOf('sector-outlook-2022::20')).toBe('sector-outlook-2022');
     expect(pageOf('sector-outlook-2022::20')).toBe(20);
+  });
+});
+
+describe('loadPatterns', () => {
+  let dir;
+
+  afterEach(() => {
+    if (dir) rmSync(dir, { recursive: true, force: true });
+    dir = undefined;
+  });
+
+  it('reads the client and published arrays from census-classification.json', () => {
+    dir = mkdtempSync(join(tmpdir(), 'census-corpus-'));
+    writeFileSync(
+      join(dir, 'census-classification.json'),
+      JSON.stringify({ client: ['alpha-corp'], published: ['report', 'study'] })
+    );
+
+    expect(loadPatterns(dir)).toEqual({ client: ['alpha-corp'], published: ['report', 'study'] });
+  });
+
+  it('throws when client is not an array', () => {
+    dir = mkdtempSync(join(tmpdir(), 'census-corpus-'));
+    writeFileSync(
+      join(dir, 'census-classification.json'),
+      JSON.stringify({ client: 'alpha-corp', published: ['report', 'study'] })
+    );
+
+    expect(() => loadPatterns(dir)).toThrow(
+      'census-classification.json needs client and published arrays'
+    );
   });
 });

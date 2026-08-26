@@ -11,7 +11,7 @@ import {
 describe('titleBlock', () => {
   it('joins a wrapped title instead of truncating to the first line', () => {
     expect(titleBlock(WRAPPED_TITLE)).toBe(
-      'After years of acceleration, digital adoption growth is normalising across all six markets'
+      'Regional demand held steady through the downturn while replacement cycles lengthened across segments'
     );
     expect(titleBlock(WRAPPED_TITLE).split(/\s+/).length).toBe(13);
   });

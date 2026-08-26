@@ -57,7 +57,6 @@ const result = {
   broadLengths: deckLengths('broad'),
 };
 
-mkdirSync(join(HERE, 'out'), { recursive: true });
 mkdirSync(join(HERE, 'data'), { recursive: true });
 writeFileSync(join(HERE, 'data/text-census.json'), JSON.stringify(result, null, 2) + '\n');
 console.log(JSON.stringify(result, null, 2));

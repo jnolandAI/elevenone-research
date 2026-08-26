@@ -1,11 +1,12 @@
 /* A title that wraps to two lines before the body starts. Taking lines[0] alone
-   truncates it to four words and understates every title-length measure. */
+   truncates it and understates every title-length measure. Invented text: the
+   corpus is third-party and this repository is public. */
 export const WRAPPED_TITLE = [
-  'After years of acceleration, digital adoption growth is',
-  'normalising across all six markets',
+  'Regional demand held steady through the downturn while replacement',
+  'cycles lengthened across segments',
   '',
-  'Digital adoption among urban SEA users (%)',
-  'E-commerce 75% Food delivery 71% Transport 64%',
+  'Share of firms reporting longer cycles, by segment',
+  'Machinery 61% Components 54% Assemblies 47%',
 ].join('\n');
 
 /* A table rendered by pdftotext -layout. Columns are separated by wide runs of
@@ -19,14 +20,14 @@ export const TABLE_PAGE = [
   'Transport            8          11        37.5%',
 ].join('\n');
 
-/* Genuine two-column running prose: both sides are sentences. */
+/* Genuine two-column running prose: both sides are sentences. Invented text. */
 export const TWO_COLUMN_PROSE = [
-  'Operating models that convert strategy',
+  'A shared baseline for the operating review',
   '',
-  'These principles also provide the criteria for        decisions. A rewards framework linked to these',
-  'testing and adjusting the model over time,            accountabilities reinforces strong execution',
-  'bringing objectivity to what can be a highly          across every one of the business units named',
-  'politically charged internal process here.            in the operating model document above.',
+  'The framework gives each unit the same starting        point, and the differences that remain are the',
+  'point from which every later comparison runs,          ones worth arguing about in the review meeting.',
+  'and it removes the argument about whose numbers        Everything after that is a question of judgement',
+  'are correct before the discussion even opens.          rather than a question of arithmetic accuracy.',
 ].join('\n');
 
 /* A table whose row labels clear both the length floor and the letter floor,

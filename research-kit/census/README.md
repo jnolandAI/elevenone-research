@@ -11,10 +11,11 @@ itself.
 ## The corpus
 
 The corpus is external and third-party. It lives outside this repository, at
-a local path supplied as an argument to each script (it defaults to
-`C:/Projects/ExampleSlides` in every script below, which is a placeholder path,
-not a real location to point at). It holds 90 decks and 3,895 pages of
-copyrighted material that this repository does not, and must not, reproduce.
+a local path supplied as an argument to each script. Every script below
+defaults to `C:/Projects/ExampleSlides`, which is the author's own local
+corpus location; anyone else running these scripts needs to pass their own
+path as the first argument. It holds 90 decks and 3,895 pages of copyrighted
+material that this repository does not, and must not, reproduce.
 
 Three inputs live with the corpus and are read by these scripts but never
 copied in:
@@ -107,10 +108,9 @@ each line off in `visual-sample.md` while doing it. That step has no script;
 it is Task 5's visual read, and it is the only source for
 `data/form-inventory.md`.
 
-`run-text-census.mjs` creates both `research-kit/census/data/` and
-`research-kit/census/out/` if they do not already exist; `run-sample.mjs`
-creates `research-kit/census/out/` only. Neither needs the directory created
-by hand on a fresh checkout.
+`run-text-census.mjs` creates `research-kit/census/data/` if it does not
+already exist; `run-sample.mjs` creates `research-kit/census/out/`. Neither
+needs the directory created by hand on a fresh checkout.
 
 ## What each output file holds
 
@@ -145,7 +145,12 @@ population (2,082 pages after furniture is excluded) and hold up:
 - **Title length.** `titleBlock()` joins a title's wrapped lines before
   counting, so a two-line title is not truncated to its first line. The
   median, quartile and wrap-rate figures reflect the whole title, not a
-  fragment of it.
+  fragment of it. `titleLines()` caps the leading run at three lines, though,
+  and on 202 of the 2,082 strict-population pages (9.7%) that cap truncates a
+  run of four or more lines, so the measured "title block" on those pages is
+  really the first three lines of body text. Excluding those pages moves the
+  title-word p90 from 20 to 17 and p75 from 14 to 12, and the longest measured
+  title drops from 67 words to 37; read the committed p90 as 17, not 20.
 - **Share of titles carrying a number.** `hasNumber()` is a straightforward
   digit test against the joined title block.
 - **Piece-length distribution.** The `broad` population's pages-per-deck
@@ -201,8 +206,9 @@ design across, not the median as a target to hit.
 ## Reproducing this document's numbers
 
 Every number cited above under "What is not reliable" comes from
-`data/form-inventory.md`, specifically its "Correction to the input" section,
-which is the committed, deck-free record of the tag-versus-image comparison.
+`data/form-inventory.md`, the committed, deck-free record of the visual read.
+The tag-audit numbers come from its "Correction to the input" section; the
+250-words figure comes from elsewhere in the same document.
 The `multiColumnPct` caveat is pinned by a test, not just a note:
 `npx vitest run tests/census-measure.test.ts` exercises the
 `TWO_COLUMN_TEXT_MATRIX` fixture and will keep passing as long as the
