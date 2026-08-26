@@ -1,0 +1,54 @@
+{
+  "corpus": {
+    "decks": 90,
+    "pages": 3895,
+    "client": 10,
+    "published": 51,
+    "unplaced": 29
+  },
+  "strict": {
+    "n": 2082,
+    "words": {
+      "median": 144,
+      "p25": 86,
+      "p75": 223,
+      "p90": 317
+    },
+    "titleWords": {
+      "median": 8,
+      "p25": 3,
+      "p75": 14,
+      "p90": 20
+    },
+    "titleWrapPct": 33,
+    "titleNumberPct": 51,
+    "multiColumnPct": 13,
+    "visualMix": {
+      "Table": 43,
+      "Chart": 24,
+      "Text-only": 22,
+      "Quote": 1,
+      "Map": 10,
+      "Image-heavy": 0
+    },
+    "roleMix": {
+      "Content": 98,
+      "Sources / Notes": 0,
+      "Executive Summary": 1,
+      "Appendix": 1
+    }
+  },
+  "broadLengths": {
+    "decks": 80,
+    "median": 27,
+    "p25": 16,
+    "p75": 52,
+    "p90": 80,
+    "bands": {
+      "to20": 32,
+      "from21to40": 19,
+      "from41to70": 19,
+      "over70": 10
+    }
+  }
+}
