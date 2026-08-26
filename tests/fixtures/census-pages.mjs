@@ -29,6 +29,32 @@ export const TWO_COLUMN_PROSE = [
   'politically charged internal process here.            in the operating model document above.',
 ].join('\n');
 
+/* A table whose row labels clear both the length floor and the letter floor,
+   so only the digit-density gate can reject them. Without this fixture every
+   table chunk is rejected on length alone and the digit gate, which the
+   implementation's own comment calls the whole reason the naive gap test
+   overcounted, is never exercised by any test. */
+export const WIDE_LABEL_TABLE = [
+  'Addressable market by segment',
+  '',
+  'Total addressable market opportunity 2019 2020 2021        Serviceable market inside the footprint 2019 2020',
+  'Installed base across all regions 2019 2020 2021 2022      Replacement demand by customer cohort 2020 2021 2022',
+].join('\n');
+
+/* A two-column text matrix. Both sides are long, letter-rich and digit-free,
+   so the heuristic counts them as prose. That is a genuine limitation rather
+   than a bug: at the granularity of one line, a text matrix and running prose
+   are not distinguishable. The test below asserts the current behaviour so the
+   limit is visible, and the census README records the multi-column figure as
+   provisional because of it. */
+export const TWO_COLUMN_TEXT_MATRIX = [
+  'How the two groups differ',
+  '',
+  'Established manufacturers with regional depth          Digital entrants selling direct to the customer',
+  'Long-standing distributor relationships in place       Fulfilment handled by third party logistics firms',
+  'Capital equipment renewed on a decade cycle            Software renewed continuously against subscription',
+].join('\n');
+
 /* A single-column prose page: no gutter at all. */
 export const SINGLE_COLUMN = [
   'The case for standardisation',

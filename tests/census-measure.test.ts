@@ -5,6 +5,7 @@ import {
 } from '../research-kit/census/measure.mjs';
 import {
   WRAPPED_TITLE, TABLE_PAGE, TWO_COLUMN_PROSE, SINGLE_COLUMN,
+  WIDE_LABEL_TABLE, TWO_COLUMN_TEXT_MATRIX,
 } from './fixtures/census-pages.mjs';
 
 describe('titleBlock', () => {
@@ -41,6 +42,22 @@ describe('multiColumnProseLines', () => {
 
   it('returns zero for single-column prose', () => {
     expect(multiColumnProseLines(SINGLE_COLUMN)).toBe(0);
+  });
+
+  it('rejects wide table labels on digit density, not on length', () => {
+    // Every chunk here is 49 to 53 characters with 29 to 35 letters, so it
+    // clears the length and letter floors and only the digit-ratio gate can
+    // reject it. TABLE_PAGE cannot catch a regression in that gate, because
+    // its widest chunk is 13 characters and never reaches the digit check.
+    expect(multiColumnProseLines(WIDE_LABEL_TABLE)).toBe(0);
+  });
+
+  it('counts a two-column text matrix as prose, a known limitation', () => {
+    // Both sides are long, letter-rich and digit-free, so they pass every
+    // gate. One line of a text matrix is not distinguishable from one line of
+    // running prose. Asserted rather than hidden: the census README records
+    // the multi-column figure as provisional for this reason.
+    expect(multiColumnProseLines(TWO_COLUMN_TEXT_MATRIX)).toBe(3);
   });
 });
 
