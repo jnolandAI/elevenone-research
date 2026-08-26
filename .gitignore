@@ -58,3 +58,6 @@ playwright-report/
 
 # Netlify CLI local link state
 .netlify/
+
+# Census working output keyed on deck identity (the corpus is third-party)
+research-kit/census/out/
