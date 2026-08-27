@@ -82,7 +82,7 @@ describe('token contract', () => {
     }
   });
 
-  it('pins all six neighbours the mark must stand off', () => {
+  it('pins all fifteen neighbours the mark must stand off', () => {
     // A mark has to stand off the fill it sits among, the field it sits on,
     // strong type, and every categorical series. Strong type was added after
     // a greyscale adapter was found resolving --ct-mark and --ct-text-strong
@@ -91,12 +91,19 @@ describe('token contract', () => {
     // were found resolving --ct-mark to the same colour as one of their own
     // series: Noland's mark and series 1 were both slate-800, Eleven One's
     // mark and series 3 were both --ink, a dE of exactly 0.0000, and nothing
-    // compared the two roles. Deleting an entry from this list would leave
-    // the suite green without it, so the list is pinned rather than merely
-    // iterated.
+    // compared the two roles. The four ordinal levels and five sequential
+    // steps were added after the same defect shipped one role over: Noland's
+    // mark sat 0.0563 from --ct-ex-scale-5 and Map's marked state sat 0.0474
+    // from its own top choropleth level. A mark says this value differs from
+    // its neighbours; a scale says this value is larger than its neighbours;
+    // nothing had compared a mark to a magnitude. Deleting an entry from this
+    // list would leave the suite green without it, so the list is pinned
+    // rather than merely iterated.
     expect(contract.roles.mark.distinctFrom).toEqual([
       '--ct-ex-fill', '--ct-mark-soft', '--ct-text-strong',
       '--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3',
+      '--ct-ex-level-1', '--ct-ex-level-2', '--ct-ex-level-3', '--ct-ex-level-4',
+      '--ct-ex-scale-1', '--ct-ex-scale-2', '--ct-ex-scale-3', '--ct-ex-scale-4', '--ct-ex-scale-5',
     ]);
   });
 

@@ -48,7 +48,7 @@
       ]
     },
     "mark": {
-      "description": "The single marked value on an exhibit. Mark is the body, mark-soft is the field a mark sits on so the mark still reads against it, mark-text is type carried on the mark. A mark must also stand apart from every categorical series, because a chart carrying both devices puts them side by side and a marked value that is the colour of a category is not marked.",
+      "description": "The single marked value on an exhibit. Mark is the body, mark-soft is the field a mark sits on so the mark still reads against it, mark-text is type carried on the mark. A mark must also stand apart from every categorical series, because a chart carrying both devices puts them side by side and a marked value that is the colour of a category is not marked. It must also stand apart from every step of every scale. A mark says this value differs from its neighbours; a scale says this value is larger than its neighbours. A mark that is the colour of a magnitude is making the second claim while meaning the first.",
       "names": ["--ct-mark", "--ct-mark-soft", "--ct-mark-text"]
     },
     "field": {
@@ -118,7 +118,16 @@
         "--ct-text-strong",
         "--ct-ex-series-1",
         "--ct-ex-series-2",
-        "--ct-ex-series-3"
+        "--ct-ex-series-3",
+        "--ct-ex-level-1",
+        "--ct-ex-level-2",
+        "--ct-ex-level-3",
+        "--ct-ex-level-4",
+        "--ct-ex-scale-1",
+        "--ct-ex-scale-2",
+        "--ct-ex-scale-3",
+        "--ct-ex-scale-4",
+        "--ct-ex-scale-5"
       ]
     },
     "colourNames": [

@@ -141,9 +141,15 @@ describe('tokencheck', () => {
     // below is testing. #181818 clears #253444 by 0.115 and stays clear of
     // series-1 and series-2 by wide margins, so the mark-vs-fill and
     // mark-vs-strong mechanics stay the only things this test exercises.
+    // --ct-ex-level-4 and --ct-ex-scale-5 are overridden for the same reason,
+    // now that the mark also has to stand off every scale step: the fixture's
+    // defaults (#404040 and #333333) sit 0.063 and 0.035 from #253444, both
+    // under the 0.08 floor. #181818 is the same value already used for
+    // series-3 above, clears #253444 by 0.115, and keeps both ramps monotonic
+    // with every adjacent step still clearing 0.03.
     const chromatic = run({
       '--ct-mark': '#253444', '--ct-mark-soft': '#BFCBD8', '--ct-text-strong': '#131312',
-      '--ct-ex-series-3': '#181818',
+      '--ct-ex-series-3': '#181818', '--ct-ex-level-4': '#181818', '--ct-ex-scale-5': '#181818',
     });
     const neutral = run({
       '--ct-mark': '#131312', '--ct-mark-soft': '#DEDEDD', '--ct-text-strong': '#2B2B2B',
@@ -169,9 +175,14 @@ describe('tokencheck', () => {
     // test above: the fixture's default series-3 (#282828) sits 0.055 from
     // #253444, under the 0.08 floor, which would fail this fixture on a role
     // the discriminating pair above is not about. #181818 clears it.
+    // --ct-ex-level-4 and --ct-ex-scale-5 are overridden for the same reason,
+    // now that the mark also has to stand off every scale step: the fixture's
+    // defaults (#404040 and #333333) sit 0.063 and 0.035 from #253444, both
+    // under the 0.08 floor. #181818 clears #253444 by 0.115 and keeps both
+    // ramps monotonic with every adjacent step still clearing 0.03.
     const r = run({
       '--ct-mark': '#253444', '--ct-ex-fill': '#4A4A48', '--ct-text-strong': '#131312',
-      '--ct-ex-series-3': '#181818',
+      '--ct-ex-series-3': '#181818', '--ct-ex-level-4': '#181818', '--ct-ex-scale-5': '#181818',
     });
     // --ct-ex-fill also sits in roles.graphicalOn against the ground, so this
     // fixture may legitimately produce a non-mark finding there. Only mark
@@ -221,6 +232,28 @@ describe('tokencheck', () => {
       r.findings.some((f: any) => f.check === 'mark' && f.token === '--ct-mark'),
       JSON.stringify(r.findings, null, 2),
     ).toBe(true);
+  });
+
+  it('fails a mark that is the same colour as a step of a scale', () => {
+    // The two defects this widening exists for, both shipped. Noland's mark sat
+    // 0.0563 from --ct-ex-scale-5 and Map's marked state 0.0474 from its own top
+    // choropleth level. distinctFrom named no scale at all, so nothing compared
+    // a mark to a magnitude.
+    const r = run({ '--ct-ex-scale-3': '#111111' });
+    expect(r.ok).toBe(false);
+    const f = r.findings.find(
+      (x: any) => x.check === 'mark' && x.message.includes('--ct-ex-scale-3'),
+    );
+    expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
+  });
+
+  it('fails a mark that is the same colour as an ordinal level', () => {
+    const r = run({ '--ct-ex-level-3': '#111111' });
+    expect(r.ok).toBe(false);
+    const f = r.findings.find(
+      (x: any) => x.check === 'mark' && x.message.includes('--ct-ex-level-3'),
+    );
+    expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
   });
 
   it('names which series the mark collided with, not just that it collided', () => {
