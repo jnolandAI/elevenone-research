@@ -1,19 +1,25 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { resolveTokens } from '../research-kit/contract/resolve.mjs';
 import { checkAdapter } from '../research-kit/contract/checks.mjs';
 import { parseHex, neutralSpread } from '../research-kit/contract/color.mjs';
 
+/* The adapter moved beside the ramp it maps: it now lives, along with its
+   base, in the noland-advisory repository, not this one. Set NOLAND_REPO to
+   that repository's path to run this file at all; without it every describe
+   block below skips, structural included, because the file the structural
+   checks read is no longer here to read. */
+const repo = process.env.NOLAND_REPO;
+const adapterPath = repo ? join(repo, 'src/styles/contract-adapter.css') : undefined;
+const basePath = repo ? join(repo, 'src/styles/tokens.css') : undefined;
+const skip = !repo || !adapterPath || !existsSync(adapterPath) || !basePath || !existsSync(basePath);
+
 const contract = JSON.parse(readFileSync('research-kit/contract/tokens.contract.json', 'utf8'));
-const adapter = readFileSync('research-kit/adapters/noland.css', 'utf8');
+const adapter = skip ? '' : readFileSync(adapterPath!, 'utf8');
 const allNames = Object.values(contract.groups).flatMap((g: any) => g.names) as string[];
 
-/* The base lives in another repository. Set NOLAND_TOKENS to its tokens.css to
-   run the value checks; without it only the structural ones run, and the suite
-   says so rather than passing quietly. */
-const basePath = process.env.NOLAND_TOKENS;
-
-describe('the Noland Advisory adapter, structurally', () => {
+describe.skipIf(skip)('the Noland Advisory adapter, structurally', () => {
   it('declares every contract name exactly once', () => {
     const decls = [...adapter.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--ct-[\w-]+)\s*:/g)]
       .map((m) => m[1]!);
@@ -43,7 +49,7 @@ describe('the Noland Advisory adapter, structurally', () => {
   });
 });
 
-describe.skipIf(!basePath || !existsSync(basePath))('the Noland Advisory adapter, by value', () => {
+describe.skipIf(skip)('the Noland Advisory adapter, by value', () => {
   it('passes every contract check against the real token layer', () => {
     const tokens = resolveTokens([readFileSync(basePath!, 'utf8'), adapter]);
     const result = checkAdapter({ contract, tokens });
