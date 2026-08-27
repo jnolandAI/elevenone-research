@@ -1,6 +1,6 @@
 /* Eleven One Research maps onto the token contract.
    Base: src/styles/tokens.css. Validate with
-     node research-kit/scripts/tokencheck.mjs research-kit/adapters/eleven-one.css src/styles/tokens.css
+     node research-kit/scripts/tokencheck.mjs src/styles/contract-adapter.css src/styles/tokens.css
 
    This system has no hue, by rule and by test. Everything the contract asks a
    colour to do here is done with value, and the validator is built to accept
@@ -29,6 +29,11 @@
 
   /* ---- Exhibit primitives ---- */
   --ct-ex-axis: var(--g60);
+  /* --g30 is the weight this system's rules already sit at. It measures
+     1.35:1 against the ground, which is why it cannot be --ct-ex-axis, and
+     0.0997 in OKLab, which is why it comfortably clears the recessive floor
+     of 0.03. A baseline rule that says where zero is, and nothing more. */
+  --ct-ex-axis-quiet: var(--g30);
   --ct-ex-connector: var(--g60);
   --ct-ex-fill: var(--g70);
   --ct-ex-fill-quiet: var(--g30);

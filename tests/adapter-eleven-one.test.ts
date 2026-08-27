@@ -6,7 +6,7 @@ import { parseHex, neutralSpread } from '../research-kit/contract/color.mjs';
 
 const contract = JSON.parse(readFileSync('research-kit/contract/tokens.contract.json', 'utf8'));
 const base = readFileSync('src/styles/tokens.css', 'utf8');
-const adapter = readFileSync('research-kit/adapters/eleven-one.css', 'utf8');
+const adapter = readFileSync('src/styles/contract-adapter.css', 'utf8');
 const tokens = resolveTokens([base, adapter]);
 const result = checkAdapter({ contract, tokens });
 
@@ -41,6 +41,18 @@ describe('the Eleven One Research adapter', () => {
       expect(neutralSpread(c!), `${name} resolves to ${tokens.get(name)}, which carries hue`)
         .toBeLessThanOrEqual(4);
     }
+  });
+
+  it('maps the recessive axis to a rule that recedes without vanishing', () => {
+    // The site's own deck draws baseline rules at this weight. The point of
+    // the new token is that this is a legitimate treatment, not a failure.
+    const quiet = tokens.get('--ct-ex-axis-quiet')!;
+    const axis = tokens.get('--ct-ex-axis')!;
+    expect(quiet, 'the recessive axis is the same value as the structural one')
+      .not.toBe(axis);
+    const m = result.measures.find((m: any) => m.check === 'perceptible');
+    expect(m, 'no perceptible measure was recorded').toBeDefined();
+    expect(m.value).toBeGreaterThanOrEqual(m.floor);
   });
 
   it('satisfies the mark by value, having no hue to spend on it', () => {

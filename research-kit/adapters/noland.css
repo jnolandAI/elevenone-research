@@ -29,6 +29,12 @@
 
   /* ---- Exhibit primitives ---- */
   --ct-ex-axis: var(--color-grey-60);
+  /* --color-grey-30 is what --color-rule already resolves to, so this is
+     literally the weight this system's rules are drawn at. It measures
+     1.35:1 against the ground, which is why it cannot be --ct-ex-axis, and
+     0.0997 in OKLab, clearing the recessive floor of 0.03 at over three
+     times. A baseline rule that says where zero is, and nothing more. */
+  --ct-ex-axis-quiet: var(--color-grey-30);
   --ct-ex-connector: var(--color-grey-60);
   --ct-ex-fill: var(--color-grey-70);
   --ct-ex-fill-quiet: var(--color-grey-30);
