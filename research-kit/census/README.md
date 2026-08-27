@@ -70,8 +70,9 @@ committed run, `strict` is 51 decks and `broad` is 80.
 ## Rerunning the scripts
 
 Both scripts take the corpus path as their first positional argument and fall
-back to a placeholder path if omitted; point them at wherever the corpus
-actually sits on disk. Run from the repository root.
+back to `C:/Projects/ExampleSlides`, the author's own local corpus location,
+if omitted; point them at wherever the corpus actually sits on disk. Run from
+the repository root.
 
 **Text census:**
 
