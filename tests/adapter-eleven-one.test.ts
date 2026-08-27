@@ -16,6 +16,14 @@ describe('the Eleven One Research adapter', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('declares every contract name exactly once', () => {
+    const contractNames = Object.values(contract.groups).flatMap((g: any) => g.names) as string[];
+    const decls = [...adapter.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--ct-[\w-]+)\s*:/g)]
+      .map((m) => m[1]!);
+    expect(new Set(decls).size, 'a name is declared twice').toBe(decls.length);
+    for (const n of contractNames) expect(decls, `missing ${n}`).toContain(n);
+  });
+
   it('names no value of its own: every mapping is a var into the system', () => {
     const decls = [...adapter.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--ct-[\w-]+)\s*:\s*([^;}]+)/g)];
     expect(decls.length).toBeGreaterThan(0);
@@ -36,8 +44,18 @@ describe('the Eleven One Research adapter', () => {
   });
 
   it('satisfies the mark by value, having no hue to spend on it', () => {
-    const mark = result.measures.find((m: any) => m.check === 'mark')!;
-    expect(mark.value).toBeGreaterThanOrEqual(mark.floor);
+    // "By value" has to mean something a swap of the two systems' mechanisms
+    // would break: both the mark and the fill it stands off from are neutral
+    // (channel spread <= 4, the same measure the greyscale-wide sweep above
+    // uses), so whatever separates them cannot be hue. It still clears the
+    // distance floor, which is what the plain mark.value >= mark.floor
+    // assertion this replaces could not tell apart from a chromatic pass.
+    const mark = parseHex(tokens.get('--ct-mark')!)!;
+    const fill = parseHex(tokens.get('--ct-ex-fill')!)!;
+    expect(neutralSpread(mark), '--ct-mark carries hue').toBeLessThanOrEqual(4);
+    expect(neutralSpread(fill), '--ct-ex-fill carries hue').toBeLessThanOrEqual(4);
+    const markFinding = result.measures.find((m: any) => m.check === 'mark' && m.pair[1] === '--ct-ex-fill')!;
+    expect(markFinding.value).toBeGreaterThanOrEqual(markFinding.floor);
   });
 
   it('separates by elevation and not by border, without any component branching', () => {

@@ -109,8 +109,10 @@
   /* ---- The slide ------------------------------------------------------
      1280 by 720 is 16:9 at 96dpi, the size PowerPoint and Google Slides use,
      so an export lands at native size without resampling. The margin is a
-     lane down one side carrying wayfinding and nothing else; the pad insets
-     the other three edges. Measure is what is left: 1280 - 32 - 64. */
+     lane down one side carrying wayfinding and nothing else, stacked on top
+     of the pad on that same side; the pad alone insets the opposite side.
+     Measure is what is left of the width: 1280 - 32 (margin) - 2x32 (pad on
+     both sides) = 1184. */
   --slide-w: 1280px;
   --slide-h: 720px;
   --slide-margin: 32px;

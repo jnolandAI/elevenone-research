@@ -342,6 +342,16 @@ describe('design tokens', () => {
     }
   });
 
+  it('keeps the five weights strictly ascending', () => {
+    // Range alone lets all five sit at 400 and still pass; a weight scale
+    // that does not actually step is not a scale.
+    const weights = ['light', 'normal', 'medium', 'semibold', 'bold']
+      .map((n) => parseInt(value(`weight-${n}`)!, 10));
+    for (let i = 1; i < weights.length; i++) {
+      expect(weights[i]!, `--weight step ${i}`).toBeGreaterThan(weights[i - 1]!);
+    }
+  });
+
   it('carries four tracking values and no fifth', () => {
     for (const n of ['tight', 'snug', 'normal', 'wide']) {
       expect(value(`tracking-${n}`), `--tracking-${n}`).toMatch(/em$/);
@@ -370,7 +380,9 @@ describe('design tokens', () => {
     const n = (name: string) => parseInt(value(name)!, 10);
     expect(n('slide-w')).toBe(1280);
     expect(n('slide-h')).toBe(720);
-    // The lane runs down one side only; the pad insets the other three edges.
+    // The pad insets both left and right edges; the margin lane stacks on
+    // top of the pad on one of those same edges for wayfinding, which is why
+    // the width consumes one margin plus two pads, not one of each.
     expect(n('slide-measure')).toBe(n('slide-w') - n('slide-margin') - 2 * n('slide-pad'));
   });
 });
