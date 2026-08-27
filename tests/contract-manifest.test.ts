@@ -82,7 +82,7 @@ describe('token contract', () => {
     }
   });
 
-  it('pins all six neighbours the mark must stand off', () => {
+  it('pins all fifteen neighbours the mark must stand off', () => {
     // A mark has to stand off the fill it sits among, the field it sits on,
     // strong type, and every categorical series. Strong type was added after
     // a greyscale adapter was found resolving --ct-mark and --ct-text-strong
@@ -91,13 +91,43 @@ describe('token contract', () => {
     // were found resolving --ct-mark to the same colour as one of their own
     // series: Noland's mark and series 1 were both slate-800, Eleven One's
     // mark and series 3 were both --ink, a dE of exactly 0.0000, and nothing
-    // compared the two roles. Deleting an entry from this list would leave
-    // the suite green without it, so the list is pinned rather than merely
-    // iterated.
+    // compared the two roles. The four ordinal levels and five sequential
+    // steps were added after the same defect shipped one role over: Noland's
+    // mark sat 0.0563 from --ct-ex-scale-5 and Map's marked state sat 0.0474
+    // from its own top choropleth level. A mark says this value differs from
+    // its neighbours; a scale says this value is larger than its neighbours;
+    // nothing had compared a mark to a magnitude. Deleting an entry from this
+    // list would leave the suite green without it, so the list is pinned
+    // rather than merely iterated.
     expect(contract.roles.mark.distinctFrom).toEqual([
       '--ct-ex-fill', '--ct-mark-soft', '--ct-text-strong',
       '--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3',
+      '--ct-ex-level-1', '--ct-ex-level-2', '--ct-ex-level-3', '--ct-ex-level-4',
+      '--ct-ex-scale-1', '--ct-ex-scale-2', '--ct-ex-scale-3', '--ct-ex-scale-4', '--ct-ex-scale-5',
     ]);
+  });
+
+  it('roles.mark.distinctFrom covers every ordinal, sequential and series name, not just the ones pinned above', () => {
+    // The test above pins distinctFrom to an exact, hand-enumerated list. A
+    // hand-enumerated list only proves nothing already in it was deleted; it
+    // cannot catch a name that should have been added and never was. That is
+    // how this defect reached a second round: roles.mark.distinctFrom named
+    // no scale at all until this pass, and the suite stayed green the whole
+    // time because nothing compared the enumerated list to the roles it was
+    // supposed to cover. This test derives the required set from
+    // roles.ordinal, roles.sequential and roles.series themselves, so a
+    // fifth series or a sixth scale step added to those roles without a
+    // matching edit to distinctFrom fails here even if the pinned-list test
+    // above is updated to match the omission.
+    const categorical = new Set<string>([
+      ...contract.roles.ordinal,
+      ...contract.roles.sequential,
+      ...contract.roles.series,
+    ]);
+    const distinctFrom = new Set(contract.roles.mark.distinctFrom as string[]);
+    for (const n of categorical) {
+      expect(distinctFrom, `mark.distinctFrom is missing ${n}`).toContain(n);
+    }
   });
 
   it('declares every threshold the validator reads, each with a stated reason', () => {
