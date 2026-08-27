@@ -1,8 +1,28 @@
 import { parseHex, contrastRatio, deltaEOK, toOklab } from './color.mjs';
 
-/* The six checks the spec asks tokencheck to make (presence, contrast,
-   perceptible, monotonic, series, mark), plus the one that has to run before
-   any of the other five mean anything: is it a colour.
+/* Primary sort key for the measures the CLI prints. Every check name that can
+   push a row into `measures` below must have an entry here: a name missing
+   from this map yields `undefined` and puts a NaN into the CLI's comparator,
+   silently corrupting the sort order and any labels derived from it. This
+   hazard has already been hand-fixed twice (once when the map was written,
+   once when `perceptible` was added) and tests/tokencheck.test.ts now checks
+   that every check name the fixture actually produces appears as a key here,
+   so a new check that forgets to register itself fails a test instead of
+   recurring a third time. */
+export const MEASURE_ORDER = { contrast: 0, perceptible: 1, monotonic: 2, series: 3, mark: 4 };
+
+/* The spec asks tokencheck to make five checks: presence, contrast,
+   monotonic, series, mark. `perceptible` is not one of them: it was added
+   later, by the recessive-axis plan, to hold a rule that recedes to being
+   perceptible against its ground rather than to the graphical contrast floor
+   the other non-text objects carry.
+
+   The sections numbered below run 1 to 6 (1 presence, 2 colour, 3 contrast,
+   4 monotonic, 5 series, 6 mark) and are a different list from the one above:
+   `colour` is a prerequisite the spec's five checks all depend on, not a
+   sixth thing the spec asked for, and `perceptible` carries no section
+   number of its own because it lives inside section 3, run immediately after
+   the graphicalOn contrast loop rather than as a numbered section of its own.
 
    Every numeric comparison is pushed to `measures` whether it passes or fails.
    A validator that only prints failures tells you nothing about how close the

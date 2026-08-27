@@ -46,11 +46,19 @@ describe('the Eleven One Research adapter', () => {
   it('maps the recessive axis to a rule that recedes without vanishing', () => {
     // The site's own deck draws baseline rules at this weight. The point of
     // the new token is that this is a legitimate treatment, not a failure.
+    //
+    // The load-bearing assertion is the one below checking the recessive
+    // token is not the same value as the structural axis: that is the one
+    // thing "passes every contract check" above cannot tell you, since two
+    // identical tokens would still both individually clear their own floors.
+    // The m.value >= m.floor assertion that follows is already implied by
+    // "passes every contract check" (which asserts findings is empty) and is
+    // kept only as a second, more specific pin on this one measure.
     const quiet = tokens.get('--ct-ex-axis-quiet')!;
     const axis = tokens.get('--ct-ex-axis')!;
     expect(quiet, 'the recessive axis is the same value as the structural one')
       .not.toBe(axis);
-    const m = result.measures.find((m: any) => m.check === 'perceptible');
+    const m = result.measures.find((m: any) => m.check === 'perceptible' && m.pair[0] === '--ct-ex-axis-quiet');
     expect(m, 'no perceptible measure was recorded').toBeDefined();
     expect(m.value).toBeGreaterThanOrEqual(m.floor);
   });

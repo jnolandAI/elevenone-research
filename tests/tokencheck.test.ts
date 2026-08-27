@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { checkAdapter } from '../research-kit/contract/checks.mjs';
+import { checkAdapter, MEASURE_ORDER } from '../research-kit/contract/checks.mjs';
 import { resolveTokens } from '../research-kit/contract/resolve.mjs';
 
 const contract = JSON.parse(readFileSync('research-kit/contract/tokens.contract.json', 'utf8'));
@@ -149,6 +149,20 @@ describe('tokencheck', () => {
     const r = run({ '--ct-ex-axis-quiet': '#FEFEFE' });
     expect(r.ok).toBe(false);
     expect(r.findings.some((f: any) => f.check === 'perceptible' && f.token === '--ct-ex-axis-quiet')).toBe(true);
+  });
+
+  it('registers every check that can produce a measure in MEASURE_ORDER', () => {
+    // The CLI sorts printed measures by MEASURE_ORDER[m.check]. A check name
+    // missing from that map yields undefined and puts a NaN into the sort
+    // comparator, silently corrupting the printed order. This has already
+    // been hand-fixed twice; this test makes the next omission fail here
+    // instead of recurring a third time in the CLI's output.
+    const r = run();
+    const distinctChecks = new Set(r.measures.map((m: any) => m.check));
+    expect(distinctChecks.size).toBeGreaterThan(0);
+    for (const check of distinctChecks) {
+      expect(Object.keys(MEASURE_ORDER), `check "${check}" is missing from MEASURE_ORDER`).toContain(check);
+    }
   });
 
   it('does not hold the recessive axis to the graphical contrast floor', () => {

@@ -92,6 +92,20 @@ describe('token contract', () => {
     }
   });
 
+  it('pins every threshold to its exact current value', () => {
+    // A floor that can drift silently is not a contract. The tests above only
+    // check that each threshold is defined and numeric, so changing
+    // recessiveDeltaEOK from 0.03 to 0.005, or graphicalContrast from 3.0 to
+    // 1.5, would leave every other test in this suite green. This test is the
+    // one place that has to change, deliberately, before any threshold does.
+    expect(contract.thresholds.bodyContrast.value).toBe(4.5);
+    expect(contract.thresholds.graphicalContrast.value).toBe(3.0);
+    expect(contract.thresholds.recessiveDeltaEOK.value).toBe(0.03);
+    expect(contract.thresholds.seriesDeltaEOK.value).toBe(0.08);
+    expect(contract.thresholds.markDeltaEOK.value).toBe(0.08);
+    expect(contract.thresholds.scaleStepDeltaL.value).toBe(0.03);
+  });
+
   it('holds the recessive axis to perceptibility rather than to the graphical floor', () => {
     // The two axis tokens exist because a baseline rule under a bar chart is
     // doing a different job from an axis you have to find. The contract would

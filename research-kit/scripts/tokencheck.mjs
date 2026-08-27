@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveTokens } from '../contract/resolve.mjs';
-import { checkAdapter } from '../contract/checks.mjs';
+import { checkAdapter, MEASURE_ORDER } from '../contract/checks.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const [adapterPath, ...basePaths] = process.argv.slice(2);
@@ -19,8 +19,7 @@ const contract = JSON.parse(readFileSync(join(HERE, '../contract/tokens.contract
 const texts = [...basePaths, adapterPath].map((p) => readFileSync(p, 'utf8'));
 const { ok, findings, measures } = checkAdapter({ contract, tokens: resolveTokens(texts) });
 
-const order = { contrast: 0, perceptible: 1, monotonic: 2, series: 3, mark: 4 };
-for (const m of [...measures].sort((a, b) => (order[a.check] - order[b.check]) || (a.value - b.value))) {
+for (const m of [...measures].sort((a, b) => (MEASURE_ORDER[a.check] - MEASURE_ORDER[b.check]) || (a.value - b.value))) {
   const unit = m.check === 'contrast' || (m.check === 'series' && m.pair[1] === '--ct-ground') ? ':1'
     : m.check === 'monotonic' ? ' ΔL' // OKLab lightness only, not full ΔE
     : ' dE';

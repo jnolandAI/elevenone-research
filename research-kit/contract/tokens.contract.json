@@ -11,7 +11,7 @@
     },
     "recessiveDeltaEOK": {
       "value": 0.03,
-      "why": "Perceptual distance from its own ground for a mark that is meant to recede. A baseline rule under a bar chart is not an axis you hunt for; the mark carries the data and the rule only says where zero is. Holding it to the 3:1 graphical floor would forbid a legitimate and common treatment, and exempting it entirely would let a rule vanish into the page. This is the same figure the ramp-step floor uses, and on a white ground it admits a rule at the third step of a twelve-step ramp while rejecting one at the first."
+      "why": "Perceptual distance from its own ground for a mark that is meant to recede. A baseline rule under a bar chart is not an axis you hunt for; the mark carries the data and the rule only says where zero is. Holding it to the 3:1 graphical floor would forbid a legitimate and common treatment, and exempting it entirely would let a rule vanish into the page. On a white ground it rejects a rule measured at 0.0152 dE while admitting one measured at 0.0332 dE. The number 0.03 is the same figure the ramp-step floor uses, but not the same measure: scaleStepDeltaL is OKLab lightness alone, while this one is full OKLab distance."
     },
     "seriesDeltaEOK": {
       "value": 0.08,
@@ -36,7 +36,7 @@
       "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
     },
     "exhibit": {
-      "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type.",
+      "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure, held to the same non-text contrast floor as axis. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type.",
       "names": ["--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
     },
     "scales": {
