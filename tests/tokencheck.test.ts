@@ -9,6 +9,11 @@ const allNames = Object.values(contract.groups).flatMap((g: any) => g.names) as 
 /* A synthetic system, not either real one: the point is to exercise the checks,
    and a fixture that quoted a real ramp would fail for a brand's reasons rather
    than the validator's. Values are chosen to clear every floor with room. */
+/* series-3 is #282828 and not #141414, which is where it started. #141414 sits
+   0.0136 from this fixture's --ct-mark of #111111: the synthetic system carried
+   the same defect as both real ones, and passed, because nothing measured the
+   pair. #282828 clears the mark by 0.0992, series-2 by 0.1323 and series-1 by
+   0.3566, at 14.74:1 on the ground. */
 const VALUES: Record<string, string> = {
   '--ct-ground': '#FFFFFF', '--ct-surface': '#FAFAFA', '--ct-well': '#F0F0F0',
   '--ct-rule': '#DDDDDD', '--ct-rule-firm': '#8A8A8A',
@@ -21,7 +26,7 @@ const VALUES: Record<string, string> = {
   '--ct-ex-level-3': '#888888', '--ct-ex-level-4': '#404040',
   '--ct-ex-scale-1': '#F2F2F2', '--ct-ex-scale-2': '#CCCCCC', '--ct-ex-scale-3': '#999999',
   '--ct-ex-scale-4': '#666666', '--ct-ex-scale-5': '#333333',
-  '--ct-ex-series-1': '#8A8A8A', '--ct-ex-series-2': '#4A4A4A', '--ct-ex-series-3': '#141414',
+  '--ct-ex-series-1': '#8A8A8A', '--ct-ex-series-2': '#4A4A4A', '--ct-ex-series-3': '#282828',
   '--ct-mark': '#111111', '--ct-mark-soft': '#DDDDDD', '--ct-mark-text': '#FFFFFF',
   '--ct-field': '#222222', '--ct-field-text': '#FFFFFF',
 };
@@ -130,8 +135,15 @@ describe('tokencheck', () => {
     // back up the ramp (0.103). Holding both to one strong value would fail
     // whichever mechanism that value happened to crowd, which is precisely the
     // privileging this test exists to catch.
+    // --ct-ex-series-3 is overridden here because the mark now has to stand
+    // off every series too: the fixture's default series-3 (#282828) sits
+    // 0.055 from #253444, under the 0.08 floor, which is not what either case
+    // below is testing. #181818 clears #253444 by 0.115 and stays clear of
+    // series-1 and series-2 by wide margins, so the mark-vs-fill and
+    // mark-vs-strong mechanics stay the only things this test exercises.
     const chromatic = run({
       '--ct-mark': '#253444', '--ct-mark-soft': '#BFCBD8', '--ct-text-strong': '#131312',
+      '--ct-ex-series-3': '#181818',
     });
     const neutral = run({
       '--ct-mark': '#131312', '--ct-mark-soft': '#DEDEDD', '--ct-text-strong': '#2B2B2B',
@@ -153,8 +165,13 @@ describe('tokencheck', () => {
     // test above sets it per case: a chromatic mark at mid-darkness has to
     // stand off strong type too, and the default fixture's strong crowds it.
     // That constraint is real and is not what this test is measuring.
+    // --ct-ex-series-3 is overridden for the same reason as the mechanism
+    // test above: the fixture's default series-3 (#282828) sits 0.055 from
+    // #253444, under the 0.08 floor, which would fail this fixture on a role
+    // the discriminating pair above is not about. #181818 clears it.
     const r = run({
       '--ct-mark': '#253444', '--ct-ex-fill': '#4A4A48', '--ct-text-strong': '#131312',
+      '--ct-ex-series-3': '#181818',
     });
     // --ct-ex-fill also sits in roles.graphicalOn against the ground, so this
     // fixture may legitimately produce a non-mark finding there. Only mark
@@ -191,5 +208,31 @@ describe('tokencheck', () => {
     const m = r.measures.find((m: any) => m.check === 'perceptible' && m.pair[0] === '--ct-ex-axis-quiet');
     expect(m, 'no perceptible measure was recorded').toBeDefined();
     expect(m.value).toBeGreaterThanOrEqual(m.floor);
+  });
+
+  it('fails a mark that is the same colour as a series', () => {
+    // The defect this gate exists for. Both real adapters shipped it: Noland's
+    // mark and series 1 were both slate-800, and Eleven One's mark and series 3
+    // were both --ink, a dE of exactly 0.0000. Nothing compared the two roles,
+    // so nothing failed.
+    const r = run({ '--ct-ex-series-2': '#111111' });
+    expect(r.ok).toBe(false);
+    expect(
+      r.findings.some((f: any) => f.check === 'mark' && f.token === '--ct-mark'),
+      JSON.stringify(r.findings, null, 2),
+    ).toBe(true);
+  });
+
+  it('names which series the mark collided with, not just that it collided', () => {
+    // Both series failure modes emit check: 'series' and are told apart only by
+    // their message, a gap already recorded against this suite. Do not repeat it
+    // one role over: a finding that says "the mark is too close to something"
+    // cannot be acted on.
+    const r = run({ '--ct-ex-series-2': '#111111' });
+    // Findings are { check, token, message }; the mark loop's message already
+    // interpolates the neighbour, so this passes without touching checks.mjs.
+    // It is here to keep it that way.
+    const f = r.findings.find((x: any) => x.check === 'mark')!;
+    expect(f.message).toContain('--ct-ex-series-2');
   });
 });
