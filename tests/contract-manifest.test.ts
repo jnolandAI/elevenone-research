@@ -45,7 +45,7 @@ describe('token contract', () => {
       ...contract.roles.series,
       ...contract.roles.colourNames,
       contract.roles.mark.token,
-      contract.roles.mark.distinctFrom,
+      ...contract.roles.mark.distinctFrom,
       ...Object.keys(contract.roles.textOn),
       ...(Object.values(contract.roles.textOn).flat() as string[]),
       ...contract.roles.graphicalOn.map((r: any) => r.token),
@@ -54,9 +54,33 @@ describe('token contract', () => {
     for (const n of referenced) expect(allNames, `role references undeclared ${n}`).toContain(n);
   });
 
+  it('every colour-role reference is also in roles.colourNames, not just a declared name', () => {
+    // Every comparison in checks.mjs is guarded by have(...), which returns
+    // false both when a token is unparseable (reported as a finding) and when
+    // it was never parsed because it is absent from roles.colourNames
+    // (silently skipped, no finding at all). Being a declared name (checked
+    // above) is not the same thing: a role could reference a real, declared
+    // token that just never made it into colourNames, and the check for it
+    // would quietly do nothing. This asserts the stronger property.
+    const colourReferenced: string[] = [
+      ...Object.keys(contract.roles.textOn),
+      ...(Object.values(contract.roles.textOn).flat() as string[]),
+      ...contract.roles.graphicalOn.map((r: any) => r.token),
+      ...contract.roles.graphicalOn.map((r: any) => r.ground),
+      ...contract.roles.ordinal,
+      ...contract.roles.sequential,
+      ...contract.roles.series,
+      contract.roles.mark.token,
+      ...contract.roles.mark.distinctFrom,
+    ];
+    for (const n of colourReferenced) {
+      expect(contract.roles.colourNames, `${n} is a colour role but not in colourNames`).toContain(n);
+    }
+  });
+
   it('declares every threshold the validator reads, each with a stated reason', () => {
     for (const k of ['bodyContrast', 'graphicalContrast',
-                     'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaEOK']) {
+                     'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaL']) {
       expect(contract.thresholds[k], `threshold ${k}`).toBeDefined();
       expect(typeof contract.thresholds[k].value, `threshold ${k}.value`).toBe('number');
       expect(contract.thresholds[k].why.length, `threshold ${k}.why`).toBeGreaterThan(20);

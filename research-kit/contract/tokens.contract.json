@@ -17,14 +17,14 @@
       "value": 0.08,
       "why": "The mark says this value differs from its neighbours. Same measure as series and the same reason: the contract expresses the emphasis job, not the emphasis mechanism."
     },
-    "scaleStepDeltaEOK": {
+    "scaleStepDeltaL": {
       "value": 0.03,
-      "why": "Adjacent steps of an ordinal or sequential scale must be separable, but a scale is read as a ramp against its own neighbours rather than as independent categories, so the bar sits below the series bar."
+      "why": "Adjacent steps of an ordinal or sequential scale must be separable, but a scale is read as a ramp against its own neighbours rather than as independent categories, so the bar sits below the series bar. Measured in OKLab lightness alone, not full OKLab distance: a sequential ramp encodes magnitude, magnitude is read as lightness, and letting chroma pay for lightness would hold a chromatic system to a weaker bar than a neutral one, where chroma cannot substitute."
     }
   },
   "groups": {
     "surface": {
-      "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field.",
+      "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field. Rule-firm is the divider held to a contrast floor; rule is a quieter division that is not.",
       "names": ["--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm"]
     },
     "text": {
@@ -32,7 +32,7 @@
       "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
     },
     "exhibit": {
-      "description": "Exhibit primitives. Axis and connector are structure, fill and fill-quiet are the default and recessive mark bodies, label-muted is tick and axis type.",
+      "description": "Exhibit primitives. Axis and connector are structure, fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own, label-muted is tick and axis type.",
       "names": ["--ct-ex-axis", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
     },
     "scales": {
@@ -103,7 +103,7 @@
     "ordinal": ["--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4"],
     "sequential": ["--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5"],
     "series": ["--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"],
-    "mark": { "token": "--ct-mark", "distinctFrom": "--ct-ex-fill" },
+    "mark": { "token": "--ct-mark", "distinctFrom": ["--ct-ex-fill", "--ct-mark-soft"] },
     "colourNames": [
       "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm",
       "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",

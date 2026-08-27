@@ -126,4 +126,20 @@ describe('tokencheck', () => {
     expect(chromatic.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
     expect(neutral.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
   });
+
+  it('accepts a mark the luminance test would have rejected, because it measures OKLab', () => {
+    // The discriminating pair: #253444 against #4A4A48 measures 1.430:1 in
+    // WCAG contrast (a luminance test would reject this as indistinguishable)
+    // but 0.097 dE in OKLab (the contract's own measure accepts it, clearing
+    // the 0.08 floor). This is the whole point of the mark check being built
+    // on deltaEOK rather than contrastRatio: swap that measure for contrast,
+    // or lower a contrast-based floor below ~2.2, and this fixture goes green
+    // for the wrong reason. If this test ever fails after such a change, that
+    // is the change to revert, not the fixture to "simplify".
+    const r = run({ '--ct-mark': '#253444', '--ct-ex-fill': '#4A4A48' });
+    // --ct-ex-fill also sits in roles.graphicalOn against the ground, so this
+    // fixture may legitimately produce a non-mark finding there. Only mark
+    // findings are asserted empty.
+    expect(r.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
+  });
 });

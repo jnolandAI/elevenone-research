@@ -21,7 +21,9 @@ const { ok, findings, measures } = checkAdapter({ contract, tokens: resolveToken
 
 const order = { contrast: 0, monotonic: 1, series: 2, mark: 3 };
 for (const m of [...measures].sort((a, b) => (order[a.check] - order[b.check]) || (a.value - b.value))) {
-  const unit = m.check === 'contrast' || (m.check === 'series' && m.pair[1] === '--ct-ground') ? ':1' : ' dE';
+  const unit = m.check === 'contrast' || (m.check === 'series' && m.pair[1] === '--ct-ground') ? ':1'
+    : m.check === 'monotonic' ? ' ΔL' // OKLab lightness only, not full ΔE
+    : ' dE';
   const mark = m.value >= m.floor ? 'ok  ' : 'FAIL';
   console.log(`${mark} ${m.check.padEnd(9)} ${m.pair[0]} / ${m.pair[1]}  ${m.value.toFixed(3)}${unit} (floor ${m.floor})`);
 }

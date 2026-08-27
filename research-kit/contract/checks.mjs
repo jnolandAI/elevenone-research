@@ -1,7 +1,8 @@
 import { parseHex, contrastRatio, deltaEOK, toOklab } from './color.mjs';
 
-/* The five checks the spec asks tokencheck to make, plus the two that have to
-   run before any of them mean anything: is the name there, and is it a colour.
+/* The five checks the spec asks tokencheck to make (presence, contrast,
+   monotonic, series, mark), plus the one that has to run before any of the
+   other four mean anything: is it a colour.
 
    Every numeric comparison is pushed to `measures` whether it passes or fails.
    A validator that only prints failures tells you nothing about how close the
@@ -63,7 +64,13 @@ export function checkAdapter({ contract, tokens }) {
 
   // 4. Monotonic. An ordinal or sequential scale has to ramp in one direction
   //    in perceptual lightness, and each step has to be separable from the one
-  //    beside it. Direction is taken from the first step, not assumed.
+  //    beside it. Direction is taken from the first step, not assumed. The
+  //    step-size floor is measured in OKLab L alone, not full OKLab distance:
+  //    a ramp is read AS lightness, so letting chroma substitute for it here
+  //    would hold a chromatic system to a weaker bar than a neutral one, on
+  //    the one scale where that would matter. seriesDeltaEOK and markDeltaEOK
+  //    stay full ΔE below, because those are categorical distinctions where
+  //    hue is a legitimate separator.
   const checkRamp = (label, names) => {
     if (!names.every((n) => rgb.has(n))) return;
     const ls = names.map((n) => toOklab(rgb.get(n)).L);
@@ -74,11 +81,11 @@ export function checkAdapter({ contract, tokens }) {
       if (!stepOk) {
         fail('monotonic', names[i], `${label} reverses direction at ${names[i]}: L goes ${ls[i - 1].toFixed(3)} to ${ls[i].toFixed(3)}`);
       }
-      const value = deltaEOK(rgb.get(names[i - 1]), rgb.get(names[i]));
-      const floor = th('scaleStepDeltaEOK');
+      const value = Math.abs(ls[i] - ls[i - 1]);
+      const floor = th('scaleStepDeltaL');
       measures.push({ check: 'monotonic', pair: [names[i - 1], names[i]], value, floor });
       if (value < floor) {
-        fail('monotonic', names[i], `${label} step from ${names[i - 1]} is ${value.toFixed(3)} in OKLab, needs ${floor}`);
+        fail('monotonic', names[i], `${label} step from ${names[i - 1]} is ${value.toFixed(3)} in OKLab L, needs ${floor}`);
       }
     }
   };
@@ -109,14 +116,16 @@ export function checkAdapter({ contract, tokens }) {
     }
   }
 
-  // 6. Mark. Perceptibly distinct from the fill it sits among, by any means.
+  // 6. Mark. Perceptibly distinct from every neighbour it sits among, by any
+  //    means: the fill it stands out from and the field it sits on.
   const { token: markToken, distinctFrom } = roles.mark;
-  if (have(markToken, distinctFrom)) {
-    const value = deltaEOK(rgb.get(markToken), rgb.get(distinctFrom));
+  for (const neighbour of distinctFrom) {
+    if (!have(markToken, neighbour)) continue;
+    const value = deltaEOK(rgb.get(markToken), rgb.get(neighbour));
     const floor = th('markDeltaEOK');
-    measures.push({ check: 'mark', pair: [markToken, distinctFrom], value, floor });
+    measures.push({ check: 'mark', pair: [markToken, neighbour], value, floor });
     if (value < floor) {
-      fail('mark', markToken, `${value.toFixed(3)} in OKLab from ${distinctFrom}, needs ${floor}. The mark can differ by hue or by value; it cannot differ by neither.`);
+      fail('mark', markToken, `${value.toFixed(3)} in OKLab from ${neighbour}, needs ${floor}. The mark can differ by hue or by value; it cannot differ by neither.`);
     }
   }
 
