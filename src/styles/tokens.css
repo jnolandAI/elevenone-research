@@ -41,4 +41,79 @@
   --read: 624px;
   --rail: 300px;
   --gut: 60px;
+
+  /* ---- Type -----------------------------------------------------------
+     The family moves here from base.css so there is one name for it and an
+     adapter has something to point at. Ten sizes, on the same ladder the
+     other system uses: the ladder is arithmetic, not brand, and two systems
+     that agree on it can share a component that sets --ct-text-lg. */
+  --font: 'Familjen Grotesk Variable', 'Familjen Grotesk', system-ui, sans-serif;
+
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 18px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: 36px;
+  --text-3xl: 48px;
+  --text-4xl: 64px;
+  --text-5xl: 88px;
+
+  /* Familjen Grotesk Variable ships a 400 to 700 weight axis. Declaring a
+     300 here would not produce a lighter face, it would produce a browser
+     synthesising one, so the light end is the lightest weight the shipped
+     font actually has. Martian Mono's own 100 to 800 axis is not in scope:
+     .mono sets its weight directly. */
+  --weight-light: 400;
+  --weight-normal: 450;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Four values bound to size band, not one per heading. */
+  --tracking-tight: -0.03em;   /* 48px and up */
+  --tracking-snug: -0.02em;    /* 22 to 36px */
+  --tracking-normal: 0em;      /* all body and interface text */
+  --tracking-wide: 0.08em;     /* reserved */
+
+  /* px on a four-pixel baseline, so a ratio can never produce a subpixel.
+     The step number is the multiple: --leading-7 is 28px. */
+  --leading-4: 16px;
+  --leading-5: 20px;
+  --leading-6: 24px;
+  --leading-7: 28px;
+  --leading-8: 32px;
+  --leading-9: 36px;
+  --leading-10: 40px;
+  --leading-11: 44px;
+  --leading-12: 48px;
+  --leading-14: 56px;
+  --leading-16: 64px;
+  --leading-18: 72px;
+  --leading-22: 88px;
+
+  /* ---- Space ----------------------------------------------------------
+     Ten steps on a four-pixel base. No value exists between them. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* ---- The slide ------------------------------------------------------
+     1280 by 720 is 16:9 at 96dpi, the size PowerPoint and Google Slides use,
+     so an export lands at native size without resampling. The margin is a
+     lane down one side carrying wayfinding and nothing else; the pad insets
+     the other three edges. Measure is what is left: 1280 - 32 - 64. */
+  --slide-w: 1280px;
+  --slide-h: 720px;
+  --slide-margin: 32px;
+  --slide-pad: 32px;
+  --slide-measure: 1184px;
 }

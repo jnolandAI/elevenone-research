@@ -6,7 +6,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--g10);
-  font-family: 'Familjen Grotesk Variable', 'Familjen Grotesk', system-ui, sans-serif;
+  font-family: var(--font);
   -webkit-font-smoothing: antialiased;
   /* The numerals rule (below) belongs on every surface that can carry a
      number, not just article p: .hero .stand, the rail, the load path, the

@@ -305,4 +305,72 @@ describe('design tokens', () => {
     // test would otherwise pass by finding nothing to check.
     expect(checked).toBeGreaterThan(0);
   });
+
+  it('declares the body family in the token layer, not in base.css', () => {
+    expect(value('font')).toMatch(/Familjen Grotesk/);
+    const base = readFileSync('src/styles/base.css', 'utf8');
+    // One font-family declaration naming a real family may remain: .mono's,
+    // which reads var(--font-mono). Nothing else may name a family directly.
+    const families = [...base.matchAll(/font-family:\s*([^;]+);/g)].map((m) => m[1]!.trim());
+    for (const f of families) {
+      expect(f, `base.css names a family directly: ${f}`).toMatch(/^var\(--font(-mono)?\)$/);
+    }
+  });
+
+  it('carries a ten-step type scale', () => {
+    for (const n of ['xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl']) {
+      expect(value(`text-${n}`), `--text-${n}`).toMatch(/^\d+px$/);
+    }
+  });
+
+  it('keeps the type scale strictly ascending', () => {
+    const px = ['xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl']
+      .map((n) => parseInt(value(`text-${n}`)!, 10));
+    for (let i = 1; i < px.length; i++) {
+      expect(px[i]!, `--text step ${i}`).toBeGreaterThan(px[i - 1]!);
+    }
+  });
+
+  it('carries five weights inside the variable font range', () => {
+    // Familjen Grotesk Variable ships 400 to 700. A weight outside that range
+    // is synthesised by the browser, which is a different face, not a lighter
+    // one, so the scale is declared inside what the shipped font can do.
+    for (const n of ['light', 'normal', 'medium', 'semibold', 'bold']) {
+      const w = parseInt(value(`weight-${n}`)!, 10);
+      expect(w, `--weight-${n}`).toBeGreaterThanOrEqual(400);
+      expect(w, `--weight-${n}`).toBeLessThanOrEqual(700);
+    }
+  });
+
+  it('carries four tracking values and no fifth', () => {
+    for (const n of ['tight', 'snug', 'normal', 'wide']) {
+      expect(value(`tracking-${n}`), `--tracking-${n}`).toMatch(/em$/);
+    }
+  });
+
+  it('puts every leading and space step on the four-pixel baseline', () => {
+    const steps = [
+      ...[4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 22].map((n) => `leading-${n}`),
+      ...[1, 2, 3, 4, 6, 8, 12, 16, 24, 32].map((n) => `space-${n}`),
+    ];
+    for (const n of steps) {
+      const v = value(n);
+      expect(v, `--${n}`).toMatch(/^\d+px$/);
+      expect(parseInt(v!, 10) % 4, `--${n} is off the four-pixel baseline`).toBe(0);
+    }
+  });
+
+  it('names a leading step for the multiple of four it actually is', () => {
+    for (const n of [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 22]) {
+      expect(parseInt(value(`leading-${n}`)!, 10), `--leading-${n}`).toBe(n * 4);
+    }
+  });
+
+  it('carries a slide profile whose measure is the width it actually leaves', () => {
+    const n = (name: string) => parseInt(value(name)!, 10);
+    expect(n('slide-w')).toBe(1280);
+    expect(n('slide-h')).toBe(720);
+    // The lane runs down one side only; the pad insets the other three edges.
+    expect(n('slide-measure')).toBe(n('slide-w') - n('slide-margin') - 2 * n('slide-pad'));
+  });
 });
