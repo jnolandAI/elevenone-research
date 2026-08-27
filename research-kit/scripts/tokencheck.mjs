@@ -34,4 +34,4 @@ if (ok) {
   console.log('');
   console.log(`${adapterPath}: ${findings.length} finding(s)`);
 }
-process.exit(ok ? 0 : 1);
+process.exitCode = ok ? 0 : 1;
