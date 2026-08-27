@@ -110,7 +110,7 @@
     "ordinal": ["--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4"],
     "sequential": ["--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5"],
     "series": ["--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"],
-    "mark": { "token": "--ct-mark", "distinctFrom": ["--ct-ex-fill", "--ct-mark-soft"] },
+    "mark": { "token": "--ct-mark", "distinctFrom": ["--ct-ex-fill", "--ct-mark-soft", "--ct-text-strong"] },
     "colourNames": [
       "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm",
       "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",

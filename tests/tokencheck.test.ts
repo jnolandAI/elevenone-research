@@ -12,7 +12,7 @@ const allNames = Object.values(contract.groups).flatMap((g: any) => g.names) as 
 const VALUES: Record<string, string> = {
   '--ct-ground': '#FFFFFF', '--ct-surface': '#FAFAFA', '--ct-well': '#F0F0F0',
   '--ct-rule': '#DDDDDD', '--ct-rule-firm': '#8A8A8A',
-  '--ct-text': '#333333', '--ct-text-muted': '#666666', '--ct-text-strong': '#111111',
+  '--ct-text': '#4A4A4A', '--ct-text-muted': '#666666', '--ct-text-strong': '#2B2B2B',
   '--ct-text-on-field': '#FFFFFF',
   '--ct-ex-axis': '#8A8A8A', '--ct-ex-connector': '#8A8A8A', '--ct-ex-fill': '#666666',
   '--ct-ex-axis-quiet': '#E0E0E0',
@@ -121,9 +121,21 @@ describe('tokencheck', () => {
 
   it('accepts a chromatic mark and a neutral mark equally', () => {
     // The contract expresses the emphasis job, not the emphasis mechanism.
-    // A slate mark and a near-black mark both satisfy it against a mid fill.
-    const chromatic = run({ '--ct-mark': '#253444', '--ct-mark-soft': '#BFCBD8' });
-    const neutral = run({ '--ct-mark': '#131312', '--ct-mark-soft': '#DEDEDD' });
+    //
+    // Each case sets its own --ct-text-strong, and that is the point rather
+    // than a convenience. The mark must stand off strong type as well as off
+    // the fill, and where a system can put strong type depends on where its
+    // mark already sits. A chromatic mark at mid-darkness needs strong pushed
+    // to near-black to clear it (0.138); a near-black mark needs strong pulled
+    // back up the ramp (0.103). Holding both to one strong value would fail
+    // whichever mechanism that value happened to crowd, which is precisely the
+    // privileging this test exists to catch.
+    const chromatic = run({
+      '--ct-mark': '#253444', '--ct-mark-soft': '#BFCBD8', '--ct-text-strong': '#131312',
+    });
+    const neutral = run({
+      '--ct-mark': '#131312', '--ct-mark-soft': '#DEDEDD', '--ct-text-strong': '#2B2B2B',
+    });
     expect(chromatic.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
     expect(neutral.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
   });
@@ -137,7 +149,13 @@ describe('tokencheck', () => {
     // or lower a contrast-based floor below ~2.2, and this fixture goes green
     // for the wrong reason. If this test ever fails after such a change, that
     // is the change to revert, not the fixture to "simplify".
-    const r = run({ '--ct-mark': '#253444', '--ct-ex-fill': '#4A4A48' });
+    // --ct-text-strong is set to near-black for the same reason the mechanism
+    // test above sets it per case: a chromatic mark at mid-darkness has to
+    // stand off strong type too, and the default fixture's strong crowds it.
+    // That constraint is real and is not what this test is measuring.
+    const r = run({
+      '--ct-mark': '#253444', '--ct-ex-fill': '#4A4A48', '--ct-text-strong': '#131312',
+    });
     // --ct-ex-fill also sits in roles.graphicalOn against the ground, so this
     // fixture may legitimately produce a non-mark finding there. Only mark
     // findings are asserted empty.

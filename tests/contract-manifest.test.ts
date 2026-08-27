@@ -82,6 +82,18 @@ describe('token contract', () => {
     }
   });
 
+  it('pins all three neighbours the mark must stand off', () => {
+    // A mark has to stand off the fill it sits among, the field it sits on, and
+    // strong type. The third was added after a greyscale adapter was found
+    // resolving --ct-mark and --ct-text-strong to the same ink, which made
+    // emphasis on type invisible while every check passed. Deleting an entry
+    // from this list would leave the suite green without it, so the list is
+    // pinned rather than merely iterated.
+    expect(contract.roles.mark.distinctFrom).toEqual([
+      '--ct-ex-fill', '--ct-mark-soft', '--ct-text-strong',
+    ]);
+  });
+
   it('declares every threshold the validator reads, each with a stated reason', () => {
     for (const k of ['bodyContrast', 'graphicalContrast',
                      'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaL',

@@ -22,9 +22,15 @@
   /* ---- Text ----
      The well is --g10 rather than --g20 because --g70 muted type sits in it:
      on --g20 that pair measures 4.41:1, just under the 4.5:1 body floor. */
-  --ct-text: var(--g90);
+  /* Three distinct darks, because this system has no hue to spend on
+     emphasis. Body, strong and mark were previously two values across three
+     names: --ct-text-strong and --ct-mark both resolved to --ink, so an
+     emphasised word and a strong word were the same colour and the emphasis
+     was invisible. The mark now clears the contract's 0.08 separation from
+     strong by value alone. */
+  --ct-text: var(--g80);
   --ct-text-muted: var(--g70);
-  --ct-text-strong: var(--ink);
+  --ct-text-strong: var(--g90);
   --ct-text-on-field: var(--w);
 
   /* ---- Exhibit primitives ---- */
