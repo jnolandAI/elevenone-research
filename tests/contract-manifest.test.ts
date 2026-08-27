@@ -107,6 +107,29 @@ describe('token contract', () => {
     ]);
   });
 
+  it('roles.mark.distinctFrom covers every ordinal, sequential and series name, not just the ones pinned above', () => {
+    // The test above pins distinctFrom to an exact, hand-enumerated list. A
+    // hand-enumerated list only proves nothing already in it was deleted; it
+    // cannot catch a name that should have been added and never was. That is
+    // how this defect reached a second round: roles.mark.distinctFrom named
+    // no scale at all until this pass, and the suite stayed green the whole
+    // time because nothing compared the enumerated list to the roles it was
+    // supposed to cover. This test derives the required set from
+    // roles.ordinal, roles.sequential and roles.series themselves, so a
+    // fifth series or a sixth scale step added to those roles without a
+    // matching edit to distinctFrom fails here even if the pinned-list test
+    // above is updated to match the omission.
+    const categorical = new Set<string>([
+      ...contract.roles.ordinal,
+      ...contract.roles.sequential,
+      ...contract.roles.series,
+    ]);
+    const distinctFrom = new Set(contract.roles.mark.distinctFrom as string[]);
+    for (const n of categorical) {
+      expect(distinctFrom, `mark.distinctFrom is missing ${n}`).toContain(n);
+    }
+  });
+
   it('declares every threshold the validator reads, each with a stated reason', () => {
     for (const k of ['bodyContrast', 'graphicalContrast',
                      'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaL',
