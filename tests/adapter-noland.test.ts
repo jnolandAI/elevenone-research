@@ -9,11 +9,27 @@ import { parseHex, neutralSpread } from '../research-kit/contract/color.mjs';
    base, in the noland-advisory repository, not this one. Set NOLAND_REPO to
    that repository's path to run this file at all; without it every describe
    block below skips, structural included, because the file the structural
-   checks read is no longer here to read. */
+   checks read is no longer here to read.
+
+   Skipping is only right for the unset case. Once NOLAND_REPO is set, a
+   missing file means the path is stale, mistyped, or the other repository
+   renamed something out from under this test — every one of those is a
+   real failure this file exists to catch, not a reason to quietly skip. */
 const repo = process.env.NOLAND_REPO;
+const skip = !repo;
 const adapterPath = repo ? join(repo, 'src/styles/contract-adapter.css') : undefined;
 const basePath = repo ? join(repo, 'src/styles/tokens.css') : undefined;
-const skip = !repo || !adapterPath || !existsSync(adapterPath) || !basePath || !existsSync(basePath);
+
+if (repo) {
+  const missing = [adapterPath, basePath].filter((p) => !existsSync(p!));
+  if (missing.length) {
+    throw new Error(
+      `NOLAND_REPO is set to "${repo}" but the following expected file(s) are missing: ` +
+        `${missing.join(', ')}. Fix the path or the rename on the other side; this must ` +
+        `not silently skip once NOLAND_REPO is set.`,
+    );
+  }
+}
 
 const contract = JSON.parse(readFileSync('research-kit/contract/tokens.contract.json', 'utf8'));
 const adapter = skip ? '' : readFileSync(adapterPath!, 'utf8');
