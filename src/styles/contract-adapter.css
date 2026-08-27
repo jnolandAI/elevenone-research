@@ -65,7 +65,10 @@
      0.000 in OKLab from the mark: the same value, so a marked line on a
      three-series chart was invisible as a mark. --g90 is the loudest neutral
      this system has left, at 0.1024 from the mark and 14.17:1 on the ground.
-     Anything lighter than --g60 disappears against --w. */
+     Anything lighter than --g60 disappears against --w. The binding margin is
+     series 1 against series 2, 0.1197 against the 0.08 floor: the worst
+     pairwise separation either adapter has, with series 1 against the mark at
+     0.1024 close behind. */
   --ct-ex-series-1: var(--g90);
   --ct-ex-series-2: var(--g80);
   --ct-ex-series-3: var(--g60);

@@ -231,8 +231,12 @@ describe('tokencheck', () => {
     const r = run({ '--ct-ex-series-2': '#111111' });
     // Findings are { check, token, message }; the mark loop's message already
     // interpolates the neighbour, so this passes without touching checks.mjs.
-    // It is here to keep it that way.
-    const f = r.findings.find((x: any) => x.check === 'mark')!;
-    expect(f.message).toContain('--ct-ex-series-2');
+    // It is here to keep it that way. Selected by the neighbour it names, not
+    // by position: .find(check === 'mark') alone would grab whichever mark
+    // finding sorts first, which is only correct today because this fixture
+    // produces exactly one.
+    const f = r.findings.find((x: any) => x.check === 'mark' && x.message.includes('--ct-ex-series-2'));
+    expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
+    expect(f!.message).toContain('--ct-ex-series-2');
   });
 });
