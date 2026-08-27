@@ -82,15 +82,21 @@ describe('token contract', () => {
     }
   });
 
-  it('pins all three neighbours the mark must stand off', () => {
-    // A mark has to stand off the fill it sits among, the field it sits on, and
-    // strong type. The third was added after a greyscale adapter was found
-    // resolving --ct-mark and --ct-text-strong to the same ink, which made
-    // emphasis on type invisible while every check passed. Deleting an entry
-    // from this list would leave the suite green without it, so the list is
-    // pinned rather than merely iterated.
+  it('pins all six neighbours the mark must stand off', () => {
+    // A mark has to stand off the fill it sits among, the field it sits on,
+    // strong type, and every categorical series. Strong type was added after
+    // a greyscale adapter was found resolving --ct-mark and --ct-text-strong
+    // to the same ink, which made emphasis on type invisible while every
+    // check passed. The three series were added after both real adapters
+    // were found resolving --ct-mark to the same colour as one of their own
+    // series: Noland's mark and series 1 were both slate-800, Eleven One's
+    // mark and series 3 were both --ink, a dE of exactly 0.0000, and nothing
+    // compared the two roles. Deleting an entry from this list would leave
+    // the suite green without it, so the list is pinned rather than merely
+    // iterated.
     expect(contract.roles.mark.distinctFrom).toEqual([
       '--ct-ex-fill', '--ct-mark-soft', '--ct-text-strong',
+      '--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3',
     ]);
   });
 
