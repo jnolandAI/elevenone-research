@@ -15,6 +15,7 @@ const VALUES: Record<string, string> = {
   '--ct-text': '#333333', '--ct-text-muted': '#666666', '--ct-text-strong': '#111111',
   '--ct-text-on-field': '#FFFFFF',
   '--ct-ex-axis': '#8A8A8A', '--ct-ex-connector': '#8A8A8A', '--ct-ex-fill': '#666666',
+  '--ct-ex-axis-quiet': '#E0E0E0',
   '--ct-ex-fill-quiet': '#DDDDDD', '--ct-ex-label-muted': '#666666',
   '--ct-ex-level-1': '#EEEEEE', '--ct-ex-level-2': '#C0C0C0',
   '--ct-ex-level-3': '#888888', '--ct-ex-level-4': '#404040',
@@ -141,5 +142,22 @@ describe('tokencheck', () => {
     // fixture may legitimately produce a non-mark finding there. Only mark
     // findings are asserted empty.
     expect(r.findings.filter((f: any) => f.check === 'mark')).toEqual([]);
+  });
+
+  it('fails a recessive axis that has receded into the ground', () => {
+    // A recessive axis may be quiet. It may not be invisible.
+    const r = run({ '--ct-ex-axis-quiet': '#FEFEFE' });
+    expect(r.ok).toBe(false);
+    expect(r.findings.some((f: any) => f.check === 'perceptible' && f.token === '--ct-ex-axis-quiet')).toBe(true);
+  });
+
+  it('does not hold the recessive axis to the graphical contrast floor', () => {
+    // #E0E0E0 is 1.32:1 on the ground. An axis held to 3:1 would fail here;
+    // this token is held to perceptibility instead, and clears it at 0.093 dE.
+    const r = run();
+    expect(r.findings.filter((f: any) => f.token === '--ct-ex-axis-quiet')).toEqual([]);
+    const m = r.measures.find((m: any) => m.check === 'perceptible' && m.pair[0] === '--ct-ex-axis-quiet');
+    expect(m, 'no perceptible measure was recorded').toBeDefined();
+    expect(m.value).toBeGreaterThanOrEqual(m.floor);
   });
 });

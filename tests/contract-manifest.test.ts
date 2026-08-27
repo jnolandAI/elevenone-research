@@ -50,6 +50,8 @@ describe('token contract', () => {
       ...(Object.values(contract.roles.textOn).flat() as string[]),
       ...contract.roles.graphicalOn.map((r: any) => r.token),
       ...contract.roles.graphicalOn.map((r: any) => r.ground),
+      ...contract.roles.perceptibleOn.map((r: any) => r.token),
+      ...contract.roles.perceptibleOn.map((r: any) => r.ground),
     ];
     for (const n of referenced) expect(allNames, `role references undeclared ${n}`).toContain(n);
   });
@@ -67,6 +69,8 @@ describe('token contract', () => {
       ...(Object.values(contract.roles.textOn).flat() as string[]),
       ...contract.roles.graphicalOn.map((r: any) => r.token),
       ...contract.roles.graphicalOn.map((r: any) => r.ground),
+      ...contract.roles.perceptibleOn.map((r: any) => r.token),
+      ...contract.roles.perceptibleOn.map((r: any) => r.ground),
       ...contract.roles.ordinal,
       ...contract.roles.sequential,
       ...contract.roles.series,
@@ -80,10 +84,26 @@ describe('token contract', () => {
 
   it('declares every threshold the validator reads, each with a stated reason', () => {
     for (const k of ['bodyContrast', 'graphicalContrast',
-                     'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaL']) {
+                     'seriesDeltaEOK', 'markDeltaEOK', 'scaleStepDeltaL',
+                     'recessiveDeltaEOK']) {
       expect(contract.thresholds[k], `threshold ${k}`).toBeDefined();
       expect(typeof contract.thresholds[k].value, `threshold ${k}.value`).toBe('number');
       expect(contract.thresholds[k].why.length, `threshold ${k}.why`).toBeGreaterThan(20);
     }
+  });
+
+  it('holds the recessive axis to perceptibility rather than to the graphical floor', () => {
+    // The two axis tokens exist because a baseline rule under a bar chart is
+    // doing a different job from an axis you have to find. The contract would
+    // be lying if the quiet one were simply exempt, so it carries its own
+    // check against its own ground with its own measure.
+    const quiet = '--ct-ex-axis-quiet';
+    expect(allNames, `${quiet} is not declared`).toContain(quiet);
+    expect(contract.roles.graphicalOn.map((r: any) => r.token))
+      .not.toContain(quiet);
+    expect(contract.roles.perceptibleOn.map((r: any) => r.token))
+      .toContain(quiet);
+    expect(contract.roles.graphicalOn.map((r: any) => r.token))
+      .toContain('--ct-ex-axis');
   });
 });

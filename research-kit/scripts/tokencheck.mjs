@@ -19,7 +19,7 @@ const contract = JSON.parse(readFileSync(join(HERE, '../contract/tokens.contract
 const texts = [...basePaths, adapterPath].map((p) => readFileSync(p, 'utf8'));
 const { ok, findings, measures } = checkAdapter({ contract, tokens: resolveTokens(texts) });
 
-const order = { contrast: 0, monotonic: 1, series: 2, mark: 3 };
+const order = { contrast: 0, perceptible: 1, monotonic: 2, series: 3, mark: 4 };
 for (const m of [...measures].sort((a, b) => (order[a.check] - order[b.check]) || (a.value - b.value))) {
   const unit = m.check === 'contrast' || (m.check === 'series' && m.pair[1] === '--ct-ground') ? ':1'
     : m.check === 'monotonic' ? ' ΔL' // OKLab lightness only, not full ΔE

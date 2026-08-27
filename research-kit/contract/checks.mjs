@@ -1,8 +1,8 @@
 import { parseHex, contrastRatio, deltaEOK, toOklab } from './color.mjs';
 
-/* The five checks the spec asks tokencheck to make (presence, contrast,
-   monotonic, series, mark), plus the one that has to run before any of the
-   other four mean anything: is it a colour.
+/* The six checks the spec asks tokencheck to make (presence, contrast,
+   perceptible, monotonic, series, mark), plus the one that has to run before
+   any of the other five mean anything: is it a colour.
 
    Every numeric comparison is pushed to `measures` whether it passes or fails.
    A validator that only prints failures tells you nothing about how close the
@@ -59,6 +59,20 @@ export function checkAdapter({ contract, tokens }) {
     measures.push({ check: 'contrast', pair: [token, ground], value, floor });
     if (value < floor) {
       fail('contrast', token, `${value.toFixed(2)}:1 on ${ground}, needs ${floor}:1 as a non-text object`);
+    }
+  }
+
+  //    A recessive mark is the exception, and it is an exception with its own
+  //    bar rather than an exemption. A rule that only says where zero is does
+  //    not have to be findable, but it does have to be there: measured as
+  //    perceptual distance from its own ground, not as contrast against it.
+  for (const { token, ground } of roles.perceptibleOn) {
+    if (!have(token, ground)) continue;
+    const value = deltaEOK(rgb.get(token), rgb.get(ground));
+    const floor = th('recessiveDeltaEOK');
+    measures.push({ check: 'perceptible', pair: [token, ground], value, floor });
+    if (value < floor) {
+      fail('perceptible', token, `${value.toFixed(3)} in OKLab from ${ground}, needs ${floor}. A recessive mark may be quiet; it may not be invisible.`);
     }
   }
 

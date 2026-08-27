@@ -9,6 +9,10 @@
       "value": 3.0,
       "why": "WCAG 1.4.11 for non-text objects. An axis or a connector has to be findable against its ground without being as loud as type."
     },
+    "recessiveDeltaEOK": {
+      "value": 0.03,
+      "why": "Perceptual distance from its own ground for a mark that is meant to recede. A baseline rule under a bar chart is not an axis you hunt for; the mark carries the data and the rule only says where zero is. Holding it to the 3:1 graphical floor would forbid a legitimate and common treatment, and exempting it entirely would let a rule vanish into the page. This is the same figure the ramp-step floor uses, and on a white ground it admits a rule at the third step of a twelve-step ramp while rejecting one at the first."
+    },
     "seriesDeltaEOK": {
       "value": 0.08,
       "why": "Perceptual distance in OKLab between any two categorical series. Luminance contrast is the wrong measure: one system separates series by hue and the other by value, and a luminance test would reject the chromatic pair while passing an illegible neutral one."
@@ -32,8 +36,8 @@
       "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
     },
     "exhibit": {
-      "description": "Exhibit primitives. Axis and connector are structure, fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own, label-muted is tick and axis type.",
-      "names": ["--ct-ex-axis", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
+      "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type.",
+      "names": ["--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
     },
     "scales": {
       "description": "Three scales with three different jobs. Ordinal encodes rank across four levels. Sequential encodes magnitude across five steps and must ramp monotonically. Series encodes category across three lines and must be mutually separable rather than ordered.",
@@ -100,6 +104,9 @@
       { "token": "--ct-ex-fill", "ground": "--ct-ground" },
       { "token": "--ct-rule-firm", "ground": "--ct-ground" }
     ],
+    "perceptibleOn": [
+      { "token": "--ct-ex-axis-quiet", "ground": "--ct-ground" }
+    ],
     "ordinal": ["--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4"],
     "sequential": ["--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5"],
     "series": ["--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"],
@@ -107,7 +114,7 @@
     "colourNames": [
       "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm",
       "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",
-      "--ct-ex-axis", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted",
+      "--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted",
       "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
       "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
       "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3",
