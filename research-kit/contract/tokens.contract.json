@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "thresholds": {
+    "bodyContrast": {
+      "value": 4.5,
+      "why": "WCAG 1.4.3 for text under 18px. Both systems set body at 15px, so the body floor is the one that binds."
+    },
+    "graphicalContrast": {
+      "value": 3.0,
+      "why": "WCAG 1.4.11 for non-text objects. An axis or a connector has to be findable against its ground without being as loud as type."
+    },
+    "seriesDeltaEOK": {
+      "value": 0.08,
+      "why": "Perceptual distance in OKLab between any two categorical series. Luminance contrast is the wrong measure: one system separates series by hue and the other by value, and a luminance test would reject the chromatic pair while passing an illegible neutral one."
+    },
+    "markDeltaEOK": {
+      "value": 0.08,
+      "why": "The mark says this value differs from its neighbours. Same measure as series and the same reason: the contract expresses the emphasis job, not the emphasis mechanism."
+    },
+    "scaleStepDeltaEOK": {
+      "value": 0.03,
+      "why": "Adjacent steps of an ordinal or sequential scale must be separable, but a scale is read as a ramp against its own neighbours rather than as independent categories, so the bar sits below the series bar."
+    }
+  },
+  "groups": {
+    "surface": {
+      "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field.",
+      "names": ["--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm"]
+    },
+    "text": {
+      "description": "Type colour by job, not by size. Muted is secondary and label type, strong is the emphatic end, on-field is type over a full-bleed divider.",
+      "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
+    },
+    "exhibit": {
+      "description": "Exhibit primitives. Axis and connector are structure, fill and fill-quiet are the default and recessive mark bodies, label-muted is tick and axis type.",
+      "names": ["--ct-ex-axis", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
+    },
+    "scales": {
+      "description": "Three scales with three different jobs. Ordinal encodes rank across four levels. Sequential encodes magnitude across five steps and must ramp monotonically. Series encodes category across three lines and must be mutually separable rather than ordered.",
+      "names": [
+        "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
+        "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
+        "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"
+      ]
+    },
+    "mark": {
+      "description": "The single marked value on an exhibit. Mark is the body, mark-soft is the field a mark sits on so the mark still reads against it, mark-text is type carried on the mark.",
+      "names": ["--ct-mark", "--ct-mark-soft", "--ct-mark-text"]
+    },
+    "field": {
+      "description": "The full-bleed colour field of a divider or statement page, and the type carried on it.",
+      "names": ["--ct-field", "--ct-field-text"]
+    },
+    "separation": {
+      "description": "How a panel separates from its ground. Components set both, always. One system supplies a real border and no shadow, the other the reverse, and no component ever branches.",
+      "names": ["--ct-sep-border", "--ct-sep-shadow"]
+    },
+    "type": {
+      "description": "Three families, ten sizes, five weights, four tracking values bound to size band, and leading on a four-pixel baseline. A system with one family aliases all three family names to it.",
+      "names": [
+        "--ct-font-display", "--ct-font-body", "--ct-font-mono",
+        "--ct-text-xs", "--ct-text-sm", "--ct-text-base", "--ct-text-md", "--ct-text-lg",
+        "--ct-text-xl", "--ct-text-2xl", "--ct-text-3xl", "--ct-text-4xl", "--ct-text-5xl",
+        "--ct-weight-light", "--ct-weight-normal", "--ct-weight-medium", "--ct-weight-semibold", "--ct-weight-bold",
+        "--ct-tracking-tight", "--ct-tracking-snug", "--ct-tracking-normal", "--ct-tracking-wide",
+        "--ct-leading-4", "--ct-leading-5", "--ct-leading-6", "--ct-leading-7", "--ct-leading-8",
+        "--ct-leading-9", "--ct-leading-10", "--ct-leading-11", "--ct-leading-12",
+        "--ct-leading-14", "--ct-leading-16", "--ct-leading-18", "--ct-leading-22"
+      ]
+    },
+    "space": {
+      "description": "Ten steps on a four-pixel base. No value exists between them.",
+      "names": [
+        "--ct-space-1", "--ct-space-2", "--ct-space-3", "--ct-space-4", "--ct-space-6",
+        "--ct-space-8", "--ct-space-12", "--ct-space-16", "--ct-space-24", "--ct-space-32"
+      ]
+    },
+    "geometry": {
+      "description": "The slide profile. Declared per system rather than defaulted, because one system is a document that also renders slides and the other is being changed to slide-first.",
+      "names": ["--ct-slide-w", "--ct-slide-h", "--ct-slide-margin", "--ct-slide-pad", "--ct-slide-measure"]
+    },
+    "art": {
+      "description": "A string prepended to every image prompt, so the two brands do not produce imagery that reads as the same model.",
+      "names": ["--ct-art-direction"]
+    }
+  },
+  "roles": {
+    "textOn": {
+      "--ct-text": ["--ct-ground", "--ct-surface", "--ct-well"],
+      "--ct-text-muted": ["--ct-ground", "--ct-surface", "--ct-well"],
+      "--ct-text-strong": ["--ct-ground", "--ct-surface", "--ct-well"],
+      "--ct-text-on-field": ["--ct-field"],
+      "--ct-ex-label-muted": ["--ct-ground", "--ct-surface"],
+      "--ct-field-text": ["--ct-field"],
+      "--ct-mark-text": ["--ct-mark"]
+    },
+    "graphicalOn": [
+      { "token": "--ct-ex-axis", "ground": "--ct-ground" },
+      { "token": "--ct-ex-connector", "ground": "--ct-ground" },
+      { "token": "--ct-ex-fill", "ground": "--ct-ground" },
+      { "token": "--ct-rule-firm", "ground": "--ct-ground" }
+    ],
+    "ordinal": ["--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4"],
+    "sequential": ["--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5"],
+    "series": ["--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"],
+    "mark": { "token": "--ct-mark", "distinctFrom": "--ct-ex-fill" },
+    "colourNames": [
+      "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm",
+      "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",
+      "--ct-ex-axis", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted",
+      "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
+      "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
+      "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3",
+      "--ct-mark", "--ct-mark-soft", "--ct-mark-text",
+      "--ct-field", "--ct-field-text"
+    ]
+  }
+}
