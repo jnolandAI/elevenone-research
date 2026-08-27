@@ -1,0 +1,138 @@
+/* Eleven One Research maps onto the token contract.
+   Base: src/styles/tokens.css. Validate with
+     node research-kit/scripts/tokencheck.mjs research-kit/adapters/eleven-one.css src/styles/tokens.css
+
+   This system has no hue, by rule and by test. Everything the contract asks a
+   colour to do here is done with value, and the validator is built to accept
+   that: it asks whether a distinction is perceptible, never whether it is
+   chromatic. */
+
+:root {
+  /* ---- Surface and rule ----
+     Ground is flat --w, not the drawn .ground gradient the site uses. A page
+     carrying an exhibit needs a flat field under the marks. --ct-rule-firm is
+     --g60 and not --g50 because --g50 measures 2.22:1 on white and a non-text
+     object needs 3:1. */
+  --ct-ground: var(--w);
+  --ct-surface: var(--g05);
+  --ct-well: var(--g10);
+  --ct-rule: var(--g30);
+  --ct-rule-firm: var(--g60);
+
+  /* ---- Text ----
+     The well is --g10 rather than --g20 because --g70 muted type sits in it:
+     on --g20 that pair measures 4.41:1, just under the 4.5:1 body floor. */
+  --ct-text: var(--g90);
+  --ct-text-muted: var(--g70);
+  --ct-text-strong: var(--ink);
+  --ct-text-on-field: var(--w);
+
+  /* ---- Exhibit primitives ---- */
+  --ct-ex-axis: var(--g60);
+  --ct-ex-connector: var(--g60);
+  --ct-ex-fill: var(--g70);
+  --ct-ex-fill-quiet: var(--g30);
+  --ct-ex-label-muted: var(--g70);
+
+  /* ---- Scales ----
+     Ordinal skips a step of the spine at each level so four levels are told
+     apart at a glance. Sequential starts one step lighter so a choropleth has
+     a near-empty low end. */
+  --ct-ex-level-1: var(--g20);
+  --ct-ex-level-2: var(--g40);
+  --ct-ex-level-3: var(--g60);
+  --ct-ex-level-4: var(--g80);
+
+  --ct-ex-scale-1: var(--g05);
+  --ct-ex-scale-2: var(--g20);
+  --ct-ex-scale-3: var(--g40);
+  --ct-ex-scale-4: var(--g60);
+  --ct-ex-scale-5: var(--g80);
+
+  /* Three neutrals spread as wide as the spine allows while each still clears
+     3:1 on the ground. Anything lighter than --g60 disappears against --w. */
+  --ct-ex-series-1: var(--g60);
+  --ct-ex-series-2: var(--g80);
+  --ct-ex-series-3: var(--ink);
+
+  /* ---- The mark ----
+     Satisfied by value. --ink against a --g70 field of neighbours. */
+  --ct-mark: var(--ink);
+  --ct-mark-soft: var(--g30);
+  --ct-mark-text: var(--w);
+
+  /* ---- The field ---- */
+  --ct-field: var(--ink);
+  --ct-field-text: var(--w);
+
+  /* ---- Separation ----
+     Elevation, not a border. Both are set; no component branches. */
+  --ct-sep-border: none;
+  --ct-sep-shadow: var(--e1);
+
+  /* ---- Type ---- */
+  --ct-font-display: var(--font);
+  --ct-font-body: var(--font);
+  --ct-font-mono: var(--font-mono);
+
+  --ct-text-xs: var(--text-xs);
+  --ct-text-sm: var(--text-sm);
+  --ct-text-base: var(--text-base);
+  --ct-text-md: var(--text-md);
+  --ct-text-lg: var(--text-lg);
+  --ct-text-xl: var(--text-xl);
+  --ct-text-2xl: var(--text-2xl);
+  --ct-text-3xl: var(--text-3xl);
+  --ct-text-4xl: var(--text-4xl);
+  --ct-text-5xl: var(--text-5xl);
+
+  --ct-weight-light: var(--weight-light);
+  --ct-weight-normal: var(--weight-normal);
+  --ct-weight-medium: var(--weight-medium);
+  --ct-weight-semibold: var(--weight-semibold);
+  --ct-weight-bold: var(--weight-bold);
+
+  --ct-tracking-tight: var(--tracking-tight);
+  --ct-tracking-snug: var(--tracking-snug);
+  --ct-tracking-normal: var(--tracking-normal);
+  --ct-tracking-wide: var(--tracking-wide);
+
+  --ct-leading-4: var(--leading-4);
+  --ct-leading-5: var(--leading-5);
+  --ct-leading-6: var(--leading-6);
+  --ct-leading-7: var(--leading-7);
+  --ct-leading-8: var(--leading-8);
+  --ct-leading-9: var(--leading-9);
+  --ct-leading-10: var(--leading-10);
+  --ct-leading-11: var(--leading-11);
+  --ct-leading-12: var(--leading-12);
+  --ct-leading-14: var(--leading-14);
+  --ct-leading-16: var(--leading-16);
+  --ct-leading-18: var(--leading-18);
+  --ct-leading-22: var(--leading-22);
+
+  /* ---- Space ---- */
+  --ct-space-1: var(--space-1);
+  --ct-space-2: var(--space-2);
+  --ct-space-3: var(--space-3);
+  --ct-space-4: var(--space-4);
+  --ct-space-6: var(--space-6);
+  --ct-space-8: var(--space-8);
+  --ct-space-12: var(--space-12);
+  --ct-space-16: var(--space-16);
+  --ct-space-24: var(--space-24);
+  --ct-space-32: var(--space-32);
+
+  /* ---- Geometry ---- */
+  --ct-slide-w: var(--slide-w);
+  --ct-slide-h: var(--slide-h);
+  --ct-slide-margin: var(--slide-margin);
+  --ct-slide-pad: var(--slide-pad);
+  --ct-slide-measure: var(--slide-measure);
+
+  /* ---- Art direction ----
+     Against a system that is greyscale by rule, one saturated image per
+     section opener carries the contrast, and the discipline is what stops
+     twenty images becoming a mood board. */
+  --ct-art-direction: "saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage";
+}
