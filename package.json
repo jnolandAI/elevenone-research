@@ -16,6 +16,8 @@
     "audit": "node research-kit/scripts/audit.mjs --profile brief src/pages/pieces",
     "density": "node research-kit/scripts/density.mjs --profile brief",
     "art": "node research-kit/scripts/generate-art.mjs --manifest art/piece-001.manifest.json --out public/assets/art --adapter src/styles/contract-adapter.css",
+    "art:prompts": "npm run art -- --prompts",
+    "art:import": "npm run art -- --import art/staged",
     "artcheck": "node research-kit/scripts/artcheck.mjs --manifest art/piece-001.manifest.json --out public/assets/art --src src/pages/pieces --adapter src/styles/contract-adapter.css"
   },
   "dependencies": {

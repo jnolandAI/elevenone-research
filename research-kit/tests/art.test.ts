@@ -129,6 +129,46 @@ describe('generate-art composes prompts from the contract, not from itself', () 
   });
 });
 
+describe('the import path, for a subscription rather than an API key', () => {
+  it('ingests a staged file and writes a record artcheck accepts as current', () => {
+    // The defect this pins: the hash is computed from the model name that is
+    // also recorded. Hashing with gpt-image-2 while recording chatgpt-ui
+    // marked every imported image stale the moment it landed.
+    const stage = join(dir, 'stage');
+    mkdirSync(stage, { recursive: true });
+    writeFileSync(join(stage, 'cover-one.png'), 'staged-bytes');
+
+    const g = run(GEN, ['--manifest', manifest, '--out', out, '--adapter', adapter, '--import', stage, '--force']);
+    expect(g.code).toBe(0);
+    expect(g.out).toMatch(/imported\s+cover-one/);
+
+    const rec = JSON.parse(readFileSync(join(out, 'cover-one.json'), 'utf8'));
+    expect(rec.source).toBe('imported');
+    expect(rec.model).toBe('chatgpt-ui');
+
+    const c = run(CHK, ['--manifest', manifest, '--out', out, '--src', src, '--adapter', adapter]);
+    expect(c.out).toContain('clean');
+    expect(c.code).toBe(0);
+  });
+
+  it('reports a staged file with the wrong extension rather than skipping it', () => {
+    const stage2 = join(dir, 'stage2');
+    mkdirSync(stage2, { recursive: true });
+    writeFileSync(join(stage2, 'cover-one.webp'), 'x');
+    const r = run(GEN, ['--manifest', manifest, '--out', out, '--adapter', adapter, '--import', stage2, '--force']);
+    expect(r.code).toBe(2);
+    expect(r.err).toMatch(/found cover-one\.webp but the pages reference \.png/);
+  });
+
+  it('prints prompts alone, with no generation machinery around them', () => {
+    const r = run(GEN, ['--manifest', manifest, '--out', out, '--adapter', adapter, '--prompts']);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('cover-one  [cover, 2560x1440]');
+    expect(r.out).toContain(`A single steel tray on a seamless surface. ${DIRECTION}`);
+    expect(r.out).not.toMatch(/would generate|skip /);
+  });
+});
+
 describe('artcheck', () => {
   it('passes once the asset, the provenance and the alt are all present', () => {
     const r = run(CHK, ['--manifest', manifest, '--out', out, '--src', src, '--adapter', adapter]);

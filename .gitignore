@@ -61,3 +61,8 @@ playwright-report/
 
 # Census working output keyed on deck identity (the corpus is third-party)
 research-kit/census/out/
+
+# Art staging. Hand-generated images land here before import; only the
+# imported result under public/assets/art is committed.
+art/staged/*
+!art/staged/README.md

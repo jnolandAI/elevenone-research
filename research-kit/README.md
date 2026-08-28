@@ -70,6 +70,20 @@ follows it.
 `--dry-run` composes and prints every prompt without calling anything. Use it
 before spending.
 
+**Two ways to get the image, and the manifest does not care which was used.**
+The API path spends per image on the OpenAI platform. The import path costs
+nothing beyond a ChatGPT subscription, which is worth knowing because a
+subscription and the API platform are separately billed and a subscription
+grants no API credit:
+
+    node scripts/generate-art.mjs ... --prompts            # print them
+    # generate each one in the chat UI, save as <id>.png into a staging dir
+    node scripts/generate-art.mjs ... --import <staging dir>
+
+Both paths write the same provenance record, and it notes which produced the
+file. The prompt hash is computed from the same model string the record
+carries, so an imported image is not flagged stale the moment it lands.
+
 Nothing is fetched at render time. Each generated image is committed alongside
 a provenance record carrying the prompt, model, size, timestamp and a prompt
 hash, and an unchanged hash is skipped, so a rebuild costs nothing and changing

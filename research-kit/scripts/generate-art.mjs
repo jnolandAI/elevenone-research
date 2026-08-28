@@ -11,6 +11,9 @@ import { dirname, join, resolve } from 'node:path';
  *   --out       directory for <id>.png and <id>.json
  *   --adapter   the consuming site's contract-adapter.css, read for
  *               --ct-art-direction
+ *   --prompts   print id and prompt only, for pasting into a chat UI
+ *   --import <d> ingest <id>.png files from a staging directory instead of
+ *               calling the API, writing the same provenance record
  *   --dry-run   compose and print every prompt, call nothing, spend nothing
  *   --force     regenerate even when the recorded prompt hash is unchanged
  *   --only <id> restrict to one item
@@ -31,6 +34,15 @@ import { dirname, join, resolve } from 'node:path';
  *
  * Provenance is recorded for our own tracking, not for disclosure. Generated
  * imagery carries no visible credit on the piece.
+ *
+ * Two ways to get an image, and the manifest does not care which was used.
+ * The API path spends per image on the OpenAI platform. The import path costs
+ * nothing beyond a ChatGPT subscription: run --prompts, generate each image in
+ * the chat UI, save them as <id>.png into a staging directory, and run
+ * --import. A ChatGPT subscription and the API platform are separately billed
+ * and a subscription grants no API credit, so for anyone paying for the former
+ * and not the latter, import is the cheaper route to the same committed asset.
+ * The provenance record notes which path produced the file.
  */
 
 const args = process.argv.slice(2);
@@ -53,6 +65,13 @@ const ADAPTER = flag('--adapter') ?? die('--adapter is required.');
 const MODEL = flag('--model', 'gpt-image-2');
 const SIZE = flag('--size', '2560x1440');
 const ONLY = flag('--only');
+const IMPORT = flag('--import');
+/* The model string that goes into the record AND into the prompt hash. These
+   have to be the same value: artcheck recomputes the hash from record.model,
+   so hashing with one name and recording another marks every imported image
+   stale the moment it lands. */
+const RECORD_MODEL = IMPORT ? flag('--model', 'chatgpt-ui') : MODEL;
+const PROMPTS = has('--prompts');
 const DRY = has('--dry-run');
 const FORCE = has('--force');
 
@@ -98,6 +117,42 @@ const compose = (subject) => `${subject.trim().replace(/\.$/, '')}. ${DIRECTION}
 const hashOf = (prompt, model, size) =>
   createHash('sha256').update(`${model}|${size}|${prompt}`).digest('hex').slice(0, 16);
 
+if (PROMPTS) {
+  for (const item of manifest.items) {
+    if (ONLY && item.id !== ONLY) continue;
+    console.log(`${item.id}  [${item.role}, ${item.size ?? SIZE}]`);
+    console.log(compose(item.subject));
+    console.log('');
+  }
+  process.exit(0);
+}
+
+/* One writer for both paths. An imported file and a generated one must carry
+   the same provenance shape, or artcheck's staleness comparison would only
+   work for images that came down one of the two routes. */
+function record(item, size, prompt, promptHash, bytes, source) {
+  return (
+    JSON.stringify(
+      {
+        id: item.id,
+        role: item.role,
+        model: RECORD_MODEL,
+        size,
+        prompt,
+        promptHash,
+        subject: item.subject,
+        direction: DIRECTION,
+        alt: item.alt,
+        bytes: bytes.length,
+        source,
+        generated: new Date().toISOString(),
+      },
+      null,
+      2,
+    ) + '\n'
+  );
+}
+
 mkdirSync(OUT, { recursive: true });
 
 const targets = ONLY ? manifest.items.filter((i) => i.id === ONLY) : manifest.items;
@@ -109,7 +164,7 @@ let skipped = 0;
 for (const item of targets) {
   const size = item.size ?? SIZE;
   const prompt = compose(item.subject);
-  const promptHash = hashOf(prompt, MODEL, size);
+  const promptHash = hashOf(prompt, RECORD_MODEL, size);
   const png = join(OUT, `${item.id}.png`);
   const rec = join(OUT, `${item.id}.json`);
 
@@ -132,8 +187,26 @@ for (const item of targets) {
     continue;
   }
 
+  if (IMPORT) {
+    const staged = join(IMPORT, `${item.id}.png`);
+    if (!existsSync(staged)) {
+      const near = ['jpg', 'jpeg', 'webp'].find((e) => existsSync(join(IMPORT, `${item.id}.${e}`)));
+      if (near) {
+        die(`${item.id}: found ${item.id}.${near} but the pages reference .png. Convert it and retry.`);
+      }
+      console.log(`missing   ${item.id}  (nothing at ${staged})`);
+      continue;
+    }
+    const bytes = readFileSync(staged);
+    writeFileSync(png, bytes);
+    writeFileSync(rec, record(item, size, prompt, promptHash, bytes, 'imported'));
+    console.log(`imported  ${item.id}  from ${staged} (${Math.round(bytes.length / 1024)}KB)`);
+    generated++;
+    continue;
+  }
+
   const key = process.env.OPENAI_API_KEY;
-  if (!key) die('OPENAI_API_KEY is not set. Use --dry-run to compose prompts without it.');
+  if (!key) die('OPENAI_API_KEY is not set. Use --prompts and --import, or --dry-run.');
 
   console.log(`generating  ${item.id}  [${item.role}, ${size}]`);
   const res = await fetch('https://api.openai.com/v1/images/generations', {
@@ -163,26 +236,7 @@ for (const item of targets) {
   }
 
   writeFileSync(png, bytes);
-  writeFileSync(
-    rec,
-    JSON.stringify(
-      {
-        id: item.id,
-        role: item.role,
-        model: MODEL,
-        size,
-        prompt,
-        promptHash,
-        subject: item.subject,
-        direction: DIRECTION,
-        alt: item.alt,
-        bytes: bytes.length,
-        generated: new Date().toISOString(),
-      },
-      null,
-      2,
-    ) + '\n',
-  );
+  writeFileSync(rec, record(item, size, prompt, promptHash, bytes, 'api'));
   console.log(`  wrote ${png} (${Math.round(bytes.length / 1024)}KB) and ${rec}`);
   generated++;
 }
