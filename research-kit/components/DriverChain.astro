@@ -1,0 +1,95 @@
+---
+import { chainLayout, type ChainTerm } from 'research-kit/lib/exhibits';
+
+/**
+ * A sizing equation set as chips joined by operators.
+ *
+ * The reference decks show build-up arithmetic this way rather than as a
+ * waterfall: the waterfall decomposes a movement, the chain shows how a number
+ * was constructed. Each term carries the figure, what it is, and where it came
+ * from, so a sceptic can check the build without leaving the page.
+ */
+interface Props {
+  terms: ChainTerm[];
+  alt: string;
+  height?: number;
+  width?: number;
+}
+
+const { terms, alt, height = 172, width: w = 1184 } = Astro.props;
+const width = w;
+const cells = chainLayout(terms, { width });
+const boxTop = 22;
+const boxHeight = 76;
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {
+    cells.map((c) => (
+      <>
+        {c.opX !== null && (
+          <text class="op" x={c.opX} y={boxTop + boxHeight / 2 + 8} text-anchor="middle">
+            {c.op}
+          </text>
+        )}
+        <rect
+          class:list={['chip', { 'chip--mark': c.mark }]}
+          x={c.x}
+          y={boxTop}
+          width={c.width}
+          height={boxHeight}
+        />
+        <text class:list={['fig-val', { 'fig-val--mark': c.mark }]} x={c.centre} y={boxTop + 44} text-anchor="middle">
+          {c.value}
+        </text>
+        <text class:list={['fig-lab', { 'fig-lab--mark': c.mark }]} x={c.centre} y={boxTop + 66} text-anchor="middle">
+          {c.label}
+        </text>
+        {c.note && (
+          <text class="fig-note" x={c.centre} y={boxTop + boxHeight + 18} text-anchor="middle">
+            {c.note}
+          </text>
+        )}
+      </>
+    ))
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  /* A quiet field rather than a bordered box: the chips are zones of one
+     equation, not five separate exhibits. */
+  .chip { fill: var(--ct-well); }
+  /* The slate budget is one value; every sibling marked fill is slate. */
+  .chip--mark { fill: var(--ct-mark); }
+
+  .op {
+    font-size: var(--ct-text-lg);
+    fill: var(--ct-ex-label-muted);
+    font-weight: var(--ct-weight-light);
+  }
+
+  .fig-val {
+    font-size: var(--ct-text-2xl);
+    font-weight: var(--ct-weight-light);
+    letter-spacing: var(--ct-tracking-snug);
+    fill: var(--ct-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fig-val--mark { fill: var(--ct-text-on-field); }
+
+  .fig-lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  /* A muted label on a dark chip. */
+  .fig-lab--mark { fill: var(--ct-field-text-muted); }
+
+  .fig-note {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+</style>

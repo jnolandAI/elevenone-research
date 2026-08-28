@@ -1,0 +1,137 @@
+---
+import { bridgeLayout, calloutLayout, type BridgeStep, type CalloutSpec } from 'research-kit/lib/exhibits';
+
+/**
+ * A bridge decomposes a movement into its drivers.
+ *
+ * Encoding, and it is not negotiable: anchors in grey-80, increases in grey-40,
+ * decreases in grey-60, and exactly one step in slate. Sign is read from the
+ * direction of the step, never from colour, so the exhibit survives a
+ * monochrome printer and a colour-blind reader.
+ */
+interface Props {
+  steps: BridgeStep[];
+  /** Accessible summary. An SVG with no description is not an exhibit. */
+  alt: string;
+  height?: number;
+  /** Drawing width in user units. A page column by default, a slide passes its own. */
+  width?: number;
+  /** An on-chart reading, its leader anchored to the named step. */
+  callout?: CalloutSpec;
+}
+
+const { steps, alt, height = 250, width: w = 1199, callout } = Astro.props;
+const width = w;
+const { bars, connectors, baseline } = bridgeLayout(steps, {
+  width,
+  height,
+  plotTop: 30,
+  plotBottom: height - 30,
+});
+
+// Three waterfall roles are three categories, not three magnitudes.
+const fill = (b: (typeof bars)[number]) => {
+  if (b.mark) return 'var(--ct-mark)';
+  if (b.anchor) return 'var(--ct-ex-series-1)';
+  return b.value < 0 ? 'var(--ct-ex-series-2)' : 'var(--ct-ex-series-3)';
+};
+
+let co = null;
+if (callout) {
+  const bar = bars.find((b) => b.label === callout.at);
+  if (!bar) throw new Error(`Bridge: no step "${callout.at}" for the callout`);
+  const side = callout.side ?? 'below';
+  const anchor =
+    side === 'below'
+      ? { x: bar.centre, y: bar.y + bar.height + 3 }
+      : side === 'above'
+        ? { x: bar.centre, y: bar.y - 3 }
+        : side === 'left'
+          ? { x: bar.x - 3, y: bar.y + bar.height / 2 }
+          : { x: bar.x + bar.width + 3, y: bar.y + bar.height / 2 };
+  co = calloutLayout(anchor, { lines: callout.lines, side }, {
+    width,
+    height,
+    fontSize: 11,
+    lineHeight: 14,
+    reach: callout.reach ?? 26,
+  });
+}
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  <line class="base" x1="0" y1={baseline} x2={width} y2={baseline} />
+  {connectors.map((c) => <line class="join" x1={c.x1} y1={c.y} x2={c.x2} y2={c.y} />)}
+  {bars.map((b) => <rect x={b.x} y={b.y} width={b.width} height={b.height} fill={fill(b)} />)}
+  {
+    bars.map((b) => (
+      <text class:list={['val', { 'val--mark': b.mark }]} x={b.centre} y={b.labelY} text-anchor="middle">
+        {b.valueText}
+      </text>
+    ))
+  }
+  {
+    bars.map((b) => (
+      <text class:list={['cat', { 'cat--mark': b.mark }]} x={b.centre} y={baseline + 18} text-anchor="middle">
+        {b.label}
+      </text>
+    ))
+  }
+  {
+    co && (
+      <>
+        <line class="co-lead" x1={co.leader.x1} y1={co.leader.y1} x2={co.leader.x2} y2={co.leader.y2} />
+        {co.texts.map((t) => (
+          <text class="co-text" x={t.x} y={t.y} text-anchor={co.align}>
+            {t.text}
+          </text>
+        ))}
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig {
+    width: 100%;
+    height: auto;
+  }
+
+  .base {
+    stroke: var(--ct-rule);
+    stroke-width: 1;
+  }
+
+  .join {
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+  }
+
+  .val,
+  .cat {
+    font-size: var(--ct-text-sm);
+    fill: var(--ct-text);
+  }
+
+  .val--mark,
+  .cat--mark {
+    font-weight: var(--ct-weight-semibold);
+    fill: var(--ct-mark);
+  }
+
+  .co-lead {
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+  }
+
+  /* A halo in the ground colour so a gridline or connector behind the reading
+     never runs through the letters. */
+  .co-text {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+</style>

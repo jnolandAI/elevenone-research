@@ -1,0 +1,168 @@
+---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
+/**
+ * A value chain as stacked bands, tinted by how concentrated each layer is.
+ *
+ * The census puts diagrams at 13% of analytical slides and this system had one
+ * (the driver chain), so a page whose content was "three layers of an industry
+ * and who holds the power in each" had nowhere to go but a table. Set as a
+ * table it reads as three unrelated rows; set as bands it reads as a stack,
+ * which is what the reader already pictures when they hear "value chain".
+ *
+ * The tint does the argument. Concentration is the measure that decides who
+ * holds pricing power, so it is encoded as ground rather than stated in a
+ * column, and a light band between two dark ones says "squeezed from both
+ * sides" before a word is read. The words stay in the band, so the exhibit
+ * still works in grey-scale print and needs no legend.
+ *
+ * Reach for this when the page is about position in a chain: supplier to
+ * operator to customer, upstream to downstream, or the tiers of a channel.
+ * Three or four bands. Two is a comparison and belongs in Panels; five is a
+ * process and belongs in a flow.
+ */
+export interface Layer {
+  /** The layer's name: "Mills and manufacturers". */
+  name: string;
+  /** Where it sits, said plainly: "Above", "The layer ADG occupies". */
+  position?: string;
+  /** Who is in it. */
+  players?: string;
+  /** Two or three short statements about the layer. */
+  facts: string[];
+  /** How concentrated the layer is. 0 is fragmented, 3 is concentrated. */
+  level: 0 | 1 | 2 | 3;
+  mark?: boolean;
+}
+
+interface Props {
+  layers: Layer[];
+  alt: string;
+  /** What the tint encodes, named under the exhibit rather than in a legend. */
+  tintLabel?: string;
+}
+
+const { layers, alt, tintLabel } = Astro.props;
+
+assertOneMark(
+  layers.map((l) => ({ label: l.name, mark: l.mark })),
+  'Layers',
+);
+
+if (layers.length < 3) {
+  throw new Error(
+    `Layers: ${layers.length} bands. Two layers is a comparison and belongs in Panels; a chain ` +
+      'needs at least three so a middle exists.',
+  );
+}
+if (layers.length > 4) {
+  throw new Error(
+    `Layers: ${layers.length} bands, four is the ceiling. Past four the bands are too shallow ` +
+      'to carry their facts and the exhibit is a process flow, not a chain.',
+  );
+}
+for (const l of layers) {
+  if (l.facts.length > 3) {
+    throw new Error(`Layers: "${l.name}" carries ${l.facts.length} facts and three is the ceiling`);
+  }
+}
+---
+
+<div class="s-layers" role="img" aria-label={alt}>
+  {
+    layers.map((l) => (
+      <div class:list={['s-layer', `s-layer--lv${l.level}`, { 's-layer--mark': l.mark }]}>
+        <div class="s-layer__head">
+          <p class="s-layer__term" set:html={l.name} />
+          {l.position && <p class="s-layer__pos" set:html={l.position} />}
+        </div>
+        <div class="s-layer__body">
+          {l.players && <p class="s-layer__players" set:html={l.players} />}
+          <ul class="s-layer__facts">
+            {l.facts.map((f) => (
+              <li set:html={f} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    ))
+  }
+</div>
+{tintLabel && <p class="s-label s-layers__key">{tintLabel}</p>}
+
+<style>
+  .s-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* A band, not a box: no border, because the tint is already the boundary and
+     a border on a tinted ground doubles the structure. */
+  .s-layer {
+    display: flex;
+    gap: var(--ct-space-6);
+    padding: var(--ct-space-3) var(--ct-space-4);
+  }
+
+  .s-layer--lv0 { background: var(--ct-ex-level-1); }
+  .s-layer--lv1 { background: var(--ct-ex-level-2); }
+  .s-layer--lv2 { background: var(--ct-ex-level-3); }
+  .s-layer--lv3 { background: var(--ct-ex-level-4); }
+
+  /* The marked band keeps its tint and takes a slate edge, the same device the
+     finding field uses. Filling it with the accent would put the page's one
+     mark on a surface. */
+  .s-layer--mark {
+    box-shadow: inset 3px 0 0 0 var(--ct-mark);
+  }
+
+  .s-layer__head {
+    flex-shrink: 0;
+    width: 260px;
+  }
+
+  .s-layer__term {
+    font-size: var(--ct-text-sm);
+    font-weight: var(--ct-weight-medium);
+    line-height: var(--ct-leading-5);
+    color: var(--ct-text-strong);
+  }
+
+  .s-layer--mark .s-layer__term { color: var(--ct-mark); }
+
+  .s-layer__pos {
+    padding-top: var(--ct-space-1);
+    font-size: var(--ct-text-xs);
+    line-height: var(--ct-leading-4);
+    color: var(--ct-text);
+  }
+
+  .s-layer__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .s-layer__players {
+    font-size: var(--ct-text-xs);
+    line-height: var(--ct-leading-4);
+    color: var(--ct-text);
+  }
+
+  .s-layer__facts {
+    display: flex;
+    gap: var(--ct-space-6);
+    list-style: none;
+    padding-top: var(--ct-space-1);
+  }
+
+  .s-layer__facts > li {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--ct-text-sm);
+    line-height: var(--ct-leading-5);
+    color: var(--ct-text);
+  }
+
+  .s-layers__key { padding-top: var(--ct-space-2); }
+</style>

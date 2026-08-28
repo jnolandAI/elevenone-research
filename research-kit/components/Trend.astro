@@ -1,0 +1,227 @@
+---
+import { trendLayout, plotBand, calloutLayout, type TrendSeries, type CalloutSpec } from 'research-kit/lib/exhibits';
+
+/**
+ * A multi-series line, for a measure over time.
+ *
+ * Series are named at the end of their own line, never in a detached legend.
+ * A projected segment is dashed and a divider rule separates it from the
+ * observed period, so a reader can see at a glance where the evidence stops.
+ */
+interface Props {
+  series: TrendSeries[];
+  /** Period labels along the x-axis, one per point. */
+  periods: string[];
+  alt: string;
+  height?: number;
+  width?: number;
+  min?: number;
+  max?: number;
+  /** Index of the last observed point; later points are dashed. */
+  solidThrough?: number;
+  /** Caption for the dashed zone, set above the divider. */
+  projectedLabel?: string;
+  /** Horizontal gridlines at these values. */
+  ticks?: number[];
+  axisLabel?: string;
+  /** Print the end value beside each series name. */
+  endValues?: boolean;
+  callout?: CalloutSpec & { index?: number };
+}
+
+const {
+  series,
+  periods,
+  alt,
+  height = 320,
+  width: w = 1184,
+  min,
+  max,
+  solidThrough,
+  projectedLabel,
+  ticks = [],
+  axisLabel,
+  endValues = true,
+  callout,
+} = Astro.props;
+
+const width = w;
+// The plot stops short of the right edge so the end labels have a lane.
+const { x1, x2 } = plotBand(width, 0.055, 0.78);
+const laid = trendLayout(series, {
+  width,
+  height,
+  plotTop: 26,
+  plotBottom: height - 44,
+  x1,
+  x2,
+  min,
+  max,
+  solidThrough,
+});
+
+if (periods.length !== series[0]!.points.length) {
+  throw new Error(
+    `Trend: ${periods.length} period labels for ${series[0]!.points.length} points`,
+  );
+}
+
+const plotTop = 26;
+const plotBottom = height - 44;
+const tickY = (v: number) => plotBottom - ((v - laid.min) / (laid.max - laid.min)) * (plotBottom - plotTop);
+
+let co = null;
+if (callout) {
+  const line = laid.lines.find((l) => l.label === callout.at);
+  if (!line) throw new Error(`Trend: no series "${callout.at}" for the callout`);
+  const i = callout.index ?? line.dots.length - 1;
+  const dot = line.dots[i];
+  if (!dot) throw new Error(`Trend: point ${i} is outside "${callout.at}"`);
+  const side = callout.side ?? 'above';
+  const anchor =
+    side === 'above'
+      ? { x: dot.x, y: dot.y - 4 }
+      : side === 'below'
+        ? { x: dot.x, y: dot.y + 4 }
+        : side === 'left'
+          ? { x: dot.x - 4, y: dot.y }
+          : { x: dot.x + 4, y: dot.y };
+  co = calloutLayout(anchor, { lines: callout.lines, side }, {
+    width,
+    height,
+    fontSize: 11,
+    lineHeight: 14,
+    reach: callout.reach ?? 22,
+  });
+}
+
+const stroke = (l: (typeof laid.lines)[number], i: number) => {
+  if (l.mark) return 'var(--ct-mark)';
+  // A benchmark is structure, not a category, so it is held to the axis floor
+  // rather than given a series name. It drew grey-50 at 2.22:1, below the 3:1
+  // a non-text object needs.
+  if (l.reference) return 'var(--ct-ex-axis)';
+  return i === 0
+    ? 'var(--ct-ex-series-1)'
+    : i === 1
+      ? 'var(--ct-ex-series-2)'
+      : 'var(--ct-ex-series-3)';
+};
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {ticks.map((t) => <line class="grid" x1={x1} y1={tickY(t)} x2={x2} y2={tickY(t)} />)}
+  {ticks.map((t) => <text class="tick" x={x1 - 6} y={tickY(t) + 4} text-anchor="end">{t}</text>)}
+
+  {
+    laid.dividerX !== null && (
+      <>
+        <line class="divide" x1={laid.dividerX} y1={plotTop - 8} x2={laid.dividerX} y2={plotBottom} />
+        {projectedLabel && (
+          <text class="zone" x={laid.dividerX + 6} y={plotTop - 12}>
+            {projectedLabel}
+          </text>
+        )}
+      </>
+    )
+  }
+
+  <line class="base" x1={x1} y1={plotBottom} x2={x2} y2={plotBottom} />
+
+  {
+    laid.lines.map((l, i) => (
+      <>
+        <polyline
+          class:list={['line', { 'line--ref': l.reference }]}
+          points={l.path}
+          stroke={stroke(l, i)}
+        />
+        {l.projected && (
+          <polyline class="line line--proj" points={l.projected} stroke={stroke(l, i)} />
+        )}
+        {!l.reference &&
+          l.dots.map((d) => (
+            <circle cx={d.x} cy={d.y} r="2.5" fill={stroke(l, i)} />
+          ))}
+        <text class:list={['name', { 'name--mark': l.mark }]} x={x2 + 10} y={l.endY + 4}>
+          {endValues ? `${l.label}  ${l.last}` : l.label}
+        </text>
+      </>
+    ))
+  }
+
+  {
+    periods.map((p, i) => (
+      <text class="cat" x={laid.xs[i]} y={plotBottom + 18} text-anchor="middle">
+        {p}
+      </text>
+    ))
+  }
+  {axisLabel && <text class="unit" x={x1} y={height - 8}>{axisLabel}</text>}
+
+  {
+    co && (
+      <>
+        <line class="co-lead" x1={co.leader.x1} y1={co.leader.y1} x2={co.leader.x2} y2={co.leader.y2} />
+        {co.texts.map((t) => (
+          <text class="co-text" x={t.x} y={t.y} text-anchor={co.align}>
+            {t.text}
+          </text>
+        ))}
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .grid { stroke: var(--ct-ex-axis-quiet); stroke-width: 1; }
+  .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  /* The divider between what was observed and what is projected. It carries
+     meaning, so it is findable structure and not a recessive rule: --ct-ex-axis,
+     not --ct-ex-axis-quiet. It drew grey-40 at 1.66:1. */
+  .divide {
+    stroke: var(--ct-ex-axis);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .line {
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linejoin: round;
+  }
+
+  .line--ref { stroke-width: 1; stroke-dasharray: 4 3; }
+  .line--proj { stroke-dasharray: 5 4; }
+
+  .name {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .name--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .cat,
+  .tick,
+  .unit,
+  .zone {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  /* grey-60 either way, so this paints identically. A callout leader is a
+     connector: it joins a label to the thing the label is about. */
+  .co-lead { stroke: var(--ct-ex-connector); stroke-width: 1; }
+
+  .co-text {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+</style>

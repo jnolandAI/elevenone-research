@@ -1,0 +1,209 @@
+---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+import { US_STATES } from 'research-kit/lib/us-states';
+
+/**
+ * A US state map, shaded by band.
+ *
+ * The form the deck was missing. John, 2026-08-26: "in talking about the
+ * different regions and the maps that are associated with this information, I
+ * wanna actually see a map on the slide. There's a little more showing that
+ * could be done instead of just telling."
+ *
+ * It is a choropleth and nothing else: no bubbles, no flow lines, no
+ * annotation layer. A map earns its place when the geography is the finding,
+ * and it does not when the geography is decoration for a number that would
+ * read better as a bar. The refusal below enforces the first half of that; the
+ * second half is a judgement the author has to make.
+ *
+ * States the caller does not name are drawn unshaded, which is the honest
+ * treatment for a footprint that is only partly disclosed: an unshaded state
+ * says "not in the evidence", not "zero".
+ */
+export interface MapBand {
+  /** What this band means: "30-45% share". */
+  label: string;
+  /** Two-letter postal codes. */
+  states: string[];
+  /** 0 is the lightest tint, higher is darker. The marked band takes slate. */
+  level: 0 | 1 | 2 | 3;
+  mark?: boolean;
+}
+
+interface Props {
+  bands: MapBand[];
+  alt: string;
+  /** Drawn width. The map keeps the Albers USA aspect, roughly 1.6:1. */
+  width?: number;
+  /** Postal codes to letter on the map. Keep it to the ones being discussed. */
+  labels?: string[];
+  /** What an unshaded state means, said on the page rather than assumed. */
+  unshadedNote?: string;
+}
+
+const { bands, alt, width = 640, labels = [], unshadedNote } = Astro.props;
+
+assertOneMark(
+  bands.map((b) => ({ label: b.label, mark: b.mark })),
+  'Map',
+);
+if (bands.length === 0) throw new Error('Map: no bands; an unshaded map is a decoration');
+if (bands.length > 4) {
+  throw new Error(
+    `Map: ${bands.length} bands, four is the ceiling. Past four the tints stop separating at ` +
+      'slide size and the reader is matching greys to a legend instead of reading a map.',
+  );
+}
+
+const known = new Set(US_STATES.map((s) => s.abbr));
+const seen = new Map<string, MapBand>();
+for (const b of bands) {
+  for (const st of b.states) {
+    if (!known.has(st)) throw new Error(`Map: "${st}" is not a state code`);
+    const prior = seen.get(st);
+    if (prior) throw new Error(`Map: ${st} is in both "${prior.label}" and "${b.label}"`);
+    seen.set(st, b);
+  }
+}
+
+const bandOf = (abbr: string) => seen.get(abbr);
+const lettered = new Set(labels);
+---
+
+{/* The Albers USA composite the atlas ships: 975 by 610, Alaska and Hawaii in
+    their usual lower-left insets. The figure carries the width so the SVG can
+    scale the way every other exhibit here does. */}
+<figure class="map-fig" style={`max-width: ${width}px`}>
+  <svg class="fig" viewBox="0 0 975 610" role="img" aria-label={alt}>
+    {
+      US_STATES.map((s) => {
+        const b = bandOf(s.abbr);
+        return (
+          <path
+            class:list={[
+              'state',
+              b ? `state--l${b.level}` : 'state--none',
+              { 'state--mark': b?.mark },
+            ]}
+            d={s.d}
+          />
+        );
+      })
+    }
+    {
+      US_STATES.filter((s) => lettered.has(s.abbr)).map((s) => (
+        <text
+          class:list={[
+            'abbr',
+            { 'abbr--on': !!bandOf(s.abbr) && (bandOf(s.abbr)!.level >= 2 || !!bandOf(s.abbr)!.mark) },
+          ]}
+          x={s.cx}
+          y={s.cy + 5}
+          text-anchor="middle"
+        >
+          {s.abbr}
+        </text>
+      ))
+    }
+  </svg>
+
+  <figcaption class="legend">
+    {
+      bands.map((b) => (
+        <span class="legend__item">
+          <svg class="legend__swatch" viewBox="0 0 14 10" aria-hidden="true">
+            <rect
+              class:list={['state', `state--l${b.level}`, { 'state--mark': b.mark }]}
+              width="14"
+              height="10"
+              stroke="none"
+            />
+          </svg>
+          {b.label}
+        </span>
+      ))
+    }
+    {unshadedNote && <span class="legend__note">{unshadedNote}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  /* Centred in whatever column it is given: a map is a shape rather than a
+     plot, and a shape pinned to the left of a wide column reads as an
+     accident. */
+  .map-fig { display: block; margin-inline: auto; }
+
+  .fig { display: block; width: 100%; height: auto; }
+
+  /* One hairline between every state, so the shading reads as regions rather
+     than as blobs, and an unshaded state still reads as a state. */
+  .state {
+    stroke: var(--ct-ground);
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+/* Four steps that actually separate at slide size, taken from the contract's
+     sequential scale. They start at scale-2 rather than scale-1: the first
+     version ran grey-30 to grey-90 against a grey-10 ground and the lightest
+     band was indistinguishable from an unshaded state on a projector, and
+     scale-1 would leave only 0.0450 in OKLab lightness for that same gap.
+     Level 3 moves from grey-90 to scale-5. grey-90 measured 0.0474 from
+     --ct-mark, so a marked state was the colour of the top band. */
+  .state--none { fill: var(--ct-well); }
+  .state--l0 { fill: var(--ct-ex-scale-2); }
+  .state--l1 { fill: var(--ct-ex-scale-3); }
+  .state--l2 { fill: var(--ct-ex-scale-4); }
+  .state--l3 { fill: var(--ct-ex-scale-5); }
+  .state--mark { fill: var(--ct-mark); }
+
+  /* The swatch is an SVG rect and not a tinted span, so the accent stays a
+     fill. Slate is allowed to mark a shape in an exhibit and is never allowed
+     to be a surface colour, and a background on a div is a surface. */
+
+  /* White clears grey-80 at 8.88:1 and ink at 18.59:1, and fails grey-60 at
+     3.37:1. The knockout used to trigger at level 1, which is grey-60, and
+     .abbr--on drops the ground-coloured halo that would otherwise have
+     carried it. */
+  .abbr {
+    font-size: var(--ct-text-sm);
+    font-weight: var(--ct-weight-medium);
+    /* grey-80 on grey-60 is 2.64:1; ink on grey-60 is 5.52:1, so the haloed
+       levels need the strong end. */
+    fill: var(--ct-text-strong);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+
+  /* On a dark state the knockout reads; the ground-coloured halo would fight it. */
+  .abbr--on {
+    fill: var(--ct-text-on-field);
+    stroke: none;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ct-space-2) var(--ct-space-6);
+    padding-top: var(--ct-space-3);
+    font-size: var(--ct-text-xs);
+    line-height: var(--ct-leading-4);
+    color: var(--ct-ex-label-muted);
+  }
+
+  .legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ct-space-2);
+  }
+
+  .legend__swatch {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .legend__note { color: var(--ct-text-muted); }
+</style>

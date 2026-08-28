@@ -1,0 +1,100 @@
+---
+/**
+ * An exhibit breaks the margin rule and takes the full column. That break is
+ * the device that keeps a document page from reading as a wall of type, so an
+ * Exhibit is deliberately NOT a Row: it sits between Rows as a direct child of
+ * .page.
+ *
+ * The frame is fixed. Title and unit on one line, ink rule under it, the figure,
+ * a hairline, then an italic caption below the figure where a caption belongs.
+ * Nothing here is optional except the unit, because an exhibit without a caption
+ * saying what it is and whether it is illustrative does not ship.
+ */
+interface Props {
+  /** "Exhibit 1" and the rest of the title, already composed. */
+  title: string;
+  /** Right-hand unit note: "$m", "Index, Q1 FY23 = 100". */
+  unit?: string;
+  /** Italic caption. State the encoding and say so if the figures are illustrative. */
+  caption: string;
+}
+
+const { title, unit, caption } = Astro.props;
+---
+
+<figure class="ex">
+  <figcaption class="ex__head">
+    <h2 class="ex__title">{title}</h2>
+    {unit && <p class="ex__unit">{unit}</p>}
+  </figcaption>
+  <hr class="ex__rule ex__rule--strong" />
+  <div class="ex__body">
+    <slot />
+  </div>
+  <hr class="ex__rule" />
+  <figcaption class="ex__caption measure">{caption}</figcaption>
+</figure>
+
+<style>
+  .ex {
+    width: 100%;
+    padding-top: var(--ct-space-16);
+  }
+
+  .ex__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ct-space-6);
+    padding-bottom: var(--ct-space-3);
+  }
+
+  .ex__title {
+    font-size: var(--ct-text-base);
+    font-weight: var(--ct-weight-medium);
+    line-height: var(--ct-leading-6);
+    color: var(--ct-text-strong);
+  }
+
+  .ex__unit {
+    flex-shrink: 0;
+    font-size: var(--ct-text-sm);
+    color: var(--ct-text-muted);
+  }
+
+  /* An exhibit's own rules, not the page's. .rule-ink and .rule-hair in
+     base.css draw the same two weights for host chrome, but they name raw
+     --color-* values: a class shared with the masthead would carry the site's
+     palette onto a slide and put a fallback site inside the contract's scope.
+     Same geometry, contract names, stated here. */
+  .ex__rule {
+    width: 100%;
+    height: 1px;
+    border: 0;
+    background: var(--ct-rule);
+  }
+
+  .ex__rule--strong { background: var(--ct-rule-strong); }
+
+  .ex__body { padding-block: var(--ct-space-6); }
+
+  .ex__caption {
+    padding-top: var(--ct-space-3);
+    font-size: var(--ct-text-sm);
+    line-height: var(--ct-leading-5);
+    color: var(--ct-text-muted);
+  }
+
+  /* Printers drop backgrounds, so the rules become real borders on paper.
+     --ct-rule-firm rather than --ct-rule: ink on paper is heavier, and the
+     hairline steps up to grey-60 the same way print.css steps up body type. */
+  @media print {
+    .ex__rule {
+      height: 0;
+      background: none;
+      border-top: 1px solid var(--ct-rule-firm);
+    }
+
+    .ex__rule--strong { border-top-color: var(--ct-rule-strong); }
+  }
+</style>

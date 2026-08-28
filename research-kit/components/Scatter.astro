@@ -1,0 +1,212 @@
+---
+import { scatterLayout, plotBand, type ScatterPoint } from 'research-kit/lib/exhibits';
+
+/**
+ * Points on two measures, optionally sized by a third.
+ *
+ * The positioning map, the deal register and the risk board share this
+ * geometry; what changes is the axis captions and whether quadrant rules are
+ * drawn. Points carry their own labels because a scatter with a legend cannot
+ * be read at slide size.
+ */
+interface Props {
+  points: ScatterPoint[];
+  alt: string;
+  xLabel: string;
+  yLabel: string;
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+  height?: number;
+  width?: number;
+  /** Quadrant rules at these values, with optional corner captions. */
+  xDivide?: number;
+  yDivide?: number;
+  /** Corner captions, clockwise from top-left. */
+  quadrants?: [string, string, string, string];
+  /** Ends of the axes, when the axis is qualitative: ["Narrow", "Full"]. */
+  xEnds?: [string, string];
+  yEnds?: [string, string];
+  /** What the bubble area encodes, named under the exhibit. */
+  sizeLabel?: string;
+  /** Tick values on the vertical axis, so the measure can be read off. */
+  yTicks?: number[];
+  yTickFormat?: (v: number) => string;
+}
+
+const {
+  points,
+  alt,
+  xLabel,
+  yLabel,
+  xMin,
+  xMax,
+  yMin,
+  yMax,
+  height = 340,
+  width: w = 1184,
+  xDivide,
+  yDivide,
+  quadrants,
+  xEnds,
+  yEnds,
+  sizeLabel,
+  yTicks = [],
+  yTickFormat,
+} = Astro.props;
+
+const width = w;
+const { x1, x2 } = plotBand(width, 0.1, 0.965);
+/* Chrome, measured rather than guessed: the quadrant captions need 14px above
+   the plot and the axis caption sits on the baseline at height-8, so 20 above
+   and 38 below is what the drawing actually uses. It was 26 and 46, which cost
+   every scatter 14px of plot for nothing. */
+const plotTop = 20;
+const plotBottom = height - 38;
+
+/* A positioning map is a judgement about where players sit relative to each
+   other, and its coordinates carry no unit. Drawing its dividers at the data
+   values the author happened to type puts the crosshair at 60% and 64% of the
+   plot and invents a precision the exhibit does not have. On a qualitative map
+   the quadrants are even by construction: four equal boxes, which is what the
+   reader already assumes they are looking at. Added 2026-08-26 after John read
+   slide 22: "I'd make the quadrants evenly sized." */
+const qualitative = quadrants !== undefined && yTicks.length === 0;
+if (qualitative && (xDivide !== undefined || yDivide !== undefined)) {
+  throw new Error(
+    'Scatter: a quadrant map on qualitative axes divides at the middle, so xDivide and yDivide ' +
+      'are not accepted. Drop them, or give the vertical axis yTicks to make the map quantitative.',
+  );
+}
+
+/* A plot much wider than it is tall reads as squashed however good the data
+   is, and the fix is always the same one line. 3.4 is where the deck's own
+   exhibits stop looking like charts and start looking like strips. */
+const ratio = (x2 - x1) / (plotBottom - plotTop);
+if (ratio > 3.4) {
+  throw new Error(
+    `Scatter: the plot is ${ratio.toFixed(1)}:1, which draws as a strip rather than a map. ` +
+      `Raise height to at least ${Math.ceil((x2 - x1) / 3.4 + (height - (plotBottom - plotTop)))}.`,
+  );
+}
+
+const dots = scatterLayout(points, {
+  width,
+  height,
+  plotTop,
+  plotBottom,
+  x1,
+  x2,
+  xMin,
+  xMax,
+  yMin,
+  yMax,
+});
+
+const px = (v: number) => x1 + ((v - xMin) / (xMax - xMin)) * (x2 - x1);
+const py = (v: number) => plotBottom - ((v - yMin) / (yMax - yMin)) * (plotBottom - plotTop);
+const hasSize = points.some((p) => p.size !== undefined);
+const yfmt = yTickFormat ?? ((v: number) => String(v));
+
+const divideX = qualitative ? (x1 + x2) / 2 : xDivide !== undefined ? px(xDivide) : undefined;
+const divideY = qualitative ? (plotTop + plotBottom) / 2 : yDivide !== undefined ? py(yDivide) : undefined;
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {divideX !== undefined && <line class="divide" x1={divideX} y1={plotTop} x2={divideX} y2={plotBottom} />}
+  {divideY !== undefined && <line class="divide" x1={x1} y1={divideY} x2={x2} y2={divideY} />}
+
+  {
+    quadrants && (
+      <>
+        <text class="quad" x={x1 + 8} y={plotTop + 14}>{quadrants[0]}</text>
+        <text class="quad" x={x2 - 8} y={plotTop + 14} text-anchor="end">{quadrants[1]}</text>
+        <text class="quad" x={x2 - 8} y={plotBottom - 8} text-anchor="end">{quadrants[2]}</text>
+        <text class="quad" x={x1 + 8} y={plotBottom - 8}>{quadrants[3]}</text>
+      </>
+    )
+  }
+
+  {yTicks.map((t) => <text class="end" x={x1 - 8} y={py(t) + 4} text-anchor="end">{yfmt(t)}</text>)}
+
+  <line class="axis" x1={x1} y1={plotBottom} x2={x2} y2={plotBottom} />
+  <line class="axis" x1={x1} y1={plotTop} x2={x1} y2={plotBottom} />
+
+  {
+    dots.map((d) => (
+      <>
+        <circle
+          class:list={['dot', { 'dot--mark': d.mark, 'dot--bubble': hasSize }]}
+          cx={d.cx}
+          cy={d.cy}
+          r={d.r}
+        />
+        <text
+          class:list={['name', { 'name--mark': d.mark }]}
+          x={d.labelX}
+          y={d.labelY}
+          text-anchor={d.labelAnchor}
+        >
+          {d.label}
+        </text>
+      </>
+    ))
+  }
+
+  {/* Qualitative axes are captioned at their ends rather than ticked. */}
+  {xEnds && <text class="end" x={x1} y={plotBottom + 17}>{xEnds[0]}</text>}
+  {xEnds && <text class="end" x={x2} y={plotBottom + 17} text-anchor="end">{xEnds[1]}</text>}
+  {yEnds && <text class="end" x={x1 - 8} y={plotBottom} text-anchor="end">{yEnds[0]}</text>}
+  {yEnds && <text class="end" x={x1 - 8} y={plotTop + 8} text-anchor="end">{yEnds[1]}</text>}
+
+  <text class="unit" x={(x1 + x2) / 2} y={height - 8} text-anchor="middle">{xLabel}</text>
+  <text class="unit" x={14} y={(plotTop + plotBottom) / 2} transform={`rotate(-90 14 ${(plotTop + plotBottom) / 2})`} text-anchor="middle">
+    {yLabel}
+  </text>
+  {sizeLabel && <text class="unit" x={x2} y={height - 8} text-anchor="end">{sizeLabel}</text>}
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .axis { stroke: var(--ct-rule); stroke-width: 1; }
+
+  .divide {
+    stroke: var(--ct-ex-axis-quiet);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  .dot { fill: var(--ct-ex-fill); }
+
+  /* A bubble is a field rather than a point, so it is drawn open enough that
+     two overlapping bubbles both stay readable. */
+  .dot--bubble {
+    fill: var(--ct-ex-fill-quiet);
+    /* Thin structure separating a mark from its field. */
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+  }
+
+  .dot--mark { fill: var(--ct-mark); stroke: var(--ct-mark); }
+
+  .name {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+
+  .name--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .quad,
+  .end,
+  .unit {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .quad { fill: var(--ct-ex-label-muted); }
+</style>

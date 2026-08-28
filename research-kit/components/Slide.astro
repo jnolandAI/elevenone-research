@@ -1,0 +1,140 @@
+---
+/**
+ * One slide: a fixed 1280 by 720 canvas with a thin lane down its left.
+ *
+ * The canvas is fixed because a deck is a fixed medium. It is scaled to the
+ * container with a transform rather than by making the type fluid, so what a
+ * reader sees in a browser is the same drawing that a 16:9 export produces, at
+ * a different size. Container query units do the arithmetic.
+ *
+ * The lane is 32px on every working slide. A rule that shifts horizontally
+ * between slides reads as misregistration rather than as a change of pace.
+ * At its head the lane carries the waymarker: one short tick per section,
+ * with the current section's tick set in the accent and drawn longer. It is
+ * the only signal of position in the deck besides the slide number at the
+ * lane's foot; the section numeral that used to sit at the head was removed
+ * because two numbers on one rule read as clutter.
+ *
+ * A cover or a divider takes `full`, which drops the lane and the body
+ * padding and hands the slot the whole canvas, because a cover is a field
+ * rather than a page.
+ */
+interface Props {
+  /** Slide number, set at the foot of the lane. */
+  n: number;
+  /** The current section, one-based ("01" to sections). Drives the waymarker. */
+  section?: string;
+  /** How many sections the deck has, so the waymarker knows how many ticks to draw. */
+  sections?: number;
+  /** Full-bleed: no lane, no padding. For covers and dividers. */
+  full?: boolean;
+}
+
+const { n, section, sections = 0, full = false } = Astro.props;
+const num = String(n).padStart(2, '0');
+const here = section ? parseInt(section, 10) : 0;
+const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) => i + 1) : [];
+---
+
+<div class="scale">
+  <div class="slide">
+    {
+      !full && (
+        <div class="slide__lane">
+          <div class="slide__way">
+            {ticks.map((t) => (
+              <div class={t === here ? 'slide__tick slide__tick--here' : 'slide__tick'} />
+            ))}
+          </div>
+          <p class="slide__num">{num}</p>
+        </div>
+      )
+    }
+    <div class={full ? 'slide__body slide__body--full' : 'slide__body'}>
+      <slot />
+    </div>
+    {!full && <p class="slide__mark">Noland Advisory</p>}
+  </div>
+</div>
+
+<style>
+  .scale {
+    container-type: inline-size;
+    width: 100%;
+    max-width: var(--ct-slide-w);
+    aspect-ratio: 1280 / 720;
+    margin-inline: auto;
+    border: 1px solid var(--ct-rule);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: relative;
+    display: flex;
+    width: var(--ct-slide-w);
+    height: var(--ct-slide-h);
+    background: var(--ct-ground);
+    transform-origin: top left;
+    /* 100cqw is the container's own width, so the canvas lands exactly on it at
+       any size without a media query or a script. */
+    transform: scale(calc(100cqw / 1280));
+  }
+
+  /* The firm mark, bottom right in the padding band, mirroring the slide
+     number at the foot of the lane. The one place the firm's name appears on
+     a working page. */
+  .slide__mark {
+    position: absolute;
+    right: var(--ct-slide-pad);
+    bottom: var(--ct-space-3);
+    font-size: var(--ct-text-xs);
+    line-height: var(--ct-leading-4);
+    color: var(--ct-text-muted);
+  }
+
+  .slide__lane {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    box-sizing: border-box;
+    width: var(--ct-slide-margin);
+    flex-shrink: 0;
+    padding: var(--ct-slide-pad) var(--ct-space-2) var(--ct-slide-pad) 0;
+    border-right: 1px solid var(--ct-rule);
+  }
+
+  .slide__way {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--ct-space-2);
+  }
+
+  .slide__tick {
+    width: 10px;
+    border-top: 1px solid var(--ct-rule-firm);
+  }
+
+  .slide__tick--here {
+    width: 18px;
+    border-top: 2px solid var(--ct-mark);
+  }
+
+  .slide__num {
+    font-size: var(--ct-text-xs);
+    line-height: var(--ct-leading-4);
+    color: var(--ct-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .slide__body {
+    flex: 1;
+    min-width: 0;
+    padding: var(--ct-slide-pad);
+  }
+
+  .slide__body--full {
+    padding: 0;
+  }
+</style>

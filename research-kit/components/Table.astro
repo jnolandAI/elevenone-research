@@ -1,0 +1,198 @@
+---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
+/**
+ * A ruled table, for values a reader will want to check rather than scan.
+ *
+ * Booktabs and nothing else: ink rule above the head, hairline under it, ink
+ * rule at the foot, and nothing between rows. Column heads are small and grey.
+ * Figures are tabular and right aligned. A vertical rule between columns is not
+ * permitted, which is why there are no column borders anywhere below.
+ */
+export interface Column {
+  head: string;
+  /** Numeric columns right align and set in tabular figures. */
+  numeric?: boolean;
+}
+
+export interface Row {
+  label: string;
+  cells: (string | number)[];
+  mark?: boolean;
+  /**
+   * Heatmap tint per cell, 0 to 4, aligned to cells. 0 leaves the cell on
+   * the ground; 1 to 4 step up the grey ramp, so magnitude reads down a
+   * column at a glance. Grey and never slate: the tint carries level, the
+   * one mark still carries the argument.
+   */
+  tints?: number[];
+}
+
+interface Props {
+  columns: Column[];
+  rows: Row[];
+  caption?: string;
+  /**
+   * Slide density. A page can spend a full line height on a row; a slide
+   * cannot, and a page-density table on a slide overruns its zone and paints
+   * over the source line beneath it.
+   */
+  dense?: boolean;
+  /**
+   * Wider value lanes, for a table whose row labels are short. Without this
+   * a short-labeled table pools its spare width between the label and the
+   * first value column, which reads as a gap rather than as a column grid.
+   */
+  wide?: boolean;
+}
+
+const { columns, rows, caption, dense = false, wide = false } = Astro.props;
+assertOneMark(rows, 'Table');
+
+const [first, ...rest] = columns;
+for (const r of rows) {
+  if (r.cells.length !== rest.length) {
+    throw new Error(
+      `Table row "${r.label}" has ${r.cells.length} cells for ${rest.length} value columns.`,
+    );
+  }
+}
+---
+
+<div class:list={['tbl', { 'tbl--dense': dense, 'tbl--wide': wide }]}>
+  <hr class="tbl__rule tbl__rule--strong" />
+  <div class="tbl__row tbl__row--head">
+    <span class="tbl__label">{first!.head}</span>
+    {
+      rest.map((c) => <span class="tbl__cell">{c.head}</span>)
+    }
+  </div>
+  <hr class="tbl__rule" />
+  {
+    rows.map((r) => (
+      <div class:list={['tbl__row', { 'tbl__row--mark': r.mark }]}>
+        <span class="tbl__label">{r.label}</span>
+        {
+          r.cells.map((cell, i) => (
+            <span class:list={['tbl__cell', 'num', r.tints?.[i] ? `tbl__cell--t${r.tints[i]}` : null]}>
+              {cell}
+            </span>
+          ))
+        }
+      </div>
+    ))
+  }
+  <hr class="tbl__rule tbl__rule--strong" />
+  {caption && <p class="tbl__caption measure">{caption}</p>}
+</div>
+
+<style>
+  .tbl { width: 100%; }
+
+  /* The table's own rules. base.css draws the same two weights as .rule-ink
+     and .rule-hair, but on raw --color-* values for host chrome; a table sits
+     inside the contract's scope and names contract tokens instead. */
+  .tbl__rule {
+    width: 100%;
+    height: 1px;
+    border: 0;
+    background: var(--ct-rule);
+  }
+
+  .tbl__rule--strong { background: var(--ct-rule-strong); }
+
+  /* Dense: a slide's row, not a page's. Half the vertical padding and one
+     step down the type scale, which is what lets six columns and five rows
+     sit inside a slide zone without overrunning it. */
+  .tbl--dense .tbl__row { padding-block: var(--ct-space-2); }
+
+  .tbl--dense .tbl__label,
+  .tbl--dense .tbl__cell {
+    font-size: var(--ct-text-sm);
+    line-height: var(--ct-leading-5);
+  }
+
+  .tbl--dense .tbl__row--head .tbl__label,
+  .tbl--dense .tbl__row--head .tbl__cell { font-size: var(--ct-text-xs); }
+
+  .tbl__row {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+    gap: var(--ct-space-4);
+    padding-block: var(--ct-space-3);
+  }
+
+  .tbl__label {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--ct-text-base);
+    line-height: var(--ct-leading-6);
+    color: var(--ct-text);
+  }
+
+  /* A fixed slot rather than gap alone, so the value lanes hold across rows
+     whose labels wrap to different heights. */
+  .tbl__cell {
+    width: var(--ct-space-24);
+    flex-shrink: 0;
+    text-align: right;
+    font-size: var(--ct-text-base);
+    line-height: var(--ct-leading-6);
+    color: var(--ct-text);
+  }
+
+  .tbl__row--head .tbl__label,
+  .tbl__row--head .tbl__cell {
+    font-size: var(--ct-text-sm);
+    color: var(--ct-ex-label-muted);
+  }
+
+  /* The heatmap ramp. Grey fields under the figures so magnitude reads down
+     a column; padding keeps the figure off the field's edge, and border-box
+     holds the value lanes to the same width as untinted cells. */
+  .tbl__cell--t1,
+  .tbl__cell--t2,
+  .tbl__cell--t3,
+  .tbl__cell--t4 {
+    box-sizing: border-box;
+    padding-inline: var(--ct-space-2);
+  }
+
+  .tbl__cell--t1 { background: var(--ct-ex-level-1); }
+  .tbl__cell--t2 { background: var(--ct-ex-level-2); }
+  .tbl__cell--t3 { background: var(--ct-ex-level-3); }
+  .tbl__cell--t4 { background: var(--ct-ex-level-4); }
+
+  .tbl__row--mark .tbl__label,
+  .tbl__row--mark .tbl__cell {
+    font-weight: var(--ct-weight-semibold);
+    color: var(--ct-mark);
+  }
+
+  .tbl__caption {
+    padding-top: var(--ct-space-3);
+    font-size: var(--ct-text-sm);
+    line-height: var(--ct-leading-5);
+    color: var(--ct-ex-label-muted);
+  }
+
+  .tbl--wide .tbl__cell { width: 176px; }
+
+  @media (max-width: 767px) {
+    .tbl__cell { width: var(--ct-space-16); }
+  }
+
+  /* Printers drop backgrounds; the booktabs rules have to be real borders on
+     paper, and the hairline steps up to --ct-rule-firm the way print.css
+     steps up body type. */
+  @media print {
+    .tbl__rule {
+      height: 0;
+      background: none;
+      border-top: 1px solid var(--ct-rule-firm);
+    }
+
+    .tbl__rule--strong { border-top-color: var(--ct-rule-strong); }
+  }
+</style>

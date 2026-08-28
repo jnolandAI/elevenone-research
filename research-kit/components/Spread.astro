@@ -1,0 +1,140 @@
+---
+import { spreadLayout, plotBand, type SpreadRow } from 'research-kit/lib/exhibits';
+
+/**
+ * Horizontal value ranges on a shared axis: the football field.
+ *
+ * Where RangeDot shows dispersion inside one population, this shows competing
+ * estimates of a single quantity, each carried with its own basis. A threshold
+ * rule marks the line that decides something, which is what turns a set of
+ * ranges into a finding.
+ */
+interface Props {
+  rows: SpreadRow[];
+  alt: string;
+  min: number;
+  max: number;
+  ticks: number[];
+  axisLabel: string;
+  height?: number;
+  width?: number;
+  /** A vertical rule at a decisive level, with a caption at its head. */
+  threshold?: { at: number; label: string };
+  /** Tick formatter, for axes that carry a unit: "$31B". */
+  tickFormat?: (v: number) => string;
+}
+
+const {
+  rows,
+  alt,
+  min,
+  max,
+  ticks,
+  axisLabel,
+  height = 300,
+  width: w = 1184,
+  threshold,
+  tickFormat,
+} = Astro.props;
+
+const width = w;
+// Row labels take the left third; the value readings take a lane at the right.
+const { x1, x2 } = plotBand(width, 0.28, 0.83);
+const plotTop = 22;
+const plotBottom = height - 44;
+const bars = spreadLayout(rows, { width, height, plotTop, plotBottom, x1, x2, min, max });
+const tickX = (v: number) => x1 + ((v - min) / (max - min)) * (x2 - x1);
+const fmt = tickFormat ?? ((v: number) => String(v));
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {ticks.map((t) => <line class="grid" x1={tickX(t)} y1={plotTop} x2={tickX(t)} y2={plotBottom} />)}
+
+  {
+    threshold && (
+      <>
+        <line class="thresh" x1={tickX(threshold.at)} y1={plotTop - 10} x2={tickX(threshold.at)} y2={plotBottom} />
+        <text class="thresh-lab" x={tickX(threshold.at)} y={plotTop - 14} text-anchor="middle">
+          {threshold.label}
+        </text>
+      </>
+    )
+  }
+
+  {
+    bars.map((b) => (
+      <>
+        <rect
+          class:list={['span', { 'span--mark': b.mark, 'span--muted': b.muted }]}
+          x={b.x}
+          y={b.y - 7}
+          width={b.width}
+          height="14"
+        />
+        {b.point && <circle class:list={['pt', { 'pt--mark': b.mark }]} cx={b.x} cy={b.y} r="4" />}
+        <text class:list={['lab', { 'lab--mark': b.mark }]} x={x1 - 10} y={b.y + 4} text-anchor="end">
+          {b.label}
+        </text>
+        {b.value && (
+          <text class:list={['val', { 'val--mark': b.mark }]} x={b.valueX} y={b.y + 4}>
+            {b.value}
+          </text>
+        )}
+      </>
+    ))
+  }
+
+  <line class="axis" x1={x1} y1={plotBottom} x2={x2} y2={plotBottom} />
+  {ticks.map((t) => <text class="tick" x={tickX(t)} y={plotBottom + 17} text-anchor="middle">{fmt(t)}</text>)}
+  <text class="unit" x={(x1 + x2) / 2} y={height - 8} text-anchor="middle">{axisLabel}</text>
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .grid { stroke: var(--ct-ex-axis-quiet); stroke-width: 1; }
+  .axis { stroke: var(--ct-rule); stroke-width: 1; }
+
+  /* Matches RangeDot's span exactly, which is the same device. */
+  .span { fill: var(--ct-ex-fill-quiet); }
+  .span--mark { fill: var(--ct-mark); }
+
+  /* An open range: a reference the exhibit carries but does not rely on. */
+  .span--muted {
+    fill: none;
+    stroke: var(--ct-ex-fill-quiet);
+    stroke-width: 1;
+    stroke-dasharray: 3 2;
+  }
+
+  /* Matches RangeDot's point exactly. */
+  .pt { fill: var(--ct-ex-fill); }
+  .pt--mark { fill: var(--ct-mark); }
+
+  /* A threshold reads as a statement, not scaffolding. */
+  .thresh { stroke: var(--ct-rule-strong); stroke-width: 1; }
+
+  .lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+  }
+
+  .lab--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .val {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .val--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .tick,
+  .unit,
+  .thresh-lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .thresh-lab { fill: var(--ct-text-strong); }
+</style>

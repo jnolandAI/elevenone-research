@@ -1,0 +1,89 @@
+---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
+/**
+ * Two to four panels side by side, each a heading, a figure and a short list.
+ *
+ * The answer to the deck's table problem. A three-column table whose rows are
+ * sentences is not a table: nothing lines up, no column is scanned as a value
+ * lane, and the row rules exist only to stop the prose running together. What
+ * the content actually is, most of the time, is two to four groups of related
+ * statements, and a group reads better as a panel than as a row.
+ *
+ * John, 2026-08-26, on a deck that had come back 34 ledgers deep: "if a table
+ * has three columns, for instance, it could be the same information, but maybe
+ * it's not always just a table. Maybe it's three sections on the page."
+ *
+ * Reach for this when the columns are kinds rather than measures: tiers of a
+ * register, cases of a scenario, sides of a comparison. Keep Table for numbers
+ * in a lane, and keep the text ledger for a genuine matrix where every row
+ * answers the same set of questions.
+ *
+ * This is HTML rather than SVG on purpose. Panels are text at heart, so they
+ * reflow to their content and to the zone they are given, which is the one
+ * thing the drawn exhibits cannot do.
+ */
+export interface Panel {
+  /** The group's name: "Critical", "Upside case", "What we accept". */
+  head: string;
+  /** The figure or qualifier under the head: "2 risks", "~$207M". */
+  meta?: string;
+  /** The statements in this group. Sentences, not fragments. */
+  items: string[];
+  /** A closing line set apart from the items. */
+  note?: string;
+  mark?: boolean;
+}
+
+interface Props {
+  panels: Panel[];
+  /** Numbered items, when a reader will be pointed at one of them. */
+  numbered?: boolean;
+  /** Wider gutters and a heavier head rule, for a panel set that is the page. */
+  lead?: boolean;
+}
+
+const { panels, numbered = false, lead = false } = Astro.props;
+
+assertOneMark(
+  panels.map((p) => ({ label: p.head, mark: p.mark })),
+  'Panels',
+);
+
+if (panels.length < 2) throw new Error('Panels: two is the minimum; one group is a paragraph');
+if (panels.length > 4) {
+  throw new Error(
+    `Panels: ${panels.length} panels, four is the ceiling. Past four each column is too narrow ` +
+      'for a sentence and the form becomes a table with the rules removed.',
+  );
+}
+
+const most = Math.max(...panels.map((p) => p.items.length));
+if (most > 6) {
+  throw new Error(
+    `Panels: a panel carries ${most} items and six is the ceiling. A longer list is a ledger.`,
+  );
+}
+---
+
+<div class:list={['s-panels', { 's-panels--lead': lead }]} style={`--panels: ${panels.length}`}>
+  {
+    panels.map((p) => (
+      <div class:list={['s-panel', { 's-panel--mark': p.mark }]}>
+        <div class="s-panel__head">
+          <p class="s-panel__term" set:html={p.head} />
+          {p.meta && <p class="s-panel__meta" set:html={p.meta} />}
+        </div>
+        <ul class="s-panel__list">
+          {p.items.map((item, i) => (
+            <li class="s-panel__item">
+              {numbered && <span class="s-panel__num">{i + 1}</span>}
+              <span class="s-panel__text" set:html={item} />
+            </li>
+          ))}
+        </ul>
+        {p.note && <p class="s-panel__note" set:html={p.note} />}
+      </div>
+    ))
+  }
+</div>
