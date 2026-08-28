@@ -148,3 +148,25 @@ describe('Cover', () => {
     expect(src).toMatch(/<Title\b/);
   });
 });
+
+describe('RailPage', () => {
+  const src = read('RailPage');
+
+  it('carries no style block', () => {
+    expect(src).not.toMatch(/<style/);
+  });
+
+  it('keeps s-col optional, because migration preserves and does not fix', () => {
+    // 20 of 22 main columns carry s-col and 2 do not, and s-col is
+    // display:flex, flex-direction:column, height:100%, so the two lay out
+    // differently. They may well be an oversight. Normalising them here would
+    // move Argo's paint inside a migration whose only proof is that paint did
+    // not move, so the option stays and the question is recorded.
+    expect(src).toMatch(/'s-col':\s*col/);
+  });
+
+  it('takes both halves as slots, because only the wrapper is boilerplate', () => {
+    expect(src).toMatch(/<slot\s*\/>/);
+    expect(src).toMatch(/<slot name="rail"/);
+  });
+});

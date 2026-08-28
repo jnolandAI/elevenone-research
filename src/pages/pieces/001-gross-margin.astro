@@ -14,6 +14,7 @@
 import Piece from '../../layouts/Piece.astro';
 import Slide from 'research-kit/components/Slide.astro';
 import Page from 'research-kit/components/Page.astro';
+import RailPage from 'research-kit/components/RailPage.astro';
 import Cover from 'research-kit/components/Cover.astro';
 import Bars from 'research-kit/components/Bars.astro';
 import Distribution from 'research-kit/components/Distribution.astro';
@@ -283,8 +284,7 @@ const loadPath = [
   {/* 05 The bands */}
   <Slide n={5} section="01" sections={SECTIONS}>
     <Page title="No 10-point band holds more than one filer in six" col={false} source=" Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact. ">
-        <div class="s-split s-split--fill">
-          <div class="s-split__main s-split__main--pad s-col">
+        <RailPage>
             <div class="s-ex__head">
               <p class="s-ex__title">Exhibit 1&ensp;Share of the universe by ten-point margin band</p>
               <p class="s-label">{universe.kept.toLocaleString()} filers</p>
@@ -302,8 +302,8 @@ const loadPath = [
                 alt={bandAlt}
               />
             </div>
-          </div>
-          <div class="s-split__side s-split__side--field">
+          
+    <Fragment slot="rail">
             <p class="s-label">Reading</p>
             <div class="s-comment__item s-pad-t--sm">
               <p class="s-comment__lead">The tallest band is not tall.</p>
@@ -329,8 +329,9 @@ const loadPath = [
                 is what the next page measures.
               </p>
             </div>
-          </div>
-        </div>
+          
+    </Fragment>
+  </RailPage>
       </Page>
   </Slide>
 
@@ -403,8 +404,7 @@ const loadPath = [
   {/* 09 Medians */}
   <Slide n={9} section="02" sections={SECTIONS}>
     <Page title="Across 6 revenue cohorts the medians do not decline in order" col={false} source={` ${universe.source}. Cohorts are equal-count by revenue, not chosen boundaries. `}>
-        <div class="s-split s-split--fill">
-          <div class="s-split__main s-split__main--pad s-col">
+        <RailPage>
             <div class="s-ex__head">
               <p class="s-ex__title">Exhibit 3&ensp;Median reported gross margin by revenue cohort</p>
               <p class="s-label">Equal-count cohorts</p>
@@ -421,8 +421,8 @@ const loadPath = [
                 alt={`Median gross margin across six equal-count revenue cohorts, running ${cohorts.map((c) => one(c.median)).join(', ')} per cent from smallest to largest. Only the largest cohort is clearly separated from the rest.`}
               />
             </div>
-          </div>
-          <div class="s-split__side s-split__side--field">
+          
+    <Fragment slot="rail">
             <p class="s-label">Reading</p>
             <div class="s-comment__item s-pad-t--sm">
               <p class="s-comment__lead">The intuition does not hold.</p>
@@ -448,8 +448,9 @@ const loadPath = [
                 thing we would check before leaning on it.
               </p>
             </div>
-          </div>
-        </div>
+          
+    </Fragment>
+  </RailPage>
       </Page>
   </Slide>
 

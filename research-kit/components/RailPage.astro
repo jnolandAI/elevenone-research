@@ -1,0 +1,28 @@
+---
+/**
+ * An exhibit beside a reading rail: the Bain working-page model, exhibit on
+ * the ground and the reading of it in a tinted panel.
+ *
+ * All 22 in the corpus use one modifier set, so the wrapper is boilerplate.
+ * Both halves vary completely, so neither is a prop.
+ */
+interface Props {
+  /**
+   * `s-col` on the main column: flex, column, full height. 20 of 22 carry it.
+   * The 2 that do not may be an oversight, and finding out is not this
+   * migration's job: its only proof is that paint did not move.
+   */
+  col?: boolean;
+}
+
+const { col = true, ...rest } = Astro.props;
+---
+
+<div class="s-split s-split--fill" {...rest}>
+  <div class:list={['s-split__main', 's-split__main--pad', { 's-col': col }]}>
+    <slot />
+  </div>
+  <div class="s-split__side s-split__side--field">
+    <slot name="rail" />
+  </div>
+</div>

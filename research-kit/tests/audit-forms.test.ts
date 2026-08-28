@@ -18,7 +18,7 @@ describe("the audit's form census", () => {
   const forms = audit.slice(audit.indexOf('const FORMS'), audit.indexOf('const census'));
 
   /** Page furniture and wrappers. These draw no exhibit of their own. */
-  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover']);
+  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage']);
 
   it('knows every kit component that draws an exhibit', () => {
     const components = readdirSync('research-kit/components')
