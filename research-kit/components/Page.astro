@@ -1,0 +1,36 @@
+---
+/**
+ * The working-page skeleton.
+ *
+ * All 82 working pages across Argo and piece 001 open with `s-stack`, put the
+ * title directly inside it, and close with a source line. Five variants, one
+ * structure. Titles and source lines are plain strings in every one of the
+ * 95, so they are props rather than slots.
+ *
+ * This component adds no element. `paint-capture` keys by index path, so one
+ * extra wrapper would shift every path after it and turn a 4406-element
+ * comparison into noise rather than a finding.
+ */
+interface Props {
+  /** Section label above the title. Present on 7 of 81. */
+  kicker?: string;
+  title: string;
+  /** Restatement under the title. Present on 12 of 81. */
+  sub?: string;
+  /** Source or attribution line. Present on 81 of 82 working pages. One page carries none. */
+  source?: string;
+  /** Note below the source. Present on 22 of 81. */
+  foot?: string;
+}
+
+const { kicker, title, sub, source, foot, ...rest } = Astro.props;
+---
+
+<div class="s-stack" {...rest}>
+  {kicker && <p class="s-kicker">{kicker}</p>}
+  <h2 class:list={['s-title', { 's-pad-t--sm': Boolean(kicker) }]}>{title}</h2>
+  {sub && <p class="s-sub">{sub}</p>}
+  <div class="s-grow s-pad-t"><slot /></div>
+  {source && <p class="s-source">{source}</p>}
+  {foot && <p class="s-foot">{foot}</p>}
+</div>

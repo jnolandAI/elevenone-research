@@ -13,6 +13,7 @@
  */
 import Piece from '../../layouts/Piece.astro';
 import Slide from 'research-kit/components/Slide.astro';
+import Page from 'research-kit/components/Page.astro';
 import Bars from 'research-kit/components/Bars.astro';
 import Distribution from 'research-kit/components/Distribution.astro';
 import Spread from 'research-kit/components/Spread.astro';
@@ -309,9 +310,7 @@ const loadPath = [
 
   {/* 05 The bands */}
   <Slide n={5} section="01" sections={SECTIONS}>
-    <div class="s-stack">
-      <h2 class="s-title">No 10-point band holds more than one filer in six</h2>
-      <div class="s-grow s-pad-t">
+    <Page title="No 10-point band holds more than one filer in six" source=" Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact. ">
         <div class="s-split s-split--fill">
           <div class="s-split__main s-split__main--pad s-col">
             <div class="s-ex__head">
@@ -360,11 +359,7 @@ const loadPath = [
             </div>
           </div>
         </div>
-      </div>
-      <p class="s-source">
-        Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact.
-      </p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 06 The middle */}
@@ -647,10 +642,7 @@ const loadPath = [
 
   {/* 13 What follows */}
   <Slide n={13} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <p class="s-kicker">What follows</p>
-      <h2 class="s-title s-pad-t--sm">Three changes to how a gross margin comparison is set up</h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="What follows" title="Three changes to how a gross margin comparison is set up" source="Each follows from claims A, B and C, and from nothing else.">
         <div class="s-list s-list--hero s-list--fill">
           <div class="s-list__row">
             <p class="s-list__term">Say which mode</p>
@@ -676,9 +668,7 @@ const loadPath = [
             </p>
           </div>
         </div>
-      </div>
-      <p class="s-source">Each follows from claims A, B and C, and from nothing else.</p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 14 Method */}

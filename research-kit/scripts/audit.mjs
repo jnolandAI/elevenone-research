@@ -79,6 +79,15 @@ for (const file of files) {
   for (const m of src.matchAll(/<h2 class="[^"]*\bs-title\b[^"]*">([\s\S]*?)<\/h2>/g)) {
     titles.push({ file, text: strip(m[1]) });
   }
+  // A page composed with <Page> carries its title as a prop, not as a literal
+  // <h2>, so the census above cannot see it: it undercounted every migrated
+  // page's title (and, below, its source line) until this matched the tag
+  // itself. Non-greedy up to the tag's own closing '>', since Page's props
+  // are plain strings that hold no '>' of their own.
+  for (const m of src.matchAll(/<Page[\s\S]*?>/g)) {
+    const t = /\btitle="([^"]*)"/.exec(m[0]);
+    if (t) titles.push({ file, text: strip(t[1]) });
+  }
   for (const m of src.matchAll(/Exhibit (\d+)&ensp;/g)) {
     exhibits.push({ file, n: Number(m[1]) });
   }
@@ -96,7 +105,8 @@ for (const file of files) {
       continue;
     }
     slides++;
-    if (block.includes('class="s-source"')) sourced++;
+    const sourcedByPage = /<Page[\s\S]*?\bsource="[^"]/.test(block);
+    if (block.includes('class="s-source"') || sourcedByPage) sourced++;
   }
 }
 
