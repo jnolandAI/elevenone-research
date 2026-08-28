@@ -1,0 +1,25 @@
+{
+  "piece": "001-gross-margin",
+  "publicBase": "/assets/art",
+  "note": "Three images: a cover and one per section opener. The closing page deliberately has none. The corpus reuses the cover field without the photograph for a closing, and a fourth image would be the point at which a discipline becomes a mood board. Subjects are physical and single because the direction token asks for that; none of them depicts data, because photography in the sampled corpus carries data on none of the 16 pages it appears on.",
+  "items": [
+    {
+      "id": "cover-distribution",
+      "role": "cover",
+      "subject": "A wide shallow metal tray holding dried beans spread unevenly across it, heaped thickly toward one end and thinning to a scatter at the other, shot from directly above",
+      "alt": "Dried beans spread unevenly across a shallow tray, heaped at one end and thinning to a scatter at the other."
+    },
+    {
+      "id": "opener-spread",
+      "role": "opener",
+      "subject": "A single steel measuring tape uncoiled in one long unbroken run across an empty seamless surface, running out of the frame at both ends",
+      "alt": "A steel measuring tape uncoiled in one long run across an empty surface, leaving the frame at both ends."
+    },
+    {
+      "id": "opener-size",
+      "role": "opener",
+      "subject": "A single close row of six graduated glass cylinders standing on a seamless surface, each one wider and shorter than the last",
+      "alt": "Six graduated glass cylinders standing in a row, each wider and shorter than the one before it."
+    }
+  ]
+}

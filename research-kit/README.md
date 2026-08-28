@@ -55,6 +55,32 @@ The same page count is a fault under one profile and a form under another: 41%
 of published research pages run under 120 words, so the research profiles
 expect two fifths of their pages to be thin while `deliverable` allows none.
 
+## Imagery
+
+`generate-art.mjs` renders the images a piece references, once, from a manifest
+of `{ id, role, subject, alt }`. The style half of every prompt comes from the
+consuming site's `--ct-art-direction`, not from the kit: two brands must not
+produce imagery that reads as the same model, so a kit that hard-coded the
+style would defeat the contract. The subject leads the prompt and the direction
+follows it.
+
+    node scripts/generate-art.mjs --manifest <m> --out <dir> --adapter <css> [--dry-run]
+    node scripts/artcheck.mjs     --manifest <m> --out <dir> --src <dir> [--adapter <css>]
+
+`--dry-run` composes and prints every prompt without calling anything. Use it
+before spending.
+
+Nothing is fetched at render time. Each generated image is committed alongside
+a provenance record carrying the prompt, model, size, timestamp and a prompt
+hash, and an unchanged hash is skipped, so a rebuild costs nothing and changing
+a subject costs one image. Provenance is recorded for tracking, not for
+disclosure: generated imagery carries no visible credit on the piece.
+
+`artcheck.mjs` fails on a missing asset, a missing provenance record, absent or
+medium-naming alt text, an orphan file, a page referencing an id the manifest
+does not carry, and an image whose recorded prompt no longer matches what the
+manifest and adapter compose today.
+
 ## What the kit deliberately does not hold
 
 No brand values, and no piece content. Drafts, art manifests and rendered

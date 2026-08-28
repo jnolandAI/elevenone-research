@@ -4,6 +4,7 @@ import { join } from 'node:path';
 
 const SCRIPTS = [
   'portability', 'slidecheck', 'density', 'audit', 'paint-capture', 'paint-diff',
+  'generate-art', 'artcheck',
 ];
 
 /* The site-copy half of this check can only see whether a stale gate script
