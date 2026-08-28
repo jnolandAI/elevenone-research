@@ -2,11 +2,17 @@
 /**
  * A ruled ledger of term against reading. 9 in the corpus, 5 marked. 27
  * literal rows in source; one of the nine maps over a frontmatter array, so
- * 34 rows actually render.
+ * 34 rows actually render. num and pp, closed in Task 10 round 1, cover the
+ * one block (project-argo.astro's contents page) that carries an ordinal
+ * before the term and a page range after the body.
  */
 export interface DenseRow {
+  /** An ordinal before the term. */
+  num?: string;
   term: string;
   body: string;
+  /** A trailing figure after the body. */
+  pp?: string;
   /** The accent. Lands on the row. */
   mark?: boolean;
 }
@@ -24,8 +30,10 @@ const { rows, under = false, fill = false, ...rest } = Astro.props;
   {
     rows.map((row) => (
       <div class:list={['s-dense__row', { 's-dense__row--mark': row.mark }]}>
+        {row.num && <p class="s-dense__num">{row.num}</p>}
         <p class="s-dense__term">{row.term}</p>
         <p class="s-dense__body">{row.body}</p>
+        {row.pp && <p class="s-dense__pp">{row.pp}</p>}
       </div>
     ))
   }

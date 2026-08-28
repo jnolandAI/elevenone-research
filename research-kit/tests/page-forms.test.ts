@@ -213,6 +213,14 @@ describe('Comment and Annot', () => {
   it('give Annot the bare modifier, which 1 of 16 carries', () => {
     expect(read('Annot')).toMatch(/'s-annot--bare':\s*bare/);
   });
+
+  it('give Annot the field modifier, closed round 1 of Task 10 for project-argo.astro\'s contents page', () => {
+    // s-annot--field is real in deck.css (the grey ground, same field the KPI
+    // band uses) but had no prop until the coverage guard's fixed needle
+    // caught project-argo.astro still hand-writing
+    // class="s-annot s-annot--field" for exactly this reason.
+    expect(read('Annot')).toMatch(/'s-annot--field':\s*field/);
+  });
 });
 
 describe('Matrix', () => {
@@ -256,5 +264,26 @@ describe('Kpi and Dense', () => {
     // it is where deck.css draws it.
     expect(read('Kpi')).toMatch(/'s-kpi__value--mark'/);
     expect(read('Dense')).toMatch(/'s-dense__row--mark'/);
+  });
+
+  it('give Dense optional num and pp fields, closed round 1 of Task 10 for project-argo.astro\'s contents table', () => {
+    // project-argo.astro's contents page carries 4 fields per row (num,
+    // term, body, pp) against Dense's original 2 (term, body). s-dense__num
+    // and s-dense__pp are both real classes in deck.css. num sits before
+    // term and pp sits after body, matching the corpus row order, and both
+    // render as <p>, like every other cell in this component.
+    const src = read('Dense');
+    expect(src).toMatch(/num\?:\s*string/);
+    expect(src).toMatch(/pp\?:\s*string/);
+    expect(src).toMatch(/<p class="s-dense__num">/);
+    expect(src).toMatch(/<p class="s-dense__pp">/);
+    const numAt = src.indexOf('s-dense__num');
+    const termAt = src.indexOf('s-dense__term');
+    const bodyAt = src.indexOf('s-dense__body');
+    const ppAt = src.indexOf('s-dense__pp');
+    expect(numAt).toBeGreaterThan(-1);
+    expect(numAt).toBeLessThan(termAt);
+    expect(termAt).toBeLessThan(bodyAt);
+    expect(bodyAt).toBeLessThan(ppAt);
   });
 });

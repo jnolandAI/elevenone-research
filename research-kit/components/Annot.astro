@@ -1,7 +1,8 @@
 ---
 /**
  * Annotations on the page itself, as opposed to in a rail. 44 items across 16
- * blocks, one of them bare.
+ * blocks, one of them bare, and one more, closed in Task 10 round 1, on the
+ * field.
  */
 interface AnnotItem {
   lead: string;
@@ -12,12 +13,14 @@ interface Props {
   items: AnnotItem[];
   /** No rules between items. 1 of 16. */
   bare?: boolean;
+  /** The grey field, same ground the KPI band uses. Mutually exclusive with bare in the corpus. */
+  field?: boolean;
 }
 
-const { items, bare = false, ...rest } = Astro.props;
+const { items, bare = false, field = false, ...rest } = Astro.props;
 ---
 
-<div class:list={['s-annot', { 's-annot--bare': bare }]} {...rest}>
+<div class:list={['s-annot', { 's-annot--bare': bare, 's-annot--field': field }]} {...rest}>
   {
     items.map((item) => (
       <div class="s-annot__item">
