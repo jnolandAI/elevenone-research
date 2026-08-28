@@ -22,24 +22,25 @@ import { join } from 'node:path';
  * guard blind in both directions at once: `s-annot` as a bare string missed
  * every modified instance, while `s-matrix s-`, `s-kpi s-` and `s-dense s-`
  * required a modifier and would have missed a bare one. Both directions are
- * closed here the same way, with one deliberate exception:
+ * closed the same way for every root except RailPage's, which keeps its
+ * exact compound leading edge on purpose:
  *
- * RailPage's outer class, `s-split s-split--fill`, stays an exact compound
- * literal rather than a root-plus-boundary match. The component never emits
- * a modifier on it, so there is no modified form to miss, and a
- * boundary-safe `class="s-split(?=[\s"])` needle would also catch bare
- * `class="s-split"` and `class="s-split s-split--even"` — a distinct,
- * legitimate construct that exists in this corpus (Noland's
- * commercial-diligence.astro, out of this guard's walked scope today) and
- * that RailPage's own shape, one main column plus one rail, does not cover.
- * Generalising that needle would flag a page for a component that does not
- * fit it, which is the same class of false coverage this guard exists to
- * prevent, just pointed the other way.
+ * `class="s-split s-split--fill(?=[\s"])` still requires the full
+ * `s-split s-split--fill` compound before the boundary, so a bare
+ * `class="s-split"` or a modified `class="s-split s-split--even"` still do
+ * not match. Both are real, and both are a distinct, legitimate construct in
+ * this corpus (three blocks in Noland's commercial-diligence.astro) that
+ * RailPage's own shape, one main column plus one rail, does not cover;
+ * matching them here would flag a page for a component that does not fit
+ * it, which is the same class of false coverage this guard exists to
+ * prevent, just pointed the other way. The lookahead after `--fill` closes
+ * the one gap that exact literal did leave: a hand-written instance
+ * carrying a third appended class after the compound now still matches.
  */
 const ROOTS: [RegExp, string][] = [
   [/<div class="s-stack(?=[\s"])/, 'Page'],
   [/class="s-cover(?=[\s"])/, 'Cover'],
-  [/class="s-split s-split--fill"/, 'RailPage'],
+  [/class="s-split s-split--fill(?=[\s"])/, 'RailPage'],
   [/class="s-finding(?=[\s"])/, 'Finding'],
   [/class="s-implication(?=[\s"])/, 'Implication'],
   [/class="s-annot(?=[\s"])/, 'Annot'],
@@ -55,19 +56,34 @@ const ROOTS: [RegExp, string][] = [
  * built with the same `join()` call the walk uses, so the lookup matches on
  * every OS regardless of path separator.
  *
- * Empty. The guard's first run (before the needle fix below) found one hit
- * here, `project-argo.astro`'s contents table on Dense, and it was exempted
- * for this shape reason: the table carries num and pp on every row (4
- * fields) against Dense's then-shipped 2-field row shape (term, body).
- * Fixing the needles in round 1 also surfaced a second, previously
- * invisible hit in the same file, an `s-annot s-annot--field` block Annot
- * had no prop for. Both turned out to be closeable rather than genuine
- * shape mismatches — unlike `List`, which needed a field bound to a class
- * from a different component's family entirely — so Dense gained optional
- * `num`/`pp` fields, Annot gained a `field` boolean, and both blocks in
- * `project-argo.astro` now use the components. No exemption remains.
+ * An entry here is a debt with a name on it, not a permanent carve-out: it
+ * exists to be migrated and removed, not to stay.
+ *
+ * Fix round 2's census (2026-08-28) found the walk itself had a hole: only
+ * `src/components/argo` and one hardcoded file, `project-argo.astro`, were
+ * ever walked on the Noland side, while `src/pages/` also holds three live,
+ * linked deck pages the original census never counted — 30 slides across
+ * `commercial-diligence.astro` (11), `firm-overview.astro` (16) and
+ * `robotics-components.astro` (3), all importing `Deck`/`Slide` from the
+ * kit and hand-writing nearly every construct this guard checks. The walk
+ * is fixed below to be recursive over `src/pages`, the same way the Eleven
+ * One side already is, which is what surfaces these three rather than
+ * missing them a second way. They are not migrated here: a change that
+ * size needs its own pre-migration paint and html baselines, which this fix
+ * round does not have, and forcing it in now would be exactly the
+ * unmeasured change this plan's gates exist to prevent. Tracked as Task 11.
  */
-const EXEMPT: Record<string, string> = {};
+const repoEnv = process.env.NOLAND_REPO;
+const EXEMPT: Record<string, string> = repoEnv
+  ? {
+      [join(repoEnv, 'src/pages/commercial-diligence.astro')]:
+        'unmigrated, tracked as Task 11; 11 slides outside the original census, no pre-migration baseline yet.',
+      [join(repoEnv, 'src/pages/firm-overview.astro')]:
+        'unmigrated, tracked as Task 11; 16 slides outside the original census, no pre-migration baseline yet.',
+      [join(repoEnv, 'src/pages/robotics-components.astro')]:
+        'unmigrated, tracked as Task 11; 3 slides outside the original census, no pre-migration baseline yet.',
+    }
+  : {};
 
 function walk(dir: string): string[] {
   const out: string[] = [];
@@ -100,14 +116,14 @@ describe('no page writes a componentised construct by hand', () => {
   });
 
   it.skipIf(!repo)('holds in Noland', () => {
-    // src/components/argo holds the deck's slide bodies. project-argo.astro
-    // itself is walked separately: it is a single page file, not a
-    // directory, and the brief's original walk of src/components/argo alone
-    // missed it entirely, including the 2 slides it composes directly (the
-    // deck cover and the contents page) rather than importing from argo/.
+    // Recursive over src/pages, the same way the Eleven One side already
+    // is, plus src/components/argo, which holds the slide bodies the deck
+    // pages import. A hardcoded single-file addition here once stood in for
+    // the recursive walk and missed three live deck pages as a result; see
+    // EXEMPT above.
     const files = [
       ...walk(join(repo!, 'src/components/argo')),
-      join(repo!, 'src/pages/project-argo.astro'),
+      ...walk(join(repo!, 'src/pages')),
     ];
     expect(scan(files)).toEqual([]);
   });
