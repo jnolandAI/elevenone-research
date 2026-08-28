@@ -92,3 +92,52 @@ describe('Page', () => {
     expect(nearby).toMatch(/style=\{sourcePad[^}]*undefined[^}]*\}/);
   });
 });
+
+describe('Cover', () => {
+  const src = read('Cover');
+
+  it('carries no style block', () => {
+    expect(src).not.toMatch(/<style/);
+  });
+
+  it('defaults the art modifier on when art is present', () => {
+    // Under Eleven One's light ground a photographic cover without
+    // s-cover--art gives its furniture a muted grey gated against ink, which
+    // measured 1.66:1 to 3.52:1 the first time it shipped. Defaulting the
+    // modifier on makes that impossible to get wrong by omission.
+    //
+    // Asserts the computed expression, not the bare class name: the docblock
+    // above the component names s-cover--art too, so a substring match here
+    // would pass against a component that never applies it.
+    const expr = src.match(/'s-cover--art':\s*([^\n}]+)/)![1]!;
+    expect(expr).toContain('onArt');
+    expect(src).toMatch(/const onArt = Boolean\(art\) && furniture !== 'base'/);
+  });
+
+  it('lets a cover opt out of it, because Noland measures fine without', () => {
+    // Argo's deck cover carries art and not the modifier, and that is correct
+    // rather than a defect. Noland's base s-cover is already a dark field with
+    // light furniture, and against Argo's scrim it measures 9.25:1 at the
+    // kicker, 11.00:1 at the body and 11.28:1 at the foot. Deriving with no
+    // escape would repaint four elements on that page for no gain, inside a
+    // migration whose only proof is that paint did not move.
+    //
+    // Asserts the destructured prop and its default, not the word: "furniture"
+    // appears in this component's docblock, so a substring match would pass
+    // against a component that never reads it.
+    expect(src).toMatch(/furniture\s*=\s*'auto'/);
+    expect(src).toMatch(/furniture\?:\s*'auto'\s*\|\s*'base'/);
+  });
+
+  it('draws the scrim only with art, because a scrim over nothing is a grey wash', () => {
+    expect(src).toMatch(/art\s*&&[\s\S]{0,200}s-cover__scrim/);
+  });
+
+  it('keeps the foot spacing the corpus carries on all 14', () => {
+    expect(src).toContain('margin-top: var(--ct-space-12)');
+  });
+
+  it('lets the deck cover be an h1 and a divider an h2', () => {
+    expect(src).toMatch(/level/);
+  });
+});

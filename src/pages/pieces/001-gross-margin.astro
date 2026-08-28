@@ -14,6 +14,7 @@
 import Piece from '../../layouts/Piece.astro';
 import Slide from 'research-kit/components/Slide.astro';
 import Page from 'research-kit/components/Page.astro';
+import Cover from 'research-kit/components/Cover.astro';
 import Bars from 'research-kit/components/Bars.astro';
 import Distribution from 'research-kit/components/Distribution.astro';
 import Spread from 'research-kit/components/Spread.astro';
@@ -162,28 +163,19 @@ const loadPath = [
 >
   {/* 01 Cover */}
   <Slide n={1} full>
-    <div class="s-cover s-cover--art">
-      <img
-        class="s-cover__img"
-        src="/assets/art/cover-distribution.jpg"
-        alt="Dried beans spread unevenly across a shallow tray, heaped at one end and thinning to a scatter at the other."
-        width="2560"
-        height="1440"
-      />
-      <div class="s-cover__scrim"></div>
-      <div class="s-cover__content">
-        <p class="s-cover__kicker">Eleven One Research&ensp;|&ensp;Brief 001</p>
-        <div class="s-grow s-stack s-stack--end">
-          <h1 class="s-cover__title s-cover__title--sm">Reported gross margin is not one distribution</h1>
-          <div class="s-cover__rule"></div>
-          <p class="s-cover__body">The peer median sits between two of them.</p>
-        </div>
-        <div class="s-cover__foot" style="margin-top: var(--ct-space-12)">
-          <p>Cross-sector financial analysis</p>
-          <p>{universe.kept.toLocaleString()} SEC registrants, CY2024</p>
-        </div>
-      </div>
-    </div>
+    <Cover
+      level={1}
+      kicker="Eleven One Research | Brief 001"
+      title="Reported gross margin is not one distribution"
+      body="The peer median sits between two of them."
+      foot={['Cross-sector financial analysis', `${universe.kept.toLocaleString()} SEC registrants, CY2024`]}
+      art={{
+        src: '/assets/art/cover-distribution.jpg',
+        alt: 'Dried beans spread unevenly across a shallow tray, heaped at one end and thinning to a scatter at the other.',
+        width: 2560,
+        height: 1440,
+      }}
+    />
   </Slide>
 
   {/* 02 The question */}
@@ -275,26 +267,17 @@ const loadPath = [
 
   {/* 04 Opener */}
   <Slide n={4} full>
-    <div class="s-cover s-cover--art">
-      <img
-        class="s-cover__img"
-        src="/assets/art/opener-spread.jpg"
-        alt="A steel measuring tape uncoiled in one long run across an empty surface, leaving the frame at both ends."
-        width="2560"
-        height="1440"
-      />
-      <div class="s-cover__scrim"></div>
-      <div class="s-cover__content">
-        <p class="s-cover__kicker">01</p>
-        <div class="s-grow s-stack s-stack--end">
-          <h2 class="s-cover__title s-cover__title--sm">The spread swamps the middle</h2>
-          <div class="s-cover__rule"></div>
-        </div>
-        <div class="s-cover__foot" style="margin-top: var(--ct-space-12)">
-          <p>Reported gross margin is not one distribution</p>
-        </div>
-      </div>
-    </div>
+    <Cover
+      kicker="01"
+      title="The spread swamps the middle"
+      foot={['Reported gross margin is not one distribution']}
+      art={{
+        src: '/assets/art/opener-spread.jpg',
+        alt: 'A steel measuring tape uncoiled in one long run across an empty surface, leaving the frame at both ends.',
+        width: 2560,
+        height: 1440,
+      }}
+    />
   </Slide>
 
   {/* 05 The bands */}
@@ -404,26 +387,17 @@ const loadPath = [
 
   {/* 08 Opener */}
   <Slide n={8} full>
-    <div class="s-cover s-cover--art">
-      <img
-        class="s-cover__img"
-        src="/assets/art/opener-size.jpg"
-        alt="A pair of steel calipers lying open on an empty surface with their jaws spread wide."
-        width="2560"
-        height="1440"
-      />
-      <div class="s-cover__scrim"></div>
-      <div class="s-cover__content">
-        <p class="s-cover__kicker">02</p>
-        <div class="s-grow s-stack s-stack--end">
-          <h2 class="s-cover__title s-cover__title--sm">Size moves the spread, not the middle</h2>
-          <div class="s-cover__rule"></div>
-        </div>
-        <div class="s-cover__foot" style="margin-top: var(--ct-space-12)">
-          <p>Reported gross margin is not one distribution</p>
-        </div>
-      </div>
-    </div>
+    <Cover
+      kicker="02"
+      title="Size moves the spread, not the middle"
+      foot={['Reported gross margin is not one distribution']}
+      art={{
+        src: '/assets/art/opener-size.jpg',
+        alt: 'A pair of steel calipers lying open on an empty surface with their jaws spread wide.',
+        width: 2560,
+        height: 1440,
+      }}
+    />
   </Slide>
 
   {/* 09 Medians */}
@@ -705,23 +679,11 @@ const loadPath = [
 
   {/* 16 Source */}
   <Slide n={16} full>
-    <div class="s-cover">
-      <div class="s-cover__content">
-        <p class="s-cover__kicker">Eleven One Research</p>
-        <div class="s-grow s-stack s-stack--end">
-          <h2 class="s-cover__title s-cover__title--sm">Recomputable from the published data</h2>
-          <div class="s-cover__rule"></div>
-          <p class="s-cover__body">
-            {universe.source}, retrieved {universe.retrieved}. {universe.kept.toLocaleString()} of
-            {' '}{universe.screened.toLocaleString()} registrants kept. The full dataset behind every
-            figure is published alongside this piece, and nothing here cannot be recomputed from it.
-          </p>
-        </div>
-        <div class="s-cover__foot" style="margin-top: var(--ct-space-12)">
-          <p>Brief 001</p>
-          <p>elevenoneresearch.com</p>
-        </div>
-      </div>
-    </div>
+    <Cover
+      kicker="Eleven One Research"
+      title="Recomputable from the published data"
+      body={`${universe.source}, retrieved ${universe.retrieved}. ${universe.kept.toLocaleString()} of ${universe.screened.toLocaleString()} registrants kept. The full dataset behind every figure is published alongside this piece, and nothing here cannot be recomputed from it.`}
+      foot={['Brief 001', 'elevenoneresearch.com']}
+    />
   </Slide>
 </Piece>

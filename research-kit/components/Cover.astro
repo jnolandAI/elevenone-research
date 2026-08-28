@@ -1,0 +1,61 @@
+---
+/**
+ * A cover or a section divider: a field rather than a page.
+ *
+ * Sits inside `<Slide full>`, which drops the lane and the padding. All 14 in
+ * the corpus carry the kicker, the small title, the rule, the content wrapper
+ * and the foot, so none of those is optional.
+ *
+ * The art modifier is derived and not passed. Without `s-cover--art` the
+ * kicker, subtitle and foot take a muted grey gated against ink, and on a
+ * scrimmed photograph that measured between 1.66:1 and 3.52:1 the first time
+ * it shipped.
+ */
+interface CoverArt {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  /** 1 on a deck cover, 2 on a section divider. */
+  level?: 1 | 2;
+  kicker: string;
+  title: string;
+  /** Standfirst under the rule. */
+  body?: string;
+  /** Foot lines, one <p> each. */
+  foot: string[];
+  art?: CoverArt;
+  /**
+   * How the furniture is coloured on a photographic cover. 'auto' follows the
+   * presence of art, which is the safe default. 'base' keeps the ground's own
+   * treatment: Argo's deck cover carries art and measures 9.25:1 to 11.28:1
+   * without the modifier, because Noland's base cover is already a dark field.
+   */
+  furniture?: 'auto' | 'base';
+}
+
+const { level = 2, kicker, title, body, foot, art, furniture = 'auto', ...rest } = Astro.props;
+const Title = level === 1 ? 'h1' : 'h2';
+const onArt = Boolean(art) && furniture !== 'base';
+---
+
+<div class:list={['s-cover', { 's-cover--art': onArt }]} {...rest}>
+  {art && (
+    <img class="s-cover__img" src={art.src} alt={art.alt} width={art.width} height={art.height} />
+  )}
+  {art && <div class="s-cover__scrim"></div>}
+  <div class="s-cover__content">
+    <p class="s-cover__kicker">{kicker}</p>
+    <div class="s-grow s-stack s-stack--end">
+      <Title class="s-cover__title s-cover__title--sm">{title}</Title>
+      <div class="s-cover__rule"></div>
+      {body && <p class="s-cover__body">{body}</p>}
+    </div>
+    <div class="s-cover__foot" style="margin-top: var(--ct-space-12)">
+      {foot.map((line) => <p>{line}</p>)}
+    </div>
+  </div>
+</div>
