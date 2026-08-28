@@ -22,7 +22,12 @@
  * yields zero elements to check: a page with nothing to check is a refusal,
  * not a pass.
  *
- *   node portability.mjs <tokens.css> <contract-adapter.css> [--repo <path>] [--page /path ...]
+ *   node portability.mjs <tokens.css> <contract-adapter.css> [--repo <path>]
+ *                       [--layout <path>] [--page /path ...]
+ *
+ * --layout is the deck layout whose tokens.css and contract-adapter.css
+ * imports are swapped, relative to the repo. Defaults to
+ * src/layouts/Deck.astro; Eleven One passes src/layouts/Piece.astro.
  *
  * With no --page, it iterates the deck pages this branch already treats as
  * the rendered surface: /project-argo and /commercial-diligence (both
@@ -86,12 +91,28 @@ import { fileURLToPath } from 'node:url';
 const allArgs = process.argv.slice(2);
 const repoIdx = allArgs.indexOf('--repo');
 const REPO = resolve(repoIdx === -1 ? process.cwd() : allArgs[repoIdx + 1] ?? process.cwd());
-const rawArgs = repoIdx === -1 ? allArgs : [...allArgs.slice(0, repoIdx), ...allArgs.slice(repoIdx + 2)];
+const afterRepo = repoIdx === -1 ? allArgs : [...allArgs.slice(0, repoIdx), ...allArgs.slice(repoIdx + 2)];
+
+// The deck layout whose two stylesheet imports get swapped. --repo made the
+// repository overridable and left the layout's filename fixed at Noland's, so
+// the gate could not run against Eleven One at all: it exits 2 on a missing
+// Deck.astro before reaching any page. The name is a site's choice, not the
+// kit's, and Eleven One calls its deck layout Piece.astro.
+const layoutIdx = afterRepo.indexOf('--layout');
+const LAYOUT_REL = layoutIdx === -1 ? 'src/layouts/Deck.astro' : afterRepo[layoutIdx + 1];
+if (layoutIdx !== -1 && !LAYOUT_REL) {
+  console.error('portability.mjs: --layout needs a value.');
+  process.exit(2);
+}
+const rawArgs =
+  layoutIdx === -1
+    ? afterRepo
+    : [...afterRepo.slice(0, layoutIdx), ...afterRepo.slice(layoutIdx + 2)];
 
 // The site under test, not the directory this script happens to sit in. The
 // kit measures a consuming site; assuming its own parent was only ever right
 // while the gate and the site were the same repository.
-const DECK = resolve(REPO, 'src/layouts/Deck.astro');
+const DECK = resolve(REPO, LAYOUT_REL);
 const ASTRO_BIN = resolve(REPO, 'node_modules/astro/astro.js');
 const PROPS = [
   'fill', 'stroke', 'color', 'background-color',

@@ -53,7 +53,7 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     <div class={full ? 'slide__body slide__body--full' : 'slide__body'}>
       <slot />
     </div>
-    {!full && <p class="slide__mark">Noland Advisory</p>}
+    {!full && <p class="slide__mark" aria-hidden="true" />}
   </div>
 </div>
 
@@ -82,7 +82,28 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
 
   /* The firm mark, bottom right in the padding band, mirroring the slide
      number at the foot of the lane. The one place the firm's name appears on
-     a working page. */
+     a working page.
+
+     Drawn from --ct-firm-mark rather than written into the markup. This was
+     a literal "Noland Advisory" until 2026-08-28, which made it the last
+     brand value inside the kit and would have printed one firm's name on the
+     other firm's piece. A string token is how the contract already carries
+     --ct-art-direction, so this needed no new mechanism.
+
+     Generated content rather than a prop because a prop would have to be
+     passed by all 118 slides on the Argo deck to say one thing that never
+     varies within a deck, and Astro has no way for a layout to inject it
+     through a slot. It is aria-hidden because it is a colophon, not content:
+     the firm is already named in the masthead and the document title, and a
+     screen reader should not meet it 118 times. */
+  /* On ::after rather than on .slide__mark itself: `content` on a bare
+     element is CSS Content Level 3 element replacement, which Chromium and
+     WebKit have long shipped but Firefox only added in 128. A pseudo-element
+     has carried generated content everywhere for twenty years. */
+  .slide__mark::after {
+    content: var(--ct-firm-mark);
+  }
+
   .slide__mark {
     position: absolute;
     right: var(--ct-slide-pad);

@@ -10,7 +10,8 @@
     "./lib/exhibits": "./lib/exhibits.ts",
     "./lib/us-states": "./lib/us-states.ts",
     "./contract/*.json": "./contract/*.json",
-    "./contract/*.mjs": "./contract/*.mjs"
+    "./contract/*.mjs": "./contract/*.mjs",
+    "./styles/*.css": "./styles/*.css"
   },
   "peerDependencies": {
     "astro": "^5.0.0"
