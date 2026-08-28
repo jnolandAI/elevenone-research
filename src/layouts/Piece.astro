@@ -1,0 +1,91 @@
+---
+/**
+ * A research piece: 16:9 pages rendered through research-kit.
+ *
+ * The counterpart to Base.astro, which frames a document. This frames a deck,
+ * and it is the first Eleven One route that draws anything from the kit.
+ *
+ * It loads this site's own tokens, base and adapter, then the kit's page
+ * vocabulary. Order matters: deck.css reads --ct-* names and the adapter is
+ * what defines them.
+ *
+ * No Nav. A piece is a document in its own right, not a page of the site, and
+ * the census found the same in the corpus: a published research deck carries
+ * its identity on the cover and a mark in the margin, and nothing else.
+ *
+ * The drawn ground and the noise layer that Base.astro paints are deliberately
+ * absent. A slide supplies its own flat --ct-ground, and a texture behind a
+ * fixed canvas would show only in the gutters, where it reads as the site
+ * intruding on the piece.
+ */
+import '@fontsource-variable/familjen-grotesk';
+import '@fontsource-variable/martian-mono';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/contract-adapter.css';
+import 'research-kit/styles/deck.css';
+import '../styles/print.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Drafts carry noindex. A piece is noindex until it is published. */
+  noindex?: boolean;
+}
+
+const { title, description, noindex = true } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/svg+xml" href="/assets/mark/icon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the piece</a>
+    <main id="main" class="piece">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Copied from Base.astro rather than shared: both are scoped styles on a
+     layout, and there is no third layout to justify a partial. If a fourth
+     appears, this moves to base.css. */
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 12px;
+    z-index: 100;
+    padding: 10px 18px;
+    border-radius: var(--pill);
+    background: var(--w);
+    box-shadow: var(--e2);
+    font-size: 13.5px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .skip:focus { left: 26px; }
+
+  /* Slides cap at their native width rather than filling the page. Scaling a
+     fixed canvas past its own size costs crispness and buys nothing. */
+  .piece {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    max-width: calc(var(--slide-w) + var(--space-16) * 2);
+    margin-inline: auto;
+    padding: var(--space-16) var(--space-8);
+  }
+</style>

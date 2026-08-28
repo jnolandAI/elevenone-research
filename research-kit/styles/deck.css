@@ -837,7 +837,11 @@
   color: var(--ct-text-muted);
 }
 
-.s-panel__list { list-style: none; }
+/* margin and padding are zeroed here, not left to the host's reset. Noland's
+   base.css resets ol and ul; Eleven One's does not, so the first render of
+   Panels under that brand showed the browser's 40px list indent. A kit
+   stylesheet cannot lean on a host reset it does not ship. */
+.s-panel__list { list-style: none; margin: 0; padding: 0; }
 
 .s-panel__item {
   display: flex;
