@@ -170,3 +170,23 @@ describe('RailPage', () => {
     expect(src).toMatch(/<slot name="rail"/);
   });
 });
+
+describe('Finding and Implication', () => {
+  it('keep separate components for separate deck.css objects', () => {
+    // Same label-plus-body shape, different treatment. Merging them would put
+    // the choice of visual treatment behind a prop that reads as a preference.
+    expect(read('Finding')).toContain('s-finding');
+    expect(read('Finding')).not.toContain('s-implication');
+    expect(read('Implication')).toContain('s-implication');
+    expect(read('Implication')).not.toContain('s-finding');
+  });
+
+  it('carry no style block', () => {
+    expect(read('Finding')).not.toMatch(/<style/);
+    expect(read('Implication')).not.toMatch(/<style/);
+  });
+
+  it('give Finding the ink modifier, which 6 of 39 carry', () => {
+    expect(read('Finding')).toMatch(/'s-finding--ink':\s*ink/);
+  });
+});

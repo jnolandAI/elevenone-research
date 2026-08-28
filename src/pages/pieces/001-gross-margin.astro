@@ -20,6 +20,7 @@ import Bars from 'research-kit/components/Bars.astro';
 import Distribution from 'research-kit/components/Distribution.astro';
 import Spread from 'research-kit/components/Spread.astro';
 import Panels from 'research-kit/components/Panels.astro';
+import Implication from 'research-kit/components/Implication.astro';
 import {
   universe, q, widths, bands, bandDomain, bandsIn, filersIn, tallestBand, modes,
   cohorts, one, money,
@@ -224,13 +225,10 @@ const loadPath = [
         </div>
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">What we found</p>
-        <p class="s-implication__body">
+      <Implication label="What we found">
           The peer median is a summary of a mixture, and the mixture is wide enough that distance from
           the middle carries almost no information on its own.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>
@@ -358,13 +356,10 @@ const loadPath = [
         </div>
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">Why it matters</p>
-        <p class="s-implication__body">
+      <Implication label="Why it matters">
           Narrow the band until it is tight enough to support a comparison and it holds about one
           company in six. A target fifteen points off this median is unremarkable.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>
@@ -375,13 +370,10 @@ const loadPath = [
         <Panels panels={modePanels} lead />
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">The consequence for a comparison</p>
-        <p class="s-implication__body">
+      <Implication label="The consequence for a comparison">
           Before a gross margin comparison means anything, establish which of the two the target sits
           in. Those are different questions with different comparable sets.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>
@@ -476,13 +468,10 @@ const loadPath = [
         </div>
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">What it buys</p>
-        <p class="s-implication__body">
+      <Implication label="What it buys">
           Size buys a tighter distribution and very little else. Below {money(1e10)} of revenue a
           size-matched peer median is nearly as wide as the whole universe.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>
@@ -508,13 +497,10 @@ const loadPath = [
         </div>
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">The conclusion</p>
-        <p class="s-implication__body">
+      <Implication label="The conclusion">
           A peer median summarises a mixture, so distance from it is not by itself evidence about a
           company.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>
@@ -558,13 +544,10 @@ const loadPath = [
         </div>
       
     <Fragment slot="close">
-      <div class="s-implication">
-        <p class="s-implication__label">Why it is on this page and not in the argument</p>
-        <p class="s-implication__body">
+      <Implication label="Why it is on this page and not in the argument">
           Keeping an untested belief out of the load path is the whole discipline. The alternative is
           a conclusion that quietly rests on something we cannot show you.
-        </p>
-      </div>
+      </Implication>
     </Fragment>
   </Page>
   </Slide>

@@ -1,0 +1,16 @@
+---
+/**
+ * What a page's finding means for the reader. 7 in the corpus, every label
+ * distinct. A sibling of Finding in shape and a separate object in deck.css.
+ */
+interface Props {
+  label: string;
+}
+
+const { label, ...rest } = Astro.props;
+---
+
+<div class="s-implication" {...rest}>
+  <p class="s-implication__label">{label}</p>
+  <p class="s-implication__body"><slot /></p>
+</div>

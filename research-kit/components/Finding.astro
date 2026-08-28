@@ -1,0 +1,20 @@
+---
+/**
+ * A labelled conclusion. 39 in the corpus, 6 of them on the ink field.
+ *
+ * The label is a string and varies: 22 read "Finding" and the other 17 name
+ * what the block is doing on that page, from "Verdict" to "Grade caveat".
+ */
+interface Props {
+  label: string;
+  /** The inverted field. 6 of 39. */
+  ink?: boolean;
+}
+
+const { label, ink = false, ...rest } = Astro.props;
+---
+
+<div class:list={['s-finding', { 's-finding--ink': ink }]} {...rest}>
+  <p class="s-finding__label">{label}</p>
+  <p class="s-finding__body"><slot /></p>
+</div>
