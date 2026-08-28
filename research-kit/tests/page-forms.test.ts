@@ -138,6 +138,13 @@ describe('Cover', () => {
   });
 
   it('lets the deck cover be an h1 and a divider an h2', () => {
-    expect(src).toMatch(/level/);
+    // A component that destructures level but never reads it (an always-h2
+    // Cover) would pass a bare /level/ match. Pin the derivation instead:
+    // the tag is computed from level, the computed tag is what gets
+    // rendered, and the default is 2, which is what all 13 dividers in the
+    // corpus rely on implicitly by never passing level at all.
+    expect(src).toMatch(/level\s*=\s*2\b/);
+    expect(src).toMatch(/const Title = level === 1 \? 'h1' : 'h2'/);
+    expect(src).toMatch(/<Title\b/);
   });
 });
