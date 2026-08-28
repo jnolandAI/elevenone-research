@@ -47,6 +47,7 @@ describe.skipIf(skip)('the Noland Advisory adapter, structurally', () => {
     const decls = [...adapter.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--ct-[\w-]+)\s*:\s*([^;}]+)/g)];
     for (const [, name, value] of decls) {
       if (name === '--ct-art-direction') continue;   // a prompt string, by design
+      if (name === '--ct-firm-mark') continue;      // the firm's name, by design
       if (name === '--ct-sep-shadow') continue;      // "none", by design
       expect(value, `${name} carries a literal instead of a var()`).toMatch(/var\(--/);
     }

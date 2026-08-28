@@ -29,6 +29,7 @@ describe('the Eleven One Research adapter', () => {
     expect(decls.length).toBeGreaterThan(0);
     for (const [, name, value] of decls) {
       if (name === '--ct-art-direction') continue;       // a prompt string, by design
+      if (name === '--ct-firm-mark') continue;          // the firm's name, by design
       if (name === '--ct-sep-border') continue;          // "none", by design
       expect(value, `${name} carries a literal value instead of a var()`).toMatch(/var\(--/);
     }

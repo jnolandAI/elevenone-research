@@ -155,6 +155,11 @@
   --ct-slide-pad: var(--slide-pad);
   --ct-slide-measure: var(--slide-measure);
 
+  /* ---- Identity ----
+     The firm mark on a working slide. The kit prints it and does not know
+     it. This is the first Eleven One value the kit has ever drawn. */
+  --ct-firm-mark: "Eleven One Research";
+
   /* ---- Art direction ----
      Against a system that is greyscale by rule, one saturated image per
      section opener carries the contrast, and the discipline is what stops

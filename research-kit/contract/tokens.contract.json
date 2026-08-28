@@ -86,6 +86,10 @@
     "art": {
       "description": "A string prepended to every image prompt, so the two brands do not produce imagery that reads as the same model.",
       "names": ["--ct-art-direction"]
+    },
+    "identity": {
+      "description": "The firm's name, drawn once per working slide in the padding band. A string token on the precedent art sets: a value the kit must print and must not know. Slide.astro carried one firm's name as a literal until 2026-08-28, which made it the last brand value inside the kit and would have printed that firm on the other one's piece.",
+      "names": ["--ct-firm-mark"]
     }
   },
   "roles": {
