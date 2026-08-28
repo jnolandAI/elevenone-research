@@ -1,0 +1,37 @@
+---
+/**
+ * The reading of an exhibit, set in a rail. 63 items in the corpus.
+ *
+ * Same record shape as Annot and a separate object in deck.css: Comment is
+ * what goes inside a rail, Annot is what goes on the page.
+ *
+ * 16 of the 63 items carry s-pad-t--sm, and it is always the first item in
+ * its rail, but not every rail's first item carries it: several rails run
+ * their first item plain. That makes it an authorial choice per rail rather
+ * than a position, so it is a field on the item record rather than derived
+ * from the index.
+ */
+interface CommentItem {
+  lead: string;
+  body: string;
+  /** s-pad-t--sm on this item. 16 of 63. */
+  pad?: boolean;
+}
+
+interface Props {
+  items: CommentItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<Fragment>
+  {
+    items.map((item) => (
+      <div class:list={['s-comment__item', { 's-pad-t--sm': item.pad }]}>
+        <p class="s-comment__lead">{item.lead}</p>
+        <p class="s-comment__body">{item.body}</p>
+      </div>
+    ))
+  }
+</Fragment>

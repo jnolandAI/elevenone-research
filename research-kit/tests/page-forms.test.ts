@@ -190,3 +190,27 @@ describe('Finding and Implication', () => {
     expect(read('Finding')).toMatch(/'s-finding--ink':\s*ink/);
   });
 });
+
+describe('Comment and Annot', () => {
+  it('carry no style block', () => {
+    expect(read('Comment')).not.toMatch(/<style/);
+    expect(read('Annot')).not.toMatch(/<style/);
+  });
+
+  it("give Comment's first-item spacing as a pad field on the item record, not derived from position", () => {
+    // 16 of 63 comment items carry s-pad-t--sm. Checked against
+    // src/components/argo/S0*.astro before writing this component: the
+    // padded item is always the first in its rail, but not every rail's
+    // first item is padded (S04 alone has five unpadded first items sitting
+    // beside two padded ones), so index alone over-applies the class to
+    // rails the corpus never padded. It is an authorial choice per rail, not
+    // a position, so it is a field on the item record.
+    const expr = read('Comment').match(/'s-pad-t--sm':\s*([^\n}]+)/)![1]!;
+    expect(expr).toMatch(/item\.pad|pad\b/);
+    expect(expr).not.toMatch(/i\s*===\s*0|index\s*===\s*0/);
+  });
+
+  it('give Annot the bare modifier, which 1 of 16 carries', () => {
+    expect(read('Annot')).toMatch(/'s-annot--bare':\s*bare/);
+  });
+});

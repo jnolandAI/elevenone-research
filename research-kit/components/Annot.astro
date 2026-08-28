@@ -1,0 +1,29 @@
+---
+/**
+ * Annotations on the page itself, as opposed to in a rail. 44 items across 16
+ * blocks, one of them bare.
+ */
+interface AnnotItem {
+  lead: string;
+  body: string;
+}
+
+interface Props {
+  items: AnnotItem[];
+  /** No rules between items. 1 of 16. */
+  bare?: boolean;
+}
+
+const { items, bare = false, ...rest } = Astro.props;
+---
+
+<div class:list={['s-annot', { 's-annot--bare': bare }]} {...rest}>
+  {
+    items.map((item) => (
+      <div class="s-annot__item">
+        <p class="s-annot__lead">{item.lead}</p>
+        <p class="s-annot__body">{item.body}</p>
+      </div>
+    ))
+  }
+</div>
