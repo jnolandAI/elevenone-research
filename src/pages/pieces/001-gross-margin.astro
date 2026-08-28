@@ -14,20 +14,48 @@
 import Piece from '../../layouts/Piece.astro';
 import Slide from 'research-kit/components/Slide.astro';
 import Bars from 'research-kit/components/Bars.astro';
+import Distribution from 'research-kit/components/Distribution.astro';
 import Spread from 'research-kit/components/Spread.astro';
 import Panels from 'research-kit/components/Panels.astro';
-import { universe, q, widths, bands, modes, cohorts, one, money } from '../../lib/piece-001';
+import {
+  universe, q, widths, bands, bandDomain, bandsIn, filersIn, tallestBand, modes,
+  cohorts, one, money,
+} from '../../lib/piece-001';
 
 const SECTIONS = 2;
 const FULL = 1184;
 const HALF = 720;
 
-const bandRows = bands.map((b) => ({
-  label: b.label,
-  value: b.value,
-  note: `${b.count} filers`,
-  mark: b.label === '20 to 30%',
-}));
+/* Shares, in axis order. A histogram takes the values and places them by the
+   domain; the labels and counts the ranked form needed are carried by the
+   markers and the rail instead. */
+const bandShares = bands.map((b) => b.value);
+
+/* Filers per band across a stretch of the axis. Comparing three bands against
+   two by their totals is not a comparison, which is how the page previously
+   read the middle as thinner than it measured. */
+const perBand = (lo: number, hi: number) =>
+  Math.round(filersIn(lo, hi) / bandsIn(lo, hi).length);
+
+/* Exhibit 1's furniture, built here rather than inline: every other exhibit
+   on this page passes a frontmatter array, and the Astro compiler will not
+   take a multi-line object literal inside an attribute expression. */
+const bandAxis: [string, string] = ['-10%', '100%'];
+
+const bandMarkers = [
+  {
+    at: (tallestBand.lo + tallestBand.hi) / 2,
+    label: `Tallest band ${one(tallestBand.value)}%`,
+    mark: true,
+  },
+  { at: q.p50 / 100, label: `Median ${one(q.p50)}%` },
+];
+
+const bandAlt =
+  `Eleven ten-point bands of reported gross margin from -10 to 100 per cent. ` +
+  `The tallest, ${tallestBand.label}, holds ${one(tallestBand.value)} per cent of the ` +
+  `universe; no band holds more than that, and the median at ${one(q.p50)} per cent ` +
+  `falls outside it.`;
 
 /* Three nested readings of the same axis. The finding is how little the
    middle holds once the band is narrow enough to mean something. */
@@ -84,7 +112,7 @@ const modePanels = [
     meta: `${one(modes.second.margin - modes.main.margin)} points of margin`,
     items: [
       'The median falls inside the gap rather than on either concentration.',
-      `Bands between 40% and 70% hold ${bands[4]!.count + bands[5]!.count + bands[6]!.count} filers, fewer than the two bands on the low side.`,
+      `Bands from 40% to 70% average ${perBand(0.4, 0.7)} filers each, against ${perBand(0.2, 0.4)} in the two bands below them.`,
       'A summary statistic taken across both describes a company that is not there.',
     ],
     mark: true,
@@ -291,15 +319,16 @@ const loadPath = [
               <p class="s-label">{universe.kept.toLocaleString()} filers</p>
             </div>
             <div class="s-ex__fig">
-              <Bars
-                rows={bandRows}
+              <Distribution
+                values={bandShares}
+                domain={bandDomain}
+                form="bins"
                 width={HALF}
                 height={430}
-                digits={1}
-                suffix="%"
                 axisLabel="Share of filers"
-                railHead="Count"
-                alt={`Nine ten-point bands of reported gross margin. The largest, 20 to 30 per cent, holds ${one(bands[2]!.value)} per cent of the universe; no band holds more than that and the distribution has no concentrated centre.`}
+                domainLabels={bandAxis}
+                markers={bandMarkers}
+                alt={bandAlt}
               />
             </div>
           </div>
@@ -309,16 +338,16 @@ const loadPath = [
               <p class="s-comment__lead">The tallest band is not tall.</p>
               <p class="s-comment__body">
                 A benchmark is useful when the distribution around it is tight enough that distance
-                from it means something. The largest band here holds {one(bands[2]!.value)}% of
+                from it means something. The largest band here holds {one(tallestBand.value)}% of
                 filers, and the bands on either side of it are within five points of that.
               </p>
             </div>
             <div class="s-comment__item">
               <p class="s-comment__lead">The high end does not thin out.</p>
               <p class="s-comment__body">
-                The two bands above 70% together hold {bands[7]!.count + bands[8]!.count} filers,
-                more than the band below 10%. A distribution with a genuine centre does not look
-                like this.
+                The bands above 70% together hold {filersIn(0.7, 1.0)} filers, more
+                than the {filersIn(bandDomain[0], 0.1)} below 10%. A distribution with a
+                genuine centre does not look like this.
               </p>
             </div>
             <div class="s-comment__item">

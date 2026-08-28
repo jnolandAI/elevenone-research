@@ -65,20 +65,56 @@ export const widths = {
   withinFive: pct(below(data.q.p50 + 0.05) - below(data.q.p50 - 0.05)),
 };
 
-/** Nine ten-point bands. The finding is that none of them is a middle. */
+/**
+ * The axis the bands sit on: -10 to 100 per cent, eleven bands of ten points.
+ *
+ * It was nine bands over the data's own span, with the outer two collapsing a
+ * tail: below 10 ran from the -5 floor and above 80 ran to 100, so those two
+ * were 15 and 20 points wide against ten for the rest. Drawn through `Bars`
+ * that was honest, because a categorical bar claims nothing about interval
+ * width. Drawn as a histogram it would not be: unequal intervals at equal
+ * widths is the staircase defect, step sizes that are not to scale and read
+ * as quantitative anyway. Extending the axis to -10 rather than dropping the
+ * sub-zero filers keeps every one of the 2,186 on the exhibit.
+ */
+export const bandDomain: [number, number] = [-0.1, 1.0];
+
+/** Eleven ten-point bands. The finding is that none of them is a middle. */
 export const bands = (() => {
-  const edges = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
-  const labels = [
-    'Below 10%', '10 to 20%', '20 to 30%', '30 to 40%', '40 to 50%',
-    '50 to 60%', '60 to 70%', '70 to 80%', 'Above 80%',
-  ];
-  return labels.map((label, i) => {
-    const lo = i === 0 ? X0 : edges[i]!;
-    const hi = i === labels.length - 1 ? X1 : edges[i + 1]!;
+  const [start, end] = bandDomain;
+  const step = 0.1;
+  const n = Math.round((end - start) / step);
+  return Array.from({ length: n }, (_, i) => {
+    const lo = start + i * step;
+    const hi = lo + step;
     const count = below(hi) - below(lo);
-    return { label, value: pct(count), count: Math.round(count) };
+    return {
+      label: `${Math.round(lo * 100)} to ${Math.round(hi * 100)}%`,
+      lo,
+      hi,
+      value: pct(count),
+      count: Math.round(count),
+    };
   });
 })();
+
+/** The band holding more of the universe than any other. */
+export const tallestBand = bands.reduce((a, b) => (b.value > a.value ? b : a));
+
+/**
+ * The bands whose whole interval lies inside [lo, hi].
+ *
+ * Prose about the bands selects through this rather than by array position.
+ * An index means a range only for as long as the banding does not change, and
+ * when it did, three sentences on the piece would have gone on reading as
+ * though they still described the ranges they were written for.
+ */
+export const bandsIn = (lo: number, hi: number) =>
+  bands.filter((b) => b.lo >= lo - 1e-9 && b.hi <= hi + 1e-9);
+
+/** Filers inside [lo, hi], summed from the bands the exhibit draws. */
+export const filersIn = (lo: number, hi: number) =>
+  bandsIn(lo, hi).reduce((sum, b) => sum + b.count, 0);
 
 /** The two concentrations on the revenue and margin surface. */
 export const modes = {
