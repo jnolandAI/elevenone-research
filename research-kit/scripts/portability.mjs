@@ -383,7 +383,7 @@ function inBrowserCheck(selector, props, shorthandFallback) {
         // Inline style wins over any stylesheet rule, which in turn wins over
         // an SVG presentation attribute (fill="...", stroke="..."): the exact
         // form this kit uses for a per-element computed tone, e.g. Bridge's
-        // `fill={fill(b)}` rendering as <rect fill="var(--color-grey-80)">.
+        // `fill={fill(b)}` rendering as <rect fill="var(--ct-ex-series-1)">.
         // A presentation attribute never appears in el.style or in
         // document.styleSheets, so a check that stops at those two misses it
         // entirely, silently, on every element that sets colour this way.
