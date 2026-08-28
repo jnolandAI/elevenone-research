@@ -75,15 +75,11 @@ const strip = (s) =>
 const PAGE_TAG_ALL = /<Page[\s\S]*?(?<!=)>/g;
 const PAGE_TAG_ONE = /<Page[\s\S]*?(?<!=)>/;
 
-function extractProp(tagText, name) {
-  const plain = new RegExp(`\\b${name}="([^"]*)"`).exec(tagText);
-  if (plain) return plain[1];
-  const tmplStart = tagText.indexOf(`${name}={\``);
-  if (tmplStart === -1) return undefined;
-  const bodyStart = tmplStart + `${name}={\``.length;
-  const closeAt = tagText.indexOf('`}', bodyStart);
-  if (closeAt === -1) return undefined;
-  const raw = tagText.slice(bodyStart, closeAt);
+// Shared by extractProp below and by the Comment/Annot items-array reader
+// further down: collapses every ${expr} run in a template literal to a
+// single '0', which keeps the word-count and number-share measures honest
+// without evaluating the expression.
+function collapseExpr(raw) {
   let out = '';
   let i = 0;
   while (i < raw.length) {
@@ -105,6 +101,22 @@ function extractProp(tagText, name) {
   }
   return out;
 }
+
+function extractProp(tagText, name) {
+  const plain = new RegExp(`\\b${name}="([^"]*)"`).exec(tagText);
+  if (plain) return plain[1];
+  const tmplStart = tagText.indexOf(`${name}={\``);
+  if (tmplStart === -1) return undefined;
+  const bodyStart = tmplStart + `${name}={\``.length;
+  const closeAt = tagText.indexOf('`}', bodyStart);
+  if (closeAt === -1) return undefined;
+  return collapseExpr(tagText.slice(bodyStart, closeAt));
+}
+
+// A backslash-escaped quote or backtick inside a JS string literal ('it\'s',
+// `it\`s`) is the literal character once JS parses it; the census wants that
+// character, not the escape.
+const unescapeJs = (s) => s.replace(/\\(.)/g, '$1');
 
 const titles = [];
 const exhibits = [];
@@ -140,6 +152,37 @@ for (const file of files) {
     /class="s-(annot|comment)__lead">([\s\S]*?)<\/p>\s*<p class="s-\1__body">([\s\S]*?)<\/p>/g;
   for (const m of src.matchAll(leadBody)) {
     leads.push({ file, text: strip(m[2]), body: strip(m[3]) });
+  }
+  // A page composed with <Comment> or <Annot> carries its lead/body pairs as
+  // items={[{ lead: '...', body: '...' }, ...]}, not as literal
+  // <p class="s-*__lead"> markup: Comment renders a Fragment with no root
+  // element at all, and Annot's items are JS data assembled at the call
+  // site. The census above cannot see either, so it undercounted every
+  // migrated rail and annotation block until this matched the array literal
+  // too. Bracket-depth scanning, not a regex to the closing ']}', because an
+  // item's own body can carry a literal '[' (cohorts[5]!.median).
+  const itemsTag = /<(?:Comment|Annot)\b[\s\S]*?\bitems=\{\[/g;
+  const itemFields =
+    /lead:\s*(?:'((?:\\.|[^'\\])*)'|`((?:\\.|[^`\\])*)`)\s*,\s*body:\s*(?:'((?:\\.|[^'\\])*)'|`((?:\\.|[^`\\])*)`)/g;
+  for (const tag of src.matchAll(itemsTag)) {
+    const arrStart = tag.index + tag[0].length;
+    let depth = 1;
+    let k = arrStart;
+    while (depth > 0 && k < src.length) {
+      if (src[k] === '[') depth++;
+      else if (src[k] === ']') depth--;
+      k++;
+    }
+    const arr = src.slice(arrStart, k - 1);
+    for (const m of arr.matchAll(itemFields)) {
+      const leadRaw = m[1] ?? m[2];
+      const bodyRaw = m[3] ?? m[4];
+      leads.push({
+        file,
+        text: strip(unescapeJs(collapseExpr(leadRaw))),
+        body: strip(unescapeJs(collapseExpr(bodyRaw))),
+      });
+    }
   }
 
   // A slide is sourced if a source line appears between its own <Slide> and

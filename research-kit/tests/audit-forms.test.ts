@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { describe, it, expect, afterAll } from 'vitest';
+import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 /**
  * The audit's form census reports the share of pages carrying a chart, a
@@ -43,5 +46,63 @@ describe("the audit's form census", () => {
     for (const name of named) {
       expect(shipped.has(name), `FORMS names ${name}, which the kit does not ship`).toBe(true);
     }
+  });
+});
+
+/**
+ * The audit's sub-head census reads `<p class="s-*__lead">` markup. Comment
+ * and Annot carry their leads as `items={[{ lead: '...', body: '...' }]}`
+ * instead - Comment renders a Fragment with no root at all, and Annot's
+ * items are JS data - so the census went blind to both the day this plan
+ * migrated them: it kept printing a count, just the wrong one, for a deck
+ * that measured 101 sub-heads before migration and 1 after. The same failure
+ * hit the exhibit form census when `Distribution` joined the kit (see the
+ * describe block above) and the title/source census when `Page` did (Task
+ * 2). A gate that stops seeing content while still printing a number is
+ * worse than one that never looked, so this fixture pins both forms.
+ */
+describe("the audit's sub-head census sees both forms a lead can take", () => {
+  const dir = mkdtempSync(join(tmpdir(), 'audit-leads-'));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  writeFileSync(
+    join(dir, 'fixture.astro'),
+    [
+      '<div class="s-annot">',
+      '  <div class="s-annot__item">',
+      '    <p class="s-annot__lead">Literal markup lead.</p>',
+      '    <p class="s-annot__body">Literal markup body.</p>',
+      '  </div>',
+      '</div>',
+      '<Comment items={[',
+      "  { lead: 'Array literal lead.', body: 'Array literal body.', pad: true },",
+      ']} />',
+      '<Annot items={[',
+      "  { lead: 'Second array lead.', body: 'Second array body.' },",
+      ']} />',
+    ].join('\n'),
+    'utf8',
+  );
+
+  const out = execFileSync(
+    'node',
+    ['research-kit/scripts/audit.mjs', '--profile', 'brief', dir, '--leads'],
+    { encoding: 'utf8' },
+  );
+
+  it('counts a lead written as literal markup', () => {
+    expect(out).toContain('Literal markup lead.');
+  });
+
+  it('counts a lead written as a single-quoted items array entry', () => {
+    expect(out).toContain('Array literal lead.');
+  });
+
+  it('counts a lead from a second items array in the same file', () => {
+    expect(out).toContain('Second array lead.');
+  });
+
+  it('reports 3 sub-heads for a fixture that carries exactly 3', () => {
+    expect(out).toMatch(/\n3 sub-heads,/);
   });
 });

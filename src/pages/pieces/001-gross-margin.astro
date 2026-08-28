@@ -305,7 +305,7 @@ const loadPath = [
     <Fragment slot="rail">
             <p class="s-label">Reading</p>
             <Comment items={[
-              { lead: 'The tallest band is not tall.', body: ` A benchmark is useful when the distribution around it is tight enough that distance from it means something. The largest band here holds ${one(tallestBand.value)}% of filers, and the bands on either side of it are within five points of that. `, pad: true },
+              { lead: 'The tallest band is not tall.', body: ` A benchmark is useful when the distribution around it is tight enough that distance from it means something. The largest band here holds ${one(tallestBand.value)}% of filers, and the bands on either side of it are within five points of that. `, pad: 3 },
               { lead: 'The high end does not thin out.', body: ` The bands above 70% together hold ${filersIn(0.7, 1.0)} filers, more than the ${filersIn(bandDomain[0], 0.1)} below 10%. A distribution with a genuine centre does not look like this. ` },
               { lead: 'Coarse bands understate it.', body: ' Ten points is wider than most comparisons would accept. Narrow the band to something a diligence process would actually use and the share inside it falls further, which is what the next page measures. ' },
             ]} />
@@ -399,7 +399,7 @@ const loadPath = [
     <Fragment slot="rail">
             <p class="s-label">Reading</p>
             <Comment items={[
-              { lead: 'The intuition does not hold.', body: ' Margin is supposed to fall as companies get bigger. The third cohort carries the highest median of the six, and the second carries a lower median than the first. ', pad: true },
+              { lead: 'The intuition does not hold.', body: ' Margin is supposed to fall as companies get bigger. The third cohort carries the highest median of the six, and the second carries a lower median than the first. ', pad: 3 },
               { lead: 'One cohort does separate.', body: ` Filers above ${money(1e10)} of revenue sit at ${one(cohorts[5]!.median)}%, which is ${one(cohorts[0]!.median - cohorts[5]!.median)} points below the smallest cohort. That is the only clean size effect in the medians. ` },
               { lead: 'Equal counts, not chosen boundaries.', body: ` The cohorts hold ${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers each. The top cohort is the smallest, so its percentiles move more easily than the others, which is the first thing we would check before leaning on it. ` },
             ]} />

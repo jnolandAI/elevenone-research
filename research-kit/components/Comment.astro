@@ -10,12 +10,20 @@
  * their first item plain. That makes it an authorial choice per rail rather
  * than a position, so it is a field on the item record rather than derived
  * from the index.
+ *
+ * One item (S04) carries the same top padding at a different, larger step,
+ * written as an ad-hoc inline style rather than the s-pad-t--sm class,
+ * because that class is fixed at the smaller step. `pad` is therefore the
+ * step value, not a flag: 3 keeps the class every other padded item already
+ * uses (so its markup does not move), and 4 is the one observed exception,
+ * carried as the same inline style the corpus already writes. If a third
+ * step turns up this needs a real look, not a widened type.
  */
 interface CommentItem {
   lead: string;
   body: string;
-  /** s-pad-t--sm on this item. 16 of 63. */
-  pad?: boolean;
+  /** padding-top on this item: 3 is s-pad-t--sm (16 of 63), 4 is the one ad-hoc override. */
+  pad?: 3 | 4;
 }
 
 interface Props {
@@ -28,7 +36,10 @@ const { items } = Astro.props;
 <Fragment>
   {
     items.map((item) => (
-      <div class:list={['s-comment__item', { 's-pad-t--sm': item.pad }]}>
+      <div
+        class:list={['s-comment__item', { 's-pad-t--sm': item.pad === 3 }]}
+        style={item.pad === 4 ? 'padding-top: var(--ct-space-4)' : undefined}
+      >
         <p class="s-comment__lead">{item.lead}</p>
         <p class="s-comment__body">{item.body}</p>
       </div>
