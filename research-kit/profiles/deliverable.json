@@ -1,0 +1,27 @@
+{
+  "name": "deliverable",
+  "shape": "A client deliverable. A readout deck built for one engagement, not for publication.",
+  "pages": null,
+  "template": "Set by the engagement, not by this profile.",
+  "title": {
+    "medianWords": 19,
+    "p75Words": null,
+    "p90Words": null,
+    "numberShare": 0.74,
+    "numberShareFloor": 0.65
+  },
+  "density": {
+    "medianWords": 190,
+    "p75Words": null,
+    "p90Words": null,
+    "thinWords": 120,
+    "thinShare": 0.0
+  },
+  "forms": { "tableShareCeiling": 0.34 },
+  "measuredFrom": "The reference deliverable: a single 167-page market study. These are the constants audit.mjs and density.mjs carried inline before profiles existed, preserved exactly so an existing deck's calibration does not move on the day this file appeared.",
+  "notes": [
+    "The corpus disagrees with this profile and the disagreement is deliberate. Across the ExampleSlides corpus's ten client decks (682 working pages) a client page runs a median of 162 words with an 11-word title and 44% carrying a number, against the 190, 19 and 74% recorded here from one deck. Ten decks is the better sample. This file keeps the reference numbers anyway, because switching the calibration and adding the profile mechanism in one change would make it impossible to tell which of the two moved a result. Re-baselining onto the corpus is its own decision.",
+    "pages is null: this profile sets no page budget. The reference deliverable runs 167 pages and Project Argo runs 81, so any budget wide enough for both would not be a check.",
+    "thinShare is 0. On a client page, under 120 words usually is a placeholder that has been styled. On a published research page it is a form, which is why the research profiles expect two fifths of their pages to be thin."
+  ]
+}

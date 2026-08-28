@@ -11,7 +11,10 @@
     "check": "astro check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "slides": "node research-kit/scripts/slidecheck.mjs",
+    "audit": "node research-kit/scripts/audit.mjs --profile brief src/pages/pieces",
+    "density": "node research-kit/scripts/density.mjs --profile brief"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

@@ -1,0 +1,26 @@
+{
+  "name": "report",
+  "shape": "A published research report. Several sections, each carrying its own argument.",
+  "pages": { "min": 30, "max": 60 },
+  "template": "Cover, executive summary, four to six sections with openers, working pages, methodology, appendix.",
+  "title": {
+    "medianWords": 8,
+    "p75Words": 15,
+    "p90Words": 20,
+    "numberShare": 0.48,
+    "numberShareFloor": 0.35
+  },
+  "density": {
+    "medianWords": 141,
+    "p75Words": 217,
+    "p90Words": 306,
+    "thinWords": 120,
+    "thinShare": 0.41
+  },
+  "forms": { "tableShareCeiling": 0.34 },
+  "measuredFrom": "The same strict published population as the brief profile. Census run 2026-08-26.",
+  "notes": [
+    "Every page-level constant here is identical to the brief profile, and that is a finding rather than an oversight. The census measured page-level craft across the published population without splitting it by document length, and nothing in it suggests a longer research piece writes a denser page or a longer title. Only the page budget and the section template differ.",
+    "Should a later census split the population by length and find the page-level numbers diverge, these two files stop being duplicates and the difference goes here."
+  ]
+}

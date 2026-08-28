@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { takeProfile } from '../profiles/load.mjs';
 
 /**
  * The checks a geometry pass cannot make.
@@ -12,19 +13,40 @@ import { join } from 'node:path';
  * This reads the source rather than the render, because that is where the
  * copy lives and because it needs no browser.
  *
- *   node scripts/audit.mjs [dir]        default src/components/argo
+ *   node scripts/audit.mjs --profile <name> [dir]   default dir src/components/argo
+ *
+ * --profile is required and has no default. These constants were measured
+ * from a client deliverable and were being applied to research pieces, where
+ * they are wrong in the direction that matters: a research page carries fewer
+ * words than a client page and its titles are three words shorter at the
+ * median, so the deliverable numbers ask a research piece to be fuller and
+ * wordier than the corpus it imitates. A gate that guesses says nothing about
+ * having guessed, which is the failure this replaces.
  *
  * Exits non-zero on a hard failure (banned title construction, numbering that
  * repeats or skips). Soft measures print for judgement and never fail the run:
  * a median is a calibration, not a rule.
  */
 
-const dir = process.argv.slice(2).find((a) => !a.startsWith("--")) || 'src/components/argo';
+let PROFILE;
+let argv;
+try {
+  const taken = takeProfile(process.argv.slice(2));
+  PROFILE = taken.profile;
+  argv = taken.rest;
+} catch (e) {
+  console.error(`audit.mjs: ${e.message}`);
+  process.exit(2);
+}
 
-/* The measured baseline from the reference deliverable. A working title runs a
-   median of 19 words and about three quarters carry a number. */
-const TITLE_MEDIAN = 19;
-const NUMBER_SHARE = 0.74;
+const dir = argv.find((a) => !a.startsWith('--')) || 'src/components/argo';
+
+/* Every calibration constant comes from the profile. research-kit/profiles/
+   records what each one was measured from. */
+const TITLE_MEDIAN = PROFILE.title.medianWords;
+const NUMBER_SHARE = PROFILE.title.numberShare;
+const NUMBER_FLOOR = PROFILE.title.numberShareFloor;
+const TABLE_CEILING = PROFILE.forms.tableShareCeiling;
 
 const files = readdirSync(dir)
   .filter((f) => f.endsWith('.astro'))
@@ -44,6 +66,7 @@ const exhibits = [];
 const leads = [];
 let slides = 0;
 let sourced = 0;
+let fullPages = 0;
 
 for (const file of files) {
   const src = readFileSync(join(dir, file), 'utf8');
@@ -68,7 +91,10 @@ for (const file of files) {
   // A slide is sourced if a source line appears between its own <Slide> and
   // the next one. Full-bleed covers and dividers are exempt.
   for (const block of src.split('<Slide ').slice(1)) {
-    if (block.includes('full>')) continue;
+    if (block.includes('full>')) {
+      fullPages++;
+      continue;
+    }
     slides++;
     if (block.includes('class="s-source"')) sourced++;
   }
@@ -80,7 +106,10 @@ const fail = (msg) => {
   console.log(`FAIL  ${msg}`);
 };
 
-console.log(`${files.length} files, ${titles.length} titles, ${exhibits.length} exhibits, ${slides} working pages\n`);
+console.log(
+  `${files.length} files, ${titles.length} titles, ${exhibits.length} exhibits, ` +
+    `${slides} working pages  [profile: ${PROFILE.name}]\n`,
+);
 
 /* ---- Banned title constructions ------------------------------------------
    These are the shapes that mark a deck as generated. The dramatic colon is
@@ -149,6 +178,21 @@ if (garbled.length) {
   console.log('ok    no mis-decoded punctuation');
 }
 
+/* ---- Page budget ---------------------------------------------------------
+   Only when the profile declares one. The deliverable profile does not: the
+   reference deliverable runs 167 pages and Argo runs 81, so a budget wide
+   enough for both would not be a check. Covers and dividers count, because a
+   page budget is a property of the document a reader holds. */
+if (PROFILE.pages) {
+  const total = slides + fullPages;
+  const { min, max } = PROFILE.pages;
+  if (total < min || total > max) {
+    console.log(`\nwarn  ${total} pages, outside the ${PROFILE.name} budget of ${min} to ${max}`);
+  } else {
+    console.log(`\nok    ${total} pages, inside the ${PROFILE.name} budget of ${min} to ${max}`);
+  }
+}
+
 /* ---- Soft measures ------------------------------------------------------- */
 const words = titles.map((t) => t.text.split(' ').length).sort((a, b) => a - b);
 const median = words[Math.floor(words.length / 2)];
@@ -161,8 +205,10 @@ console.log(
 console.log(
   `carrying a number  ${withNumber} of ${titles.length}, ${Math.round(share * 100)}%  (baseline ${Math.round(NUMBER_SHARE * 100)}%)`,
 );
-if (share < 0.65) {
-  console.log('      below 65%: adjectives are probably standing where figures were available');
+if (share < NUMBER_FLOOR) {
+  console.log(
+    `      below ${Math.round(NUMBER_FLOOR * 100)}%: adjectives are probably standing where figures were available`,
+  );
 }
 
 /* Table craft. The two things that separate a working text matrix from a grid
@@ -256,7 +302,7 @@ console.log(
       .map(([k, v]) => `${k} ${v} (${Math.round((v / forms) * 100)}%)`)
       .join(', '),
 );
-if (census.table / forms > 0.34) {
+if (census.table / forms > TABLE_CEILING) {
   console.log(
     [
       '      tables are over a third of the forms. The corpus runs 18%, so open every one',

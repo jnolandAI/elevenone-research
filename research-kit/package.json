@@ -11,7 +11,9 @@
     "./lib/us-states": "./lib/us-states.ts",
     "./contract/*.json": "./contract/*.json",
     "./contract/*.mjs": "./contract/*.mjs",
-    "./styles/*.css": "./styles/*.css"
+    "./styles/*.css": "./styles/*.css",
+    "./profiles/*.json": "./profiles/*.json",
+    "./profiles/load.mjs": "./profiles/load.mjs"
   },
   "peerDependencies": {
     "astro": "^5.0.0"

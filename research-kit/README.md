@@ -34,6 +34,27 @@ against a site's own tokens and failing on any fallback colour.
   site that omits it gets a transparent cell, which reads as a design choice
   rather than as a fault.
 
+## Profiles
+
+`profiles/` holds one file per document shape: `brief` and `report` for
+published research, `deliverable` for a client readout. A profile carries the
+page budget, the section template and the calibration constants for that shape.
+
+`audit.mjs` and `density.mjs` **require** `--profile <name>` and have no
+default. They used to carry one shape's constants inline and apply them to
+every shape, which is wrong in the direction that matters: a published
+research page runs a median of 141 words against a client page's 190, and its
+titles are shorter by three words at the median. Scoring a research piece
+against deliverable constants asks it to be fuller and wordier than the corpus
+it is imitating, and says nothing about having done so.
+
+    node scripts/audit.mjs   --profile brief src/pages/pieces
+    node scripts/density.mjs --profile brief http://localhost:4321/pieces/001
+
+The same page count is a fault under one profile and a form under another: 41%
+of published research pages run under 120 words, so the research profiles
+expect two fifths of their pages to be thin while `deliverable` allows none.
+
 ## What the kit deliberately does not hold
 
 No brand values, and no piece content. Drafts, art manifests and rendered
