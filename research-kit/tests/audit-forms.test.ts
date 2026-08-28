@@ -20,8 +20,21 @@ describe("the audit's form census", () => {
   const audit = readFileSync('research-kit/scripts/audit.mjs', 'utf8');
   const forms = audit.slice(audit.indexOf('const FORMS'), audit.indexOf('const census'));
 
-  /** Page furniture and wrappers. These draw no exhibit of their own. */
-  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage', 'Finding', 'Implication', 'Comment', 'Annot']);
+  /**
+   * Page furniture and wrappers. These draw no exhibit of their own.
+   *
+   * Matrix sits here too, and for a different reason than the rest: it does
+   * draw a table, but the census already counts it, by class rather than by
+   * component name. FORMS classifies `table` on `class="s-matrix` because
+   * that class is what the rendered HTML carries regardless of which
+   * component wrote it, so Matrix's output was counted correctly before this
+   * component existed and needs no entry of its own. Adding "Matrix" to
+   * FORMS as a name match would be redundant with the class match already
+   * there, and either double-count or (once the string check below allows
+   * any substring, including this comment) mask a future regression the way
+   * the Distribution incident above did.
+   */
+  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage', 'Finding', 'Implication', 'Comment', 'Annot', 'Matrix']);
 
   it('knows every kit component that draws an exhibit', () => {
     const components = readdirSync('research-kit/components')

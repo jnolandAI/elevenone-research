@@ -214,3 +214,32 @@ describe('Comment and Annot', () => {
     expect(read('Annot')).toMatch(/'s-annot--bare':\s*bare/);
   });
 });
+
+describe('Matrix', () => {
+  const src = read('Matrix');
+
+  it('carries no style block', () => {
+    expect(src).not.toMatch(/<style/);
+  });
+
+  it('requires cols, because every matrix in the corpus sets one', () => {
+    // --cols is structural, not decoration: 23 matrices carry 23 different
+    // grid templates. A default would silently lay a table out wrong.
+    expect(src).toMatch(/cols:\s*string;/);
+    expect(src).not.toMatch(/cols\s*=\s*['"]/);
+  });
+
+  it('takes cell kind from the row records, not from a caller writing classes', () => {
+    expect(src).toMatch(/s-matrix__cell--term/);
+    expect(src).toMatch(/s-matrix__cell--num/);
+    expect(src).toMatch(/s-matrix__cell--ord/);
+    expect(src).toMatch(/s-matrix__cell--lv/);
+  });
+
+  it('emits the ordinal level class without resolving its colour', () => {
+    // --lv1 reads --deck-ordinal-lv1, the one site-supplied name in the kit.
+    // The component emits the class; the site supplies the value, exactly as
+    // today. The ordinal palette question stays open and stays out of scope.
+    expect(src).not.toMatch(/--deck-ordinal/);
+  });
+});

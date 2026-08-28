@@ -1,0 +1,58 @@
+---
+/**
+ * The table form. 23 in the corpus carrying 76 rows and 398 cells.
+ *
+ * Cell kind comes from the row records rather than from the caller writing
+ * class names, which is the whole reduction: 398 hand-written class
+ * attributes become 398 record fields that a type checks.
+ *
+ * Cells render as `p`, not `div`: every one of the 398 in the corpus is a
+ * paragraph, and the row wrapper alone is a div.
+ */
+export type MatrixCell = string | { text: string; kind?: 'term' | 'num' | 'ord'; level?: 1 | 2 | 3 | 4 };
+
+export interface MatrixRow {
+  cells: MatrixCell[];
+  head?: boolean;
+  mark?: boolean;
+}
+
+interface Props {
+  rows: MatrixRow[];
+  /** The grid template: "130px 1fr 1fr". Every matrix in the corpus sets one. */
+  cols: string;
+  under?: boolean;
+  fill?: boolean;
+  xs?: boolean;
+}
+
+const { rows, cols, under = false, fill = false, xs = false, ...rest } = Astro.props;
+
+const cellClass = (c: MatrixCell) => {
+  if (typeof c === 'string') return 's-matrix__cell';
+  const parts = ['s-matrix__cell'];
+  if (c.kind === 'term') parts.push('s-matrix__cell--term');
+  if (c.kind === 'num') parts.push('s-matrix__cell--num');
+  if (c.kind === 'ord') {
+    parts.push('s-matrix__cell--ord');
+    if (c.level) parts.push(`s-matrix__cell--lv${c.level}`);
+  }
+  return parts.join(' ');
+};
+
+const text = (c: MatrixCell) => (typeof c === 'string' ? c : c.text);
+---
+
+<div
+  class:list={['s-matrix', { 's-matrix--under': under, 's-matrix--fill': fill, 's-matrix--xs': xs }]}
+  style={`--cols: ${cols}`}
+  {...rest}
+>
+  {
+    rows.map((row) => (
+      <div class:list={['s-matrix__row', { 's-matrix__row--head': row.head, 's-matrix__row--mark': row.mark }]}>
+        {row.cells.map((c) => <p class={cellClass(c)}>{text(c)}</p>)}
+      </div>
+    ))
+  }
+</div>
