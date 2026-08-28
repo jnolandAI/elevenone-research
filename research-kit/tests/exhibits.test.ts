@@ -11,6 +11,7 @@ import {
   sparkLayout,
   plotBand,
   calloutLayout,
+  distributionLayout,
 } from '../lib/exhibits';
 
 const plot = { width: 1199, height: 250, plotTop: 30, plotBottom: 220 };
@@ -557,5 +558,237 @@ describe('the choropleth is the contract scale, and its labels clear their bands
     // grey-50 is 2.22:1 on white.
     const rule = map.match(/\.legend__note\s*\{[^}]*\}/)![0]!;
     expect(rule).toContain('--ct-text-muted');
+  });
+});
+
+/* ---- Distribution -------------------------------------------------------- */
+
+describe('distribution', () => {
+  const geom = {
+    width: 1184,
+    height: 300,
+    plotTop: 30,
+    plotBottom: 250,
+    x1: 100,
+    x2: 1000,
+    domain: [0, 1] as [number, number],
+  };
+
+  /** A hump peaking at index 5 of 11, so index order and value order differ. */
+  const hump = [0, 1, 3, 6, 9, 10, 8, 5, 3, 1, 0];
+
+  it('places a marker by its value on the domain, not by its position in the list', () => {
+    // The defect this exhibit exists to prevent: piece 001 drew ten margin
+    // bands through Bars, which places a row by its rank in the array. A
+    // distribution's x is a measured value and nothing else.
+    const laid = distributionLayout(hump, {
+      ...geom,
+      markers: [
+        { at: 0.75, label: 'p75' },
+        { at: 0.25, label: 'p25' },
+      ],
+    });
+    const [p75, p25] = laid.markers;
+    expect(p75!.x).toBe(775);
+    expect(p25!.x).toBe(325);
+    expect(p75!.x).toBeGreaterThan(p25!.x);
+  });
+
+  it('runs the curve the full width of the plot', () => {
+    const { points } = distributionLayout(hump, geom);
+    expect(points[0]!.x).toBe(geom.x1);
+    expect(points[points.length - 1]!.x).toBe(geom.x2);
+    expect(points).toHaveLength(hump.length);
+  });
+
+  it('lifts the peak to the plot top and rests a zero on the baseline', () => {
+    const { points } = distributionLayout(hump, geom);
+    expect(points[5]!.y).toBe(geom.plotTop);
+    expect(points[0]!.y).toBe(geom.plotBottom);
+  });
+
+  it('lifts a marker onto the curve rather than dropping it to the baseline', () => {
+    // 0.25 falls between points 2 and 3 of 11, which sit at 0.2 and 0.3.
+    const laid = distributionLayout(hump, {
+      ...geom,
+      markers: [{ at: 0.25, label: 'p25' }],
+    });
+    const m = laid.markers[0]!;
+    const mid = (laid.points[2]!.y + laid.points[3]!.y) / 2;
+    expect(m.y).toBeCloseTo(mid, 2);
+    expect(m.y).toBeLessThan(geom.plotBottom);
+    expect(m.y).toBeGreaterThan(geom.plotTop);
+  });
+
+  it('makes the bins contiguous, which is what separates a histogram from ranked bars', () => {
+    const { bins } = distributionLayout(hump, { ...geom, form: 'bins' });
+    for (let i = 0; i < bins.length - 1; i++) {
+      expect(bins[i]!.x + bins[i]!.width).toBeCloseTo(bins[i + 1]!.x, 6);
+    }
+  });
+
+  it('spends the whole plot on the bins', () => {
+    const { bins } = distributionLayout(hump, { ...geom, form: 'bins' });
+    expect(bins[0]!.x).toBe(geom.x1);
+    const last = bins[bins.length - 1]!;
+    expect(last.x + last.width).toBeCloseTo(geom.x2, 6);
+  });
+
+  it('sits every bin on the baseline and scales it against the tallest', () => {
+    const { bins } = distributionLayout(hump, { ...geom, form: 'bins' });
+    for (const b of bins) expect(b.y + b.height).toBeCloseTo(geom.plotBottom, 6);
+    expect(bins[5]!.height).toBeCloseTo(geom.plotBottom - geom.plotTop, 6);
+    expect(bins[4]!.height / bins[5]!.height).toBeCloseTo(9 / 10, 3);
+  });
+
+  it('reports the domain midpoint of each bin, so a bin can be named by value', () => {
+    const { bins } = distributionLayout([1, 2, 3, 4], { ...geom, form: 'bins' });
+    expect(bins.map((b) => b.at)).toEqual([0.125, 0.375, 0.625, 0.875]);
+  });
+
+  it('scales against a stated max, so two exhibits can share one frequency axis', () => {
+    const { points } = distributionLayout(hump, { ...geom, max: 20 });
+    // The peak of 10 against a stated top of 20 reaches half the plot height.
+    expect(points[5]!.y).toBeCloseTo(geom.plotTop + (geom.plotBottom - geom.plotTop) / 2, 2);
+  });
+
+  it('never sets an unmarked label over an opaque bin, and does over a quiet tint', () => {
+    // Found on the render. A bin is filled with --ct-ex-fill, a mid grey, and
+    // a label in --ct-ex-label-muted laid over it disappears: piece 001 shipped
+    // its median label inside the bar and nothing on the page showed it. The
+    // area under a curve is --ct-ex-fill-quiet, a recessive tint, and a label
+    // reads over that, so the rule is the form's and not the exhibit's.
+    const marker = [{ at: 0.5, label: 'p50' }];
+    const binned = distributionLayout(hump, { ...geom, form: 'bins', markers: marker });
+    expect(binned.markers[0]!.labelY).toBeLessThan(binned.markers[0]!.y);
+
+    const curve = distributionLayout(hump, { ...geom, markers: marker });
+    expect(curve.markers[0]!.labelY).toBeGreaterThan(curve.markers[0]!.y);
+    expect(curve.markers[0]!.labelY).toBeLessThan(geom.plotBottom);
+  });
+
+  it('lifts a marked label clear of its own dot in either form', () => {
+    const marker = [{ at: 0.5, label: 'Median', mark: true }];
+    for (const form of ['curve', 'bins'] as const) {
+      const laid = distributionLayout(hump, { ...geom, form, markers: marker });
+      const m = laid.markers[0]!;
+      expect(m.labelY, form).toBeLessThan(m.y - 8);
+    }
+  });
+
+  it('refuses a marker outside the domain, naming it', () => {
+    expect(() =>
+      distributionLayout(hump, { ...geom, markers: [{ at: 1.4, label: 'p99' }] }),
+    ).toThrow(/Distribution: marker "p99" at 1.4 is outside the domain 0 to 1/);
+  });
+
+  it('refuses a second mark', () => {
+    expect(() =>
+      distributionLayout(hump, {
+        ...geom,
+        markers: [
+          { at: 0.25, label: 'p25', mark: true },
+          { at: 0.5, label: 'Median', mark: true },
+        ],
+      }),
+    ).toThrow(/Distribution: 2 marked values \(p25, Median\)/);
+  });
+
+  it('refuses a negative frequency, which no distribution has', () => {
+    expect(() => distributionLayout([1, -2, 3], geom)).toThrow(
+      /Distribution: a frequency cannot be negative/,
+    );
+  });
+
+  it('refuses a domain that runs backwards', () => {
+    expect(() => distributionLayout(hump, { ...geom, domain: [1, 0] })).toThrow(
+      /Distribution: the domain 1 to 0 does not run upward/,
+    );
+  });
+
+  it('refuses a curve of one point, which is a dot and not a distribution', () => {
+    expect(() => distributionLayout([5], geom)).toThrow(/Distribution: 1 value/);
+  });
+
+  it('refuses bins too narrow to draw, rather than shipping a grey smear', () => {
+    // The silent failure a histogram has and a ranked bar does not: 900 units
+    // across 1200 bins is 0.75 of a unit each, which paints as a solid block.
+    const many = Array.from({ length: 1200 }, (_, i) => i % 7);
+    expect(() => distributionLayout(many, { ...geom, form: 'bins' })).toThrow(
+      /Distribution: 1200 bins across 900 units is 0.75 each/,
+    );
+  });
+});
+
+describe('the distribution component', () => {
+  const src = readFileSync('research-kit/components/Distribution.astro', 'utf8');
+  const styles = [...src.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)]
+    .map((m) => m[1]!)
+    .join('\n');
+  // The drawing itself: everything after the frontmatter and before the style
+  // block. This is the region an SVG construct would have to appear in.
+  const markup = src.slice(src.indexOf('---', 3) + 3, src.indexOf('<style'));
+  // Comments stripped. Every rule below bans a construct by name, and a
+  // comment explaining the ban states that name too: checking the commented
+  // text makes the component's own reasoning fail its own test.
+  const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Located by literal text rather than by a built regex: a modifier selector
+  // shares its base's name, and ".guide" as a pattern would happily return
+  // ".guide--mark" and let a regression in the base rule pass unseen.
+  const rule = (selector: string) => {
+    const at = styles.indexOf(`${selector} {`);
+    if (at < 0) throw new Error(`Distribution.astro declares no ${selector} rule`);
+    return styles.slice(at, styles.indexOf('}', at) + 1);
+  };
+
+  it('names every colour through the contract and carries none of its own', () => {
+    // The kit holds no brand value. A raw colour here would paint the same
+    // under both adapters, which is the one thing this system forbids.
+    expect(declarations).not.toMatch(/#[0-9A-Fa-f]{3,8}\b/);
+    expect(declarations).not.toMatch(/\brgba?\(/);
+    expect(declarations).not.toMatch(/\bhsla?\(/);
+  });
+
+  it('tints the area with a flat fill rather than a gradient', () => {
+    // kde.ts fills with three gradient stops carrying stop-opacity and a raw
+    // hex. An opacity-composited colour is a value nothing measures:
+    // portability.mjs counts fallback sites and tokencheck reads declared
+    // tokens, and neither sees what a 16 percent stop actually paints.
+    // Scoped to the two places a gradient can actually be declared, markup and
+    // style, rather than to the whole file: the component's own comment names
+    // the construct it refuses, and a whole-file ban cannot tell the two apart.
+    expect(markup).not.toMatch(/linearGradient|stop-opacity/);
+    expect(declarations).not.toMatch(/gradient/);
+    expect(rule('.area')).toContain('--ct-ex-fill-quiet');
+  });
+
+  it('draws a marker guide as findable structure, not as a recessive rule', () => {
+    // Same reasoning Trend already recorded for its projection divider: a rule
+    // that carries meaning is structure. --ct-ex-axis-quiet is for gridlines.
+    const guide = rule('.guide');
+    expect(guide).toContain('--ct-ex-axis');
+    expect(guide).not.toContain('--ct-ex-axis-quiet');
+  });
+
+  it('runs the curve as a polyline, so no spline can overshoot below zero', () => {
+    // A Catmull-Rom through few points dips under the baseline, which draws a
+    // negative frequency. The geometry hands over vertices and nothing else.
+    expect(src).toMatch(/<polyline/);
+    expect(src).toMatch(/<polygon/);
+    expect(src).not.toMatch(/<path\b/);
+  });
+
+  it('closes the seam that exact contiguity still leaves between bins on screen', () => {
+    // Found by rendering, which the geometry test could not see. The bins are
+    // contiguous to the unit, and the browser still anti-aliases each rect's
+    // edge on its own: two touching rects each paint a half-covered pixel and
+    // the ground shows through as a white hairline down every boundary, which
+    // is the exact tell that makes a histogram read as a row of separate bars.
+    expect(rule('.bin')).toContain('shape-rendering: crispEdges');
+  });
+
+  it('gives the marked guide and its label the accent', () => {
+    expect(rule('.guide--mark')).toContain('--ct-mark');
+    expect(rule('.marker--mark')).toContain('--ct-mark');
   });
 });

@@ -282,7 +282,7 @@ if (craft.length) {
    208-slide reference corpus puts it at roughly 47% chart, 18% table. A deck
    whose table share runs past about a third is defaulting. */
 const FORMS = [
-  ['chart', /<(Bars|Columns|Trend|Stack|Scatter|Spread|Slope|Bridge|Timeline|RangeDot|SmallMultiples|Phases|Map)\b/g],
+  ['chart', /<(Bars|Columns|Trend|Stack|Scatter|Spread|Slope|Bridge|Timeline|RangeDot|SmallMultiples|Phases|Map|Distribution)\b/g],
   ['diagram', /<(DriverChain|Layers)\b|class="s-flow"/g],
   ['panels', /<(Panels)\b/g],
   ['list', /class="s-dense\b|class="s-list\b/g],

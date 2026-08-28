@@ -977,6 +977,180 @@ export function spreadLayout(rows: readonly SpreadRow[], geom: SpreadGeometry): 
   });
 }
 
+/* ---- Distribution -------------------------------------------------------- */
+
+/**
+ * One distribution over a continuous numeric axis, drawn as a density curve or
+ * as contiguous bins.
+ *
+ * The axis is a measured range and not a list of categories, and holding that
+ * distinction is the whole reason this exhibit exists. Piece 001 drew ten
+ * margin bands through `barsLayout`, which places a row by its rank in the
+ * array: the bands happened to arrive in order, so the drawing was right by
+ * luck rather than by construction, and a marker at the 25th percentile had
+ * nowhere to go at all. Here every x is a value on the domain.
+ */
+export interface DistributionMarker {
+  /** A value on the domain: a quantile, a threshold, a peer figure. */
+  at: number;
+  label: string;
+  mark?: boolean;
+}
+
+export interface DistributionPlacement extends DistributionMarker {
+  x: number;
+  /** Height of the distribution at `at`, which is where a guide meets it. */
+  y: number;
+  /**
+   * Baseline of the label, which is a property of the form and not of the
+   * exhibit. A bin is filled with `--ct-ex-fill`, an opaque mid tone, so a
+   * label laid over one is not quiet but gone, and it goes above the bin. The
+   * area under a curve is `--ct-ex-fill-quiet`, a recessive tint, so a label
+   * reads over it and sits at the foot of its own guide where it crowds
+   * nothing. A marked label clears its own dot in both.
+   */
+  labelY: number;
+}
+
+export interface DistributionPoint {
+  x: number;
+  y: number;
+}
+
+export interface DistributionBin {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  value: number;
+  /** Midpoint of the bin on the domain, so a bin can be named by value. */
+  at: number;
+}
+
+export interface DistributionGeometry extends PlotGeometry {
+  x1: number;
+  x2: number;
+  /** The measured range the values cover, low to high. */
+  domain: [number, number];
+  form?: 'curve' | 'bins';
+  /** Top of the frequency axis, stated when two exhibits must share one. */
+  max?: number;
+  markers?: readonly DistributionMarker[];
+}
+
+export interface DistributionLayout {
+  form: 'curve' | 'bins';
+  points: DistributionPoint[];
+  /** The polyline, ready for a `points` attribute. */
+  path: string;
+  /** The same line closed to the baseline, for the tint underneath it. */
+  area: string;
+  bins: DistributionBin[];
+  markers: DistributionPlacement[];
+  max: number;
+}
+
+export function distributionLayout(
+  values: readonly number[],
+  geom: DistributionGeometry,
+): DistributionLayout {
+  const markers = geom.markers ?? [];
+  assertOneMark(markers, 'Distribution');
+
+  const form = geom.form ?? 'curve';
+  const [lo, hi] = geom.domain;
+  if (!(hi > lo)) {
+    throw new Error(`Distribution: the domain ${lo} to ${hi} does not run upward`);
+  }
+  if (values.length < 2) {
+    throw new Error(
+      `Distribution: ${values.length} value${values.length === 1 ? '' : 's'}. ` +
+        'A distribution needs at least two.',
+    );
+  }
+  if (values.some((v) => v < 0)) {
+    throw new Error('Distribution: a frequency cannot be negative');
+  }
+
+  const span = geom.x2 - geom.x1;
+  const depth = geom.plotBottom - geom.plotTop;
+  // No axisTop here, deliberately. A frequency axis on a density carries no
+  // ticks to round to and usually no scale at all: the shape is the reading.
+  // Rounding the peak up would push the curve off the top of its own plot.
+  const max = geom.max ?? Math.max(...values);
+  if (max <= 0) throw new Error('Distribution: every value is zero');
+
+  const onDomain = (v: number) => round(geom.x1 + ((v - lo) / (hi - lo)) * span);
+  const height = (v: number) => (v / max) * depth;
+
+  const points = values.map((v, i) => ({
+    x: round(geom.x1 + (i / (values.length - 1)) * span),
+    y: round(geom.plotBottom - height(v)),
+  }));
+  const path = points.map((p) => `${p.x},${p.y}`).join(' ');
+  const area = `${path} ${geom.x2},${geom.plotBottom} ${geom.x1},${geom.plotBottom}`;
+
+  let bins: DistributionBin[] = [];
+  if (form === 'bins') {
+    // Edges are computed once and each bin takes its width from the next
+    // edge. Rounding an x and a width apart lets them disagree by a hundredth
+    // and opens a hairline gap between bins, which is exactly the tell that
+    // makes a histogram read as a row of separate bars.
+    const edge = (i: number) => round(geom.x1 + (i / values.length) * span);
+    if (span / values.length < 1) {
+      throw new Error(
+        `Distribution: ${values.length} bins across ${span} units is ` +
+          `${round(span / values.length)} each, which paints as a solid block. ` +
+          'Bin the data more coarsely, or draw it as a curve.',
+      );
+    }
+    bins = values.map((v, i) => {
+      const x = edge(i);
+      const y = round(geom.plotBottom - height(v));
+      return {
+        x,
+        y,
+        width: round(edge(i + 1) - x),
+        height: round(geom.plotBottom - y),
+        value: v,
+        at: lo + ((i + 0.5) / values.length) * (hi - lo),
+      };
+    });
+  }
+
+  const placed = markers.map((m) => {
+    if (m.at < lo || m.at > hi) {
+      throw new Error(
+        `Distribution: marker "${m.label}" at ${m.at} is outside the domain ${lo} to ${hi}`,
+      );
+    }
+    let y: number;
+    if (form === 'bins') {
+      const i = Math.min(
+        Math.floor(((m.at - lo) / (hi - lo)) * values.length),
+        values.length - 1,
+      );
+      y = bins[i]!.y;
+    } else {
+      // A guide meets the curve, not the floor. Dropping it to the baseline
+      // would say the distribution is empty at its own median.
+      const t = ((m.at - lo) / (hi - lo)) * (values.length - 1);
+      const i = Math.min(Math.floor(t), values.length - 2);
+      const a = points[i]!.y;
+      const b = points[i + 1]!.y;
+      y = round(a + (b - a) * (t - i));
+    }
+    const labelY = m.mark
+      ? round(y - 12)
+      : form === 'bins'
+        ? round(y - 8)
+        : geom.plotBottom - 6;
+    return { ...m, x: onDomain(m.at), y, labelY };
+  });
+
+  return { form, points, path, area, bins, markers: placed, max };
+}
+
 /* ---- Timeline ------------------------------------------------------------ */
 
 /**

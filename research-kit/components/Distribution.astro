@@ -1,0 +1,181 @@
+---
+import {
+  distributionLayout,
+  plotBand,
+  type DistributionMarker,
+} from 'research-kit/lib/exhibits';
+
+/**
+ * One distribution over a continuous numeric axis.
+ *
+ * The form for a shape: where the mass sits, how wide the spread runs, whether
+ * there is one hump or two. Drawn as a density curve where the values are many
+ * and as contiguous bins where they are few. Neither carries a label per point,
+ * which is what separates this from Trend, and neither ranks its categories,
+ * which is what separates it from Bars.
+ *
+ * Markers are the reading: quantiles, a threshold, a peer figure. The marked
+ * one takes a dot and a label above it. The rest label quietly, at the foot of
+ * their own guide over a curve and above the bin over bins: the geometry
+ * decides which, because a bin is opaque and the area under a curve is not.
+ */
+interface Props {
+  /** Densities, or counts per bin. Ordered along the domain, not by size. */
+  values: number[];
+  /** The measured range the values cover, low to high. */
+  domain: [number, number];
+  alt: string;
+  form?: 'curve' | 'bins';
+  markers?: DistributionMarker[];
+  height?: number;
+  width?: number;
+  /** Top of the frequency axis, stated when two exhibits must share one. */
+  max?: number;
+  /** Unit caption at the head of the plot. */
+  axisLabel?: string;
+  /** Captions at the two ends of the baseline: ["0% margin", "100%"]. */
+  domainLabels?: [string, string];
+}
+
+const {
+  values,
+  domain,
+  alt,
+  form = 'curve',
+  markers = [],
+  height = 300,
+  width: w = 1184,
+  max,
+  axisLabel,
+  domainLabels,
+} = Astro.props;
+
+const width = w;
+// Near the full drawing. A distribution has no category names down the left
+// and no series names off the right, so the lanes those forms reserve are
+// spent on the shape instead.
+const { x1, x2 } = plotBand(width, 0.02, 0.98);
+const plotTop = axisLabel ? 30 : 16;
+const plotBottom = height - (domainLabels ? 34 : 16);
+
+const laid = distributionLayout(values, {
+  width,
+  height,
+  plotTop,
+  plotBottom,
+  x1,
+  x2,
+  domain,
+  form,
+  max,
+  markers,
+});
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {axisLabel && <text class="unit" x={x1} y={16}>{axisLabel}</text>}
+
+  {
+    laid.form === 'curve' ? (
+      <>
+        <polygon class="area" points={laid.area} />
+        <polyline class="curve" points={laid.path} />
+      </>
+    ) : (
+      laid.bins.map((b) => (
+        <rect class="bin" x={b.x} y={b.y} width={b.width} height={b.height} />
+      ))
+    )
+  }
+
+  <line class="base" x1={x1} y1={plotBottom} x2={x2} y2={plotBottom} />
+
+  {
+    laid.markers.map((m) =>
+      m.mark ? (
+        <>
+          <line class="guide guide--mark" x1={m.x} y1={m.y + 5} x2={m.x} y2={plotBottom} />
+          <circle class="dot" cx={m.x} cy={m.y} r="3.4" />
+          <text class="marker marker--mark" x={m.x} y={m.labelY} text-anchor="middle">
+            {m.label}
+          </text>
+        </>
+      ) : (
+        <>
+          <line class="guide" x1={m.x} y1={m.y} x2={m.x} y2={plotBottom} />
+          <text class="marker" x={m.x + 5} y={m.labelY}>{m.label}</text>
+        </>
+      ),
+    )
+  }
+
+  {
+    domainLabels && (
+      <>
+        <text class="unit" x={x1} y={height - 10}>{domainLabels[0]}</text>
+        <text class="unit" x={x2} y={height - 10} text-anchor="end">{domainLabels[1]}</text>
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  /* Flat, not a gradient. The web brief's density fills with three stops
+     carrying stop-opacity, and an opacity-composited colour is a value no gate
+     in this system can measure. --ct-ex-fill-quiet is the recessive tint and
+     this is the job it exists for. */
+  .area { fill: var(--ct-ex-fill-quiet); }
+
+  .curve {
+    fill: none;
+    stroke: var(--ct-ex-series-1);
+    stroke-width: 1.75;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  /* Edges snapped to the pixel grid. The geometry makes the bins contiguous
+     to the unit and that is still not contiguous on screen: two touching
+     rects each anti-alias their own edge, each paints a half-covered pixel,
+     and the ground shows through as a white hairline down every boundary. A
+     bin may then differ from its neighbour by one device pixel of width,
+     which at this scale nothing can see, and the distribution reads as one
+     object rather than as forty bars. */
+  .bin {
+    fill: var(--ct-ex-fill);
+    shape-rendering: crispEdges;
+  }
+
+  /* A quantile guide carries meaning, so it is findable structure rather than
+     a recessive rule. Same reasoning Trend records for its projection divider:
+     --ct-ex-axis-quiet is for gridlines, which say nothing on their own. */
+  .guide {
+    stroke: var(--ct-ex-axis);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+
+  .guide--mark { stroke: var(--ct-mark); stroke-dasharray: none; }
+
+  .dot { fill: var(--ct-mark); }
+
+  .marker {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .marker--mark {
+    fill: var(--ct-mark);
+    font-weight: var(--ct-weight-semibold);
+  }
+
+  .unit {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+</style>
