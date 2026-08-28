@@ -48,7 +48,12 @@ let sourced = 0;
 for (const file of files) {
   const src = readFileSync(join(dir, file), 'utf8');
 
-  for (const m of src.matchAll(/<h2 class="s-title">([\s\S]*?)<\/h2>/g)) {
+  // Any class list containing s-title, not the bare attribute. The exact-match
+  // form silently skipped every title carrying a spacing modifier alongside it,
+  // which on the first piece rendered outside Argo was 7 of 12: the gate
+  // reported five titles on a twelve-page deck and computed its length and
+  // number-share statistics from that biased subset without saying so.
+  for (const m of src.matchAll(/<h2 class="[^"]*\bs-title\b[^"]*">([\s\S]*?)<\/h2>/g)) {
     titles.push({ file, text: strip(m[1]) });
   }
   for (const m of src.matchAll(/Exhibit (\d+)&ensp;/g)) {
