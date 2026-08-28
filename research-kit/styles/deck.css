@@ -1,0 +1,1050 @@
+/* The deck ------------------------------------------------------------------
+
+   A deck is this system at a different aspect, not a second system: the same
+   tokens, the same family, the same rule vocabulary and the same exhibits. What
+   changes is the lane, which narrows from 240px to 64px, and the reserved
+   display sizes, which appear only on the cover, the dividers and a finding.
+
+   These classes are global rather than scoped because a slide's body arrives
+   through a slot, and Astro's scoping does not cross a slot boundary. */
+
+/* The cover ------------------------------------------------------------------
+
+   A cover is a field, not a page: a full-bleed photograph darkened under an
+   ink scrim so the type holds, the title in the left third, a short soft rule
+   under the title block, and the date and mark at the edges. The photograph
+   is atmosphere and it is confined to here; it never enters a working page.
+   The closing reuses the same field without the photograph. */
+
+.s-cover {
+  position: relative;
+  height: 100%;
+  /* The cover is the full-bleed field the contract describes. */
+  background: var(--ct-field);
+  overflow: hidden;
+}
+
+.s-cover__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A flat translucent layer, not a gradient: the photograph is pulled toward
+   ink evenly so white type reads anywhere on it. */
+.s-cover__scrim {
+  position: absolute;
+  inset: 0;
+  /* The cover is the full-bleed field the contract describes. */
+  background: var(--ct-field);
+  opacity: 0.55;
+}
+
+.s-cover__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--ct-space-12) var(--ct-space-16);
+}
+
+.s-cover__kicker {
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  /* Muted type on the cover. */
+  color: var(--ct-field-text-muted);
+}
+
+.s-cover__title {
+  font-size: var(--ct-text-5xl);
+  font-weight: var(--ct-weight-light);
+  line-height: var(--ct-leading-22);
+  letter-spacing: var(--ct-tracking-tight);
+  color: var(--ct-text-on-field);
+}
+
+.s-cover__title--sm {
+  font-size: var(--ct-text-4xl);
+  line-height: var(--ct-leading-18);
+}
+
+/* The rule under the title block: a grey hairline at the full content width,
+   the same ruled vocabulary as the working pages. The earlier form, a short
+   64px stub in soft slate, was rejected 2026-08-25: the pale blue read as an
+   AI tell and the stub as decoration rather than structure. */
+.s-cover__rule {
+  width: 100%;
+  margin-top: var(--ct-space-6);
+  /* The firm divider, one step lighter and still above 3:1. */
+  border-top: 1px solid var(--ct-rule-firm);
+}
+
+.s-cover__body {
+  margin-top: var(--ct-space-6);
+  max-width: 720px;
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  /* Same job; grey-30 on ink was 13.81:1, grey-40 is 11.21:1, both clear. */
+  color: var(--ct-field-text-muted);
+}
+
+.s-cover__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ct-space-8);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  /* Same job, and it moves up off grey-50. */
+  color: var(--ct-field-text-muted);
+}
+
+.s-display {
+  font-size: var(--ct-text-5xl);
+  font-weight: var(--ct-weight-light);
+  line-height: var(--ct-leading-22);
+  letter-spacing: var(--ct-tracking-tight);
+  color: var(--ct-text-strong);
+}
+
+.s-display--sm {
+  font-size: var(--ct-text-4xl);
+  line-height: var(--ct-leading-18);
+}
+
+/* The action title on a working slide. 28px, and it carries the claim the
+   exhibits below it prove: a deck exists to reach a conclusion, which is the one
+   place this system is allowed to assert. */
+.s-title {
+  font-size: var(--ct-text-xl);
+  font-weight: var(--ct-weight-normal);
+  line-height: var(--ct-leading-9);
+  letter-spacing: var(--ct-tracking-snug);
+  color: var(--ct-text-strong);
+}
+
+.s-body {
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text);
+}
+
+.s-body + .s-body { padding-top: var(--ct-space-3); }
+
+.s-note {
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+.s-label {
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+.s-kicker {
+  font-size: var(--ct-text-sm);
+  color: var(--ct-text-muted);
+}
+
+/* The one element a page does not have. An ink rule and a small slate label,
+   used to state the conclusion the exhibits support rather than leaving the
+   reader to infer it. */
+.s-implication {
+  margin-top: var(--ct-space-6);
+  padding-top: var(--ct-space-3);
+  /* Booktabs boundary rule: the heaviest division a page draws. */
+  border-top: 1px solid var(--ct-rule-strong);
+}
+
+.s-implication__label {
+  font-size: var(--ct-text-xs);
+  color: var(--ct-mark);
+}
+
+.s-implication__body {
+  padding-top: var(--ct-space-2);
+  font-size: var(--ct-text-md);
+  line-height: var(--ct-leading-7);
+  color: var(--ct-text-strong);
+}
+
+/* Layout helpers, all of them absolute because a slide is a fixed canvas. */
+.s-stack { display: flex; flex-direction: column; height: 100%; }
+.s-stack--end { justify-content: flex-end; }
+.s-stack--center { justify-content: center; }
+.s-grow { flex: 1; min-height: 0; }
+.s-two-up { display: flex; gap: var(--ct-space-8); }
+.s-two-up > * { flex: 1; min-width: 0; }
+.s-measure { max-width: 720px; }
+.s-pad-t { padding-top: var(--ct-space-6); }
+/* The gap between an exhibit head's rule and the content under it. One value,
+   used everywhere that pairing occurs, because the head-to-content distance is
+   exactly the kind of spacing a reader's eye compares across a spread. */
+.s-pad-t--sm { padding-top: var(--ct-space-3); }
+
+/* The gap under an action title, where a page wants a full breath before its
+   first rule. */
+.s-pad-t--lg { padding-top: var(--ct-space-8); }
+
+/* A ruled list on a slide. Denser than DefList, which is built for a page. */
+.s-list { border-top: 1px solid var(--ct-rule); }
+
+/* Roomier rows, for a page like a contents list that has height to spend.
+   One spacing step up; not the equal-band fill, which stretches four rows
+   over a whole zone. */
+.s-list--roomy .s-list__row { padding-block: var(--ct-space-4); }
+
+.s-list__row {
+  display: flex;
+  gap: var(--ct-space-6);
+  padding: var(--ct-space-3) 0;
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.s-list__num {
+  flex-shrink: 0;
+  width: 24px;
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text-muted);
+}
+
+.s-list__term {
+  flex-shrink: 0;
+  width: 260px;
+  font-size: var(--ct-text-base);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text-strong);
+}
+
+.s-list__body {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text);
+}
+
+/* A list given the full height of its zone. Every row takes an equal band and
+   its content sits centered between the rules, so the rules land at even
+   intervals no matter how many lines each body runs. The earlier version
+   spread natural-height rows with space-between, which put each rule tight
+   under its own text and a void before the next: even gaps, uneven look.
+   John's August 2026 review named it, and the fix is equal bands. */
+.s-list--fill,
+.s-dense--fill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.s-list--fill > .s-list__row,
+.s-dense--fill > .s-dense__row {
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+}
+
+/* The commentary items of a column, spread down the height the column was
+   given, for the same reason as the fill lists above. */
+.s-spread {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Two or three columns of commentary that share their rows. Independent
+   columns each spreading their own items drift out of register the moment
+   one body runs a line longer than its neighbour; a grid puts the neighbours
+   in the same row, so their leads sit on one baseline the way a set page
+   would have them. Items go in row-major order: c1, o1, c2, o2. */
+/* One gap, 32px, above the grid and between its rows, so the page reads as
+   one rhythm rather than a large breath followed by smaller ones. */
+.s-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--ct-space-8);
+  row-gap: var(--ct-space-8);
+  align-content: start;
+  height: 100%;
+}
+
+.s-grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* The flow: steps down a vertical spine, each row opened by a short accent
+   tick off the rule. The vocabulary for how work runs, distinct from the
+   ruled ledger (records) and the tile grid (kinds). */
+.s-flow {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-left: 1px solid var(--ct-rule);
+}
+
+.s-flow__row {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-6);
+  padding-left: var(--ct-space-8);
+}
+
+.s-flow__row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 20px;
+  border-top: 2px solid var(--ct-mark);
+}
+
+.s-flow__term {
+  flex-shrink: 0;
+  width: 220px;
+  font-size: var(--ct-text-md);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-7);
+  color: var(--ct-text-strong);
+}
+
+.s-flow__body {
+  max-width: 720px;
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text);
+}
+
+/* A glyph cell at the head of a list row. */
+.s-list__glyph {
+  flex-shrink: 0;
+  width: 40px;
+}
+
+/* The hero variant of a ruled list: a page whose three or four rows ARE the
+   content, so the glyph and the term step up two sizes. */
+.s-list--hero .s-list__glyph {
+  width: 88px;
+}
+
+.s-list--hero .s-list__term {
+  font-size: var(--ct-text-lg);
+  line-height: var(--ct-leading-8);
+  letter-spacing: var(--ct-tracking-snug);
+}
+
+.s-list--hero .s-list__body {
+  font-size: var(--ct-text-md);
+  line-height: var(--ct-leading-7);
+}
+
+/* The exhibit head on a slide: title left, unit right, over a rule. */
+.s-ex__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ct-space-6);
+  padding-bottom: var(--ct-space-2);
+  /* Booktabs boundary rule: the heaviest division a page draws. */
+  border-bottom: 1px solid var(--ct-rule-strong);
+}
+
+/* No closing rule, for a head that sits over a form which draws its own:
+   panels, layers, anything whose first element opens on a rule of its own. */
+.s-ex__head--bare {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.s-ex__title {
+  font-size: var(--ct-text-sm);
+  font-weight: var(--ct-weight-medium);
+  color: var(--ct-text-strong);
+}
+
+/* Clearance on both sides. The bottom half matters as much as the top: an
+   exhibit whose axis labels end 0px above the next rule reads as cramped even
+   though nothing overlaps. */
+.s-ex__fig {
+  padding-top: var(--ct-space-4);
+  padding-bottom: var(--ct-space-2);
+}
+
+.s-ex__caption {
+  padding-top: var(--ct-space-3);
+  border-top: 1px solid var(--ct-rule);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* Density ---------------------------------------------------------------------
+
+   A working consulting slide is not a chart with a title. It is a chart, the
+   commentary that reads it, a sub-header naming the cut, a unit, data labels, a
+   source line, and a conclusion. The classes below are the furniture that turns
+   an exhibit into a readout page. Added August 2026 after the first specimen
+   came back correctly formatted and far too thin. */
+
+/* The working split: exhibit left, the reading of it right. Roughly 62/38,
+   which leaves the commentary a real column rather than a gutter. */
+.s-split {
+  display: flex;
+  gap: var(--ct-space-8);
+  min-height: 0;
+}
+
+.s-split__main { flex: 62; min-width: 0; }
+.s-split__side { flex: 38; min-width: 0; }
+
+/* When the side sits on a field, its head starts 16px down inside the field's
+   padding. The main column takes the same 16px so the two head rules land on
+   one line across the page (John, 2026-08-25: rules across a split align, and
+   everything else sizes around that). */
+.s-split__main--pad { padding-top: var(--ct-space-4); }
+
+/* The commentary column on a quiet grey field, the Bain working-page model:
+   exhibit on the ground, the reading of it in a tinted panel. */
+.s-split__side--field {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ct-space-4) var(--ct-space-6);
+  background: var(--ct-well);
+}
+
+.s-split--even .s-split__main,
+.s-split--even .s-split__side { flex: 1; }
+
+/* Commentary. Bold lead, then the support, numbered so a reader can be pointed
+   at one of them in the room. */
+.s-comment__item { padding-bottom: var(--ct-space-4); }
+.s-comment__item:last-child { padding-bottom: 0; }
+
+.s-comment__lead {
+  font-size: var(--ct-text-base);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text-strong);
+}
+
+.s-comment__body {
+  padding-top: var(--ct-space-1);
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text);
+}
+
+/* A sub-header names the cut of the data under the exhibit title. */
+.s-sub {
+  padding-top: var(--ct-space-1);
+  padding-bottom: var(--ct-space-1);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* The source line, at the foot of the slide where a reader looks for it. */
+.s-source {
+  padding-top: var(--ct-space-3);
+  border-top: 1px solid var(--ct-rule);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* A row of figures across the top of a slide, for the numbers a reader will be
+   asked to hold for the next five minutes. */
+.s-kpi {
+  display: flex;
+  gap: var(--ct-space-8);
+  padding: var(--ct-space-4) 0;
+  border-top: 1px solid var(--ct-rule);
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.s-kpi__item { flex: 1; min-width: 0; }
+
+/* Hairlines between the figures, the way a metric rail separates its cells. */
+.s-kpi__item + .s-kpi__item {
+  border-left: 1px solid var(--ct-rule);
+  padding-left: var(--ct-space-8);
+}
+
+/* The band as a field: a quiet grey ground instead of a pair of rules, so
+   the figures sit in a zone rather than floating on the page. */
+.s-kpi--field {
+  padding: var(--ct-space-6);
+  border-top: 0;
+  border-bottom: 0;
+  background: var(--ct-well);
+}
+
+/* Five figures across one band. 36px instead of 48, because five 48px
+   values do not fit the measure and a wrapped figure is worse than a
+   smaller one. */
+.s-kpi--dense .s-kpi__value {
+  font-size: var(--ct-text-2xl);
+  line-height: var(--ct-leading-10);
+}
+
+/* 48px over an 11px grey caption. The spread between a figure and its label
+   is where a page's visual scale comes from; at 28px these read as body text
+   that happened to be numbers. */
+.s-kpi__value {
+  font-size: var(--ct-text-3xl);
+  font-weight: var(--ct-weight-light);
+  line-height: var(--ct-leading-12);
+  letter-spacing: var(--ct-tracking-tight);
+  color: var(--ct-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-kpi__value--mark { color: var(--ct-mark); }
+
+.s-kpi__label {
+  padding-top: var(--ct-space-1);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* A finding, bounded by rules. The default form for a page already carrying
+   a field. */
+.s-finding {
+  padding: var(--ct-space-4) 0;
+  /* Booktabs boundary rule: the heaviest division a page draws. */
+  border-top: 1px solid var(--ct-rule-strong);
+  border-bottom: 1px solid var(--ct-rule-strong);
+}
+
+.s-finding__label {
+  font-size: var(--ct-text-xs);
+  color: var(--ct-mark);
+}
+
+.s-finding__body {
+  padding-top: var(--ct-space-2);
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text-strong);
+}
+
+/* The finding as a field. This was an ink ground with knockout type until
+   2026-08-26, when John read the deck end to end: "those black boxes at the
+   bottom that have verdict, that's just really heavy on a black and white
+   slide." He is right, and the reason is that the page has no other filled
+   surface. On a deck built from rules and one accent, a solid black slab is
+   not emphasis, it is a different design arriving on the last inch of the
+   page.
+
+   The field survives; the weight does not. Quiet grey ground, a slate edge on
+   the leading side, the label in slate and the body in ink. It still zones
+   the foot of the page and still reads as the loudest thing on it, without
+   inverting a sixth of the slide. */
+.s-finding--ink {
+  margin-top: var(--ct-space-4);
+  padding: var(--ct-space-4) var(--ct-space-6);
+  border-top: 0;
+  border-bottom: 0;
+  border-left: 3px solid var(--ct-mark);
+  background: var(--ct-well);
+}
+
+.s-finding--ink .s-finding__label {
+  color: var(--ct-mark);
+}
+
+.s-finding--ink .s-finding__body {
+  color: var(--ct-text-strong);
+}
+
+/* Tiles: a grid of blocks, each opened by a hairline rule, carrying a glyph,
+   a term and a body. The alternative to setting one more ruled table, for the
+   pages where the content is a set of kinds rather than a list of records. */
+.s-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  column-gap: var(--ct-space-8);
+  row-gap: var(--ct-space-6);
+  height: 100%;
+}
+
+/* Rows hug their content and the spare height sits between them, for the
+   pages where a foot element follows the grid and the space should not pool
+   above it. */
+.s-tiles--spread {
+  grid-auto-rows: auto;
+  align-content: space-between;
+}
+
+/* Rows hug their content and stack from the top, for the pages where the
+   tiles are dense enough to carry the page without being stretched. */
+.s-tiles--flow {
+  grid-auto-rows: auto;
+  align-content: start;
+}
+
+.s-tile {
+  border-top: 1px solid var(--ct-rule);
+  padding-top: var(--ct-space-4);
+  min-width: 0;
+}
+
+.s-tile__term {
+  padding-top: var(--ct-space-2);
+  font-size: var(--ct-text-md);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-7);
+  color: var(--ct-text-strong);
+}
+
+.s-tile__body {
+  padding-top: var(--ct-space-1);
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text);
+}
+
+/* A photograph opening a tile: an identifier, cropped to a band and set in
+   grayscale so it stays inside the monochrome system. */
+.s-tile__photo {
+  display: block;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.s-tile__photo + .s-tile__term {
+  padding-top: var(--ct-space-3);
+}
+
+/* A tile that opens with the client's question instead of a glyph and term.
+   The question is the hero of its tile, so it sets at 22px light. Roman, not
+   italic: the Literata italic reads cartoonish at display sizes (John,
+   2026-08-25) and the family's italic axis is retired across the system. */
+.s-tile__quote {
+  font-size: var(--ct-text-lg);
+  font-weight: var(--ct-weight-light);
+  line-height: var(--ct-leading-8);
+  letter-spacing: var(--ct-tracking-snug);
+  color: var(--ct-text-strong);
+}
+
+.s-tile__quote + .s-tile__body {
+  padding-top: var(--ct-space-3);
+}
+
+/* A dense list where the term is short and the body carries the weight. */
+.s-dense { border-top: 1px solid var(--ct-rule); }
+
+/* A dense list set directly under an exhibit head, whose ink rule already
+   opens it: a second rule of its own would double the line, and the first
+   row takes the same 12px clearance the head gives a paragraph. */
+.s-dense--under { border-top: 0; }
+
+.s-dense--under .s-dense__row:first-child {
+  padding-top: var(--ct-space-3);
+}
+
+.s-dense__row {
+  display: flex;
+  gap: var(--ct-space-4);
+  padding: var(--ct-space-2) 0;
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+/* The one marked row, the same treatment the text matrix uses: the term takes
+   the accent and the body comes forward in ink. Slate lands on the row's name
+   and nowhere else, so the emphasis reads as "this row" without spending the
+   page's accent five times over. */
+.s-dense__row--mark .s-dense__term { color: var(--ct-mark); }
+.s-dense__row--mark .s-dense__body { color: var(--ct-text-strong); }
+
+.s-dense__num {
+  flex-shrink: 0;
+  width: 20px;
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text-muted);
+}
+
+.s-dense__term {
+  flex-shrink: 0;
+  width: 180px;
+  font-size: var(--ct-text-sm);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text-strong);
+}
+
+.s-dense__body {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text);
+}
+
+/* The slide range a contents row points at. */
+.s-dense__pp {
+  flex-shrink: 0;
+  width: 48px;
+  text-align: right;
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The result figure on a case row. 22px light against the 13px row it closes,
+   because the figure is what the row exists to deliver. It was 28px until
+   John's 2026-08-25 review called the column too loud for a supporting
+   element; one step down keeps the scale spread without shouting. */
+.s-dense__fig {
+  flex-shrink: 0;
+  width: 120px;
+  text-align: right;
+  font-size: var(--ct-text-lg);
+  font-weight: var(--ct-weight-light);
+  line-height: var(--ct-leading-8);
+  letter-spacing: var(--ct-tracking-snug);
+  color: var(--ct-text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-dense__fig--mark { color: var(--ct-mark); font-weight: var(--ct-weight-medium); }
+
+/* Annotation row -------------------------------------------------------------
+
+   A full width exhibit leaves no column for the commentary that reads it, and
+   the reference deliverable never leaves a chart unread. This is that
+   commentary laid across the foot of the exhibit instead of beside it: two or
+   three short blocks, a bold lead and a sentence each. It is where the word
+   count on a wide slide comes from. */
+.s-annot {
+  display: flex;
+  gap: var(--ct-space-8);
+  padding-top: var(--ct-space-3);
+  /* Clearance under the last line, because something almost always follows:
+     the finding band's top rule, the footnote rule, the source line. Without
+     it the strip's last line and the next rule sit 2px apart and the page
+     reads as cramped even though nothing collides (John, 2026-08-26: a rule
+     needs breathing room on both sides, everywhere in the deck). */
+  padding-bottom: var(--ct-space-3);
+  border-top: 1px solid var(--ct-rule);
+}
+
+/* No opening rule, for a strip that follows something which already closed on
+   one. A booktabs table's bottom rule and the strip's top rule land 19px apart
+   with nothing between them, which reads as a mistake in a system whose only
+   structure is rules. */
+.s-annot--bare {
+  border-top: 0;
+  padding-top: var(--ct-space-4);
+}
+
+.s-annot__item { flex: 1; min-width: 0; }
+
+/* The annotation strip as a field, same grey ground as the KPI band. */
+.s-annot--field {
+  border-top: 0;
+  padding: var(--ct-space-4) var(--ct-space-6);
+  background: var(--ct-well);
+}
+
+.s-annot__lead {
+  font-size: var(--ct-text-sm);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text-strong);
+}
+
+.s-annot__body {
+  padding-top: var(--ct-space-1);
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text);
+}
+
+/* Numbered footnotes, above the source line. Every analytical choice a sceptic
+   would question gets one: what was excluded, how a cohort was defined, which
+   year is the base. */
+.s-foot {
+  padding-top: var(--ct-space-2);
+  /* The source line below draws its own top rule, and the footnote used to end
+     flush against it. */
+  padding-bottom: var(--ct-space-2);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* Panels ----------------------------------------------------------------------
+
+   Groups across the page instead of rows down it. Added 2026-08-26 to give the
+   deck a form between "one wide chart" and "another ruled table": a set of two
+   to four kinds, each with a heading, a figure and its statements.
+
+   The head rule is the only structure. A panel does not get a border box or a
+   tinted ground, because a page with three boxed panels stops being a working
+   page and starts being a slide template; the rule over each head is enough to
+   say where one group ends and the next begins. The marked panel takes a slate
+   rule and a slate head, which spends the page's one accent on the group that
+   carries the finding. */
+.s-panels {
+  display: grid;
+  grid-template-columns: repeat(var(--panels, 3), 1fr);
+  gap: var(--ct-space-8);
+  align-items: start;
+}
+
+.s-panels--lead { gap: var(--ct-space-12); }
+
+.s-panel__head {
+  padding-bottom: var(--ct-space-2);
+  /* Booktabs boundary rule: the heaviest division a page draws. */
+  border-top: 2px solid var(--ct-rule-strong);
+  padding-top: var(--ct-space-3);
+}
+
+.s-panels--lead .s-panel__head { border-top-width: 3px; }
+
+.s-panel--mark .s-panel__head { border-top-color: var(--ct-mark); }
+
+.s-panel__term {
+  font-size: var(--ct-text-base);
+  font-weight: var(--ct-weight-medium);
+  line-height: var(--ct-leading-6);
+  color: var(--ct-text-strong);
+}
+
+.s-panel--mark .s-panel__term { color: var(--ct-mark); }
+
+.s-panel__meta {
+  padding-top: var(--ct-space-1);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+.s-panel__list { list-style: none; }
+
+.s-panel__item {
+  display: flex;
+  gap: var(--ct-space-2);
+  padding-top: var(--ct-space-3);
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text);
+}
+
+.s-panel__num {
+  flex-shrink: 0;
+  width: 14px;
+  color: var(--ct-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-panel__text { min-width: 0; }
+
+.s-panel__note {
+  margin-top: var(--ct-space-4);
+  padding-top: var(--ct-space-3);
+  /* A division that recedes and is not held to a floor. */
+  border-top: 1px solid var(--ct-rule);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+/* The text matrix ---------------------------------------------------------
+
+   For tables whose cells are sentences rather than figures, which is the table
+   form real decks actually use. Table.astro right-aligns fixed value lanes,
+   correct for numbers and wrong for prose; this is the same booktabs discipline
+   on a grid whose columns each page sets for itself with --cols.
+
+   One deliberate departure from Table.astro: this ledger DOES rule between
+   rows. Booktabs bans that, and the ban is right for a numeric table, where
+   every row is one line and the eye tracks a value lane down the column. It
+   is wrong here. A text matrix's rows run two to five wrapped lines each, and
+   with no rule between them the reader cannot tell where one row's third line
+   ends and the next row's first begins. The 208-slide corpus census agrees:
+   real text matrices carry "dotted or hairline row rules", while the numeric
+   tables in the same decks carry none. The rule is drawn at the standard
+   rule weight, grey-30, so it separates without building a grid.
+
+   Local to this deck; promoted to deck.css only if a second deck wants it. */
+.s-matrix {
+  /* Booktabs boundary rule: the heaviest division a page draws. */
+  border-top: 1px solid var(--ct-rule-strong);
+  border-bottom: 1px solid var(--ct-rule-strong);
+}
+
+/* Set directly under an exhibit head, whose ink rule already opens it. */
+.s-matrix--under {
+  border-top: 0;
+}
+
+.s-matrix__row {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: var(--ct-space-6);
+  /* Was spacing-2 with the leftover height distributed into the rows. That
+     distribution is gone (see --fill below); the rhythm a text matrix wants
+     is built into the row instead, once, at a size that does not change
+     with how much room the page happens to have. */
+  padding-block: var(--ct-space-3);
+  /* A division that recedes and is not held to a floor. */
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.s-matrix__row:last-child {
+  border-bottom: 0;
+}
+
+.s-matrix__row--head {
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.s-matrix__row--head .s-matrix__cell {
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-muted);
+}
+
+.s-matrix__cell {
+  min-width: 0;
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-5);
+  color: var(--ct-text);
+}
+
+.s-matrix__cell--term {
+  font-weight: var(--ct-weight-medium);
+  color: var(--ct-text-strong);
+}
+
+/* Numeric cells inside a text ledger: right-aligned tabular figures. */
+.s-matrix__cell--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The one marked row.
+   Slate lands on the row's own name and nowhere else. Painting every cell of
+   a marked row in the accent put three to six slate elements on a page whose
+   budget is one, and it made the emphasis mean "this row" rather than "this
+   value" — which is the whole distinction the budget exists to enforce. The
+   remaining cells come forward in ink instead, so the row still reads as the
+   marked one at a glance. */
+.s-matrix__row--mark .s-matrix__cell {
+  color: var(--ct-text-strong);
+}
+
+.s-matrix__row--mark .s-matrix__cell--term {
+  font-weight: var(--ct-weight-semibold);
+  color: var(--ct-mark);
+}
+
+/* The appendix size: one step down again, for reference boards whose job is
+   to be complete rather than read at arm's length. */
+.s-matrix--xs .s-matrix__cell {
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+}
+
+/* A column that hands its spare height to the ledger: the same equal-band
+   fill as s-dense--fill, so a table that is the page's content does not
+   leave the lower third of its zone abandoned. */
+.s-col {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* --fill used to hand every spare pixel in the zone to the rows, equally.
+   Measured on the finished deck that put 33 of 34 ledgers between 43px and
+   163px of empty space inside each row: a two-row table on slide 25 was
+   163px taller per row than its own text. John, reading it: "the table's
+   just stretched way out to fill the space ... there's really no need for
+   the table to be taking up that much room."
+
+   A table is now sized by its content, full stop. The class survives only to
+   say "this ledger is the page's content, start it at the top of the zone",
+   because the leftover belongs to the page, not to the rows. Where that
+   leaves a page short, the answer is a different exhibit form or more
+   content, and node_modules/research-kit/scripts/slidecheck.mjs fails the build
+   until one of those happens rather than letting a table absorb the gap. */
+.s-matrix--fill {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+/* A split that spends the full height of its zone, so a fill ledger inside
+   it has a height to fill and a side field runs the depth of the page. */
+.s-split--fill {
+  height: 100%;
+}
+
+/* Level tint ------------------------------------------------------------------
+
+   The census entry that had no implementation: "many items on many qualitative
+   dimensions -> text matrix, tinted by level". An ordinal column repeating one
+   of three or four words down the page ("Moderate / Narrow / Narrow", "Stable /
+   Eroding / Eroding") is a scale written out in prose, and a reader has to
+   re-read every cell to see the pattern that a tint shows at a glance.
+
+   Four steps and no more, because past four they stop separating at slide size.
+   The tint carries the level and the word stays in the cell: a tint alone would
+   need a legend, which is the thing an exhibit head should not have to carry.
+   Slate is not one of the steps. The accent marks one thing on a page, and a
+   whole column of it would spend the budget on a scale rather than a finding. */
+/* grey-10 up, not grey-05 up: the first version started one step too light
+   and lv1 was indistinguishable from the page, which turns a four-step scale
+   into a three-step one. */
+/* Raw on purpose: --ct-ex-level-1 resolves to grey-05, which measures 0.0152
+   in OKLab lightness from the page, below the contract's 0.03 floor for a
+   recessive mark -- the same regression the comment above already found by
+   eye. The ramp cannot move up to clear the floor either: grey-10 to
+   grey-20 measures 0.0271, still below the 0.03 floor for a separable scale
+   step. No four-step ordinal ramp in this palette is both perceptible from
+   the page and separable within the grey-40 cap dark body text requires, so
+   this one site stays a raw grey-10 reference rather than a contract role. */
+/* An ordinal tint level, named for its rank rather than its value. */
+.s-matrix__cell--lv1 { background: var(--deck-ordinal-lv1); }
+.s-matrix__cell--lv2 { background: var(--ct-ex-level-2); }
+.s-matrix__cell--lv3 { background: var(--ct-ex-level-3); }
+.s-matrix__cell--lv4 { background: var(--ct-ex-level-4); }
+
+/* A tinted cell is a block rather than a line of text. It fills the row's
+   content box, which grid does by default, and centres its word inside that.
+   It does NOT reach back over the row's own padding: pulling it out with a
+   negative margin made the last row's tints cross the table's closing rule. */
+.s-matrix__cell--lv1,
+.s-matrix__cell--lv2,
+.s-matrix__cell--lv3,
+.s-matrix__cell--lv4 {
+  padding: var(--ct-space-2) var(--ct-space-3);
+  align-content: center;
+}
+
+/* Ordinal columns are narrow and their words are short, so they centre. */
+.s-matrix__cell--ord {
+  text-align: center;
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  color: var(--ct-text-strong);
+}
