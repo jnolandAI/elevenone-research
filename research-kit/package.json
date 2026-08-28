@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
-  "description": "Renders research pieces. Holds no brand values: every colour, size and weight is named through the token contract and supplied by a consuming site's adapter.",
+  "description": "Renders research pieces. Holds no brand colour: every colour is named through the token contract and supplied by a consuming site's adapter. See README.md for what else a consuming site must supply.",
   "exports": {
     "./package.json": "./package.json",
     "./components/*.astro": "./components/*.astro",

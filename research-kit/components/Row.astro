@@ -62,7 +62,9 @@ const { num, label, note, space = 'none', id } = Astro.props;
 
   .row__margin {
     /* Host chrome, not contract: page geometry on a document row. The
-       contract does not declare page geometry at all. */
+       contract does not declare page geometry at all. A consuming site must
+       define --container-margin and --container-gutter itself; Eleven One
+       does not define them today. See README.md. */
     width: var(--container-margin);
     flex-shrink: 0;
     padding-right: var(--ct-space-6);
