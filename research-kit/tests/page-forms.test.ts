@@ -61,13 +61,17 @@ describe('Page', () => {
     expect(closeSlotAt).toBeLessThan(footAt);
   });
 
-  it('renders a lead slot between the title stack and the body zone, for the s-kpi band that precedes it', () => {
-    const subOrTitleAt = Math.max(src.indexOf('{sub'), src.indexOf('s-pad-t--sm'));
+  it('renders a lead slot between the title and the body zone, for the s-kpi band that precedes it', () => {
+    const titleAt = src.indexOf('s-pad-t--sm');
     const leadSlotAt = src.indexOf('<slot name="lead"');
     const bodyDivAt = src.search(/<div class:list=\{[^}]*\}>/);
     expect(leadSlotAt, 'no named lead slot found').toBeGreaterThan(-1);
-    expect(leadSlotAt).toBeGreaterThan(subOrTitleAt);
+    expect(leadSlotAt).toBeGreaterThan(titleAt);
     expect(leadSlotAt).toBeLessThan(bodyDivAt);
+  });
+
+  it('carries no sub prop: the 13 s-sub elements in the corpus are body content nested inside charts and columns, not a skeleton layer, and zero of them follow a title', () => {
+    expect(src).not.toMatch(/\bsub\b/);
   });
 
   it('carries sourcePad, the one inline style any s-source takes anywhere in the corpus, as a boolean rather than a string', () => {

@@ -28,8 +28,6 @@ interface Props {
   /** Section label above the title. */
   kicker?: string;
   title: string;
-  /** Restatement under the title. */
-  sub?: string;
   /** Source or attribution line. Written after the foot, not before it. */
   source?: string;
   /** Note below the body/close zone, above the source. */
@@ -49,7 +47,6 @@ interface Props {
 const {
   kicker,
   title,
-  sub,
   source,
   foot,
   col = true,
@@ -63,7 +60,6 @@ const bodyClass = ['s-grow', padLg ? 's-pad-t--lg' : 's-pad-t', { 's-col': col }
 <div class="s-stack" {...rest}>
   {kicker && <p class="s-kicker">{kicker}</p>}
   <h2 class:list={['s-title', { 's-pad-t--sm': Boolean(kicker) }]}>{title}</h2>
-  {sub && <p class="s-sub">{sub}</p>}
   <slot name="lead" />
   <div class:list={bodyClass}>
     <slot />
