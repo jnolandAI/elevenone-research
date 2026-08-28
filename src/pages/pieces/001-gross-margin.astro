@@ -188,10 +188,7 @@ const loadPath = [
 
   {/* 02 The question */}
   <Slide n={2}>
-    <div class="s-stack">
-      <p class="s-kicker">The question</p>
-      <h2 class="s-title s-pad-t--sm">Every diligence process anchors gross margin to a peer median</h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="The question" title="Every diligence process anchors gross margin to a peer median" col={false} source={` ${universe.source}, retrieved ${universe.retrieved} `} sourcePad>
         <div class="s-two-up">
           <div>
             <div class="s-ex__head s-ex__head--bare">
@@ -232,7 +229,8 @@ const loadPath = [
             </div>
           </div>
         </div>
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">What we found</p>
         <p class="s-implication__body">
@@ -240,20 +238,13 @@ const loadPath = [
           the middle carries almost no information on its own.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        {universe.source}, retrieved {universe.retrieved}
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 03 The universe */}
   <Slide n={3}>
-    <div class="s-stack">
-      <p class="s-kicker">The evidence base</p>
-      <h2 class="s-title s-pad-t--sm">
-        {universe.kept.toLocaleString()} registrants, one public source, and no filter of any kind
-      </h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="The evidence base" title={` ${universe.kept.toLocaleString()} registrants, one public source, and no filter of any kind `} col={false} source={`${universe.source}, retrieved ${universe.retrieved}`}>
         <div class="s-kpi">
           <div class="s-kpi__item">
             <p class="s-kpi__value s-kpi__value--mark">{universe.kept.toLocaleString()}</p>
@@ -279,9 +270,7 @@ const loadPath = [
             from the published dataset.
           </p>
         </div>
-      </div>
-      <p class="s-source">{universe.source}, retrieved {universe.retrieved}</p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 04 Opener */}
@@ -364,11 +353,7 @@ const loadPath = [
 
   {/* 06 The middle */}
   <Slide n={6} section="01" sections={SECTIONS}>
-    <div class="s-stack">
-      <h2 class="s-title">
-        Eight in ten fall inside a band {one(widths.p10p90, 0)} points wide
-      </h2>
-      <div class="s-grow s-pad-t">
+    <Page title={` Eight in ten fall inside a band ${one(widths.p10p90, 0)} points wide `} col={false} source={` Percentiles exact from ${universe.kept.toLocaleString()} filers. The share inside the ten-point band is interpolated and good to about a point. `} sourcePad>
         <div class="s-ex__head">
           <p class="s-ex__title">Exhibit 2&ensp;Three nested readings of the same axis</p>
           <p class="s-label">{universe.kept.toLocaleString()} filers</p>
@@ -387,7 +372,8 @@ const loadPath = [
             alt={`Three nested bands on a gross margin axis. The tenth to ninetieth percentile spans ${one(widths.p10p90)} points, the interquartile range ${one(widths.iqr)} points, and a ten-point band centred on the median holds only ${one(widths.withinFive)} per cent of the universe.`}
           />
         </div>
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">Why it matters</p>
         <p class="s-implication__body">
@@ -395,23 +381,16 @@ const loadPath = [
           company in six. A target fifteen points off this median is unremarkable.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        Percentiles exact from {universe.kept.toLocaleString()} filers. The share inside the
-        ten-point band is interpolated and good to about a point.
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 07 The second population */}
   <Slide n={7} section="01" sections={SECTIONS}>
-    <div class="s-stack">
-      <h2 class="s-title">
-        Two concentrations sit {one(modes.second.margin - modes.main.margin, 0)} points apart, with
-        the median between them
-      </h2>
-      <div class="s-grow s-pad-t--lg">
+    <Page title={` Two concentrations sit ${one(modes.second.margin - modes.main.margin, 0)} points apart, with the median between them `} col={false} padLg source=" Density surface over log revenue and margin, 72 by 96 cells. Gaussian kernels, bandwidth by Silverman&rsquo;s rule. Band counts interpolated from 2.6-point bins. " sourcePad>
         <Panels panels={modePanels} lead />
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">The consequence for a comparison</p>
         <p class="s-implication__body">
@@ -419,11 +398,8 @@ const loadPath = [
           in. Those are different questions with different comparable sets.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        Density surface over log revenue and margin, 72 by 96 cells. Gaussian kernels, bandwidth by
-        Silverman&rsquo;s rule. Band counts interpolated from 2.6-point bins.
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 08 Opener */}
@@ -452,9 +428,7 @@ const loadPath = [
 
   {/* 09 Medians */}
   <Slide n={9} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <h2 class="s-title">Across 6 revenue cohorts the medians do not decline in order</h2>
-      <div class="s-grow s-pad-t">
+    <Page title="Across 6 revenue cohorts the medians do not decline in order" col={false} source={` ${universe.source}. Cohorts are equal-count by revenue, not chosen boundaries. `}>
         <div class="s-split s-split--fill">
           <div class="s-split__main s-split__main--pad s-col">
             <div class="s-ex__head">
@@ -502,20 +476,12 @@ const loadPath = [
             </div>
           </div>
         </div>
-      </div>
-      <p class="s-source">
-        {universe.source}. Cohorts are equal-count by revenue, not chosen boundaries.
-      </p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 10 Dispersion */}
   <Slide n={10} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <h2 class="s-title">
-        Dispersion narrows at every step, from {one(cohorts[0]!.spread)} points to {one(cohorts[5]!.spread)}
-      </h2>
-      <div class="s-grow s-pad-t">
+    <Page title={` Dispersion narrows at every step, from ${one(cohorts[0]!.spread)} points to ${one(cohorts[5]!.spread)} `} col={false} source={` Percentiles exact within each cohort. Cohorts hold ${' '}${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers. `} sourcePad>
         <div class="s-ex__head">
           <p class="s-ex__title">Exhibit 4&ensp;Tenth to ninetieth percentile by revenue cohort</p>
           <p class="s-label">No reversal at any step</p>
@@ -533,7 +499,8 @@ const loadPath = [
             alt={`Tenth to ninetieth percentile bands for six equal-count revenue cohorts. The band width falls from ${one(cohorts[0]!.spread)} points in the smallest cohort to ${one(cohorts[5]!.spread)} in the largest, with no reversal at any step.`}
           />
         </div>
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">What it buys</p>
         <p class="s-implication__body">
@@ -541,19 +508,13 @@ const loadPath = [
           size-matched peer median is nearly as wide as the whole universe.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        Percentiles exact within each cohort. Cohorts hold
-        {' '}{Math.min(...cohorts.map((c) => c.n))} to {Math.max(...cohorts.map((c) => c.n))} filers.
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 11 The load path */}
   <Slide n={11} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <p class="s-kicker">What the conclusion rests on</p>
-      <h2 class="s-title s-pad-t--sm">Three claims carry the conclusion, and each names what breaks it</h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="What the conclusion rests on" title="Three claims carry the conclusion, and each names what breaks it" col={false} source=" Claim D is held off this path and is stated on the next page. " sourcePad>
         <div class="s-list">
           {
             loadPath.map((c) => (
@@ -570,7 +531,8 @@ const loadPath = [
             ))
           }
         </div>
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">The conclusion</p>
         <p class="s-implication__body">
@@ -578,20 +540,13 @@ const loadPath = [
           company.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        Claim D is held off this path and is stated on the next page.
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 12 Off the load path */}
   <Slide n={12} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <p class="s-kicker">Held, and deliberately unused</p>
-      <h2 class="s-title s-pad-t--sm">
-        We think the high-margin concentration is a business-model population
-      </h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="Held, and deliberately unused" title=" We think the high-margin concentration is a business-model population " col={false} source=" Rests on nothing. Testable against SIC codes in the SEC submissions endpoint. " sourcePad>
         <div class="s-measure">
           <p class="s-body">
             Software, licensing, diagnostics: anything where cost of revenue is small by
@@ -626,7 +581,8 @@ const loadPath = [
             </div>
           </div>
         </div>
-      </div>
+      
+    <Fragment slot="close">
       <div class="s-implication">
         <p class="s-implication__label">Why it is on this page and not in the argument</p>
         <p class="s-implication__body">
@@ -634,10 +590,8 @@ const loadPath = [
           a conclusion that quietly rests on something we cannot show you.
         </p>
       </div>
-      <p class="s-source" style="padding-top: var(--ct-space-3)">
-        Rests on nothing. Testable against SIC codes in the SEC submissions endpoint.
-      </p>
-    </div>
+    </Fragment>
+  </Page>
   </Slide>
 
   {/* 13 What follows */}
@@ -673,10 +627,7 @@ const loadPath = [
 
   {/* 14 Method */}
   <Slide n={14} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <p class="s-kicker">Method</p>
-      <h2 class="s-title s-pad-t--sm">One source, one computation, and no paid data</h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="Method" title="One source, one computation, and no paid data" col={false} source={`${universe.source}, retrieved ${universe.retrieved}`}>
         <div class="s-list s-list--fill">
           <div class="s-list__row">
             <p class="s-list__term">Sourcing</p>
@@ -713,19 +664,12 @@ const loadPath = [
             </p>
           </div>
         </div>
-      </div>
-      <p class="s-source">{universe.source}, retrieved {universe.retrieved}</p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 15 Not done */}
   <Slide n={15} section="02" sections={SECTIONS}>
-    <div class="s-stack">
-      <p class="s-kicker">What we did not do</p>
-      <h2 class="s-title s-pad-t--sm">
-        Sector, multimodality and the {universe.excluded} exclusions are all untested
-      </h2>
-      <div class="s-grow s-pad-t">
+    <Page kicker="What we did not do" title={` Sector, multimodality and the ${universe.excluded} exclusions are all untested `} col={false} source="Each is named in the claim it affects rather than only here.">
         <div class="s-list s-list--roomy s-list--fill">
           <div class="s-list__row">
             <p class="s-list__num">01</p>
@@ -756,9 +700,7 @@ const loadPath = [
             </p>
           </div>
         </div>
-      </div>
-      <p class="s-source">Each is named in the claim it affects rather than only here.</p>
-    </div>
+      </Page>
   </Slide>
 
   {/* 16 Source */}

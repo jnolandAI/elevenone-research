@@ -61,6 +61,51 @@ const strip = (s) =>
     .replace(/&ensp;|&nbsp;/g, ' ')
     .trim();
 
+// A prop can be a plain string (title="...") or, when the corpus's own copy
+// carries a computed value, a template literal (title={`... ${expr} ...`}).
+// The word-count and number-share measures below need real text either way,
+// so a template literal's ${expr} runs are collapsed to a single "0": one
+// placeholder word, and one that (correctly) reads as carrying a number,
+// since that is the entire reason the expression is there.
+// A non-greedy [\s\S]*?> stops at the first '>' it sees, and an arrow
+// function inside a prop's expression (cohorts.map((c) => c.n), a plain
+// case once col/padLg/sourcePad and expression props existed together) has
+// one long before the tag's own close. Excluding a '>' immediately preceded
+// by '=' skips every arrow function's own '>' and finds the real one.
+const PAGE_TAG_ALL = /<Page[\s\S]*?(?<!=)>/g;
+const PAGE_TAG_ONE = /<Page[\s\S]*?(?<!=)>/;
+
+function extractProp(tagText, name) {
+  const plain = new RegExp(`\\b${name}="([^"]*)"`).exec(tagText);
+  if (plain) return plain[1];
+  const tmplStart = tagText.indexOf(`${name}={\``);
+  if (tmplStart === -1) return undefined;
+  const bodyStart = tmplStart + `${name}={\``.length;
+  const closeAt = tagText.indexOf('`}', bodyStart);
+  if (closeAt === -1) return undefined;
+  const raw = tagText.slice(bodyStart, closeAt);
+  let out = '';
+  let i = 0;
+  while (i < raw.length) {
+    const brace = raw.indexOf('${', i);
+    if (brace === -1) {
+      out += raw.slice(i);
+      break;
+    }
+    out += raw.slice(i, brace);
+    let depth = 1;
+    let j = brace + 2;
+    while (depth > 0 && j < raw.length) {
+      if (raw[j] === '{') depth++;
+      else if (raw[j] === '}') depth--;
+      j++;
+    }
+    out += '0';
+    i = j;
+  }
+  return out;
+}
+
 const titles = [];
 const exhibits = [];
 const leads = [];
@@ -84,9 +129,9 @@ for (const file of files) {
   // page's title (and, below, its source line) until this matched the tag
   // itself. Non-greedy up to the tag's own closing '>', since Page's props
   // are plain strings that hold no '>' of their own.
-  for (const m of src.matchAll(/<Page[\s\S]*?>/g)) {
-    const t = /\btitle="([^"]*)"/.exec(m[0]);
-    if (t) titles.push({ file, text: strip(t[1]) });
+  for (const m of src.matchAll(PAGE_TAG_ALL)) {
+    const t = extractProp(m[0], 'title');
+    if (t !== undefined) titles.push({ file, text: strip(t) });
   }
   for (const m of src.matchAll(/Exhibit (\d+)&ensp;/g)) {
     exhibits.push({ file, n: Number(m[1]) });
@@ -105,7 +150,8 @@ for (const file of files) {
       continue;
     }
     slides++;
-    const sourcedByPage = /<Page[\s\S]*?\bsource="[^"]/.test(block);
+    const pageTag = PAGE_TAG_ONE.exec(block);
+    const sourcedByPage = pageTag && extractProp(pageTag[0], 'source') !== undefined;
     if (block.includes('class="s-source"') || sourcedByPage) sourced++;
   }
 }

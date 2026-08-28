@@ -13,12 +13,16 @@
  * `col={false}`. Two pages use `s-pad-t--lg` in place of `s-pad-t`. 52
  * pages carry a finding, annotation or implication block between the body
  * and the foot: that block is the `close` slot, named because it closes out
- * the body's argument before the footnote and source line.
+ * the body's argument before the footnote and source line. 17 pages carry
+ * an s-kpi band between the title stack and the body: that is the `lead`
+ * slot. A padding-top on the ct-space-3 token is the only inline style any
+ * s-source line carries anywhere in the corpus, so `sourcePad` is a
+ * boolean, not a second string prop reopening the expression problem.
  *
- * This component adds no element beyond what the default and `close` slots
- * carry. `paint-capture` keys by index path, so one extra wrapper would
- * shift every path after it and turn a 4406-element comparison into noise
- * rather than a finding.
+ * This component adds no element beyond what the default, `lead` and
+ * `close` slots carry. `paint-capture` keys by index path, so one extra
+ * wrapper would shift every path after it and turn a 4406-element
+ * comparison into noise rather than a finding.
  */
 interface Props {
   /** Section label above the title. */
@@ -34,9 +38,25 @@ interface Props {
   col?: boolean;
   /** `s-pad-t--lg` instead of `s-pad-t` on the body zone. 2 of 71. */
   padLg?: boolean;
+  /**
+   * A padding-top on the ct-space-3 token, on the source line. The only
+   * inline style any s-source carries in the corpus, so it is a boolean and
+   * not a string.
+   */
+  sourcePad?: boolean;
 }
 
-const { kicker, title, sub, source, foot, col = true, padLg = false, ...rest } = Astro.props;
+const {
+  kicker,
+  title,
+  sub,
+  source,
+  foot,
+  col = true,
+  padLg = false,
+  sourcePad = false,
+  ...rest
+} = Astro.props;
 const bodyClass = ['s-grow', padLg ? 's-pad-t--lg' : 's-pad-t', { 's-col': col }];
 ---
 
@@ -44,10 +64,11 @@ const bodyClass = ['s-grow', padLg ? 's-pad-t--lg' : 's-pad-t', { 's-col': col }
   {kicker && <p class="s-kicker">{kicker}</p>}
   <h2 class:list={['s-title', { 's-pad-t--sm': Boolean(kicker) }]}>{title}</h2>
   {sub && <p class="s-sub">{sub}</p>}
+  <slot name="lead" />
   <div class:list={bodyClass}>
     <slot />
   </div>
   <slot name="close" />
   {foot && <p class="s-foot">{foot}</p>}
-  {source && <p class="s-source">{source}</p>}
+  {source && <p class="s-source" style={sourcePad ? 'padding-top: var(--ct-space-3)' : undefined}>{source}</p>}
 </div>

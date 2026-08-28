@@ -60,4 +60,31 @@ describe('Page', () => {
     expect(closeSlotAt).toBeGreaterThan(bodyDivEnd);
     expect(closeSlotAt).toBeLessThan(footAt);
   });
+
+  it('renders a lead slot between the title stack and the body zone, for the s-kpi band that precedes it', () => {
+    const subOrTitleAt = Math.max(src.indexOf('{sub'), src.indexOf('s-pad-t--sm'));
+    const leadSlotAt = src.indexOf('<slot name="lead"');
+    const bodyDivAt = src.search(/<div class:list=\{[^}]*\}>/);
+    expect(leadSlotAt, 'no named lead slot found').toBeGreaterThan(-1);
+    expect(leadSlotAt).toBeGreaterThan(subOrTitleAt);
+    expect(leadSlotAt).toBeLessThan(bodyDivAt);
+  });
+
+  it('carries sourcePad, the one inline style any s-source takes anywhere in the corpus, as a boolean rather than a string', () => {
+    // padding-top: var(--ct-space-3) is the only style any s-source line
+    // carries in the corpus, so one boolean covers every case rather than
+    // reopening the string-vs-expression problem for a style attribute.
+    expect(src).toMatch(/sourcePad\s*=\s*false/);
+    expect(src).toMatch(/padding-top:\s*var\(--ct-space-3\)/);
+  });
+
+  it('emits no style attribute at all when sourcePad is unset, not an empty one', () => {
+    // Astro omits a style={undefined} attribute outright; style="" would be
+    // a different (and wrong) result, and the html-diff on the 55 pages
+    // already migrated is the thing that would have caught it.
+    const sourceLineAt = src.indexOf('class="s-source"');
+    expect(sourceLineAt, 'no s-source line found').toBeGreaterThan(-1);
+    const nearby = src.slice(Math.max(0, sourceLineAt - 120), sourceLineAt + 150);
+    expect(nearby).toMatch(/style=\{sourcePad[^}]*undefined[^}]*\}/);
+  });
 });
