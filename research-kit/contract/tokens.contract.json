@@ -28,15 +28,15 @@
   },
   "groups": {
     "surface": {
-      "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field. Rule-firm is the divider held to a contrast floor; rule is a quieter division that is not.",
-      "names": ["--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm"]
+      "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field. Rule-firm is the divider held to a contrast floor; rule is a quieter division that is not. Rule-strong is the heaviest division a page draws, above rule-firm: a booktabs boundary or a threshold that has to read as a statement rather than as scaffolding. Held to the same non-text floor as rule-firm, and expected to sit well above it.",
+      "names": ["--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm", "--ct-rule-strong"]
     },
     "text": {
       "description": "Type colour by job, not by size. Muted is secondary and label type, strong is the emphatic end, on-field is type over a full-bleed divider.",
       "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
     },
     "exhibit": {
-      "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure, held to the same non-text contrast floor as axis. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type.",
+      "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure, held to the same non-text contrast floor as axis. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type. A connector also covers structure drawn at a mark to separate it from the field behind it, which is the same thin-structure job at the same floor.",
       "names": ["--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
     },
     "scales": {
@@ -52,8 +52,8 @@
       "names": ["--ct-mark", "--ct-mark-soft", "--ct-mark-text"]
     },
     "field": {
-      "description": "The full-bleed colour field of a divider or statement page, and the type carried on it.",
-      "names": ["--ct-field", "--ct-field-text"]
+      "description": "The full-bleed colour field of a divider or statement page, and the type carried on it. Field-text-muted is secondary type on a full-bleed field, where field-text is the primary. A cover carries a title and a kicker and the kicker has to recede without falling below the body floor.",
+      "names": ["--ct-field", "--ct-field-text", "--ct-field-text-muted"]
     },
     "separation": {
       "description": "How a panel separates from its ground. Components set both, always. One system supplies a real border and no shadow, the other the reverse, and no component ever branches.",
@@ -96,13 +96,15 @@
       "--ct-text-on-field": ["--ct-field"],
       "--ct-ex-label-muted": ["--ct-ground", "--ct-surface"],
       "--ct-field-text": ["--ct-field"],
+      "--ct-field-text-muted": ["--ct-field"],
       "--ct-mark-text": ["--ct-mark"]
     },
     "graphicalOn": [
       { "token": "--ct-ex-axis", "ground": "--ct-ground" },
       { "token": "--ct-ex-connector", "ground": "--ct-ground" },
       { "token": "--ct-ex-fill", "ground": "--ct-ground" },
-      { "token": "--ct-rule-firm", "ground": "--ct-ground" }
+      { "token": "--ct-rule-firm", "ground": "--ct-ground" },
+      { "token": "--ct-rule-strong", "ground": "--ct-ground" }
     ],
     "perceptibleOn": [
       { "token": "--ct-ex-axis-quiet", "ground": "--ct-ground" }
@@ -131,14 +133,14 @@
       ]
     },
     "colourNames": [
-      "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm",
+      "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm", "--ct-rule-strong",
       "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",
       "--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted",
       "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
       "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
       "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3",
       "--ct-mark", "--ct-mark-soft", "--ct-mark-text",
-      "--ct-field", "--ct-field-text"
+      "--ct-field", "--ct-field-text", "--ct-field-text-muted"
     ]
   }
 }

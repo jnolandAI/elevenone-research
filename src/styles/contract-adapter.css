@@ -18,6 +18,9 @@
   --ct-well: var(--g10);
   --ct-rule: var(--g30);
   --ct-rule-firm: var(--g60);
+  /* Ink, not a grey step: rule-strong is the boundary that has to read as a
+     statement, above rule-firm's 3.37:1. --ink on --w measures 18.59:1. */
+  --ct-rule-strong: var(--ink);
 
   /* ---- Text ----
      The well is --g10 rather than --g20 because --g70 muted type sits in it:
@@ -82,6 +85,10 @@
   /* ---- The field ---- */
   --ct-field: var(--ink);
   --ct-field-text: var(--w);
+  /* --g60 is the lightest grey on the ramp that still clears 4.5:1 on --ink:
+     --g70 measures 3.53:1 and fails, --g60 measures 5.52:1. A cover's kicker
+     recedes from --w without dropping below the body floor. */
+  --ct-field-text-muted: var(--g60);
 
   /* ---- Separation ----
      Elevation, not a border. Both are set; no component branches. */

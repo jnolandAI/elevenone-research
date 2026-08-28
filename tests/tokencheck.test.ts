@@ -16,7 +16,7 @@ const allNames = Object.values(contract.groups).flatMap((g: any) => g.names) as 
    0.3566, at 14.74:1 on the ground. */
 const VALUES: Record<string, string> = {
   '--ct-ground': '#FFFFFF', '--ct-surface': '#FAFAFA', '--ct-well': '#F0F0F0',
-  '--ct-rule': '#DDDDDD', '--ct-rule-firm': '#8A8A8A',
+  '--ct-rule': '#DDDDDD', '--ct-rule-firm': '#8A8A8A', '--ct-rule-strong': '#000000',
   '--ct-text': '#4A4A4A', '--ct-text-muted': '#666666', '--ct-text-strong': '#2B2B2B',
   '--ct-text-on-field': '#FFFFFF',
   '--ct-ex-axis': '#8A8A8A', '--ct-ex-connector': '#8A8A8A', '--ct-ex-fill': '#666666',
@@ -28,7 +28,7 @@ const VALUES: Record<string, string> = {
   '--ct-ex-scale-4': '#666666', '--ct-ex-scale-5': '#333333',
   '--ct-ex-series-1': '#8A8A8A', '--ct-ex-series-2': '#4A4A4A', '--ct-ex-series-3': '#282828',
   '--ct-mark': '#111111', '--ct-mark-soft': '#DDDDDD', '--ct-mark-text': '#FFFFFF',
-  '--ct-field': '#222222', '--ct-field-text': '#FFFFFF',
+  '--ct-field': '#222222', '--ct-field-text': '#FFFFFF', '--ct-field-text-muted': '#999999',
 };
 
 /* Everything not a colour gets a plausible literal so presence passes; the
@@ -65,6 +65,14 @@ describe('tokencheck', () => {
     const r = run();
     expect(r.measures.length).toBeGreaterThan(20);
     for (const m of r.measures) expect(Number.isFinite(m.value), JSON.stringify(m)).toBe(true);
+  });
+
+  it('requires the strong rule and the muted field text', () => {
+    for (const n of ['--ct-rule-strong', '--ct-field-text-muted']) {
+      const r = run({}, [n]);
+      expect(r.ok, `omitting ${n} should fail`).toBe(false);
+      expect(r.findings.some((f: any) => f.check === 'presence' && f.token === n)).toBe(true);
+    }
   });
 
   it('fails a missing name', () => {
