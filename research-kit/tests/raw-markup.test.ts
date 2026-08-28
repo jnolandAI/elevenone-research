@@ -37,80 +37,23 @@ import { join } from 'node:path';
  * the one gap that exact literal did leave: a hand-written instance
  * carrying a third appended class after the compound now still matches.
  *
- * Task 11 (2026-08-28) migrated the three deck pages `EXEMPT` used to carry
- * and removed the map. 30 slides, same constructs, same components — but 10
- * `<div class="s-stack">` roots, 2 `class="s-cover"` roots and 5
- * `class="s-dense"` roots turned out not to fit the components that already
- * exist, for reasons each component's own shape rules out, not for lack of
- * trying. Rather than exempt three whole files again, the three needles
- * below that had this problem are narrowed the same way RailPage's was: to
- * still match every real offence and stop matching the specific shapes these
- * pages carry that the shipped components cannot reproduce.
- *
- * `Page` (`<div class="s-stack">`) requires, within 3000 characters forward,
- * the literal `class="s-grow s-pad-t`, which matches both `s-pad-t` and
- * `s-pad-t--lg` and is the one body-wrapper shape `Page` can ever emit (its
- * `bodyClass` is always `s-grow` plus one of those two, plus optionally
- * `s-col`; never `s-stack`-flavoured, never a third class like `s-two-up`,
- * never split across two sibling divs). Ten roots in this corpus fail that
- * requirement and are excluded correctly: robotics-components.astro's cover
- * slide (kicker then straight into a `s-grow s-stack s-stack--end` hero
- * wrapper, no `<h2>` at all) and its two body slides (`s-grow s-stack
- * s-stack--center`); commercial-diligence.astro's contents page (a bare
- * `s-list` sibling then `s-grow s-stack s-stack--center s-pad-t`) and its
- * sensitivity page (`s-grow s-stack s-pad-t`); firm-overview.astro's practice
- * page, both as its own outer wrapper (`s-grow s-two-up s-pad-t`, a third
- * class `Page` cannot add) and as the two `<div class="s-stack">` column
- * wrappers inside it (plain layout columns reusing the utility class, no
- * `<h2>`, so no `Page` shape to speak of), and its roles page (two sibling
- * divs, `s-pad-t` alone and `s-grow` alone, never combined into one body
- * wrapper). 3000 characters comfortably spans the longest observed lead
- * content (a five-item `Kpi` band) between a title and its body div without
- * reaching into a neighbouring, already-componentised slide, which no longer
- * carries this literal at all. Measured after the fix: 0 offences across
- * Argo, piece 001 and all three of these files, and the ten roots above
- * still fail the lookahead exactly as intended.
- *
- * `Cover` (`class="s-cover"`) requires, within 2000 characters forward, the
- * exact compound `s-cover__title s-cover__title--sm`, which `Cover` always
- * emits regardless of `level` (the prop only switches the tag between `h1`
- * and `h2`), and excludes any block carrying a second, styled
- * `s-cover__body" style=` paragraph, which `Cover` can never emit (`body` is
- * a single optional string with no inline style). Two roots fail: firm-
- * overview.astro's own deck cover, whose `<h1 class="s-cover__title">` was
- * authored without `--sm` and would grow a font-size step (`--ct-text-5xl`
- * to `--ct-text-4xl`, a real, measured paint change, not a text-only one)
- * if forced through `Cover`; and its closing contact slide, which carries a
- * second `s-cover__body` paragraph coloured `var(--color-ground)` that
- * `Cover`'s single `body` prop cannot carry.
- *
- * `Dense` (`class="s-dense"`) excludes the literal compounds
- * `class="s-dense s-pad-t"` and `class="s-dense s-dense--under"` at the root
- * itself, and separately excludes any block carrying `s-dense__fig` within
- * 1500 characters forward, a class `Dense` can never emit (its trailing
- * figure field is `s-dense__pp`, and neither it nor `s-dense__num` carries a
- * per-field `--mark` modifier the way `s-dense__fig--mark` does here). Five
- * roots fail: commercial-diligence.astro's two summary/open blocks (both
- * `s-dense__fig`, one of them `--mark`ed per row); firm-overview.astro's
- * practice ledger (`s-pad-t`, a class `Dense`'s fixed `s-dense`/`--under`/
- * `--fill` class:list never appends) and its cases block (`s-dense__fig`
- * again); and firm-overview.astro's contents block, which is the one
- * exclusion that is not visible in the source text at all — its final row's
- * `num` field is `''`, an empty string, so `Dense`'s
- * `{row.num && <p class="s-dense__num">...}` correctly omits the paragraph
- * for that one row, while the hand-written source renders it unconditionally
- * every time. The `class="s-dense s-dense--under"` exclusion is what
- * `Dense` itself would emit for a genuinely fitting `under` block too, so it
- * is not a safe general rule; it is safe only because no other raw
- * `s-dense--under` instance exists anywhere in the walked corpus right now,
- * which the 0-offence measurement below confirms rather than assumes.
+ * Task 11 (2026-08-28) tried narrowing three more needles (`Page`, `Cover`,
+ * `Dense`) the same way, with multi-thousand-character forward lookaheads
+ * checking for the shapes those three components can and cannot emit. Ruled
+ * back out in fix round 1, the same day: a lookahead encodes what a page
+ * looks like it is allowed to get away with inside the needle itself, where
+ * nobody reads it, rather than in `EXEMPT`, where everyone does. A future
+ * page hand-writing a genuinely migratable skeleton whose body wrapper sits
+ * one character past an arbitrary bound would have passed silently, and a
+ * future `Page` extension would not carry its needle forward with it. See
+ * `EXEMPT` below for where that knowledge actually lives now: RailPage's
+ * needle is the one narrowing that stays, because its compound leading edge
+ * (`s-split s-split--fill`) is not a bound on anything, just the literal
+ * shape `RailPage` itself always emits or never does.
  */
 const ROOTS: [RegExp, string][] = [
-  [/<div class="s-stack(?=[\s"])(?=[\s\S]{0,3000}?class="s-grow s-pad-t)/, 'Page'],
-  [
-    /class="s-cover(?=[\s"])(?=[\s\S]{0,2000}?s-cover__title s-cover__title--sm)(?![\s\S]{0,2000}?s-cover__body" style=)/,
-    'Cover',
-  ],
+  [/<div class="s-stack(?=[\s"])/, 'Page'],
+  [/class="s-cover(?=[\s"])/, 'Cover'],
   [/class="s-split s-split--fill(?=[\s"])/, 'RailPage'],
   [/class="s-finding(?=[\s"])/, 'Finding'],
   [/class="s-implication(?=[\s"])/, 'Implication'],
@@ -118,25 +61,85 @@ const ROOTS: [RegExp, string][] = [
   [/class="s-comment__item(?=[\s"])/, 'Comment'],
   [/class="s-matrix(?=[\s"])/, 'Matrix'],
   [/class="s-kpi(?=[\s"])/, 'Kpi'],
-  [
-    /class="s-dense(?=[\s"])(?!\s+s-pad-t")(?!\s+s-dense--under")(?![\s\S]{0,1500}?s-dense__fig)/,
-    'Dense',
-  ],
+  [/class="s-dense(?=[\s"])/, 'Dense'],
 ];
 
 /**
- * A page that genuinely needs raw markup stays legible as a deliberate choice
- * rather than as an oversight. Each entry carries its reason, and a key is
- * built with the same `join()` call the walk uses, so the lookup matches on
- * every OS regardless of path separator.
+ * A page that genuinely needs raw markup stays legible as a deliberate
+ * choice rather than as an oversight. Keyed by file, then by the component
+ * name `ROOTS` would have named, so a page can be exempt for one construct
+ * and still policed for every other one it carries — the granularity fix
+ * round 1 made. The old shape, `Record<string, string>`, exempted a whole
+ * file the moment any one construct in it did not fit, which is exactly why
+ * narrowing the needle looked like the better option the first time.
+ *
+ * Each key is built with the same `join()` call the walk uses, so the
+ * lookup matches on every OS regardless of path separator.
  *
  * An entry here is a debt with a name on it, not a permanent carve-out: it
- * exists to be migrated and removed, not to stay. Empty again as of Task 11:
- * the three files this map used to name are migrated and walked unexempted,
- * and the shapes that do not fit an existing component are excluded at the
- * needle instead, documented above `ROOTS`.
+ * exists to be migrated and removed, not to stay — the moment a component's
+ * shape covers it, the entry should go, not the needle should narrow to
+ * stop seeing it.
+ *
+ * Task 11 (2026-08-28) migrated 30 slides across three deck pages onto
+ * `Page`, `Cover`, `Finding`, `Implication`, `Annot`, `Comment`, `Kpi` and
+ * `Dense` — no new component. 17 individual roots across these three files,
+ * grouped into 6 file-and-component entries below, turned out not to fit
+ * any shipped component, for a reason each component's own shape rules out:
  */
-const EXEMPT: Record<string, string> = {};
+const repoEnv = process.env.NOLAND_REPO;
+const EXEMPT: Record<string, Partial<Record<string, string>>> = repoEnv
+  ? {
+      [join(repoEnv, 'src/pages/robotics-components.astro')]: {
+        Page:
+          'three s-stack roots. Slide 1 (the cover) has no <h2> at all — kicker then straight ' +
+          'into a s-grow s-stack s-stack--end hero wrapper, an h1.s-display, and a closing ' +
+          'p.s-note; Page always renders an h2.s-title, so there is no title slot for this ' +
+          'shape to occupy. Slides 2 and 3 use s-grow s-stack s-stack--center as the body ' +
+          'wrapper; Page.bodyClass is always s-grow plus s-pad-t or s-pad-t--lg, plus ' +
+          'optionally s-col — never s-stack-flavoured.',
+      },
+      [join(repoEnv, 'src/pages/commercial-diligence.astro')]: {
+        Page:
+          'two s-stack roots. The contents page (slide 3) is a bare s-list sibling then ' +
+          's-grow s-stack s-stack--center s-pad-t; the sensitivity page (slide 10) is ' +
+          's-grow s-stack s-pad-t. Neither is a shape Page.bodyClass (s-grow plus s-pad-t ' +
+          'or s-pad-t--lg, plus optionally s-col) can produce.',
+        Dense:
+          'two s-dense roots. The summary block (slide 2) and the open-items block ' +
+          '(slide 11) both carry an s-dense__fig field per row, slide 2\'s also carrying a ' +
+          'per-row s-dense__fig--mark modifier. Dense\'s trailing figure field is ' +
+          's-dense__pp, unmodified; it has no field or modifier for s-dense__fig.',
+      },
+      [join(repoEnv, 'src/pages/firm-overview.astro')]: {
+        Page:
+          'four s-stack roots. The practice page (slide 2) has an outer wrapper of ' +
+          's-grow s-two-up s-pad-t — a third class Page.bodyClass cannot add — and its own ' +
+          'two inner columns are plain s-stack layout divs with no <h2> at all, reusing the ' +
+          'class as a utility rather than as Page\'s shape. The roles page (slide 4) splits ' +
+          'its body across two sibling divs, s-pad-t alone and s-grow alone, never combined ' +
+          'into the one body wrapper Page emits.',
+        Cover:
+          'two s-cover roots. The deck\'s own cover (slide 1) has <h1 class="s-cover__title"> ' +
+          'authored without --sm; Cover always adds --sm regardless of level (only the tag ' +
+          'changes, h1 vs h2), which would drop the title from --ct-text-5xl to ' +
+          '--ct-text-4xl — a measured font-size change, not a text-only one. The closing ' +
+          'contact slide (slide 16) carries a second, styled ' +
+          's-cover__body paragraph (color: var(--color-ground)) after the first; Cover\'s ' +
+          'body prop is a single optional string with no second slot and no inline style.',
+        Dense:
+          'three s-dense roots. The practice ledger (slide 2) is class="s-dense s-pad-t" — ' +
+          'Dense\'s class:list is always s-dense plus --under/--fill and cannot append a bare ' +
+          'utility class (confirmed: passing class="s-pad-t" through ...rest was tried and ' +
+          'Astro drops it in favour of class:list, verified by build and html-diff, not ' +
+          'assumed). The cases block (slide 11) carries s-dense__fig per row, which Dense has ' +
+          'no field for. The contents block (slide 2) is the one exclusion invisible in ' +
+          'source text: its final row\'s num is the empty string, so Dense\'s ' +
+          '{row.num && <p class="s-dense__num">...} correctly omits that row\'s paragraph, ' +
+          'while the hand-written .map() renders it unconditionally regardless of content.',
+      },
+    }
+  : {};
 
 function walk(dir: string): string[] {
   const out: string[] = [];
@@ -151,9 +154,9 @@ function walk(dir: string): string[] {
 function scan(files: string[]): string[] {
   const offences: string[] = [];
   for (const file of files) {
-    if (EXEMPT[file]) continue;
     const src = readFileSync(file, 'utf8');
     for (const [needle, component] of ROOTS) {
+      if (EXEMPT[file]?.[component]) continue;
       const m = src.match(needle);
       if (m) offences.push(`${file} writes ${m[0]} by hand; use ${component}`);
     }
