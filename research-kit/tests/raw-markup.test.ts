@@ -69,74 +69,109 @@ const ROOTS: [RegExp, string][] = [
  * choice rather than as an oversight. Keyed by file, then by the component
  * name `ROOTS` would have named, so a page can be exempt for one construct
  * and still policed for every other one it carries — the granularity fix
- * round 1 made. The old shape, `Record<string, string>`, exempted a whole
- * file the moment any one construct in it did not fit, which is exactly why
- * narrowing the needle looked like the better option the first time.
+ * round 1 made.
+ *
+ * Fix round 2 closed the gap that granularity alone left open: an exemption
+ * carried only a reason, and `scan()` skipped the needle entirely the moment
+ * one was found, which made it a binary per file-and-component switch rather
+ * than a measured debt. Once a file was exempt for a component, it stayed
+ * unpoliced for that component forever — a fifth, cleanly migratable
+ * instance added next month would have passed silently, and the reason
+ * string would keep describing a count that was no longer true. Each
+ * exemption now pins the exact count of roots it covers alongside the
+ * reason, `scan()` counts every match with a fresh global copy of the
+ * needle (a shared global regex carries `lastIndex` across calls, so one is
+ * built per use rather than reused), and compares: more matches than the
+ * pinned count fails as new debt, fewer fails as a stale exemption whose
+ * count should come down, and exactly the pinned count is the only way to
+ * pass. That turns "unpoliced" into "pinned at exactly the known debt,"
+ * which is what an enumerated exemption should have meant from the start.
  *
  * Each key is built with the same `join()` call the walk uses, so the
  * lookup matches on every OS regardless of path separator.
  *
  * An entry here is a debt with a name on it, not a permanent carve-out: it
  * exists to be migrated and removed, not to stay — the moment a component's
- * shape covers it, the entry should go, not the needle should narrow to
- * stop seeing it.
+ * shape covers an instance, its count should come down, not the needle
+ * narrow to stop seeing it.
  *
  * Task 11 (2026-08-28) migrated 30 slides across three deck pages onto
  * `Page`, `Cover`, `Finding`, `Implication`, `Annot`, `Comment`, `Kpi` and
- * `Dense` — no new component. 17 individual roots across these three files,
+ * `Dense` — no new component. 16 individual roots across these three files,
  * grouped into 6 file-and-component entries below, turned out not to fit
- * any shipped component, for a reason each component's own shape rules out:
+ * any shipped component, for a reason each component's own shape rules out.
+ * The count is 16, not 17: recounted against committed bytes with these
+ * exact `ROOTS` regexes after an earlier round's report claimed 17, and the
+ * six counts below (3, 2+2, 4+2+3) sum to 16.
  */
 const repoEnv = process.env.NOLAND_REPO;
-const EXEMPT: Record<string, Partial<Record<string, string>>> = repoEnv
+const EXEMPT: Record<string, Partial<Record<string, { count: number; reason: string }>>> = repoEnv
   ? {
       [join(repoEnv, 'src/pages/robotics-components.astro')]: {
-        Page:
-          'three s-stack roots. Slide 1 (the cover) has no <h2> at all — kicker then straight ' +
-          'into a s-grow s-stack s-stack--end hero wrapper, an h1.s-display, and a closing ' +
-          'p.s-note; Page always renders an h2.s-title, so there is no title slot for this ' +
-          'shape to occupy. Slides 2 and 3 use s-grow s-stack s-stack--center as the body ' +
-          'wrapper; Page.bodyClass is always s-grow plus s-pad-t or s-pad-t--lg, plus ' +
-          'optionally s-col — never s-stack-flavoured.',
+        Page: {
+          count: 3,
+          reason:
+            'Slide 1 (the cover) has no <h2> at all — kicker then straight into a ' +
+            's-grow s-stack s-stack--end hero wrapper, an h1.s-display, and a closing ' +
+            'p.s-note; Page always renders an h2.s-title, so there is no title slot for this ' +
+            'shape to occupy. Slides 2 and 3 use s-grow s-stack s-stack--center as the body ' +
+            'wrapper; Page.bodyClass is always s-grow plus s-pad-t or s-pad-t--lg, plus ' +
+            'optionally s-col — never s-stack-flavoured.',
+        },
       },
       [join(repoEnv, 'src/pages/commercial-diligence.astro')]: {
-        Page:
-          'two s-stack roots. The contents page (slide 3) is a bare s-list sibling then ' +
-          's-grow s-stack s-stack--center s-pad-t; the sensitivity page (slide 10) is ' +
-          's-grow s-stack s-pad-t. Neither is a shape Page.bodyClass (s-grow plus s-pad-t ' +
-          'or s-pad-t--lg, plus optionally s-col) can produce.',
-        Dense:
-          'two s-dense roots. The summary block (slide 2) and the open-items block ' +
-          '(slide 11) both carry an s-dense__fig field per row, slide 2\'s also carrying a ' +
-          'per-row s-dense__fig--mark modifier. Dense\'s trailing figure field is ' +
-          's-dense__pp, unmodified; it has no field or modifier for s-dense__fig.',
+        Page: {
+          count: 2,
+          reason:
+            'The contents page (slide 3) is a bare s-list sibling then ' +
+            's-grow s-stack s-stack--center s-pad-t; the sensitivity page (slide 10) is ' +
+            's-grow s-stack s-pad-t. Neither is a shape Page.bodyClass (s-grow plus s-pad-t ' +
+            'or s-pad-t--lg, plus optionally s-col) can produce.',
+        },
+        Dense: {
+          count: 2,
+          reason:
+            'The summary block (slide 2) and the open-items block (slide 11) both carry an ' +
+            "s-dense__fig field per row, slide 2's also carrying a per-row " +
+            "s-dense__fig--mark modifier. Dense's trailing figure field is s-dense__pp, " +
+            'unmodified; it has no field or modifier for s-dense__fig.',
+        },
       },
       [join(repoEnv, 'src/pages/firm-overview.astro')]: {
-        Page:
-          'four s-stack roots. The practice page (slide 2) has an outer wrapper of ' +
-          's-grow s-two-up s-pad-t — a third class Page.bodyClass cannot add — and its own ' +
-          'two inner columns are plain s-stack layout divs with no <h2> at all, reusing the ' +
-          'class as a utility rather than as Page\'s shape. The roles page (slide 4) splits ' +
-          'its body across two sibling divs, s-pad-t alone and s-grow alone, never combined ' +
-          'into the one body wrapper Page emits.',
-        Cover:
-          'two s-cover roots. The deck\'s own cover (slide 1) has <h1 class="s-cover__title"> ' +
-          'authored without --sm; Cover always adds --sm regardless of level (only the tag ' +
-          'changes, h1 vs h2), which would drop the title from --ct-text-5xl to ' +
-          '--ct-text-4xl — a measured font-size change, not a text-only one. The closing ' +
-          'contact slide (slide 16) carries a second, styled ' +
-          's-cover__body paragraph (color: var(--color-ground)) after the first; Cover\'s ' +
-          'body prop is a single optional string with no second slot and no inline style.',
-        Dense:
-          'three s-dense roots. The practice ledger (slide 2) is class="s-dense s-pad-t" — ' +
-          'Dense\'s class:list is always s-dense plus --under/--fill and cannot append a bare ' +
-          'utility class (confirmed: passing class="s-pad-t" through ...rest was tried and ' +
-          'Astro drops it in favour of class:list, verified by build and html-diff, not ' +
-          'assumed). The cases block (slide 11) carries s-dense__fig per row, which Dense has ' +
-          'no field for. The contents block (slide 2) is the one exclusion invisible in ' +
-          'source text: its final row\'s num is the empty string, so Dense\'s ' +
-          '{row.num && <p class="s-dense__num">...} correctly omits that row\'s paragraph, ' +
-          'while the hand-written .map() renders it unconditionally regardless of content.',
+        Page: {
+          count: 4,
+          reason:
+            'The practice page (slide 2) has an outer wrapper of s-grow s-two-up s-pad-t — a ' +
+            'third class Page.bodyClass cannot add — and its own two inner columns are plain ' +
+            's-stack layout divs with no <h2> at all, reusing the class as a utility rather ' +
+            "than as Page's shape. The roles page (slide 4) splits its body across two " +
+            'sibling divs, s-pad-t alone and s-grow alone, never combined into the one body ' +
+            'wrapper Page emits.',
+        },
+        Cover: {
+          count: 2,
+          reason:
+            'The deck\'s own cover (slide 1) has <h1 class="s-cover__title"> authored ' +
+            'without --sm; Cover always adds --sm regardless of level (only the tag changes, ' +
+            'h1 vs h2), which would drop the title from --ct-text-5xl to --ct-text-4xl — a ' +
+            'measured font-size change, not a text-only one. The closing contact slide ' +
+            '(slide 16) carries a second, styled s-cover__body paragraph ' +
+            "(color: var(--color-ground)) after the first; Cover's body prop is a single " +
+            'optional string with no second slot and no inline style.',
+        },
+        Dense: {
+          count: 3,
+          reason:
+            'The practice ledger (slide 2) is class="s-dense s-pad-t" — Dense\'s class:list ' +
+            'is always s-dense plus --under/--fill and cannot append a bare utility class ' +
+            '(confirmed: passing class="s-pad-t" through ...rest was tried and Astro drops ' +
+            'it in favour of class:list, verified by build and html-diff, not assumed). The ' +
+            'cases block (slide 11) carries s-dense__fig per row, which Dense has no field ' +
+            "for. The contents block (slide 2) is the one exclusion invisible in source " +
+            "text: its final row's num is the empty string, so Dense's " +
+            '{row.num && <p class="s-dense__num">...} correctly omits that row\'s paragraph, ' +
+            'while the hand-written .map() renders it unconditionally regardless of content.',
+        },
       },
     }
   : {};
@@ -156,9 +191,30 @@ function scan(files: string[]): string[] {
   for (const file of files) {
     const src = readFileSync(file, 'utf8');
     for (const [needle, component] of ROOTS) {
-      if (EXEMPT[file]?.[component]) continue;
-      const m = src.match(needle);
-      if (m) offences.push(`${file} writes ${m[0]} by hand; use ${component}`);
+      // A fresh global copy per use: a shared global regex carries lastIndex
+      // between calls, which would silently under-count every file after
+      // the first.
+      const global = new RegExp(needle.source, 'g');
+      const matches = [...src.matchAll(global)];
+      const exemption = EXEMPT[file]?.[component];
+      if (exemption) {
+        if (matches.length > exemption.count) {
+          offences.push(
+            `${file} carries ${matches.length} ${component} roots but is exempted for ` +
+              `${exemption.count}; ${matches.length - exemption.count} more than the pinned ` +
+              `count is new, unexempted debt`,
+          );
+        } else if (matches.length < exemption.count) {
+          offences.push(
+            `${file} carries ${matches.length} ${component} roots but is exempted for ` +
+              `${exemption.count}; the exemption is stale and the pinned count should come down`,
+          );
+        }
+        continue;
+      }
+      if (matches.length > 0) {
+        offences.push(`${file} writes ${matches[0]![0]} by hand; use ${component}`);
+      }
     }
   }
   return offences;
