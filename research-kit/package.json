@@ -8,6 +8,7 @@
     "./package.json": "./package.json",
     "./components/*.astro": "./components/*.astro",
     "./lib/exhibits": "./lib/exhibits.ts",
+    "./lib/us-states": "./lib/us-states.ts",
     "./contract/*.json": "./contract/*.json",
     "./contract/*.mjs": "./contract/*.mjs"
   },
