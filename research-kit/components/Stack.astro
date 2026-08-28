@@ -1,0 +1,215 @@
+---
+import { stackLayout, type StackColumn } from 'research-kit/lib/exhibits';
+
+/**
+ * A stacked column, for how a total is composed.
+ *
+ * Segment names are set in a rail beneath the exhibit and the values sit inside
+ * their own bands, which is the reference decks' rule: series belong in the
+ * bands, not in a detached legend. Every stack carries its total above it.
+ */
+interface Props {
+  columns: StackColumn[];
+  /** Segment names, baseline upward, matching the value order. */
+  segments: string[];
+  alt: string;
+  height?: number;
+  width?: number;
+  /** Normalise every column to 100%. */
+  share?: boolean;
+  max?: number;
+  digits?: number;
+  axisLabel?: string;
+  /** Draw a connector between the tops of adjacent columns. */
+  connect?: boolean;
+  /**
+   * A growth rail at the right: one reading per segment, aligned to where that
+   * segment sits in the last column. The market-study convention for carrying
+   * a rate beside a level without a second axis.
+   */
+  rail?: { head: string; values: string[] };
+}
+
+const {
+  columns,
+  segments,
+  alt,
+  height = 300,
+  width: w = 1184,
+  share = false,
+  max,
+  digits,
+  axisLabel,
+  connect = false,
+  rail,
+} = Astro.props;
+
+const width = w;
+// The rail takes a lane off the right before anything is allocated, so the
+// columns never run under it.
+const railWidth = rail ? 150 : 0;
+const laid = stackLayout(columns, {
+  width: width - railWidth,
+  height,
+  plotTop: 30,
+  plotBottom: height - 52,
+  share,
+  max,
+  digits,
+});
+
+if (rail && rail.values.length !== columns[0]!.values.length) {
+  throw new Error(`Stack: ${rail.values.length} rail readings for ${columns[0]!.values.length} segments`);
+}
+const last = laid.columns[laid.columns.length - 1]!;
+
+if (segments.length !== columns[0]!.values.length) {
+  throw new Error(`Stack: ${segments.length} segment names for ${columns[0]!.values.length} segments`);
+}
+
+// Baseline up: darkest at the foot, so the stack reads as weight resting on
+// weight rather than as an arbitrary ramp. This is the contract's sequential
+// scale, which is what a composition ramp is: five ordered steps of one
+// magnitude, not five categories.
+const tone = [
+  'var(--ct-ex-scale-5)', 'var(--ct-ex-scale-4)', 'var(--ct-ex-scale-3)',
+  'var(--ct-ex-scale-2)', 'var(--ct-ex-scale-1)',
+];
+// A marked column spends one value, not one group: the same ramp with the mark
+// standing in for its darkest step. It drew a full slate twin before, which was
+// the one place in this kit that spent the hue on a group.
+const markTone = [
+  'var(--ct-mark)', 'var(--ct-ex-scale-4)', 'var(--ct-ex-scale-3)',
+  'var(--ct-ex-scale-2)', 'var(--ct-ex-scale-1)',
+];
+const fill = (mark: boolean | undefined, s: number) => (mark ? markTone[s] : tone[s]);
+// A value set inside the two darkest bands has to knock out; below that it sets
+// in --ct-text-strong and not --ct-text. grey-80 on grey-60 is 2.64:1, under the
+// 4.5:1 body floor, while ink clears the three pale bands at 5.52, 11.21 and
+// 15.58. The mark reads the same way: white on slate-800 is 12.70:1.
+const inside = (s: number) =>
+  s <= 1 ? 'var(--ct-text-on-field)' : 'var(--ct-text-strong)';
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  <line class="base" x1="0" y1={laid.baseline} x2={width} y2={laid.baseline} />
+
+  {
+    connect &&
+      laid.columns.slice(0, -1).map((c, i) => (
+        <line
+          class="join"
+          x1={c.centre + (c.segments[0]!.width) / 2}
+          y1={c.topY}
+          x2={laid.columns[i + 1]!.centre - (c.segments[0]!.width) / 2}
+          y2={laid.columns[i + 1]!.topY}
+        />
+      ))
+  }
+
+  {
+    laid.columns.map((c) => (
+      <>
+        {c.segments.map((s) => (
+          <>
+            <rect x={s.x} y={s.y} width={s.width} height={s.height} fill={fill(c.mark, s.segment)} />
+            {!s.tight && (
+              <text
+                class="inband"
+                x={s.x + s.width / 2}
+                y={s.midY + 4}
+                text-anchor="middle"
+                fill={inside(s.segment)}
+              >
+                {s.valueText}
+              </text>
+            )}
+          </>
+        ))}
+        <text class:list={['total', { 'total--mark': c.mark }]} x={c.centre} y={c.topY - 8} text-anchor="middle">
+          {c.totalText}
+        </text>
+        <text class:list={['cat', { 'cat--mark': c.mark }]} x={c.centre} y={laid.baseline + 18} text-anchor="middle">
+          {c.label}
+        </text>
+      </>
+    ))
+  }
+
+  {
+    rail && (
+      <>
+        <text class="rail-head" x={width - railWidth + 14} y={laid.baseline - (laid.baseline - 30) - 2}>
+          {rail.head}
+        </text>
+        {rail.values.map((v, s) => (
+          <>
+            <circle cx={width - railWidth + 19} cy={last.segments[s]!.midY - 4} r="4" fill={tone[s]} />
+            <text class="rail-val" x={width - railWidth + 30} y={last.segments[s]!.midY}>
+              {v}
+            </text>
+          </>
+        ))}
+      </>
+    )
+  }
+
+  {
+    segments.map((name, s) => (
+      <>
+        <rect x={12 + s * 165} y={height - 22} width="10" height="10" fill={tone[s]} />
+        <text class="key" x={28 + s * 165} y={height - 13}>
+          {name}
+        </text>
+      </>
+    ))
+  }
+  {axisLabel && <text class="unit" x={width} y={height - 13} text-anchor="end">{axisLabel}</text>}
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  /* A connector joining column tops, so it takes the connector's floor. It drew
+     grey-40 at 1.66:1. */
+  .join {
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+  }
+
+  .inband {
+    font-size: var(--ct-text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .total {
+    font-size: var(--ct-text-sm);
+    fill: var(--ct-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .total--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .cat {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .cat--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-medium); }
+
+  .key,
+  .unit,
+  .rail-head {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .rail-val {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+import { rangeLayout, plotBand, calloutLayout, type RangeRow, type CalloutSpec } from 'research-kit/lib/exhibits';
+
+/**
+ * A range and dot plot shows dispersion, which a bar cannot.
+ *
+ * The bar spans the interquartile range in grey-30 with the median dot in
+ * grey-70. The marked row takes a slate-300 bar and a slate-800 dot, so the dot
+ * still reads against its own bar rather than disappearing into it.
+ */
+interface Props {
+  rows: RangeRow[];
+  /** Axis domain, stated rather than derived: a discount axis starts at zero. */
+  min: number;
+  max: number;
+  /** Tick values along the axis. */
+  ticks: number[];
+  axisLabel: string;
+  alt: string;
+  height?: number;
+  /** Drawing width in user units. A page column by default, a slide passes its own. */
+  width?: number;
+  /** An on-chart reading, its leader anchored to an end of the named row's bar. */
+  callout?: CalloutSpec & { edge?: 'low' | 'high' | 'mid' };
+}
+
+const { rows, min, max, ticks, axisLabel, alt, height = 230, width: w = 575, callout } = Astro.props;
+const width = w;
+// The axis sits between the row labels and the right edge. Shares rather than
+// pixels, so the plot still spans the drawing when the drawing changes size.
+const { x1, x2 } = plotBand(width, 0.31, 0.955);
+const bars = rangeLayout(rows, { width, height, plotTop: 24, plotBottom: height - 42, x1, x2, min, max });
+const tickX = (v: number) => x1 + ((v - min) / (max - min)) * (x2 - x1);
+
+let co = null;
+if (callout) {
+  const bar = bars.find((b) => b.label === callout.at);
+  if (!bar) throw new Error(`RangeDot: no row "${callout.at}" for the callout`);
+  const side = callout.side ?? 'right';
+  const edge = callout.edge ?? 'high';
+  const ax = edge === 'high' ? bar.x + bar.width : edge === 'low' ? bar.x : bar.midX;
+  const anchor =
+    side === 'above'
+      ? { x: ax, y: bar.y - 7 }
+      : side === 'below'
+        ? { x: ax, y: bar.y + 7 }
+        : side === 'left'
+          ? { x: ax - 5, y: bar.y }
+          : { x: ax + 5, y: bar.y };
+  co = calloutLayout(anchor, { lines: callout.lines, side }, {
+    width,
+    height,
+    fontSize: 11,
+    lineHeight: 14,
+    reach: callout.reach ?? 24,
+  });
+}
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {ticks.map((t) => <line class="grid" x1={tickX(t)} y1="24" x2={tickX(t)} y2={height - 42} />)}
+  {
+    bars.map((b) => (
+      <>
+        <rect
+          class:list={['span', { 'span--mark': b.mark }]}
+          x={b.x}
+          y={b.y - 3}
+          width={b.width}
+          height="6"
+        />
+        <circle class:list={['mid', { 'mid--mark': b.mark }]} cx={b.midX} cy={b.y} r="4" />
+        <text class:list={['lab', { 'lab--mark': b.mark }]} x={x1 - 8} y={b.y + 4} text-anchor="end">
+          {b.label}
+        </text>
+      </>
+    ))
+  }
+  {ticks.map((t) => <text class="tick" x={tickX(t)} y={height - 24} text-anchor="middle">{t}</text>)}
+  <text class="unit" x={(x1 + x2) / 2} y={height - 8} text-anchor="middle">{axisLabel}</text>
+  {
+    co && (
+      <>
+        <line class="co-lead" x1={co.leader.x1} y1={co.leader.y1} x2={co.leader.x2} y2={co.leader.y2} />
+        {co.texts.map((t) => (
+          <text class="co-text" x={t.x} y={t.y} text-anchor={co.align}>
+            {t.text}
+          </text>
+        ))}
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .grid { stroke: var(--ct-ex-axis-quiet); stroke-width: 1; }
+
+  .span { fill: var(--ct-ex-fill-quiet); }
+  .span--mark { fill: var(--ct-mark-soft); }
+
+  .mid { fill: var(--ct-ex-fill); }
+  .mid--mark { fill: var(--ct-mark); }
+
+  .lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+  }
+
+  .lab--mark {
+    font-weight: var(--ct-weight-semibold);
+    fill: var(--ct-mark);
+  }
+
+  .tick,
+  .unit {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .co-lead {
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+  }
+
+  /* A halo in the ground colour so a gridline or axis behind the reading
+     never runs through the letters. */
+  .co-text {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+</style>

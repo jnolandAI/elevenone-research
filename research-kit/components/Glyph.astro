@@ -1,0 +1,76 @@
+---
+/**
+ * A line glyph on the 24-unit grid: 1.25px ink stroke, square caps, no fill,
+ * matching the hairline weight of the rules it sits among. Decorative in the
+ * narrow sense that the term beside it carries the meaning, so it is hidden
+ * from assistive technology rather than described twice.
+ *
+ * The set is deliberately small: one glyph per kind of engagement. John chose
+ * to keep icons in the system (August 2026) over the no-icons recommendation.
+ */
+interface Props {
+  name: 'diligence' | 'strategy' | 'interim' | 'agentic';
+  /** Rendered size in px. The stroke compensates, so it stays 1.25px drawn. */
+  size?: number;
+}
+
+const { name, size = 24 } = Astro.props;
+const stroke = (1.25 * 24) / size;
+---
+
+<svg
+  class="glyph"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={stroke}
+  stroke-linecap="square"
+  aria-hidden="true"
+>
+  {
+    name === 'diligence' && (
+      <>
+        <circle cx="10.5" cy="10.5" r="6.75" />
+        <path d="M15.4 15.4 L20.5 20.5" />
+      </>
+    )
+  }
+  {
+    name === 'strategy' && (
+      <>
+        <path d="M3.5 19.5 L9.5 13.5 L13.5 16.5 L18.4 8.6" />
+        <path d="M17.75 4.75 h3.5 v3.5 h-3.5 z" />
+      </>
+    )
+  }
+  {
+    name === 'interim' && (
+      <>
+        <path d="M4.5 16.5 A8 8 0 0 1 20.5 16.5" />
+        <path d="M12.5 16.5 L17.1 10.3" />
+        <path d="M3.5 20.5 H21.5" />
+      </>
+    )
+  }
+  {
+    name === 'agentic' && (
+      <>
+        <circle cx="5.5" cy="18.5" r="2.2" />
+        <circle cx="12" cy="5.5" r="2.2" />
+        <circle cx="18.5" cy="18.5" r="2.2" />
+        <path d="M6.5 16.5 L11 7.5" />
+        <path d="M13 7.5 L17.5 16.5" />
+        <path d="M7.7 18.5 L16.3 18.5" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .glyph {
+    display: block;
+    color: var(--ct-text-strong);
+  }
+</style>

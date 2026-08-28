@@ -1,0 +1,138 @@
+---
+import { slopeLayout, plotBand, calloutLayout, type SlopeSeries, type CalloutSpec } from 'research-kit/lib/exhibits';
+
+/**
+ * A slope shows a shift between two periods.
+ *
+ * Lines in grey-50 at 1px, the marked series in slate at 1.75px so it reads
+ * without a second colour. Name and opening value on the left, closing value on
+ * the right. Six series is the ceiling, enforced in slopeLayout: past that the
+ * lines cross and it should have been a table.
+ */
+interface Props {
+  series: SlopeSeries[];
+  from: string;
+  to: string;
+  alt: string;
+  height?: number;
+  /** Drawing width in user units. A page column by default, a slide passes its own. */
+  width?: number;
+  /** An on-chart reading, its leader anchored to the named series' closing dot. */
+  callout?: CalloutSpec;
+}
+
+const { series, from, to, alt, height = 230, width: w = 575, callout } = Astro.props;
+const width = w;
+// The two axis columns, as shares of the drawing. The labels sit outside them
+// on the left and the values on the right.
+const { lines, x1, x2 } = slopeLayout(series, {
+  width,
+  height,
+  plotTop: 30,
+  plotBottom: height - 50,
+  ...plotBand(width, 0.351, 0.787),
+});
+const axisY = height - 23;
+
+let co = null;
+if (callout) {
+  const line = lines.find((l) => l.label === callout.at);
+  if (!line) throw new Error(`Slope: no series "${callout.at}" for the callout`);
+  const side = callout.side ?? 'left';
+  const anchor =
+    side === 'left'
+      ? { x: x2 - 8, y: line.y2 }
+      : side === 'right'
+        ? { x: x2 + 8, y: line.y2 }
+        : side === 'above'
+          ? { x: x2, y: line.y2 - 7 }
+          : { x: x2, y: line.y2 + 7 };
+  co = calloutLayout(anchor, { lines: callout.lines, side }, {
+    width,
+    height,
+    fontSize: 11,
+    lineHeight: 14,
+    reach: callout.reach ?? 24,
+  });
+}
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  <line class="axis" x1={x1} y1="24" x2={x1} y2={height - 42} />
+  <line class="axis" x1={x2} y1="24" x2={x2} y2={height - 42} />
+  {
+    lines.map((l) => (
+      <line class:list={['line', { 'line--mark': l.mark }]} x1={x1} y1={l.y1} x2={x2} y2={l.y2} />
+    ))
+  }
+  {
+    lines.map((l) => (
+      <>
+        <circle class:list={['dot', { 'dot--mark': l.mark }]} cx={x1} cy={l.y1} r={l.mark ? 3.25 : 2.5} />
+        <circle class:list={['dot', { 'dot--mark': l.mark }]} cx={x2} cy={l.y2} r={l.mark ? 3.25 : 2.5} />
+        <text class:list={['lab', { 'lab--mark': l.mark }]} x={x1 - 9} y={l.y1 + 3.5} text-anchor="end">
+          {l.label} {l.from.toFixed(1)}
+        </text>
+        <text class:list={['lab', { 'lab--mark': l.mark }]} x={x2 + 9} y={l.y2 + 3.5}>
+          {l.to.toFixed(1)}
+        </text>
+      </>
+    ))
+  }
+  <text class="per" x={x1} y={axisY} text-anchor="middle">{from}</text>
+  <text class="per" x={x2} y={axisY} text-anchor="middle">{to}</text>
+  {
+    co && (
+      <>
+        <line class="co-lead" x1={co.leader.x1} y1={co.leader.y1} x2={co.leader.x2} y2={co.leader.y2} />
+        {co.texts.map((t) => (
+          <text class="co-text" x={t.x} y={t.y} text-anchor={co.align}>
+            {t.text}
+          </text>
+        ))}
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .axis { stroke: var(--ct-ex-axis-quiet); stroke-width: 1; }
+
+  .line { stroke: var(--ct-ex-fill); stroke-width: 1; }
+  .line--mark { stroke: var(--ct-mark); stroke-width: 1.75; }
+
+  .dot { fill: var(--ct-ex-fill); }
+  .dot--mark { fill: var(--ct-mark); }
+
+  .lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+  }
+
+  .lab--mark {
+    font-weight: var(--ct-weight-semibold);
+    fill: var(--ct-mark);
+  }
+
+  .per {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .co-lead {
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+  }
+
+  /* A halo in the ground colour so a gridline or axis behind the reading
+     never runs through the letters. */
+  .co-text {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+</style>

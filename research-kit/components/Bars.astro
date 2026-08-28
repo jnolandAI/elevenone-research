@@ -1,0 +1,130 @@
+---
+import { barsLayout, plotBand, textWidth, type BarRow } from 'research-kit/lib/exhibits';
+
+/**
+ * Horizontal ranked bars.
+ *
+ * The form once the categories run past about eight or the labels are phrases
+ * rather than years. Baseline only, no gridlines: every bar carries its own
+ * value, which is what makes the axis apparatus unnecessary.
+ */
+interface Props {
+  rows: BarRow[];
+  alt: string;
+  height?: number;
+  width?: number;
+  max?: number;
+  digits?: number;
+  axisLabel?: string;
+  /** A second reading per row, set in its own lane at the right. */
+  railHead?: string;
+  /** Suffix on the value: "%", "x". */
+  suffix?: string;
+}
+
+const {
+  rows,
+  alt,
+  height = 300,
+  width: w = 1184,
+  max,
+  digits = 1,
+  axisLabel,
+  railHead,
+  suffix = '',
+} = Astro.props;
+
+const width = w;
+const hasNote = rows.some((r) => r.note);
+// Labels take the left, the value sits just past each bar, and a note lane
+// runs down the right when the rows carry one. The note lane is measured
+// rather than assumed: sized from the drawing it was given, a 23-character
+// rail head clipped mid-word inside a split column and the failure was
+// invisible to the geometry check, because SVG text that overruns its viewBox
+// is silently cut rather than overflowing anything the checker can see.
+const { x1, x2 } = plotBand(width, 0.26, hasNote ? 0.64 : 0.88);
+const noteX = hasNote ? x2 + 34 : 0;
+if (hasNote) {
+  const widest = Math.max(
+    ...rows.map((r) => textWidth(r.note ?? '', 11)),
+    textWidth(railHead ?? '', 11),
+  );
+  if (noteX + widest > width) {
+    throw new Error(
+      `Bars: the note lane needs ${Math.round(noteX + widest)} units and the drawing is ${width}. ` +
+        'Shorten the notes or the rail head, or give the exhibit more width.',
+    );
+  }
+}
+const plotTop = railHead || axisLabel ? 26 : 8;
+const plotBottom = height - 12;
+const bars = barsLayout(rows, { width, height, plotTop, plotBottom, x1, x2, max, digits });
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {axisLabel && <text class="unit" x={x1} y={14}>{axisLabel}</text>}
+  {hasNote && railHead && <text class="unit" x={noteX} y={14}>{railHead}</text>}
+
+  <line class="base" x1={x1} y1={plotTop} x2={x1} y2={plotBottom} />
+
+  {
+    bars.map((b) => (
+      <>
+        <rect
+          class:list={['bar', { 'bar--mark': b.mark }]}
+          x={b.x}
+          y={b.y}
+          width={b.width}
+          height={b.height}
+        />
+        <text class:list={['lab', { 'lab--mark': b.mark }]} x={x1 - 10} y={b.midY + 4} text-anchor="end">
+          {b.label}
+        </text>
+        <text class:list={['val', { 'val--mark': b.mark }]} x={b.valueX} y={b.midY + 4}>
+          {b.valueText}{suffix}
+        </text>
+        {b.note && (
+          <text class:list={['note', { 'note--mark': b.mark }]} x={noteX} y={b.midY + 4}>
+            {b.note}
+          </text>
+        )}
+      </>
+    ))
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  .bar { fill: var(--ct-ex-fill); }
+  .bar--mark { fill: var(--ct-mark); }
+
+  .lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+  }
+
+  .lab--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .val {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .val--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .note {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .note--mark { fill: var(--ct-mark); }
+
+  .unit {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+</style>

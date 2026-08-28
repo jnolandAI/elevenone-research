@@ -1,0 +1,73 @@
+---
+import { phaseLayout, type Phase } from 'research-kit/lib/exhibits';
+
+/**
+ * A proportional band, for how a fixed total divides.
+ *
+ * Width carries the whole meaning, so the labels sit above their own band and
+ * are never allowed to set it. A label on the last band is pulled back to the
+ * right edge when it would otherwise run past it and be clipped, which is the
+ * one case where the label moves off its band. Grey-40 throughout with exactly
+ * one slate band, which is the phase the exhibit is actually about.
+ */
+interface Props {
+  phases: Phase[];
+  alt: string;
+  /** Drawing width in user units. A page column by default, a slide passes its own. */
+  width?: number;
+}
+
+const { phases, alt, width: w = 1199 } = Astro.props;
+const width = w;
+const height = 104;
+// labelSize and spanSize are --text-sm and --text-xs. The exhibit scales, so
+// they are user units here rather than px, and tokens.test.ts holds them to
+// the values in tokens.css.
+const bands = phaseLayout(phases, { width, gap: 8, labelSize: 13, spanSize: 11 });
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {
+    bands.map((b) => (
+      <>
+        <rect
+          class:list={['band', { 'band--mark': b.mark }]}
+          x={b.x}
+          y="30"
+          width={b.width}
+          height="36"
+        />
+        <text class:list={['name', { 'name--mark': b.mark }]} x={b.labelX} y="20">
+          {b.label}
+        </text>
+        {b.span && (
+          <text class="span" x={b.spanX} y="88">
+            {b.span}
+          </text>
+        )}
+      </>
+    ))
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .band { fill: var(--ct-ex-fill); }
+  .band--mark { fill: var(--ct-mark); }
+
+  .name {
+    font-size: var(--ct-text-sm);
+    fill: var(--ct-text);
+  }
+
+  .name--mark {
+    font-weight: var(--ct-weight-semibold);
+    fill: var(--ct-mark);
+  }
+
+  .span {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+/**
+ * The page's structural unit: a live margin beside a text column, divided by a
+ * hairline that runs the full height of the row.
+ *
+ * Rows stack flush, so the rule reads as one continuous line down the page even
+ * though each row draws its own segment. That is deliberate, and it is why the
+ * margin is a per-row cell rather than one tall column beside everything: a
+ * single column pushes its last child to the foot of the page, which strands a
+ * marginal note away from the thing it annotates.
+ *
+ * An exhibit that should break through the rule is not a Row. It sits between
+ * Rows as a direct child of .page, which is what gives a document page its
+ * visual variety.
+ */
+interface Props {
+  /** Section numeral, set large and light at the top of the margin. */
+  num?: string;
+  /** Short section name, small and grey, under the numeral. */
+  label?: string;
+  /** Marginal note, set right against the rule. */
+  note?: string;
+  /** Space above the row, from the spacing scale. */
+  space?: 'none' | 'section' | 'block';
+  /** Anchor target, for a section the masthead links to. */
+  id?: string;
+}
+
+const { num, label, note, space = 'none', id } = Astro.props;
+---
+
+<div class:list={['row', `row--${space}`]} id={id}>
+  <div class="row__margin">
+    {num && <p class="row__num">{num}</p>}
+    {label && <p class="row__label">{label}</p>}
+    {note && <p class="row__note">{note}</p>}
+    <slot name="margin" />
+  </div>
+  <div class="row__text">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  /* Section space goes on the cells, not on the row. Put it on .row and the
+     gap falls outside the bordered margin cell, which breaks the rule into
+     segments with a 96px hole between each one. The continuous rule is the
+     whole reason this component exists, so the padding has to sit inside the
+     element that draws the border. */
+  .row--section > .row__margin,
+  .row--section > .row__text { padding-top: var(--ct-space-24); }
+
+  .row--block > .row__margin,
+  .row--block > .row__text { padding-top: var(--ct-space-16); }
+
+  .row__margin {
+    /* Host chrome, not contract: page geometry on a document row. The
+       contract does not declare page geometry at all. A consuming site must
+       define --container-margin and --container-gutter itself; Eleven One
+       does not define them today. See README.md. */
+    width: var(--container-margin);
+    flex-shrink: 0;
+    padding-right: var(--ct-space-6);
+    padding-bottom: var(--ct-space-8);
+    border-right: 1px solid var(--ct-rule);
+    text-align: right;
+  }
+
+  .row__text {
+    flex: 1;
+    min-width: 0;
+    /* Host chrome, not contract: page geometry on a document row. The
+       contract does not declare page geometry at all. */
+    padding-left: var(--container-gutter);
+    padding-bottom: var(--ct-space-8);
+  }
+
+  .row__num {
+    font-size: var(--ct-text-2xl);
+    font-weight: var(--ct-weight-light);
+    line-height: var(--ct-leading-9);
+    letter-spacing: var(--ct-tracking-snug);
+    /* grey-50 is 2.22:1 on the ground; at 36px the WCAG large-text floor is
+       3:1 and grey-50 fails that too. ct-text-muted resolves to grey-70,
+       5.26:1, so this repaints from the grey-50 step to the grey-70 step. */
+    color: var(--ct-text-muted);
+  }
+
+  .row__label,
+  .row__note {
+    font-size: var(--ct-text-sm);
+    line-height: var(--ct-leading-5);
+    color: var(--ct-text-muted);
+  }
+
+  .row__label { padding-top: var(--ct-space-3); }
+  .row__note { padding-top: var(--ct-space-6); }
+
+  /* The margin column is the part of this system that does not survive a
+     narrow viewport: at 148px it eats a third of a phone screen and the notes
+     set to four words a line. Below the md breakpoint it stops being a column
+     and becomes a band above the text, and the rule turns from vertical to
+     horizontal so the furniture still reads as furniture. */
+  @media (max-width: 767px) {
+    .row {
+      flex-direction: column;
+    }
+
+    .row__margin {
+      width: 100%;
+      padding-right: 0;
+      padding-bottom: var(--ct-space-3);
+      border-right: 0;
+      border-bottom: 1px solid var(--ct-rule);
+      text-align: left;
+      display: flex;
+      align-items: baseline;
+      gap: var(--ct-space-4);
+      flex-wrap: wrap;
+    }
+
+    .row__num {
+      font-size: var(--ct-text-lg);
+      line-height: var(--ct-leading-8);
+    }
+
+    .row__label,
+    .row__note { padding-top: 0; }
+
+    .row__note { flex-basis: 100%; }
+
+    .row__text {
+      padding-left: 0;
+      padding-top: var(--ct-space-4);
+    }
+  }
+</style>

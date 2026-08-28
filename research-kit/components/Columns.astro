@@ -1,0 +1,226 @@
+---
+import {
+  columnLayout,
+  calloutLayout,
+  textWidth,
+  type ColumnGroup,
+  type CalloutSpec,
+} from 'research-kit/lib/exhibits';
+
+/**
+ * Grouped vertical bars, for a comparison across a handful of categories.
+ *
+ * Encoding: series 1 through 3 from the contract's --ct-ex-series tokens, and
+ * exactly one group in slate. Every bar carries its value, because a reader
+ * who has to measure a bar against an axis has been given work the analyst
+ * should have done.
+ */
+interface Props {
+  groups: ColumnGroup[];
+  /** Series names, set as a rail under the exhibit rather than in a legend. */
+  series?: string[];
+  alt: string;
+  height?: number;
+  /** Drawing width in user units. A page column by default, a slide passes its own. */
+  width?: number;
+  /** Axis top, stated when two exhibits must share a domain. */
+  max?: number;
+  digits?: number;
+  /** Unit caption at the axis foot. */
+  axisLabel?: string;
+  /**
+   * Which series inside the marked group takes the accent. Without it a marked
+   * group renders every one of its bars in slate, which on a three-series
+   * exhibit puts three tints of the accent on the page and spends a budget of
+   * one. Set this whenever the exhibit carries more than one series.
+   */
+  markSeries?: number;
+  callout?: CalloutSpec & { series?: number };
+}
+
+const {
+  groups,
+  series: seriesNames = [],
+  alt,
+  height = 300,
+  width: w = 1184,
+  max,
+  digits,
+  axisLabel,
+  markSeries,
+  callout,
+} = Astro.props;
+const width = w;
+const foot = seriesNames.length > 1 || axisLabel ? 52 : 34;
+const laid = columnLayout(groups, {
+  width,
+  height,
+  plotTop: 26,
+  plotBottom: height - foot,
+  max,
+  digits,
+});
+
+let co = null;
+if (callout) {
+  const g = laid.groups.find((x) => x.label === callout.at);
+  if (!g) throw new Error(`Columns: no group "${callout.at}" for the callout`);
+  const bar = g.bars[callout.series ?? 0]!;
+  const side = callout.side ?? 'above';
+  const anchor =
+    side === 'above'
+      ? { x: g.centre, y: bar.y - 3 }
+      : side === 'below'
+        ? { x: g.centre, y: bar.y + bar.height + 3 }
+        : side === 'left'
+          ? { x: bar.x - 3, y: bar.y + bar.height / 2 }
+          : { x: bar.x + bar.width + 3, y: bar.y + bar.height / 2 };
+  co = calloutLayout(anchor, { lines: callout.lines, side }, {
+    width,
+    height,
+    fontSize: 11,
+    lineHeight: 14,
+    reach: callout.reach ?? 24,
+  });
+}
+
+/* The key is spaced by the width of the names in it rather than on a fixed
+   pitch, because a fixed pitch runs two long series names together. */
+let keyCursor = 12;
+const keys = seriesNames.map((name) => {
+  const x = keyCursor;
+  keyCursor += 16 + textWidth(name, 11) + 26;
+  return { name, x };
+});
+if (keyCursor > width) {
+  throw new Error(
+    `Columns: the series names need ${Math.round(keyCursor)} units and the drawing is ${width}. Shorten them.`,
+  );
+}
+
+// One mapping, called from the bars and from the legend key. Written out twice
+// before this, which is how a key comes to label the wrong bar.
+const series = (s: number) =>
+  s === 0
+    ? 'var(--ct-ex-series-1)'
+    : s === 1
+      ? 'var(--ct-ex-series-2)'
+      : 'var(--ct-ex-series-3)';
+
+// The slate budget is one value, not one group. A marked group accents exactly
+// one bar and leaves its neighbours in series, whether or not markSeries was
+// stated. The unstated case used to give every neighbour --ct-mark-soft, which
+// is slate-300 at 1.65:1: a mark tint doing a mark body's job.
+const fill = (g: (typeof laid.groups)[number], s: number) => {
+  if (!g.mark) return series(s);
+  const accent = markSeries ?? 0;
+  return s === accent ? 'var(--ct-mark)' : series(s);
+};
+
+if (markSeries !== undefined && (markSeries < 0 || markSeries >= (groups[0]?.values.length ?? 0))) {
+  throw new Error(`Columns: markSeries ${markSeries} is outside the ${groups[0]?.values.length} series`);
+}
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  <line class="base" x1="0" y1={laid.baseline} x2={width} y2={laid.baseline} />
+  {
+    laid.groups.map((g) =>
+      g.bars.map((b) => (
+        <>
+          <rect x={b.x} y={b.y} width={b.width} height={b.height} fill={fill(g, b.series)} />
+          <text
+            class:list={[
+              'val',
+              { 'val--mark': g.mark && (markSeries === undefined || b.series === markSeries) },
+            ]}
+            x={b.x + b.width / 2}
+            y={b.labelY}
+            text-anchor="middle"
+          >
+            {b.valueText}
+          </text>
+        </>
+      )),
+    )
+  }
+  {
+    laid.groups.map((g) => (
+      <text class:list={['cat', { 'cat--mark': g.mark }]} x={g.centre} y={laid.baseline + 18} text-anchor="middle">
+        {g.label}
+      </text>
+    ))
+  }
+  {
+    seriesNames.length > 1 && (
+      <>
+        {keys.map((k, s) => (
+          <>
+            <rect
+              x={k.x}
+              y={height - 22}
+              width="10"
+              height="10"
+              fill={series(s)}
+            />
+            <text class="key" x={k.x + 16} y={height - 13}>
+              {k.name}
+            </text>
+          </>
+        ))}
+      </>
+    )
+  }
+  {axisLabel && <text class="unit" x={width} y={height - 13} text-anchor="end">{axisLabel}</text>}
+  {
+    co && (
+      <>
+        <line class="co-lead" x1={co.leader.x1} y1={co.leader.y1} x2={co.leader.x2} y2={co.leader.y2} />
+        {co.texts.map((t) => (
+          <text class="co-text" x={t.x} y={t.y} text-anchor={co.align}>
+            {t.text}
+          </text>
+        ))}
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  .val {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .val--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .cat {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .cat--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-medium); }
+
+  .key,
+  .unit {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  /* grey-60 either way, so this paints identically. A callout leader is a
+     connector: it joins a label to the thing the label is about. */
+  .co-lead { stroke: var(--ct-ex-connector); stroke-width: 1; }
+
+  .co-text {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+</style>

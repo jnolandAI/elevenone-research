@@ -1,0 +1,163 @@
+---
+import { timelineLayout, plotBand, type TimelineEvent } from 'research-kit/lib/exhibits';
+
+/**
+ * Events along a horizontal axis.
+ *
+ * The point of a timeline over a list is that the spacing carries meaning:
+ * four events inside eight months and then nothing for two years is itself the
+ * finding. Labels alternate above and below the spine so a cluster stays
+ * legible, and a shaded band can mark the period the evidence covers.
+ */
+interface Props {
+  events: TimelineEvent[];
+  alt: string;
+  min: number;
+  max: number;
+  /** Axis ticks in the same units as `at`. */
+  ticks: { at: number; label: string }[];
+  height?: number;
+  width?: number;
+  /** A shaded period, for the room-date window or a forecast horizon. */
+  band?: { from: number; to: number; label: string };
+  /** A vertical rule at a decisive moment. */
+  rule?: { at: number; label: string };
+}
+
+const { events, alt, min, max, ticks, height = 240, width: w = 1184, band, rule } = Astro.props;
+
+const width = w;
+const { x1, x2 } = plotBand(width, 0.04, 0.96);
+/* 40 and not 24: the tick labels sit on the baseline at height-6, so a
+   below-spine label reaching the full half-height lands about 7px above them
+   and the two read as one block. */
+const AXIS_ROOM = 40;
+const spineY = Math.round((height - AXIS_ROOM) / 2);
+
+/* Two passes. The first learns how many tiers this set of events actually
+   needs; the second spends the height on them. The label offsets used to be
+   constants, which meant a timeline given 340px of zone drew exactly the same
+   as one given 200px and left the rest of the zone blank — the "looks a little
+   incomplete" John flagged on slide 26. A label block is 27px deep, so the
+   outermost tier has to land 27px inside the half-height and everything else
+   divides what is left. */
+const probe = timelineLayout(events, { width, height, min, max, x1, x2, spineY });
+const tiers = Math.max(...probe.map((n) => n.tier)) / 2;
+const half = spineY;
+const reach = Math.max(18, Math.floor((half - 27 - 10 * tiers) / (tiers + 1)));
+const nodes = timelineLayout(events, {
+  width,
+  height,
+  min,
+  max,
+  x1,
+  x2,
+  spineY,
+  reach,
+  tierStep: reach + 10,
+});
+const px = (v: number) => x1 + ((v - min) / (max - min)) * (x2 - x1);
+const bandHalf = Math.max(46, reach + 14);
+---
+
+<svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
+  {
+    band && (
+      <>
+        <rect
+          class="band"
+          x={px(band.from)}
+          y={spineY - bandHalf}
+          width={px(band.to) - px(band.from)}
+          height={bandHalf * 2}
+        />
+        <text class="band-lab" x={(px(band.from) + px(band.to)) / 2} y={spineY - bandHalf - 6} text-anchor="middle">
+          {band.label}
+        </text>
+      </>
+    )
+  }
+
+  {
+    rule && (
+      <>
+        <line class="rule" x1={px(rule.at)} y1={spineY - bandHalf - 8} x2={px(rule.at)} y2={spineY + bandHalf + 8} />
+        {/* Just under the spine, in the gap before the first below-tier label.
+            It used to sit below the rule's foot, which is exactly where the
+            outermost event labels land. */}
+        <text class="rule-lab" x={px(rule.at) + 6} y={spineY + 16}>
+          {rule.label}
+        </text>
+      </>
+    )
+  }
+
+  <line class="spine" x1={x1} y1={spineY} x2={x2} y2={spineY} />
+
+  {
+    nodes.map((n) => (
+      <>
+        <line class:list={['tick', { 'tick--mark': n.mark }]} x1={n.x} y1={n.tickTop} x2={n.x} y2={n.tickBottom} />
+        {/* A ring around the dot, knocked out of the spine. A plain filled
+            circle on a 1px line reads as a thickening rather than a marker;
+            the ring is what makes an event look like an event. */}
+        <circle class:list={['ring', { 'ring--mark': n.mark }]} cx={n.x} cy={spineY} r="7" />
+        <circle class:list={['node', { 'node--mark': n.mark }]} cx={n.x} cy={spineY} r="3.5" />
+        <text class:list={['lab', { 'lab--mark': n.mark }]} x={n.labelX} y={n.labelY} text-anchor="middle">
+          {n.label}
+        </text>
+        {n.when && (
+          <text class="when" x={n.labelX} y={n.whenY} text-anchor="middle">
+            {n.when}
+          </text>
+        )}
+      </>
+    ))
+  }
+
+  {ticks.map((t) => <text class="axis" x={px(t.at)} y={height - 6} text-anchor="middle">{t.label}</text>)}
+</svg>
+
+<style>
+  .fig { width: 100%; height: auto; }
+
+  /* Same job as a threshold, same weight. */
+  .spine { stroke: var(--ct-rule-strong); stroke-width: 1; }
+
+  .band { fill: var(--ct-well); }
+
+  .rule { stroke: var(--ct-ex-axis); stroke-width: 1; stroke-dasharray: 3 3; }
+
+  .tick { stroke: var(--ct-ex-connector); stroke-width: 1; }
+  .tick--mark { stroke: var(--ct-mark); }
+
+  .ring {
+    fill: var(--ct-ground);
+    /* Same job as Scatter's connector, and it lifts a stroke off 2.22:1. */
+    stroke: var(--ct-ex-connector);
+    stroke-width: 1;
+  }
+
+  .ring--mark { stroke: var(--ct-mark); }
+
+  .node { fill: var(--ct-ex-fill); }
+  .node--mark { fill: var(--ct-mark); }
+
+  .lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+
+  .lab--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  .when,
+  .axis,
+  .band-lab,
+  .rule-lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+</style>
