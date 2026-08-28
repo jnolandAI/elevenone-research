@@ -243,3 +243,18 @@ describe('Matrix', () => {
     expect(src).not.toMatch(/--deck-ordinal/);
   });
 });
+
+describe('Kpi and Dense', () => {
+  it('carry no style block', () => {
+    expect(read('Kpi')).not.toMatch(/<style/);
+    expect(read('Dense')).not.toMatch(/<style/);
+  });
+
+  it('mark the Kpi value and the Dense row, which are different elements', () => {
+    // The mark lands on s-kpi__value and on s-dense__row. Putting it on the
+    // item in one and the row in the other is not an inconsistency to tidy:
+    // it is where deck.css draws it.
+    expect(read('Kpi')).toMatch(/'s-kpi__value--mark'/);
+    expect(read('Dense')).toMatch(/'s-dense__row--mark'/);
+  });
+});

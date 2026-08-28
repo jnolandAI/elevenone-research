@@ -22,6 +22,7 @@ import Spread from 'research-kit/components/Spread.astro';
 import Panels from 'research-kit/components/Panels.astro';
 import Implication from 'research-kit/components/Implication.astro';
 import Comment from 'research-kit/components/Comment.astro';
+import Kpi from 'research-kit/components/Kpi.astro';
 import {
   universe, q, widths, bands, bandDomain, bandsIn, filersIn, tallestBand, modes,
   cohorts, one, money,
@@ -237,24 +238,14 @@ const loadPath = [
   {/* 03 The universe */}
   <Slide n={3}>
     <Page kicker="The evidence base" title={` ${universe.kept.toLocaleString()} registrants, one public source, and no filter of any kind `} col={false} source={`${universe.source}, retrieved ${universe.retrieved}`}>
-        <div class="s-kpi">
-          <div class="s-kpi__item">
-            <p class="s-kpi__value s-kpi__value--mark">{universe.kept.toLocaleString()}</p>
-            <p class="s-kpi__label">Registrants kept</p>
-          </div>
-          <div class="s-kpi__item">
-            <p class="s-kpi__value">{universe.screened.toLocaleString()}</p>
-            <p class="s-kpi__label">Appeared in both frames</p>
-          </div>
-          <div class="s-kpi__item">
-            <p class="s-kpi__value">{universe.excluded}</p>
-            <p class="s-kpi__label">Dropped for a missing or non-positive denominator</p>
-          </div>
-          <div class="s-kpi__item">
-            <p class="s-kpi__value">0</p>
-            <p class="s-kpi__label">Sector, exchange, size or listing filters applied</p>
-          </div>
-        </div>
+        <Kpi
+          items={[
+            { value: universe.kept.toLocaleString(), label: 'Registrants kept', mark: true },
+            { value: universe.screened.toLocaleString(), label: 'Appeared in both frames' },
+            { value: String(universe.excluded), label: 'Dropped for a missing or non-positive denominator' },
+            { value: '0', label: 'Sector, exchange, size or listing filters applied' },
+          ]}
+        />
         <div class="s-pad-t s-measure">
           <p class="s-body">
             Gross margin is gross profit divided by revenue, as reported, with no adjustment or

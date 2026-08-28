@@ -34,7 +34,7 @@ describe("the audit's form census", () => {
    * any substring, including this comment) mask a future regression the way
    * the Distribution incident above did.
    */
-  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage', 'Finding', 'Implication', 'Comment', 'Annot', 'Matrix']);
+  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage', 'Finding', 'Implication', 'Comment', 'Annot', 'Matrix', 'Kpi', 'Dense']);
 
   it('knows every kit component that draws an exhibit', () => {
     const components = readdirSync('research-kit/components')

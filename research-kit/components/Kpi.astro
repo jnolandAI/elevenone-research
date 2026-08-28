@@ -1,0 +1,30 @@
+---
+/**
+ * A row of figures with their labels. 18 in the corpus, 70 items, 18 marked.
+ */
+export interface KpiItem {
+  value: string;
+  label: string;
+  /** The accent. Lands on the value, not the item. */
+  mark?: boolean;
+}
+
+interface Props {
+  items: KpiItem[];
+  dense?: boolean;
+  field?: boolean;
+}
+
+const { items, dense = false, field = false, ...rest } = Astro.props;
+---
+
+<div class:list={['s-kpi', { 's-kpi--field': field, 's-kpi--dense': dense }]} {...rest}>
+  {
+    items.map((item) => (
+      <div class="s-kpi__item">
+        <p class:list={['s-kpi__value', { 's-kpi__value--mark': item.mark }]}>{item.value}</p>
+        <p class="s-kpi__label">{item.label}</p>
+      </div>
+    ))
+  }
+</div>

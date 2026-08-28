@@ -1,0 +1,30 @@
+---
+/**
+ * A ruled ledger of term against reading. 9 in the corpus, 27 rows, 5 marked.
+ */
+export interface DenseRow {
+  term: string;
+  body: string;
+  /** The accent. Lands on the row. */
+  mark?: boolean;
+}
+
+interface Props {
+  rows: DenseRow[];
+  under?: boolean;
+  fill?: boolean;
+}
+
+const { rows, under = false, fill = false, ...rest } = Astro.props;
+---
+
+<div class:list={['s-dense', { 's-dense--under': under, 's-dense--fill': fill }]} {...rest}>
+  {
+    rows.map((row) => (
+      <div class:list={['s-dense__row', { 's-dense__row--mark': row.mark }]}>
+        <p class="s-dense__term">{row.term}</p>
+        <p class="s-dense__body">{row.body}</p>
+      </div>
+    ))
+  }
+</div>
