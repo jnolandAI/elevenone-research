@@ -1,0 +1,17 @@
+{
+  "id": "cover-distribution",
+  "role": "cover",
+  "model": "gpt-image-2",
+  "size": "2560x1440",
+  "format": "jpg",
+  "quality": 82,
+  "prompt": "A wide shallow metal tray holding dried beans spread unevenly across it, heaped thickly toward one end and thinning to a scatter at the other, shot from directly above. saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "promptHash": "2eb4387c033ea462",
+  "subject": "A wide shallow metal tray holding dried beans spread unevenly across it, heaped thickly toward one end and thinning to a scatter at the other, shot from directly above",
+  "direction": "saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "alt": "Dried beans spread unevenly across a shallow tray, heaped at one end and thinning to a scatter at the other.",
+  "sourceBytes": 5704032,
+  "bytes": 458395,
+  "source": "api",
+  "generated": "2026-08-28T15:17:21.518Z"
+}

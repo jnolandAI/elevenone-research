@@ -62,7 +62,11 @@ playwright-report/
 # Census working output keyed on deck identity (the corpus is third-party)
 research-kit/census/out/
 
-# Art staging. Hand-generated images land here before import; only the
-# imported result under public/assets/art is committed.
+# Art staging and archival masters. Hand-generated images land in staged/
+# before import; the API's PNG masters land in original/. Neither is
+# committed: the three masters for piece 001 total 13MB, and the committed
+# JPEGs they encode to total 714KB. Keeping the masters locally is what makes
+# a format or quality change free instead of a repurchase.
 art/staged/*
 !art/staged/README.md
+art/original/

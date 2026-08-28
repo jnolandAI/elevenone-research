@@ -54,6 +54,10 @@ const byId = new Map(items.map((i) => [i.id, i]));
    Derived from the manifest's own publicBase rather than guessed, because the
    out directory and the URL a page uses are not the same string. */
 const BASE = (manifest.publicBase ?? '/assets/art').replace(/\/$/, '');
+/* The committed asset's extension is the manifest's, not a constant. The
+   masters are PNG and the committed assets are usually JPEG, so a gate that
+   assumed .png would look for files that were never written. */
+const EXT = manifest.format ?? 'jpg';
 
 function walk(dir) {
   const out = [];
@@ -72,7 +76,7 @@ const notes = [];
 const referenced = new Map();
 for (const file of walk(SRC).filter((f) => f.endsWith('.astro') || f.endsWith('.mdx'))) {
   const src = readFileSync(file, 'utf8');
-  const re = new RegExp(`${BASE.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}/([A-Za-z0-9_-]+)\\.png`, 'g');
+  const re = new RegExp(`${BASE.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}/([A-Za-z0-9_-]+)\\.${EXT}`, 'g');
   for (const m of src.matchAll(re)) {
     if (!referenced.has(m[1])) referenced.set(m[1], file);
   }
@@ -83,7 +87,7 @@ for (const [id, file] of referenced) {
 
 /* ---- 2 and 3. Assets, provenance and alt --------------------------------- */
 for (const item of items) {
-  const png = join(OUT, `${item.id}.png`);
+  const png = join(OUT, `${item.id}.${EXT}`);
   const rec = join(OUT, `${item.id}.json`);
   if (!existsSync(png)) failures.push(`${item.id}: no asset at ${png}`);
   if (!existsSync(rec)) failures.push(`${item.id}: no provenance record at ${rec}`);
@@ -97,7 +101,7 @@ for (const item of items) {
 
 /* ---- 4. Orphans ----------------------------------------------------------- */
 for (const f of readdirSync(OUT)) {
-  const m = f.match(/^(.+)\.(png|json)$/);
+  const m = f.match(new RegExp(`^(.+)\\.(${EXT}|json)$`));
   if (m && !byId.has(m[1])) failures.push(`${join(OUT, f)} is on disk but not in the manifest`);
 }
 

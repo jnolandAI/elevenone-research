@@ -1,0 +1,17 @@
+{
+  "id": "opener-size",
+  "role": "opener",
+  "model": "gpt-image-2",
+  "size": "2560x1440",
+  "format": "jpg",
+  "quality": 82,
+  "prompt": "A single pair of open steel calipers lying flat on an empty seamless surface, jaws spread wide, shot from directly above. saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "promptHash": "4a2b586daea7a9e8",
+  "subject": "A single pair of open steel calipers lying flat on an empty seamless surface, jaws spread wide, shot from directly above",
+  "direction": "saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "alt": "A pair of steel calipers lying open on an empty surface with their jaws spread wide.",
+  "sourceBytes": 4381991,
+  "bytes": 116835,
+  "source": "api",
+  "generated": "2026-08-28T15:17:47.964Z"
+}

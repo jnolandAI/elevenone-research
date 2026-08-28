@@ -81,6 +81,29 @@
   border-top: 1px solid var(--ct-rule-firm);
 }
 
+/* Furniture on a cover that carries a photograph.
+
+   --ct-field-text-muted is gated against --ct-field, and on a photograph it is
+   not painting on --ct-field. It is painting on a scrimmed image, which at the
+   scrim's 0.55 is a mid-tone rather than near-ink. Measured on the first
+   photographic cover this system shipped: the kicker, the body and the foot
+   ran 1.66:1, 2.73:1 and 3.26:1 against a 4.5 floor, all three having been
+   gated at 5.52:1 against ink. Nothing caught it, because the contract
+   compares a token to a token and a photograph is neither.
+
+   The scrim cannot rescue it. Recovering 4.5:1 for the muted grey over a
+   saturated image needs roughly 0.90 opacity, at which point the photograph is
+   a ten percent ghost and there was no reason to commission it.
+
+   So furniture on an art cover takes the on-field text colour outright.
+   Hierarchy is carried by size, which is 64px against 13 and 11. Covers with
+   no photograph are untouched and keep the muted grey the contract gates. */
+.s-cover--art .s-cover__kicker,
+.s-cover--art .s-cover__body,
+.s-cover--art .s-cover__foot {
+  color: var(--ct-text-on-field);
+}
+
 .s-cover__body {
   margin-top: var(--ct-space-6);
   max-width: 720px;

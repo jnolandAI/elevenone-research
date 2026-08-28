@@ -1,0 +1,17 @@
+{
+  "id": "opener-spread",
+  "role": "opener",
+  "model": "gpt-image-2",
+  "size": "2560x1440",
+  "format": "jpg",
+  "quality": 82,
+  "prompt": "A single steel measuring tape uncoiled in one long unbroken run across an empty seamless surface, running out of the frame at both ends. saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "promptHash": "186bbbb077c5e3f0",
+  "subject": "A single steel measuring tape uncoiled in one long unbroken run across an empty seamless surface, running out of the frame at both ends",
+  "direction": "saturated single-subject colour-field photography, one physical subject, one dominant hue, one strong light source, shot large and simple, no people, no text, no collage",
+  "alt": "A steel measuring tape uncoiled in one long run across an empty surface, leaving the frame at both ends.",
+  "sourceBytes": 4162806,
+  "bytes": 155849,
+  "source": "api",
+  "generated": "2026-08-28T15:17:21.846Z"
+}

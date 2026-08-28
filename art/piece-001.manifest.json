@@ -1,7 +1,9 @@
 {
   "piece": "001-gross-margin",
   "publicBase": "/assets/art",
-  "note": "Three images: a cover and one per section opener. The closing page deliberately has none. The corpus reuses the cover field without the photograph for a closing, and a fourth image would be the point at which a discipline becomes a mood board. Subjects are physical and single because the direction token asks for that; none of them depicts data, because photography in the sampled corpus carries data on none of the 16 pages it appears on.",
+  "format": "jpg",
+  "quality": 82,
+  "note": "Three images: a cover and one per section opener. The closing page deliberately has none. The corpus reuses the cover field without the photograph for a closing, and a fourth image would be the point at which a discipline becomes a mood board. Subjects are physical and single because the direction token asks for that; none of them depicts data, because photography in the sampled corpus carries data on none of the 16 pages it appears on. Masters come back as multi-megabyte PNGs and are kept in art/original, gitignored; the committed asset is JPEG. A photograph is not a PNG, and 13MB of them has no business on a page.",
   "items": [
     {
       "id": "cover-distribution",
@@ -18,8 +20,9 @@
     {
       "id": "opener-size",
       "role": "opener",
-      "subject": "A single close row of six graduated glass cylinders standing on a seamless surface, each one wider and shorter than the last",
-      "alt": "Six graduated glass cylinders standing in a row, each wider and shorter than the one before it."
+      "subject": "A single pair of open steel calipers lying flat on an empty seamless surface, jaws spread wide, shot from directly above",
+      "alt": "A pair of steel calipers lying open on an empty surface with their jaws spread wide.",
+      "note": "The first render of this id was six cylinders descending cleanly in height, which is a picture of a monotonic decline. The section it opens finds that the medians do NOT decline in order, so the image argued against its own page. Calipers measure a spread and imply no ordering."
     }
   ]
 }
