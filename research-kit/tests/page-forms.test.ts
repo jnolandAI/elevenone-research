@@ -27,7 +27,37 @@ describe('Page', () => {
     expect(src).toMatch(/\.\.\.rest/);
   });
 
-  it('renders the body inside the growing zone, not beside it', () => {
-    expect(src).toMatch(/class="s-grow s-pad-t"[\s\S]{0,80}<slot/);
+  it('renders the default-slot body inside the growing zone, not beside it', () => {
+    // The class list may be built inline or, per the lesson from an earlier
+    // task, assigned to a frontmatter variable and referenced by name -
+    // Astro rejects a multi-line object literal inside an attribute
+    // expression. Either way it must carry 's-grow' and sit ahead of the
+    // default slot.
+    expect(src).toMatch(/'s-grow'/);
+    const bodyDivAt = src.search(/<div class:list=\{[^}]*\}>/);
+    expect(bodyDivAt, 'no class:list div found for the body zone').toBeGreaterThan(-1);
+    expect(src.slice(bodyDivAt)).toMatch(/^<div class:list=\{[^}]*\}>\s*<slot\s*\/>/);
+  });
+
+  it('emits the foot before the source, because the corpus writes it that way on all 22 pages that carry both', () => {
+    const footAt = src.indexOf('{foot');
+    const sourceAt = src.indexOf('{source');
+    expect(footAt, 'no {foot} expression found').toBeGreaterThan(-1);
+    expect(sourceAt, 'no {source} expression found').toBeGreaterThan(-1);
+    expect(footAt).toBeLessThan(sourceAt);
+  });
+
+  it('defaults col to true, and the body zone drops s-col only when it is set false', () => {
+    expect(src).toMatch(/col\s*=\s*true/);
+    expect(src).toMatch(/'s-col':\s*col/);
+  });
+
+  it('renders a close slot between the body zone and the foot, for the finding/annot/implication block that follows it', () => {
+    const bodyDivEnd = src.indexOf('</div>', src.search(/<slot\s*\/>/));
+    const closeSlotAt = src.indexOf('<slot name="close"');
+    const footAt = src.indexOf('{foot');
+    expect(closeSlotAt, 'no named close slot found').toBeGreaterThan(-1);
+    expect(closeSlotAt).toBeGreaterThan(bodyDivEnd);
+    expect(closeSlotAt).toBeLessThan(footAt);
   });
 });

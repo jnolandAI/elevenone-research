@@ -2,35 +2,52 @@
 /**
  * The working-page skeleton.
  *
- * All 82 working pages across Argo and piece 001 open with `s-stack`, put the
- * title directly inside it, and close with a source line. Five variants, one
- * structure. Titles and source lines are plain strings in every one of the
- * 95, so they are props rather than slots.
+ * Every working page across Argo and piece 001 opens with `s-stack`, puts
+ * the title directly inside it, and closes with a foot and/or a source
+ * line, foot first: every page in the corpus that carries both writes them
+ * that way, with zero exceptions. Titles and source lines are plain
+ * strings, so they are props rather than slots.
  *
- * This component adds no element. `paint-capture` keys by index path, so one
- * extra wrapper would shift every path after it and turn a 4406-element
- * comparison into noise rather than a finding.
+ * The body zone takes `s-col` on 47 of 71 working pages (flex, column, full
+ * height), so `col` defaults true; the 22 pages without it pass
+ * `col={false}`. Two pages use `s-pad-t--lg` in place of `s-pad-t`. 52
+ * pages carry a finding, annotation or implication block between the body
+ * and the foot: that block is the `close` slot, named because it closes out
+ * the body's argument before the footnote and source line.
+ *
+ * This component adds no element beyond what the default and `close` slots
+ * carry. `paint-capture` keys by index path, so one extra wrapper would
+ * shift every path after it and turn a 4406-element comparison into noise
+ * rather than a finding.
  */
 interface Props {
-  /** Section label above the title. Present on 7 of 81. */
+  /** Section label above the title. */
   kicker?: string;
   title: string;
-  /** Restatement under the title. Present on 12 of 81. */
+  /** Restatement under the title. */
   sub?: string;
-  /** Source or attribution line. Present on 81 of 82 working pages. One page carries none. */
+  /** Source or attribution line. Written after the foot, not before it. */
   source?: string;
-  /** Note below the source. Present on 22 of 81. */
+  /** Note below the body/close zone, above the source. */
   foot?: string;
+  /** `s-col` on the body zone: flex, column, full height. 47 of 71 carry it. */
+  col?: boolean;
+  /** `s-pad-t--lg` instead of `s-pad-t` on the body zone. 2 of 71. */
+  padLg?: boolean;
 }
 
-const { kicker, title, sub, source, foot, ...rest } = Astro.props;
+const { kicker, title, sub, source, foot, col = true, padLg = false, ...rest } = Astro.props;
+const bodyClass = ['s-grow', padLg ? 's-pad-t--lg' : 's-pad-t', { 's-col': col }];
 ---
 
 <div class="s-stack" {...rest}>
   {kicker && <p class="s-kicker">{kicker}</p>}
   <h2 class:list={['s-title', { 's-pad-t--sm': Boolean(kicker) }]}>{title}</h2>
   {sub && <p class="s-sub">{sub}</p>}
-  <div class="s-grow s-pad-t"><slot /></div>
-  {source && <p class="s-source">{source}</p>}
+  <div class:list={bodyClass}>
+    <slot />
+  </div>
+  <slot name="close" />
   {foot && <p class="s-foot">{foot}</p>}
+  {source && <p class="s-source">{source}</p>}
 </div>
