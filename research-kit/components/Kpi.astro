@@ -1,6 +1,10 @@
 ---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
 /**
- * A row of figures with their labels. 18 in the corpus, 70 items, 18 marked.
+ * A row of figures with their labels. 18 in the corpus, 70 items, 18 marked:
+ * exactly one per row, measured, which is why the budget below is a throw and
+ * not a warning.
  */
 export interface KpiItem {
   value: string;
@@ -16,6 +20,12 @@ interface Props {
 }
 
 const { items, dense = false, field = false, ...rest } = Astro.props;
+
+/* One accent per row of figures. Enforced here rather than in a gate for the
+   reason spelled out in Matrix.astro: `mark` is a caller-set prop on a
+   frontmatter array, and `audit.mjs` reads source, so no source scan can see
+   it. */
+assertOneMark(items, 'Kpi');
 ---
 
 <div class:list={['s-kpi', { 's-kpi--field': field, 's-kpi--dense': dense }]} {...rest}>

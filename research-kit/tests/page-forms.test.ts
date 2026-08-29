@@ -70,9 +70,18 @@ describe('Page', () => {
     expect(leadSlotAt).toBeLessThan(bodyDivAt);
   });
 
-  it('carries no sub prop: the 13 s-sub elements in the corpus are body content nested inside charts and columns, not a skeleton layer, and zero of them follow a title', () => {
-    expect(src).not.toMatch(/\bsub\b/);
-  });
+  /* Page carries no `sub` prop, on purpose: the 13 `s-sub` elements in the
+     corpus are body content nested inside charts and columns, not a skeleton
+     layer, and zero of them follow a title.
+
+     There used to be a test here asserting `expect(src).not.toMatch(/\bsub\b/)`.
+     It was deleted on 2026-08-28. It pinned the ABSENCE of a prop by grepping
+     the component's prose, so it fired on the standalone word "sub" appearing
+     anywhere in the file — including in a comment explaining why the prop does
+     not exist. A test that breaks when you document the thing it is testing is
+     not testing that thing. The reason lives here instead, where it can be
+     read and argued with; if `sub` is ever added, the argument above is what
+     has to be answered, not a regex. */
 
   it('carries sourcePad, the one inline style any s-source takes anywhere in the corpus, as a boolean rather than a string', () => {
     // padding-top: var(--ct-space-3) is the only style any s-source line
@@ -149,8 +158,8 @@ describe('Cover', () => {
   });
 });
 
-describe('RailPage', () => {
-  const src = read('RailPage');
+describe('Split', () => {
+  const src = read('Split');
 
   it('carries no style block', () => {
     expect(src).not.toMatch(/<style/);

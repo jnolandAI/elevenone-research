@@ -318,10 +318,19 @@ if (share < NUMBER_FLOOR) {
    the prose treatment costs the reader the one thing a table is for.
 
    More than one marked row. The mark says "this is the row the title is about".
-   Two marks say nothing, and they spend a page's single accent twice. */
+   Two marks say nothing, and they spend a page's single accent twice.
+
+   Both readings need the rendered row and cell markup, so this only reaches a
+   matrix a page still writes by hand. A `<Matrix>` call carries its rows as a
+   frontmatter array of records, and no source scan can read a prop. The mark
+   budget therefore moved into `Matrix.astro`, which throws on a second mark
+   at render; the value-lane reading has no such home yet, so the count of
+   matrices this pass could not open is printed rather than left implied. */
 const matrices = [];
+let componentised = 0;
 for (const file of files) {
   const src = readFileSync(join(dir, file), 'utf8');
+  componentised += (src.match(/<Matrix\b/g) ?? []).length;
   let i = 0;
   while (true) {
     const open = src.indexOf('<div class="s-matrix', i);
@@ -368,11 +377,16 @@ for (const m of matrices) {
     }
   }
 }
+const scope =
+  ` (${matrices.length} hand-written matrix/matrices read` +
+  (componentised
+    ? `; ${componentised} <Matrix> call(s) carry their rows as props, where the mark budget is enforced by the component and the value lane is not yet checked at all)`
+    : ')');
 if (craft.length) {
-  console.log(`\nwarn  ${craft.length} table craft issue(s)`);
+  console.log(`\nwarn  ${craft.length} table craft issue(s)${scope}`);
   for (const c of craft) console.log(`        ${c}`);
 } else {
-  console.log('\nok    every value lane is set as one, and no matrix carries two marks');
+  console.log(`\nok    every value lane is set as one, and no matrix carries two marks${scope}`);
 }
 
 /* The form census. The first cut of this deck came back 34 ledgers deep with
@@ -380,12 +394,32 @@ if (craft.length) {
    individually defensible. The share is the thing to look at, and the
    208-slide reference corpus puts it at roughly 47% chart, 18% table. A deck
    whose table share runs past about a third is defaulting. */
+/* Every row matches BOTH forms an exhibit can take in source: the component
+   call that writes it, and the root class of a page that still writes it by
+   hand. This census reads `.astro` SOURCE and never renders, so a class
+   needle alone cannot see a componentised exhibit: `<Matrix>` emits
+   `class="s-matrix"` at render time, and that string is nowhere in the file
+   this script opens. On 2026-08-28 the page-form migration turned 23 hand-
+   written matrices into `<Matrix>` calls and 9 `s-dense` ledgers into
+   `<Dense>` calls; the census lost 32 of 72 forms, every printed share was
+   computed on the broken denominator, and the table-share warning stopped
+   firing on a deck that had not changed. It printed a number the whole time.
+   The rule: when a construct gets a component, its row gets the name too, and
+   the class stays for whatever is still hand-written. Never swap one for the
+   other. Both can never double-count the same exhibit, because a page writes
+   one form or the other, never both.
+
+   `chart` is the one row with no class needle, and deliberately: every chart
+   is an inline `<svg class="fig">`, a class the corpus also uses for a plain
+   `<figure>` wrapper (each repo's own `Figure.astro`), so a class needle there
+   would count furniture as exhibits. Charts are only ever written as
+   components, so the names are the whole surface. */
 const FORMS = [
   ['chart', /<(Bars|Columns|Trend|Stack|Scatter|Spread|Slope|Bridge|Timeline|RangeDot|SmallMultiples|Phases|Map|Distribution)\b/g],
-  ['diagram', /<(DriverChain|Layers)\b|class="s-flow"/g],
-  ['panels', /<(Panels)\b/g],
-  ['list', /class="s-dense\b|class="s-list\b/g],
-  ['table', /<(Table)\b|class="s-matrix\b/g],
+  ['diagram', /<(DriverChain|Layers)\b|class="s-flow"|class="s-layers\b/g],
+  ['panels', /<(Panels)\b|class="s-panels\b/g],
+  ['list', /<(Dense)\b|class="s-dense\b|class="s-list\b/g],
+  ['table', /<(Table|Matrix)\b|class="s-matrix\b|class="tbl\b/g],
 ];
 const census = {};
 for (const file of files) {

@@ -1,4 +1,6 @@
 ---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
 /**
  * The table form. 23 in the corpus carrying 76 rows and 398 cells.
  *
@@ -28,6 +30,29 @@ interface Props {
 
 const { rows, cols, under = false, fill = false, xs = false, ...rest } = Astro.props;
 
+const text = (c: MatrixCell) => (typeof c === 'string' ? c : c.text);
+
+/**
+ * The slate budget: one marked row per matrix. The mark says "this is the row
+ * the title is about", and two of them say nothing while spending a page's
+ * single accent twice.
+ *
+ * The rule lives here rather than in a gate because `audit.mjs` cannot see it
+ * any more. That census reads `.astro` source, and it used to count marked
+ * rows by scanning hand-written `s-matrix__row--mark` markup; once the corpus
+ * migrated to this component the marks became a caller-set `mark` field on a
+ * frontmatter array and the scan went blind to 23 of the 26 matrices while
+ * still printing `ok`. A source scan can never see a prop, so the invariant
+ * belongs where the prop arrives — the same place every other exhibit in this
+ * kit enforces the same budget.
+ *
+ * The first cell names the row, which is what the error message needs.
+ */
+assertOneMark(
+  rows.map((r) => ({ label: text(r.cells[0] ?? ''), mark: r.mark })),
+  'Matrix',
+);
+
 const cellClass = (c: MatrixCell) => {
   if (typeof c === 'string') return 's-matrix__cell';
   const parts = ['s-matrix__cell'];
@@ -39,8 +64,6 @@ const cellClass = (c: MatrixCell) => {
   }
   return parts.join(' ');
 };
-
-const text = (c: MatrixCell) => (typeof c === 'string' ? c : c.text);
 ---
 
 <div

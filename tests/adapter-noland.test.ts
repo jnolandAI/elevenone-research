@@ -1,35 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { resolveTokens } from '../research-kit/contract/resolve.mjs';
 import { checkAdapter } from '../research-kit/contract/checks.mjs';
 import { parseHex, neutralSpread } from '../research-kit/contract/color.mjs';
+import { NOLAND, announceSkip, assertUsable } from '../research-kit/tests/noland-repo';
 
 /* The adapter moved beside the ramp it maps: it now lives, along with its
-   base, in the noland-advisory repository, not this one. Set NOLAND_REPO to
-   that repository's path to run this file at all; without it every describe
-   block below skips, structural included, because the file the structural
-   checks read is no longer here to read.
+   base, in the noland-advisory repository, not this one. That checkout is
+   resolved rather than remembered — see research-kit/tests/noland-repo.ts,
+   and for why: this file's six tests skipped on every default `npm test` in
+   this repo and said nothing about it, because the only thing that set
+   NOLAND_REPO was a gate block someone had to remember to paste.
 
-   Skipping is only right for the unset case. Once NOLAND_REPO is set, a
-   missing file means the path is stale, mistyped, or the other repository
-   renamed something out from under this test — every one of those is a
-   real failure this file exists to catch, not a reason to quietly skip. */
-const repo = process.env.NOLAND_REPO;
+   Skipping is only right when the sibling repo is genuinely not on disk.
+   Once it resolves, a missing file means the path is stale, mistyped, or the
+   other repository renamed something out from under this test — every one of
+   those is a real failure this file exists to catch, not a reason to quietly
+   skip. */
+const repo = NOLAND.repo;
 const skip = !repo;
+announceSkip('adapter-noland.test.ts', "the whole file: the adapter it checks is in the other repo");
 const adapterPath = repo ? join(repo, 'src/styles/contract-adapter.css') : undefined;
 const basePath = repo ? join(repo, 'src/styles/tokens.css') : undefined;
-
-if (repo) {
-  const missing = [adapterPath, basePath].filter((p) => !existsSync(p!));
-  if (missing.length) {
-    throw new Error(
-      `NOLAND_REPO is set to "${repo}" but the following expected file(s) are missing: ` +
-        `${missing.join(', ')}. Fix the path or the rename on the other side; this must ` +
-        `not silently skip once NOLAND_REPO is set.`,
-    );
-  }
-}
+assertUsable([adapterPath, basePath].filter((p): p is string => p !== undefined));
 
 const contract = JSON.parse(readFileSync('research-kit/contract/tokens.contract.json', 'utf8'));
 const adapter = skip ? '' : readFileSync(adapterPath!, 'utf8');

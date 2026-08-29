@@ -1,6 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { NOLAND, ELEVEN_ONE_ROOT, announceSkip } from './noland-repo';
+
+/* This guard's whole reason to exist is the Noland half: 10 needles over the
+   three deck pages and the Argo slide bodies, with 16 pinned exemptions. The
+   Eleven One half walks four brief pages and has never had an offence to
+   find. It used to run only when someone remembered to set NOLAND_REPO in a
+   shell, which meant it did not run. See noland-repo.ts for how the checkout
+   is found now, and for why a skip can no longer be silent. */
+announceSkip(
+  'raw-markup.test.ts',
+  'the Noland half, which carries the 10 needles and the 16 pinned exemptions',
+);
 
 /**
  * Once a construct has a component, no page may still write its markup by
@@ -22,7 +34,7 @@ import { join } from 'node:path';
  * guard blind in both directions at once: `s-annot` as a bare string missed
  * every modified instance, while `s-matrix s-`, `s-kpi s-` and `s-dense s-`
  * required a modifier and would have missed a bare one. Both directions are
- * closed the same way for every root except RailPage's, which keeps its
+ * closed the same way for every root except Split's, which keeps its
  * exact compound leading edge on purpose:
  *
  * `class="s-split s-split--fill(?=[\s"])` still requires the full
@@ -30,7 +42,7 @@ import { join } from 'node:path';
  * `class="s-split"` or a modified `class="s-split s-split--even"` still do
  * not match. Both are real, and both are a distinct, legitimate construct in
  * this corpus (three blocks in Noland's commercial-diligence.astro) that
- * RailPage's own shape, one main column plus one rail, does not cover;
+ * Split's own shape, one main column plus one rail, does not cover;
  * matching them here would flag a page for a component that does not fit
  * it, which is the same class of false coverage this guard exists to
  * prevent, just pointed the other way. The lookahead after `--fill` closes
@@ -46,15 +58,15 @@ import { join } from 'node:path';
  * page hand-writing a genuinely migratable skeleton whose body wrapper sits
  * one character past an arbitrary bound would have passed silently, and a
  * future `Page` extension would not carry its needle forward with it. See
- * `EXEMPT` below for where that knowledge actually lives now: RailPage's
+ * `EXEMPT` below for where that knowledge actually lives now: Split's
  * needle is the one narrowing that stays, because its compound leading edge
  * (`s-split s-split--fill`) is not a bound on anything, just the literal
- * shape `RailPage` itself always emits or never does.
+ * shape `Split` itself always emits or never does.
  */
 const ROOTS: [RegExp, string][] = [
   [/<div class="s-stack(?=[\s"])/, 'Page'],
   [/class="s-cover(?=[\s"])/, 'Cover'],
-  [/class="s-split s-split--fill(?=[\s"])/, 'RailPage'],
+  [/class="s-split s-split--fill(?=[\s"])/, 'Split'],
   [/class="s-finding(?=[\s"])/, 'Finding'],
   [/class="s-implication(?=[\s"])/, 'Implication'],
   [/class="s-annot(?=[\s"])/, 'Annot'],
@@ -104,7 +116,7 @@ const ROOTS: [RegExp, string][] = [
  * exact `ROOTS` regexes after an earlier round's report claimed 17, and the
  * six counts below (3, 2+2, 4+2+3) sum to 16.
  */
-const repoEnv = process.env.NOLAND_REPO;
+const repoEnv = NOLAND.repo;
 const EXEMPT: Record<string, Partial<Record<string, { count: number; reason: string }>>> = repoEnv
   ? {
       [join(repoEnv, 'src/pages/robotics-components.astro')]: {
@@ -221,13 +233,13 @@ function scan(files: string[]): string[] {
 }
 
 describe('no page writes a componentised construct by hand', () => {
-  const repo = process.env.NOLAND_REPO;
+  const repo = NOLAND.repo;
 
   it('holds in Eleven One', () => {
-    expect(scan(walk('src/pages'))).toEqual([]);
+    expect(scan(walk(join(ELEVEN_ONE_ROOT, 'src/pages')))).toEqual([]);
   });
 
-  it.skipIf(!repo)('holds in Noland', () => {
+  it.skipIf(!repo)(`holds in Noland (${NOLAND.why})`, () => {
     // Recursive over src/pages, the same way the Eleven One side already
     // is, plus src/components/argo, which holds the slide bodies the deck
     // pages import. A hardcoded single-file addition here once stood in for

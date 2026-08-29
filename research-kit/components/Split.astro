@@ -5,6 +5,13 @@
  *
  * All 22 in the corpus use one modifier set, so the wrapper is boilerplate.
  * Both halves vary completely, so neither is a prop.
+ *
+ * Named `Split` after the class it emits, `s-split`, which is the convention
+ * every other component in this kit follows. It shipped as `RailPage` and was
+ * renamed on 2026-08-28: it is a body layout that lives INSIDE a page, and
+ * every one of the 22 call sites reads
+ * `<Page> ... <Split> ... </Split> </Page>`, so the old name claimed a level
+ * of the hierarchy it does not occupy.
  */
 interface Props {
   /**

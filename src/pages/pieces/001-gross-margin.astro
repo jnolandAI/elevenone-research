@@ -14,7 +14,7 @@
 import Piece from '../../layouts/Piece.astro';
 import Slide from 'research-kit/components/Slide.astro';
 import Page from 'research-kit/components/Page.astro';
-import RailPage from 'research-kit/components/RailPage.astro';
+import Split from 'research-kit/components/Split.astro';
 import Cover from 'research-kit/components/Cover.astro';
 import Bars from 'research-kit/components/Bars.astro';
 import Distribution from 'research-kit/components/Distribution.astro';
@@ -274,7 +274,7 @@ const loadPath = [
   {/* 05 The bands */}
   <Slide n={5} section="01" sections={SECTIONS}>
     <Page title="No 10-point band holds more than one filer in six" col={false} source=" Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact. ">
-        <RailPage>
+        <Split>
             <div class="s-ex__head">
               <p class="s-ex__title">Exhibit 1&ensp;Share of the universe by ten-point margin band</p>
               <p class="s-label">{universe.kept.toLocaleString()} filers</p>
@@ -302,7 +302,7 @@ const loadPath = [
             ]} />
 
     </Fragment>
-  </RailPage>
+  </Split>
       </Page>
   </Slide>
 
@@ -369,7 +369,7 @@ const loadPath = [
   {/* 09 Medians */}
   <Slide n={9} section="02" sections={SECTIONS}>
     <Page title="Across 6 revenue cohorts the medians do not decline in order" col={false} source={` ${universe.source}. Cohorts are equal-count by revenue, not chosen boundaries. `}>
-        <RailPage>
+        <Split>
             <div class="s-ex__head">
               <p class="s-ex__title">Exhibit 3&ensp;Median reported gross margin by revenue cohort</p>
               <p class="s-label">Equal-count cohorts</p>
@@ -396,7 +396,7 @@ const loadPath = [
             ]} />
 
     </Fragment>
-  </RailPage>
+  </Split>
       </Page>
   </Slide>
 

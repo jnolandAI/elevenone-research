@@ -1,4 +1,6 @@
 ---
+import { assertOneMark } from 'research-kit/lib/exhibits';
+
 /**
  * A ruled ledger of term against reading. 9 in the corpus, 5 marked. 27
  * literal rows in source; one of the nine maps over a frontmatter array, so
@@ -24,6 +26,16 @@ interface Props {
 }
 
 const { rows, under = false, fill = false, ...rest } = Astro.props;
+
+/* One accent per ledger. Measured before it was enforced: no instance in
+   either repo carries a second mark. Enforced here rather than in a gate for
+   the reason spelled out in Matrix.astro — `mark` is a caller-set prop, and
+   `audit.mjs` reads source, where a prop is invisible. The term names the
+   row, which is what the error message needs. */
+assertOneMark(
+  rows.map((r) => ({ label: r.term, mark: r.mark })),
+  'Dense',
+);
 ---
 
 <div class:list={['s-dense', { 's-dense--under': under, 's-dense--fill': fill }]} {...rest}>

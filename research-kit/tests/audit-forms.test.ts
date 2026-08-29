@@ -21,20 +21,36 @@ describe("the audit's form census", () => {
   const forms = audit.slice(audit.indexOf('const FORMS'), audit.indexOf('const census'));
 
   /**
-   * Page furniture and wrappers. These draw no exhibit of their own.
+   * Page furniture and wrappers. These draw no exhibit of their own, so the
+   * census does not classify them and FORMS must not name them.
    *
-   * Matrix sits here too, and for a different reason than the rest: it does
-   * draw a table, but the census already counts it, by class rather than by
-   * component name. FORMS classifies `table` on `class="s-matrix` because
-   * that class is what the rendered HTML carries regardless of which
-   * component wrote it, so Matrix's output was counted correctly before this
-   * component existed and needs no entry of its own. Adding "Matrix" to
-   * FORMS as a name match would be redundant with the class match already
-   * there, and either double-count or (once the string check below allows
-   * any substring, including this comment) mask a future regression the way
-   * the Distribution incident above did.
+   * `Matrix` and `Dense` used to sit here, on a justification that was simply
+   * false, and it cost a real result. It read: the census already counts them
+   * by class, "because that class is what the rendered HTML carries
+   * regardless of which component wrote it." The census never renders
+   * anything. `audit.mjs` reads `.astro` SOURCE — a page that writes
+   * `<Matrix rows={...} />` contains the string `s-matrix` nowhere at all, and
+   * the class needle sees nothing. On 2026-08-28 the migration turned 23
+   * matrices and 9 `s-dense` ledgers into component calls; the census dropped
+   * from 72 forms to 40, every share it printed was computed on the broken
+   * denominator, and the table-share warning stopped firing on a deck whose
+   * tables had not changed. This test passed throughout, because that
+   * sentence told it to.
+   *
+   * The rule, now in FORMS and repeated here because this is where the next
+   * person will argue with it: a construct that has a component is counted by
+   * BOTH its component name and its root class. Never one instead of the
+   * other. They cannot double-count, because a page writes one form or the
+   * other and never both — the class only appears in source when the markup
+   * is hand-written, and the name only when it is not.
+   *
+   * `Kpi` stays. It is the one entry here that draws something and is still
+   * not a form: the five buckets come from a 208-slide census of exhibit
+   * FORMS (chart, diagram, panels, list, table), and a band of figures is
+   * page furniture in that census, not a sixth bucket. It was uncounted
+   * before it was a component and it is uncounted now, so nothing moved.
    */
-  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'RailPage', 'Finding', 'Implication', 'Comment', 'Annot', 'Matrix', 'Kpi', 'Dense']);
+  const FURNITURE = new Set(['Slide', 'Exhibit', 'Row', 'Glyph', 'Page', 'Cover', 'Split', 'Finding', 'Implication', 'Comment', 'Annot', 'Kpi']);
 
   it('knows every kit component that draws an exhibit', () => {
     const components = readdirSync('research-kit/components')
@@ -59,6 +75,98 @@ describe("the audit's form census", () => {
     for (const name of named) {
       expect(shipped.has(name), `FORMS names ${name}, which the kit does not ship`).toBe(true);
     }
+  });
+});
+
+/**
+ * The reading test above only checks that FORMS mentions every component's
+ * name somewhere in its own text. That is not the same as counting it, and
+ * the difference is what let the 2026-08-28 regression through: `Matrix` and
+ * `Dense` were excused from the reading test by FURNITURE while the census
+ * quietly stopped counting the 32 exhibits they had absorbed.
+ *
+ * So this runs the census, the way the sub-head fixture below already pins
+ * the lead census after the identical failure. Every row of FORMS gets both
+ * of its forms in one file — the component call and the hand-written root
+ * class — and the printed line is pinned exactly. Under the pre-fix FORMS
+ * this fixture reads `chart 1 (14%), diagram 3 (43%), panels 1 (14%),
+ * list 2 (29%), table 2 (29%)`: seven forms out of fourteen, no failure, and
+ * a plausible-looking set of percentages.
+ */
+describe("the audit's form census sees both forms an exhibit can take", () => {
+  const dir = mkdtempSync(join(tmpdir(), 'audit-forms-'));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  writeFileSync(
+    join(dir, 'fixture.astro'),
+    [
+      '<Bars rows={rows} alt="chart, as a component" />',
+      '<DriverChain steps={steps} alt="diagram, as a component" />',
+      '<Layers bands={bands} alt="diagram, as a component" />',
+      '<div class="s-flow">diagram, hand-written</div>',
+      '<div class="s-layers">diagram, hand-written</div>',
+      '<Panels panels={panels} />',
+      '<div class="s-panels s-panels--lead">panels, hand-written</div>',
+      '<Dense rows={rows} />',
+      '<div class="s-dense s-dense--under">list, hand-written</div>',
+      '<div class="s-list">list, hand-written</div>',
+      '<Table columns={cols} rows={rows} />',
+      '<Matrix rows={rows} cols="1fr 1fr" />',
+      '<div class="s-matrix s-matrix--fill">table, hand-written</div>',
+      '<table class="tbl">table, hand-written</table>',
+    ].join('\n'),
+    'utf8',
+  );
+
+  const out = execFileSync(
+    'node',
+    ['research-kit/scripts/audit.mjs', '--profile', 'brief', dir],
+    { encoding: 'utf8' },
+  );
+
+  it('counts every exhibit twice over: once as a call, once as hand-written markup', () => {
+    expect(out).toContain(
+      'exhibit forms  chart 1 (7%), diagram 4 (29%), panels 2 (14%), list 3 (21%), table 4 (29%)',
+    );
+  });
+});
+
+/**
+ * The table-share warning is the one number in this census that changes a
+ * decision, and it is the one the regression switched off: Argo's tables ran
+ * 36% of its forms before the migration and 36% after, and the warning fired
+ * before and not after, because the census had stopped seeing 23 of the 26.
+ * A share pinned by a fixture is not enough on its own — the warning has to
+ * be observed firing on componentised tables.
+ */
+describe('the table-share warning fires on tables written as components', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'audit-tableshare-'));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  writeFileSync(
+    join(dir, 'fixture.astro'),
+    [
+      '<Bars rows={rows} alt="one chart" />',
+      '<Matrix rows={rows} cols="1fr 1fr" />',
+      '<Matrix rows={rows} cols="1fr 1fr" />',
+      '<Matrix rows={rows} cols="1fr 1fr" />',
+      '<Matrix rows={rows} cols="1fr 1fr" />',
+    ].join('\n'),
+    'utf8',
+  );
+
+  const out = execFileSync(
+    'node',
+    ['research-kit/scripts/audit.mjs', '--profile', 'brief', dir],
+    { encoding: 'utf8' },
+  );
+
+  it('counts four component tables against one chart', () => {
+    expect(out).toContain('table 4 (80%)');
+  });
+
+  it('warns, rather than printing 0% and staying silent', () => {
+    expect(out).toContain('tables are over a third of the forms');
   });
 });
 
