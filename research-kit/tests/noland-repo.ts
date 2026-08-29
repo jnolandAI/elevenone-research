@@ -30,29 +30,36 @@ import { fileURLToPath } from 'node:url';
  *
  * A `NOLAND_REPO` that IS set and does not resolve is not a skip. It is a
  * stale or mistyped path, which is a real failure every one of these files
- * exists to catch, and `assertUsable` below is how the callers that already
- * made that distinction keep making it.
+ * exists to catch. Until 2026-08-29 that sentence was prose: `resolve()`
+ * returned the stale-env case in the same `{ why }` shape as an honest skip,
+ * every consumer's `skipIf` treated the two identically, and `assertUsable`
+ * returns early when no repo resolved, so it never saw the case. Delegating a
+ * guarantee to callers who do not all call the helper is the same defect
+ * shape `audit.mjs` had. So the resolver itself now throws — at import time,
+ * in every file that reaches across — and no consumer can opt out of it.
+ * (A stale env var beside a working sibling checkout is inert, not fatal:
+ * the sibling wins and nothing skips, so there is nothing to catch.)
  */
 const E1_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SIBLING = join(E1_ROOT, '..', 'Noland Advisory2', 'noland-advisory');
 
 const isCheckout = (p: string) => existsSync(join(p, 'src', 'pages'));
 
-function resolve(): { repo?: string; why: string } {
-  if (isCheckout(SIBLING)) return { repo: SIBLING, why: `sibling checkout at ${SIBLING}` };
-  const env = process.env.NOLAND_REPO;
+/** Exported for its own test; module consumers read `NOLAND` below. */
+export function resolveNoland(sibling: string, env: string | undefined): { repo?: string; why: string } {
+  if (isCheckout(sibling)) return { repo: sibling, why: `sibling checkout at ${sibling}` };
   if (env && isCheckout(env)) return { repo: env, why: `NOLAND_REPO=${env}` };
   if (env) {
-    return {
-      why:
-        `NOLAND_REPO is set to "${env}", which has no src/pages, and there is no sibling ` +
-        `checkout at ${SIBLING}`,
-    };
+    throw new Error(
+      `NOLAND_REPO is set to "${env}", which has no src/pages, and there is no sibling ` +
+        `checkout at ${sibling}. A set NOLAND_REPO that does not resolve is a stale or ` +
+        'mistyped path: a failure, not a skip. Fix the path or unset the variable.',
+    );
   }
-  return { why: `no sibling checkout at ${SIBLING}, and NOLAND_REPO is not set` };
+  return { why: `no sibling checkout at ${sibling}, and NOLAND_REPO is not set` };
 }
 
-export const NOLAND = resolve();
+export const NOLAND = resolveNoland(SIBLING, process.env.NOLAND_REPO);
 
 /** The Eleven One repository root, resolved the same way. */
 export const ELEVEN_ONE_ROOT = E1_ROOT;
