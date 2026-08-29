@@ -1,73 +1,141 @@
+/**
+ * Rendered-output tests for the ten page-form components, via
+ * experimental_AstroContainer — the same pattern tests/home.test.ts,
+ * tests/loadpath.test.ts and tests/mark.test.ts already use.
+ *
+ * This file used to assert on component source text: regexes over the .astro
+ * files, pinning destructuring defaults and class:list expressions by their
+ * spelling. Those were change detectors, not behavior tests — a correct
+ * refactor of a frontmatter expression broke them, and a component that
+ * mentioned a class name in a comment could pass without emitting it. Every
+ * behavioral claim now renders the component and reads the HTML.
+ *
+ * Two kinds of assertion stay at source level, on purpose:
+ * - "carries no style block": the container does not inline scoped styles
+ *   into renderToString output, so the absence of a <style> block is a source
+ *   fact. Panels shipped as the only component with no style block and
+ *   emitted nine classes that existed only in Noland, so it rendered
+ *   unstyled the first time Eleven One drew it; the classes are in the kit
+ *   now, and a style block here would be the mistake in reverse.
+ * - Matrix's cols having no default: requiredness is a type-level fact a
+ *   render cannot observe (rendering without cols just emits "--cols:
+ *   undefined" at runtime).
+ */
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import Page from '../components/Page.astro';
+import Cover from '../components/Cover.astro';
+import Split from '../components/Split.astro';
+import Finding from '../components/Finding.astro';
+import Implication from '../components/Implication.astro';
+import Comment from '../components/Comment.astro';
+import Annot from '../components/Annot.astro';
+import Matrix from '../components/Matrix.astro';
+import Kpi from '../components/Kpi.astro';
+import Dense from '../components/Dense.astro';
 
 const read = (name: string) =>
   readFileSync(`research-kit/components/${name}.astro`, 'utf8');
 
-describe('Page', () => {
-  const src = read('Page');
+const render = async (
+  Component: Parameters<AstroContainer['renderToString']>[0],
+  options?: Parameters<AstroContainer['renderToString']>[1],
+) => {
+  const container = await AstroContainer.create();
+  return container.renderToString(Component, options);
+};
 
+describe('every page form', () => {
   it('carries no style block, because deck.css owns its classes', () => {
-    // Panels shipped as the only component with no style block and emitted
-    // nine classes that existed only in Noland, so it rendered unstyled the
-    // first time Eleven One drew it. That is impossible now the classes are
-    // in the kit, and a style block here would be the mistake in reverse.
-    expect(src).not.toMatch(/<style/);
+    const names = [
+      'Page', 'Cover', 'Split', 'Finding', 'Implication',
+      'Comment', 'Annot', 'Matrix', 'Kpi', 'Dense',
+    ];
+    for (const name of names) expect(read(name), name).not.toMatch(/<style/);
+  });
+});
+
+describe('Page', () => {
+  it('pads the title when and only when a kicker is present', async () => {
+    // Correct on 7 of 7 in the corpus.
+    const withKicker = await render(Page, { props: { kicker: 'Section', title: 'T' } });
+    const without = await render(Page, { props: { title: 'T' } });
+    expect(withKicker).toMatch(/<h2[^>]*class="[^"]*\bs-pad-t--sm\b[^"]*"/);
+    expect(withKicker).toContain('s-kicker');
+    expect(without).not.toContain('s-pad-t--sm');
+    expect(without).not.toContain('s-kicker');
   });
 
-  it('pads the title when and only when a kicker is present', () => {
-    // Correct on 7 of 7 in the corpus and enforced by nothing until now.
-    const expr = src.match(/'s-pad-t--sm':\s*([^\n}]+)/)![1]!;
-    expect(expr).toMatch(/kicker/);
-  });
-
-  it('forwards unknown attributes to its root, so inline spacing survives', () => {
+  it('forwards unknown attributes to its root, so inline spacing survives', async () => {
     // The corpus carries 71 ad-hoc inline styles. Modelling them is a separate
     // decision; losing them is a silent paint change on dozens of pages.
-    expect(src).toMatch(/\.\.\.rest/);
+    const html = await render(Page, {
+      props: { title: 'T', style: 'margin-top: var(--ct-space-4)' },
+    });
+    const root = html.match(/<div[^>]*class="s-stack"[^>]*>/)?.[0];
+    expect(root, 'no s-stack root found').toBeTruthy();
+    expect(root!).toContain('style="margin-top: var(--ct-space-4)"');
   });
 
-  it('renders the default-slot body inside the growing zone, not beside it', () => {
-    // The class list may be built inline or, per the lesson from an earlier
-    // task, assigned to a frontmatter variable and referenced by name -
-    // Astro rejects a multi-line object literal inside an attribute
-    // expression. Either way it must carry 's-grow' and sit ahead of the
-    // default slot.
-    expect(src).toMatch(/'s-grow'/);
-    const bodyDivAt = src.search(/<div class:list=\{[^}]*\}>/);
-    expect(bodyDivAt, 'no class:list div found for the body zone').toBeGreaterThan(-1);
-    expect(src.slice(bodyDivAt)).toMatch(/^<div class:list=\{[^}]*\}>\s*<slot\s*\/>/);
+  it('renders the default-slot body inside the growing zone, not beside it', async () => {
+    const html = await render(Page, {
+      props: { title: 'T' },
+      slots: { default: '<p id="body-probe"></p>' },
+    });
+    const zone = html.match(/<div[^>]*class="[^"]*\bs-grow\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    expect(zone, 'no s-grow zone found').toBeTruthy();
+    expect(zone![1]).toContain('body-probe');
   });
 
-  it('emits the foot before the source, because the corpus writes it that way on all 22 pages that carry both', () => {
-    const footAt = src.indexOf('{foot');
-    const sourceAt = src.indexOf('{source');
-    expect(footAt, 'no {foot} expression found').toBeGreaterThan(-1);
-    expect(sourceAt, 'no {source} expression found').toBeGreaterThan(-1);
+  it('emits the foot before the source, because the corpus writes it that way on all 22 pages that carry both', async () => {
+    const html = await render(Page, { props: { title: 'T', foot: 'F-note', source: 'S-line' } });
+    const footAt = html.indexOf('s-foot');
+    const sourceAt = html.indexOf('s-source');
+    expect(footAt, 'no s-foot rendered').toBeGreaterThan(-1);
+    expect(sourceAt, 'no s-source rendered').toBeGreaterThan(-1);
     expect(footAt).toBeLessThan(sourceAt);
   });
 
-  it('defaults col to true, and the body zone drops s-col only when it is set false', () => {
-    expect(src).toMatch(/col\s*=\s*true/);
-    expect(src).toMatch(/'s-col':\s*col/);
+  it('defaults col to true, and the body zone drops s-col only when it is set false', async () => {
+    const on = await render(Page, { props: { title: 'T' } });
+    const off = await render(Page, { props: { title: 'T', col: false } });
+    expect(on).toMatch(/class="[^"]*\bs-col\b[^"]*"/);
+    expect(off).not.toMatch(/\bs-col\b/);
   });
 
-  it('renders a close slot between the body zone and the foot, for the finding/annot/implication block that follows it', () => {
-    const bodyDivEnd = src.indexOf('</div>', src.search(/<slot\s*\/>/));
-    const closeSlotAt = src.indexOf('<slot name="close"');
-    const footAt = src.indexOf('{foot');
-    expect(closeSlotAt, 'no named close slot found').toBeGreaterThan(-1);
-    expect(closeSlotAt).toBeGreaterThan(bodyDivEnd);
-    expect(closeSlotAt).toBeLessThan(footAt);
+  it('swaps s-pad-t for s-pad-t--lg when padLg is set, which 2 of 71 pages carry', async () => {
+    const lg = await render(Page, { props: { title: 'T', padLg: true } });
+    const plain = await render(Page, { props: { title: 'T' } });
+    expect(lg).toContain('s-pad-t--lg');
+    expect(plain).toMatch(/\bs-pad-t\b(?!--)/);
+    expect(plain).not.toContain('s-pad-t--lg');
   });
 
-  it('renders a lead slot between the title and the body zone, for the s-kpi band that precedes it', () => {
-    const titleAt = src.indexOf('s-pad-t--sm');
-    const leadSlotAt = src.indexOf('<slot name="lead"');
-    const bodyDivAt = src.search(/<div class:list=\{[^}]*\}>/);
-    expect(leadSlotAt, 'no named lead slot found').toBeGreaterThan(-1);
-    expect(leadSlotAt).toBeGreaterThan(titleAt);
-    expect(leadSlotAt).toBeLessThan(bodyDivAt);
+  it('renders the close slot between the body zone and the foot, for the finding/annot/implication block that follows it', async () => {
+    const html = await render(Page, {
+      props: { title: 'T', foot: 'F-note' },
+      slots: { default: '<p id="body-probe"></p>', close: '<p id="close-probe"></p>' },
+    });
+    const zone = html.match(/<div[^>]*class="[^"]*\bs-grow\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    expect(zone![1], 'close slot leaked into the body zone').not.toContain('close-probe');
+    const closeAt = html.indexOf('close-probe');
+    expect(closeAt, 'no close slot rendered').toBeGreaterThan(-1);
+    expect(closeAt).toBeGreaterThan(html.indexOf('body-probe'));
+    expect(closeAt).toBeLessThan(html.indexOf('s-foot'));
+  });
+
+  it('renders the lead slot between the title and the body zone, for the s-kpi band that precedes it', async () => {
+    const html = await render(Page, {
+      props: { title: 'T' },
+      slots: { default: '<p id="body-probe"></p>', lead: '<p id="lead-probe"></p>' },
+    });
+    const zone = html.match(/<div[^>]*class="[^"]*\bs-grow\b[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    expect(zone![1], 'lead slot leaked into the body zone').not.toContain('lead-probe');
+    const leadAt = html.indexOf('lead-probe');
+    expect(leadAt, 'no lead slot rendered').toBeGreaterThan(-1);
+    expect(leadAt).toBeGreaterThan(html.indexOf('</h2>'));
+    expect(leadAt).toBeLessThan(html.indexOf('body-probe'));
   });
 
   /* Page carries no `sub` prop, on purpose: the 13 `s-sub` elements in the
@@ -83,216 +151,304 @@ describe('Page', () => {
      read and argued with; if `sub` is ever added, the argument above is what
      has to be answered, not a regex. */
 
-  it('carries sourcePad, the one inline style any s-source takes anywhere in the corpus, as a boolean rather than a string', () => {
+  it('pads the source line only when sourcePad is set, with the one inline style any s-source takes in the corpus', async () => {
     // padding-top: var(--ct-space-3) is the only style any s-source line
     // carries in the corpus, so one boolean covers every case rather than
     // reopening the string-vs-expression problem for a style attribute.
-    expect(src).toMatch(/sourcePad\s*=\s*false/);
-    expect(src).toMatch(/padding-top:\s*var\(--ct-space-3\)/);
+    const padded = await render(Page, { props: { title: 'T', source: 'S', sourcePad: true } });
+    const tag = padded.match(/<p[^>]*class="s-source"[^>]*>/)?.[0];
+    expect(tag, 'no s-source rendered').toBeTruthy();
+    expect(tag!).toContain('style="padding-top: var(--ct-space-3)"');
   });
 
-  it('emits no style attribute at all when sourcePad is unset, not an empty one', () => {
-    // Astro omits a style={undefined} attribute outright; style="" would be
-    // a different (and wrong) result, and the html-diff on the 55 pages
-    // already migrated is the thing that would have caught it.
-    const sourceLineAt = src.indexOf('class="s-source"');
-    expect(sourceLineAt, 'no s-source line found').toBeGreaterThan(-1);
-    const nearby = src.slice(Math.max(0, sourceLineAt - 120), sourceLineAt + 150);
-    expect(nearby).toMatch(/style=\{sourcePad[^}]*undefined[^}]*\}/);
+  it('emits no style attribute at all when sourcePad is unset, not an empty one', async () => {
+    // style="" would be a different (and wrong) result from omitting the
+    // attribute, and the html-diff on the migrated pages is the thing that
+    // would have caught it at migration time. This pins it from now on.
+    const plain = await render(Page, { props: { title: 'T', source: 'S' } });
+    const tag = plain.match(/<p[^>]*class="s-source"[^>]*>/)?.[0];
+    expect(tag, 'no s-source rendered').toBeTruthy();
+    expect(tag!).not.toContain('style=');
   });
 });
 
 describe('Cover', () => {
-  const src = read('Cover');
+  const base = { kicker: 'K', title: 'T', foot: ['Foot one', 'Foot two'] };
+  const art = { src: '/a.png', alt: 'alt text', width: 1280, height: 720 };
 
-  it('carries no style block', () => {
-    expect(src).not.toMatch(/<style/);
-  });
-
-  it('defaults the art modifier on when art is present', () => {
+  it('defaults the art modifier on when art is present', async () => {
     // Under Eleven One's light ground a photographic cover without
     // s-cover--art gives its furniture a muted grey gated against ink, which
     // measured 1.66:1 to 3.52:1 the first time it shipped. Defaulting the
     // modifier on makes that impossible to get wrong by omission.
-    //
-    // Asserts the computed expression, not the bare class name: the docblock
-    // above the component names s-cover--art too, so a substring match here
-    // would pass against a component that never applies it.
-    const expr = src.match(/'s-cover--art':\s*([^\n}]+)/)![1]!;
-    expect(expr).toContain('onArt');
-    expect(src).toMatch(/const onArt = Boolean\(art\) && furniture !== 'base'/);
+    const withArt = await render(Cover, { props: { ...base, art } });
+    const plain = await render(Cover, { props: base });
+    expect(withArt).toMatch(/class="[^"]*\bs-cover--art\b[^"]*"/);
+    expect(plain).not.toContain('s-cover--art');
   });
 
-  it('lets a cover opt out of it, because Noland measures fine without', () => {
+  it('lets a cover opt out of it, because Noland measures fine without', async () => {
     // Argo's deck cover carries art and not the modifier, and that is correct
     // rather than a defect. Noland's base s-cover is already a dark field with
     // light furniture, and against Argo's scrim it measures 9.25:1 at the
     // kicker, 11.00:1 at the body and 11.28:1 at the foot. Deriving with no
-    // escape would repaint four elements on that page for no gain, inside a
-    // migration whose only proof is that paint did not move.
-    //
-    // Asserts the destructured prop and its default, not the word: "furniture"
-    // appears in this component's docblock, so a substring match would pass
-    // against a component that never reads it.
-    expect(src).toMatch(/furniture\s*=\s*'auto'/);
-    expect(src).toMatch(/furniture\?:\s*'auto'\s*\|\s*'base'/);
+    // escape would repaint four elements on that page for no gain.
+    const opted = await render(Cover, { props: { ...base, art, furniture: 'base' } });
+    expect(opted).not.toContain('s-cover--art');
+    expect(opted).toContain('s-cover__img');
   });
 
-  it('draws the scrim only with art, because a scrim over nothing is a grey wash', () => {
-    expect(src).toMatch(/art\s*&&[\s\S]{0,200}s-cover__scrim/);
+  it('draws the image and scrim only with art, because a scrim over nothing is a grey wash', async () => {
+    const withArt = await render(Cover, { props: { ...base, art } });
+    const plain = await render(Cover, { props: base });
+    expect(withArt).toContain('s-cover__img');
+    expect(withArt).toContain('s-cover__scrim');
+    expect(plain).not.toContain('s-cover__img');
+    expect(plain).not.toContain('s-cover__scrim');
   });
 
-  it('keeps the foot spacing the corpus carries on all 14', () => {
-    expect(src).toContain('margin-top: var(--ct-space-12)');
+  it('keeps the foot spacing the corpus carries on all 14, one <p> per line', async () => {
+    const html = await render(Cover, { props: base });
+    const tag = html.match(/<div[^>]*class="s-cover__foot"[^>]*>/)?.[0];
+    expect(tag, 'no s-cover__foot rendered').toBeTruthy();
+    expect(tag!).toContain('style="margin-top: var(--ct-space-12)"');
+    expect(html).toMatch(/<p[^>]*>Foot one<\/p>\s*<p[^>]*>Foot two<\/p>/);
   });
 
-  it('lets the deck cover be an h1 and a divider an h2', () => {
-    // A component that destructures level but never reads it (an always-h2
-    // Cover) would pass a bare /level/ match. Pin the derivation instead:
-    // the tag is computed from level, the computed tag is what gets
-    // rendered, and the default is 2, which is what all 13 dividers in the
-    // corpus rely on implicitly by never passing level at all.
-    expect(src).toMatch(/level\s*=\s*2\b/);
-    expect(src).toMatch(/const Title = level === 1 \? 'h1' : 'h2'/);
-    expect(src).toMatch(/<Title\b/);
+  it('lets the deck cover be an h1 and a divider an h2, defaulting to 2 as all 13 dividers rely on', async () => {
+    const deck = await render(Cover, { props: { ...base, level: 1 } });
+    const divider = await render(Cover, { props: base });
+    expect(deck).toMatch(/<h1[^>]*class="[^"]*s-cover__title/);
+    expect(divider).toMatch(/<h2[^>]*class="[^"]*s-cover__title/);
   });
 });
 
 describe('Split', () => {
-  const src = read('Split');
+  const slots = {
+    default: '<p id="main-probe"></p>',
+    rail: '<p id="rail-probe"></p>',
+  };
 
-  it('carries no style block', () => {
-    expect(src).not.toMatch(/<style/);
-  });
-
-  it('keeps s-col optional, because migration preserves and does not fix', () => {
+  it('keeps s-col optional, because migration preserves and does not fix', async () => {
     // 20 of 22 main columns carry s-col and 2 do not, and s-col is
     // display:flex, flex-direction:column, height:100%, so the two lay out
     // differently. They may well be an oversight. Normalising them here would
-    // move Argo's paint inside a migration whose only proof is that paint did
-    // not move, so the option stays and the question is recorded.
-    expect(src).toMatch(/'s-col':\s*col/);
+    // move Argo's paint, so the option stays and the question is recorded.
+    const on = await render(Split, { slots });
+    const off = await render(Split, { props: { col: false }, slots });
+    expect(on).toMatch(/class="[^"]*s-split__main[^"]*\bs-col\b[^"]*"/);
+    expect(off).not.toMatch(/\bs-col\b/);
   });
 
-  it('takes both halves as slots, because only the wrapper is boilerplate', () => {
-    expect(src).toMatch(/<slot\s*\/>/);
-    expect(src).toMatch(/<slot name="rail"/);
+  it('takes both halves as slots, because only the wrapper is boilerplate', async () => {
+    const html = await render(Split, { slots });
+    const main = html.match(/<div[^>]*class="[^"]*s-split__main[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    const side = html.match(/<div[^>]*class="[^"]*s-split__side[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+    expect(main, 'no main column rendered').toBeTruthy();
+    expect(side, 'no side column rendered').toBeTruthy();
+    expect(main![1]).toContain('main-probe');
+    expect(side![1]).toContain('rail-probe');
   });
 });
 
 describe('Finding and Implication', () => {
-  it('keep separate components for separate deck.css objects', () => {
+  it('keep separate components for separate deck.css objects', async () => {
     // Same label-plus-body shape, different treatment. Merging them would put
     // the choice of visual treatment behind a prop that reads as a preference.
-    expect(read('Finding')).toContain('s-finding');
-    expect(read('Finding')).not.toContain('s-implication');
-    expect(read('Implication')).toContain('s-implication');
-    expect(read('Implication')).not.toContain('s-finding');
+    const f = await render(Finding, { props: { label: 'Verdict' }, slots: { default: 'the finding body' } });
+    const i = await render(Implication, { props: { label: 'So what' }, slots: { default: 'the implication body' } });
+    expect(f).toContain('s-finding');
+    expect(f).not.toContain('s-implication');
+    expect(i).toContain('s-implication');
+    expect(i).not.toContain('s-finding');
   });
 
-  it('carry no style block', () => {
-    expect(read('Finding')).not.toMatch(/<style/);
-    expect(read('Implication')).not.toMatch(/<style/);
+  it('render the label and the slot body into their deck.css elements', async () => {
+    const f = await render(Finding, { props: { label: 'Verdict' }, slots: { default: 'the finding body' } });
+    expect(f).toMatch(/<p[^>]*class="s-finding__label"[^>]*>Verdict<\/p>/);
+    expect(f).toMatch(/<p[^>]*class="s-finding__body"[^>]*>[\s\S]*the finding body/);
   });
 
-  it('give Finding the ink modifier, which 6 of 39 carry', () => {
-    expect(read('Finding')).toMatch(/'s-finding--ink':\s*ink/);
+  it('give Finding the ink modifier, which 6 of 39 carry', async () => {
+    const ink = await render(Finding, { props: { label: 'L', ink: true }, slots: { default: 'b' } });
+    const plain = await render(Finding, { props: { label: 'L' }, slots: { default: 'b' } });
+    expect(ink).toContain('s-finding--ink');
+    expect(plain).not.toContain('s-finding--ink');
   });
 });
 
 describe('Comment and Annot', () => {
-  it('carry no style block', () => {
-    expect(read('Comment')).not.toMatch(/<style/);
-    expect(read('Annot')).not.toMatch(/<style/);
-  });
-
-  it("give Comment's first-item spacing as a pad field on the item record, not derived from position", () => {
+  it("give Comment's item spacing as a pad field on the item record, not derived from position", async () => {
     // 16 of 63 comment items carry s-pad-t--sm. Checked against
     // src/components/argo/S0*.astro before writing this component: the
     // padded item is always the first in its rail, but not every rail's
     // first item is padded (S04 alone has five unpadded first items sitting
     // beside two padded ones), so index alone over-applies the class to
     // rails the corpus never padded. It is an authorial choice per rail, not
-    // a position, so it is a field on the item record.
-    const expr = read('Comment').match(/'s-pad-t--sm':\s*([^\n}]+)/)![1]!;
-    expect(expr).toMatch(/item\.pad|pad\b/);
-    expect(expr).not.toMatch(/i\s*===\s*0|index\s*===\s*0/);
+    // a position — so an unpadded first item beside a padded second is the
+    // exact rendering an index-derived class could not produce.
+    const html = await render(Comment, {
+      props: {
+        items: [
+          { lead: 'first-lead', body: 'b1' },
+          { lead: 'second-lead', body: 'b2', pad: 3 },
+        ],
+      },
+    });
+    expect(html).toMatch(/<div[^>]*class="s-comment__item"[^>]*>\s*<p[^>]*>first-lead/);
+    expect(html).toMatch(/<div[^>]*class="s-comment__item s-pad-t--sm"[^>]*>\s*<p[^>]*>second-lead/);
   });
 
-  it('give Annot the bare modifier, which 1 of 16 carries', () => {
-    expect(read('Annot')).toMatch(/'s-annot--bare':\s*bare/);
+  it('carries pad 4 as the one observed ad-hoc inline override, not a class', async () => {
+    // One item (S04) pads at the larger step, which s-pad-t--sm cannot
+    // express, so 4 renders as the same inline style the corpus writes.
+    const html = await render(Comment, {
+      props: { items: [{ lead: 'l', body: 'b', pad: 4 }] },
+    });
+    expect(html).toContain('padding-top: var(--ct-space-4)');
+    expect(html).not.toContain('s-pad-t--sm');
   });
 
-  it('give Annot the field modifier, closed round 1 of Task 10 for project-argo.astro\'s contents page', () => {
+  it('give Annot the bare modifier, which 1 of 16 carries', async () => {
+    const items = [{ lead: 'l', body: 'b' }];
+    const bare = await render(Annot, { props: { items, bare: true } });
+    const plain = await render(Annot, { props: { items } });
+    expect(bare).toContain('s-annot--bare');
+    expect(plain).not.toContain('s-annot--bare');
+  });
+
+  it('give Annot the field modifier, closed round 1 of Task 10 for project-argo.astro\'s contents page', async () => {
     // s-annot--field is real in deck.css (the grey ground, same field the KPI
     // band uses) but had no prop until the coverage guard's fixed needle
     // caught project-argo.astro still hand-writing
     // class="s-annot s-annot--field" for exactly this reason.
-    expect(read('Annot')).toMatch(/'s-annot--field':\s*field/);
+    const field = await render(Annot, { props: { items: [{ lead: 'l', body: 'b' }], field: true } });
+    expect(field).toContain('s-annot--field');
+  });
+
+  it('render each item as a lead/body pair inside its item div', async () => {
+    const html = await render(Annot, { props: { items: [{ lead: 'the-lead', body: 'the-body' }] } });
+    expect(html).toMatch(/<p[^>]*class="s-annot__lead"[^>]*>the-lead<\/p>\s*<p[^>]*class="s-annot__body"[^>]*>the-body<\/p>/);
   });
 });
 
 describe('Matrix', () => {
-  const src = read('Matrix');
+  const rows = [
+    { cells: ['Head A', 'Head B'], head: true },
+    { cells: [{ text: 'a-term', kind: 'term' }, { text: '42', kind: 'num' }] },
+    { cells: [{ text: 'an-ord', kind: 'ord', level: 2 }, 'plain-cell'], mark: true },
+  ];
 
-  it('carries no style block', () => {
-    expect(src).not.toMatch(/<style/);
-  });
-
-  it('requires cols, because every matrix in the corpus sets one', () => {
+  it('requires cols, because every matrix in the corpus sets one, and emits it as the grid template', async () => {
     // --cols is structural, not decoration: 23 matrices carry 23 different
     // grid templates. A default would silently lay a table out wrong.
-    expect(src).toMatch(/cols:\s*string;/);
-    expect(src).not.toMatch(/cols\s*=\s*['"]/);
+    // Requiredness is a type fact a render cannot observe, so that half
+    // stays a source assertion.
+    expect(read('Matrix')).toMatch(/cols:\s*string;/);
+    expect(read('Matrix')).not.toMatch(/cols\s*=\s*['"]/);
+    const html = await render(Matrix, { props: { rows, cols: '130px 1fr' } });
+    const root = html.match(/<div[^>]*class="[^"]*\bs-matrix\b[^"]*"[^>]*>/)?.[0];
+    expect(root, 'no s-matrix root rendered').toBeTruthy();
+    expect(root!).toContain('--cols: 130px 1fr');
   });
 
-  it('takes cell kind from the row records, not from a caller writing classes', () => {
-    expect(src).toMatch(/s-matrix__cell--term/);
-    expect(src).toMatch(/s-matrix__cell--num/);
-    expect(src).toMatch(/s-matrix__cell--ord/);
-    expect(src).toMatch(/s-matrix__cell--lv/);
+  it('takes cell kind from the row records, not from a caller writing classes', async () => {
+    const html = await render(Matrix, { props: { rows, cols: '1fr 1fr' } });
+    expect(html).toMatch(/<p[^>]*class="s-matrix__cell s-matrix__cell--term"[^>]*>a-term/);
+    expect(html).toMatch(/<p[^>]*class="s-matrix__cell s-matrix__cell--num"[^>]*>42/);
+    expect(html).toMatch(/<p[^>]*class="s-matrix__cell s-matrix__cell--ord s-matrix__cell--lv2"[^>]*>an-ord/);
+    expect(html).toMatch(/<p[^>]*class="s-matrix__cell"[^>]*>plain-cell/);
   });
 
-  it('emits the ordinal level class without resolving its colour', () => {
-    // --lv1 reads --deck-ordinal-lv1, the one site-supplied name in the kit.
+  it('takes head and mark from the row records the same way', async () => {
+    const html = await render(Matrix, { props: { rows, cols: '1fr 1fr' } });
+    expect(html).toMatch(/s-matrix__row--head[^>]*>\s*<p[^>]*>Head A/);
+    expect(html).toMatch(/s-matrix__row--mark[^>]*>\s*<p[^>]*>an-ord/);
+  });
+
+  it('emits the ordinal level class without resolving its colour', async () => {
+    // --lv2 reads --deck-ordinal-lv2, the one site-supplied name in the kit.
     // The component emits the class; the site supplies the value, exactly as
     // today. The ordinal palette question stays open and stays out of scope.
-    expect(src).not.toMatch(/--deck-ordinal/);
+    const html = await render(Matrix, { props: { rows, cols: '1fr 1fr' } });
+    expect(html).toContain('s-matrix__cell--lv2');
+    expect(html).not.toContain('--deck-ordinal');
   });
 });
 
 describe('Kpi and Dense', () => {
-  it('carry no style block', () => {
-    expect(read('Kpi')).not.toMatch(/<style/);
-    expect(read('Dense')).not.toMatch(/<style/);
-  });
-
-  it('mark the Kpi value and the Dense row, which are different elements', () => {
+  it('mark the Kpi value and the Dense row, which are different elements', async () => {
     // The mark lands on s-kpi__value and on s-dense__row. Putting it on the
     // item in one and the row in the other is not an inconsistency to tidy:
     // it is where deck.css draws it.
-    expect(read('Kpi')).toMatch(/'s-kpi__value--mark'/);
-    expect(read('Dense')).toMatch(/'s-dense__row--mark'/);
+    const kpi = await render(Kpi, {
+      props: {
+        items: [
+          { value: '42%', label: 'marked-share', mark: true },
+          { value: '7', label: 'plain-count' },
+        ],
+      },
+    });
+    expect(kpi).toMatch(/<p[^>]*class="s-kpi__value s-kpi__value--mark"[^>]*>42%/);
+    expect(kpi).toMatch(/<p[^>]*class="s-kpi__value"[^>]*>7</);
+
+    const dense = await render(Dense, {
+      props: { rows: [{ term: 'a-term', body: 'a-body', mark: true }] },
+    });
+    expect(dense).toMatch(/<div[^>]*class="s-dense__row s-dense__row--mark"[^>]*>/);
   });
 
-  it('give Dense optional num and pp fields, closed round 1 of Task 10 for project-argo.astro\'s contents table', () => {
+  it('give Dense optional num and pp fields, closed round 1 of Task 10 for project-argo.astro\'s contents table', async () => {
     // project-argo.astro's contents page carries 4 fields per row (num,
-    // term, body, pp) against Dense's original 2 (term, body). s-dense__num
-    // and s-dense__pp are both real classes in deck.css. num sits before
-    // term and pp sits after body, matching the corpus row order, and both
-    // render as <p>, like every other cell in this component.
-    const src = read('Dense');
-    expect(src).toMatch(/num\?:\s*string/);
-    expect(src).toMatch(/pp\?:\s*string/);
-    expect(src).toMatch(/<p class="s-dense__num">/);
-    expect(src).toMatch(/<p class="s-dense__pp">/);
-    const numAt = src.indexOf('s-dense__num');
-    const termAt = src.indexOf('s-dense__term');
-    const bodyAt = src.indexOf('s-dense__body');
-    const ppAt = src.indexOf('s-dense__pp');
-    expect(numAt).toBeGreaterThan(-1);
+    // term, body, pp) against Dense's original 2 (term, body). num sits
+    // before term and pp sits after body, matching the corpus row order.
+    const full = await render(Dense, {
+      props: { rows: [{ num: '01', term: 'a-term', body: 'a-body', pp: 'pp. 4' }] },
+    });
+    const numAt = full.indexOf('s-dense__num');
+    const termAt = full.indexOf('s-dense__term');
+    const bodyAt = full.indexOf('s-dense__body');
+    const ppAt = full.indexOf('s-dense__pp');
+    expect(numAt, 'no s-dense__num rendered').toBeGreaterThan(-1);
     expect(numAt).toBeLessThan(termAt);
     expect(termAt).toBeLessThan(bodyAt);
     expect(bodyAt).toBeLessThan(ppAt);
+
+    const minimal = await render(Dense, {
+      props: { rows: [{ term: 't', body: 'b' }] },
+    });
+    expect(minimal).not.toContain('s-dense__num');
+    expect(minimal).not.toContain('s-dense__pp');
+  });
+});
+
+describe('the one-mark budget, wired into the components and not just the library', () => {
+  // assertOneMark itself is covered in exhibits.test.ts. What that cannot
+  // prove is that each component actually calls it on its own props: a
+  // deleted import would leave the library green and the budget unenforced.
+  // audit.mjs cannot see a caller-set prop either (the reason recorded in
+  // Matrix.astro), so the render rejecting is the only guard there is.
+  it('rejects a Matrix with two marked rows', async () => {
+    const rows = [
+      { cells: ['row-a'], mark: true },
+      { cells: ['row-b'], mark: true },
+    ];
+    await expect(render(Matrix, { props: { rows, cols: '1fr' } })).rejects.toThrow(/Matrix/);
+  });
+
+  it('rejects a Kpi with two marked values', async () => {
+    const items = [
+      { value: '1', label: 'a', mark: true },
+      { value: '2', label: 'b', mark: true },
+    ];
+    await expect(render(Kpi, { props: { items } })).rejects.toThrow(/Kpi/);
+  });
+
+  it('rejects a Dense with two marked rows', async () => {
+    const rows = [
+      { term: 'a', body: 'x', mark: true },
+      { term: 'b', body: 'y', mark: true },
+    ];
+    await expect(render(Dense, { props: { rows } })).rejects.toThrow(/Dense/);
   });
 });
