@@ -45,20 +45,26 @@ describe('the profile set', () => {
   }
 });
 
-describe('the deliverable profile preserves the pre-profile calibration', () => {
-  // These six numbers were inline in audit.mjs and density.mjs before the
-  // profiles existed. If any of them moves, Project Argo's scoring moved with
-  // it, and that is a decision rather than a refactor.
+describe('the deliverable profile carries the ten-deck corpus calibration', () => {
+  // Re-baselined 2026-08-29, by decision. The original constants were
+  // preserved from one 167-page reference deck so that adding the profile
+  // mechanism and moving the calibration could not happen in the same
+  // change; once the mechanism had held stable, the corpus (ten client
+  // decks, 682 working pages) replaced the single deck. Measured before
+  // moved: under both calibrations every current verdict is identical, so
+  // this changed what the baselines claim, not what any gate says. The
+  // floor keeps its old distance, nine points under the share, which also
+  // matches the report profile's floor exactly.
   const p = loadProfile('deliverable');
 
-  it('carries the reference deliverable title constants', () => {
-    expect(p.title.medianWords).toBe(19);
-    expect(p.title.numberShare).toBe(0.74);
-    expect(p.title.numberShareFloor).toBe(0.65);
+  it('carries the corpus title constants', () => {
+    expect(p.title.medianWords).toBe(11);
+    expect(p.title.numberShare).toBe(0.44);
+    expect(p.title.numberShareFloor).toBe(0.35);
   });
 
-  it('carries the reference deliverable density constants', () => {
-    expect(p.density.medianWords).toBe(190);
+  it('carries the corpus density median and the unchanged thin threshold', () => {
+    expect(p.density.medianWords).toBe(162);
     expect(p.density.thinWords).toBe(120);
   });
 
