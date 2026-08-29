@@ -24,8 +24,18 @@ import Implication from 'research-kit/components/Implication.astro';
 import Comment from 'research-kit/components/Comment.astro';
 import Kpi from 'research-kit/components/Kpi.astro';
 import {
-  universe, q, widths, bands, bandDomain, bandsIn, filersIn, tallestBand, modes,
-  cohorts, one, money,
+  universe,
+  q,
+  widths,
+  bands,
+  bandDomain,
+  bandsIn,
+  filersIn,
+  tallestBand,
+  modes,
+  cohorts,
+  one,
+  money,
 } from '../../lib/piece-001';
 
 const SECTIONS = 2;
@@ -40,8 +50,7 @@ const bandShares = bands.map((b) => b.value);
 /* Filers per band across a stretch of the axis. Comparing three bands against
    two by their totals is not a comparison, which is how the page previously
    read the middle as thinner than it measured. */
-const perBand = (lo: number, hi: number) =>
-  Math.round(filersIn(lo, hi) / bandsIn(lo, hi).length);
+const perBand = (lo: number, hi: number) => Math.round(filersIn(lo, hi) / bandsIn(lo, hi).length);
 
 /* Exhibit 1's furniture, built here rather than inline: every other exhibit
    on this page passes a frontmatter array, and the Astro compiler will not
@@ -148,8 +157,7 @@ const loadPath = [
     id: 'B',
     standing: 'Firm',
     claim: 'Dispersion narrows monotonically with revenue while the medians do not decline in order.',
-    limit:
-      'The cohorts are equal-count rather than chosen, which is the weaker of the two available assumptions.',
+    limit: 'The cohorts are equal-count rather than chosen, which is the weaker of the two available assumptions.',
   },
   {
     id: 'C',
@@ -184,76 +192,84 @@ const loadPath = [
 
   {/* 02 The question */}
   <Slide n={2}>
-    <Page kicker="The question" title="Every diligence process anchors gross margin to a peer median" col={false} source={` ${universe.source}, retrieved ${universe.retrieved} `} sourcePad>
-        <div class="s-two-up">
-          <div>
-            <div class="s-ex__head s-ex__head--bare">
-              <p class="s-ex__title">The method</p>
-            </div>
-            <div class="s-pad-t--sm">
-              <p class="s-body">
-                Pull a comparable set, take the middle, treat the distance from it as a finding. It
-                survives because it is fast and because the number it produces always looks like an
-                answer.
-              </p>
-              <p class="s-body">
-                We wanted to know what that median is actually summarising, so we took the universe
-                instead of a comparable set: every SEC registrant that filed both revenue and gross
-                profit on a CY2024 annual basis.
-              </p>
-            </div>
+    <Page
+      kicker="The question"
+      title="Every diligence process anchors gross margin to a peer median"
+      col={false}
+      source={` ${universe.source}, retrieved ${universe.retrieved} `}
+      sourcePad
+    >
+      <div class="s-two-up">
+        <div>
+          <div class="s-ex__head s-ex__head--bare">
+            <p class="s-ex__title">The method</p>
           </div>
-          <div>
-            <div class="s-ex__head s-ex__head--bare">
-              <p class="s-ex__title">What it has to assume to work</p>
-            </div>
-            <div class="s-pad-t--sm">
-              <div class="s-list">
-                <div class="s-list__row">
-                  <p class="s-list__num">01</p>
-                  <p class="s-list__body">The comparable set is drawn from one population.</p>
-                </div>
-                <div class="s-list__row">
-                  <p class="s-list__num">02</p>
-                  <p class="s-list__body">The middle of that population is representative of it.</p>
-                </div>
-                <div class="s-list__row">
-                  <p class="s-list__num">03</p>
-                  <p class="s-list__body">Distance from the middle carries information about a company.</p>
-                </div>
+          <div class="s-pad-t--sm">
+            <p class="s-body">
+              Pull a comparable set, take the middle, treat the distance from it as a finding. It survives because it is
+              fast and because the number it produces always looks like an answer.
+            </p>
+            <p class="s-body">
+              We wanted to know what that median is actually summarising, so we took the universe instead of a
+              comparable set: every SEC registrant that filed both revenue and gross profit on a CY2024 annual basis.
+            </p>
+          </div>
+        </div>
+        <div>
+          <div class="s-ex__head s-ex__head--bare">
+            <p class="s-ex__title">What it has to assume to work</p>
+          </div>
+          <div class="s-pad-t--sm">
+            <div class="s-list">
+              <div class="s-list__row">
+                <p class="s-list__num">01</p>
+                <p class="s-list__body">The comparable set is drawn from one population.</p>
+              </div>
+              <div class="s-list__row">
+                <p class="s-list__num">02</p>
+                <p class="s-list__body">The middle of that population is representative of it.</p>
+              </div>
+              <div class="s-list__row">
+                <p class="s-list__num">03</p>
+                <p class="s-list__body">Distance from the middle carries information about a company.</p>
               </div>
             </div>
           </div>
         </div>
-      
-    <Fragment slot="close">
-      <Implication label="What we found">
-          The peer median is a summary of a mixture, and the mixture is wide enough that distance from
-          the middle carries almost no information on its own.
-      </Implication>
-    </Fragment>
-  </Page>
+      </div>
+
+      <Fragment slot="close">
+        <Implication label="What we found">
+          The peer median is a summary of a mixture, and the mixture is wide enough that distance from the middle
+          carries almost no information on its own.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 03 The universe */}
   <Slide n={3}>
-    <Page kicker="The evidence base" title={` ${universe.kept.toLocaleString()} registrants, one public source, and no filter of any kind `} col={false} source={`${universe.source}, retrieved ${universe.retrieved}`}>
-        <Kpi
-          items={[
-            { value: universe.kept.toLocaleString(), label: 'Registrants kept', mark: true },
-            { value: universe.screened.toLocaleString(), label: 'Appeared in both frames' },
-            { value: String(universe.excluded), label: 'Dropped for a missing or non-positive denominator' },
-            { value: '0', label: 'Sector, exchange, size or listing filters applied' },
-          ]}
-        />
-        <div class="s-pad-t s-measure">
-          <p class="s-body">
-            Gross margin is gross profit divided by revenue, as reported, with no adjustment or
-            normalisation. Nothing on the pages that follow uses a number that cannot be recomputed
-            from the published dataset.
-          </p>
-        </div>
-      </Page>
+    <Page
+      kicker="The evidence base"
+      title={` ${universe.kept.toLocaleString()} registrants, one public source, and no filter of any kind `}
+      col={false}
+      source={`${universe.source}, retrieved ${universe.retrieved}`}
+    >
+      <Kpi
+        items={[
+          { value: universe.kept.toLocaleString(), label: 'Registrants kept', mark: true },
+          { value: universe.screened.toLocaleString(), label: 'Appeared in both frames' },
+          { value: String(universe.excluded), label: 'Dropped for a missing or non-positive denominator' },
+          { value: '0', label: 'Sector, exchange, size or listing filters applied' },
+        ]}
+      />
+      <div class="s-pad-t s-measure">
+        <p class="s-body">
+          Gross margin is gross profit divided by revenue, as reported, with no adjustment or normalisation. Nothing on
+          the pages that follow uses a number that cannot be recomputed from the published dataset.
+        </p>
+      </div>
+    </Page>
   </Slide>
 
   {/* 04 Opener */}
@@ -273,82 +289,108 @@ const loadPath = [
 
   {/* 05 The bands */}
   <Slide n={5} section="01" sections={SECTIONS}>
-    <Page title="No 10-point band holds more than one filer in six" col={false} source=" Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact. ">
-        <Split>
-            <div class="s-ex__head">
-              <p class="s-ex__title">Exhibit 1&ensp;Share of the universe by ten-point margin band</p>
-              <p class="s-label">{universe.kept.toLocaleString()} filers</p>
-            </div>
-            <div class="s-ex__fig">
-              <Distribution
-                values={bandShares}
-                domain={bandDomain}
-                form="bins"
-                width={HALF}
-                height={430}
-                axisLabel="Share of filers"
-                domainLabels={bandAxis}
-                markers={bandMarkers}
-                alt={bandAlt}
-              />
-            </div>
-          
-    <Fragment slot="rail">
-            <p class="s-label">Reading</p>
-            <Comment items={[
-              { lead: 'The tallest band is not tall.', body: ` A benchmark is useful when the distribution around it is tight enough that distance from it means something. The largest band here holds ${one(tallestBand.value)}% of filers, and the bands on either side of it are within five points of that. `, pad: 3 },
-              { lead: 'The high end does not thin out.', body: ` The bands above 70% together hold ${filersIn(0.7, 1.0)} filers, more than the ${filersIn(bandDomain[0], 0.1)} below 10%. A distribution with a genuine centre does not look like this. ` },
-              { lead: 'Coarse bands understate it.', body: ' Ten points is wider than most comparisons would accept. Narrow the band to something a diligence process would actually use and the share inside it falls further, which is what the next page measures. ' },
-            ]} />
+    <Page
+      title="No 10-point band holds more than one filer in six"
+      col={false}
+      source=" Interpolated from 2.6-point bins, good to about a point. Percentiles elsewhere are exact. "
+    >
+      <Split>
+        <div class="s-ex__head">
+          <p class="s-ex__title">Exhibit 1&ensp;Share of the universe by ten-point margin band</p>
+          <p class="s-label">{universe.kept.toLocaleString()} filers</p>
+        </div>
+        <div class="s-ex__fig">
+          <Distribution
+            values={bandShares}
+            domain={bandDomain}
+            form="bins"
+            width={HALF}
+            height={430}
+            axisLabel="Share of filers"
+            domainLabels={bandAxis}
+            markers={bandMarkers}
+            alt={bandAlt}
+          />
+        </div>
 
-    </Fragment>
-  </Split>
-      </Page>
+        <Fragment slot="rail">
+          <p class="s-label">Reading</p>
+          <Comment
+            items={[
+              {
+                lead: 'The tallest band is not tall.',
+                body: ` A benchmark is useful when the distribution around it is tight enough that distance from it means something. The largest band here holds ${one(tallestBand.value)}% of filers, and the bands on either side of it are within five points of that. `,
+                pad: 3,
+              },
+              {
+                lead: 'The high end does not thin out.',
+                body: ` The bands above 70% together hold ${filersIn(0.7, 1.0)} filers, more than the ${filersIn(bandDomain[0], 0.1)} below 10%. A distribution with a genuine centre does not look like this. `,
+              },
+              {
+                lead: 'Coarse bands understate it.',
+                body: ' Ten points is wider than most comparisons would accept. Narrow the band to something a diligence process would actually use and the share inside it falls further, which is what the next page measures. ',
+              },
+            ]}
+          />
+        </Fragment>
+      </Split>
+    </Page>
   </Slide>
 
   {/* 06 The middle */}
   <Slide n={6} section="01" sections={SECTIONS}>
-    <Page title={` Eight in ten fall inside a band ${one(widths.p10p90, 0)} points wide `} col={false} source={` Percentiles exact from ${universe.kept.toLocaleString()} filers. The share inside the ten-point band is interpolated and good to about a point. `} sourcePad>
-        <div class="s-ex__head">
-          <p class="s-ex__title">Exhibit 2&ensp;Three nested readings of the same axis</p>
-          <p class="s-label">{universe.kept.toLocaleString()} filers</p>
-        </div>
-        <div class="s-ex__fig">
-          <Spread
-            rows={middleRows}
-            width={FULL}
-            height={285}
-            min={0}
-            max={100}
-            ticks={[0, 20, 40, 60, 80, 100]}
-            axisLabel="Reported gross margin, per cent"
-            tickFormat={(v) => `${v}%`}
-            threshold={{ at: q.p50, label: `Median ${one(q.p50)}%` }}
-            alt={`Three nested bands on a gross margin axis. The tenth to ninetieth percentile spans ${one(widths.p10p90)} points, the interquartile range ${one(widths.iqr)} points, and a ten-point band centred on the median holds only ${one(widths.withinFive)} per cent of the universe.`}
-          />
-        </div>
-      
-    <Fragment slot="close">
-      <Implication label="Why it matters">
-          Narrow the band until it is tight enough to support a comparison and it holds about one
-          company in six. A target fifteen points off this median is unremarkable.
-      </Implication>
-    </Fragment>
-  </Page>
+    <Page
+      title={` Eight in ten fall inside a band ${one(widths.p10p90, 0)} points wide `}
+      col={false}
+      source={` Percentiles exact from ${universe.kept.toLocaleString()} filers. The share inside the ten-point band is interpolated and good to about a point. `}
+      sourcePad
+    >
+      <div class="s-ex__head">
+        <p class="s-ex__title">Exhibit 2&ensp;Three nested readings of the same axis</p>
+        <p class="s-label">{universe.kept.toLocaleString()} filers</p>
+      </div>
+      <div class="s-ex__fig">
+        <Spread
+          rows={middleRows}
+          width={FULL}
+          height={285}
+          min={0}
+          max={100}
+          ticks={[0, 20, 40, 60, 80, 100]}
+          axisLabel="Reported gross margin, per cent"
+          tickFormat={(v) => `${v}%`}
+          threshold={{ at: q.p50, label: `Median ${one(q.p50)}%` }}
+          alt={`Three nested bands on a gross margin axis. The tenth to ninetieth percentile spans ${one(widths.p10p90)} points, the interquartile range ${one(widths.iqr)} points, and a ten-point band centred on the median holds only ${one(widths.withinFive)} per cent of the universe.`}
+        />
+      </div>
+
+      <Fragment slot="close">
+        <Implication label="Why it matters">
+          Narrow the band until it is tight enough to support a comparison and it holds about one company in six. A
+          target fifteen points off this median is unremarkable.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 07 The second population */}
   <Slide n={7} section="01" sections={SECTIONS}>
-    <Page title={` Two concentrations sit ${one(modes.second.margin - modes.main.margin, 0)} points apart, with the median between them `} col={false} padLg source=" Density surface over log revenue and margin, 72 by 96 cells. Gaussian kernels, bandwidth by Silverman&rsquo;s rule. Band counts interpolated from 2.6-point bins. " sourcePad>
-        <Panels panels={modePanels} lead />
-      
-    <Fragment slot="close">
-      <Implication label="The consequence for a comparison">
-          Before a gross margin comparison means anything, establish which of the two the target sits
-          in. Those are different questions with different comparable sets.
-      </Implication>
-    </Fragment>
-  </Page>
+    <Page
+      title={` Two concentrations sit ${one(modes.second.margin - modes.main.margin, 0)} points apart, with the median between them `}
+      col={false}
+      padLg
+      source=" Density surface over log revenue and margin, 72 by 96 cells. Gaussian kernels, bandwidth by Silverman’s rule. Band counts interpolated from 2.6-point bins. "
+      sourcePad
+    >
+      <Panels panels={modePanels} lead />
+
+      <Fragment slot="close">
+        <Implication label="The consequence for a comparison">
+          Before a gross margin comparison means anything, establish which of the two the target sits in. Those are
+          different questions with different comparable sets.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 08 Opener */}
@@ -368,251 +410,290 @@ const loadPath = [
 
   {/* 09 Medians */}
   <Slide n={9} section="02" sections={SECTIONS}>
-    <Page title="Across 6 revenue cohorts the medians do not decline in order" col={false} source={` ${universe.source}. Cohorts are equal-count by revenue, not chosen boundaries. `}>
-        <Split>
-            <div class="s-ex__head">
-              <p class="s-ex__title">Exhibit 3&ensp;Median reported gross margin by revenue cohort</p>
-              <p class="s-label">Equal-count cohorts</p>
-            </div>
-            <div class="s-ex__fig">
-              <Bars
-                rows={medianRows}
-                width={HALF}
-                height={320}
-                digits={1}
-                suffix="%"
-                axisLabel="Median gross margin"
-                railHead="Filers"
-                alt={`Median gross margin across six equal-count revenue cohorts, running ${cohorts.map((c) => one(c.median)).join(', ')} per cent from smallest to largest. Only the largest cohort is clearly separated from the rest.`}
-              />
-            </div>
-          
-    <Fragment slot="rail">
-            <p class="s-label">Reading</p>
-            <Comment items={[
-              { lead: 'The intuition does not hold.', body: ' Margin is supposed to fall as companies get bigger. The third cohort carries the highest median of the six, and the second carries a lower median than the first. ', pad: 3 },
-              { lead: 'One cohort does separate.', body: ` Filers above ${money(1e10)} of revenue sit at ${one(cohorts[5]!.median)}%, which is ${one(cohorts[0]!.median - cohorts[5]!.median)} points below the smallest cohort. That is the only clean size effect in the medians. ` },
-              { lead: 'Equal counts, not chosen boundaries.', body: ` The cohorts hold ${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers each. The top cohort is the smallest, so its percentiles move more easily than the others, which is the first thing we would check before leaning on it. ` },
-            ]} />
+    <Page
+      title="Across 6 revenue cohorts the medians do not decline in order"
+      col={false}
+      source={` ${universe.source}. Cohorts are equal-count by revenue, not chosen boundaries. `}
+    >
+      <Split>
+        <div class="s-ex__head">
+          <p class="s-ex__title">Exhibit 3&ensp;Median reported gross margin by revenue cohort</p>
+          <p class="s-label">Equal-count cohorts</p>
+        </div>
+        <div class="s-ex__fig">
+          <Bars
+            rows={medianRows}
+            width={HALF}
+            height={320}
+            digits={1}
+            suffix="%"
+            axisLabel="Median gross margin"
+            railHead="Filers"
+            alt={`Median gross margin across six equal-count revenue cohorts, running ${cohorts.map((c) => one(c.median)).join(', ')} per cent from smallest to largest. Only the largest cohort is clearly separated from the rest.`}
+          />
+        </div>
 
-    </Fragment>
-  </Split>
-      </Page>
+        <Fragment slot="rail">
+          <p class="s-label">Reading</p>
+          <Comment
+            items={[
+              {
+                lead: 'The intuition does not hold.',
+                body: ' Margin is supposed to fall as companies get bigger. The third cohort carries the highest median of the six, and the second carries a lower median than the first. ',
+                pad: 3,
+              },
+              {
+                lead: 'One cohort does separate.',
+                body: ` Filers above ${money(1e10)} of revenue sit at ${one(cohorts[5]!.median)}%, which is ${one(cohorts[0]!.median - cohorts[5]!.median)} points below the smallest cohort. That is the only clean size effect in the medians. `,
+              },
+              {
+                lead: 'Equal counts, not chosen boundaries.',
+                body: ` The cohorts hold ${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers each. The top cohort is the smallest, so its percentiles move more easily than the others, which is the first thing we would check before leaning on it. `,
+              },
+            ]}
+          />
+        </Fragment>
+      </Split>
+    </Page>
   </Slide>
 
   {/* 10 Dispersion */}
   <Slide n={10} section="02" sections={SECTIONS}>
-    <Page title={` Dispersion narrows at every step, from ${one(cohorts[0]!.spread)} points to ${one(cohorts[5]!.spread)} `} col={false} source={` Percentiles exact within each cohort. Cohorts hold ${' '}${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers. `} sourcePad>
-        <div class="s-ex__head">
-          <p class="s-ex__title">Exhibit 4&ensp;Tenth to ninetieth percentile by revenue cohort</p>
-          <p class="s-label">No reversal at any step</p>
-        </div>
-        <div class="s-ex__fig">
-          <Spread
-            rows={spreadRows}
-            width={FULL}
-            height={300}
-            min={-10}
-            max={100}
-            ticks={[0, 20, 40, 60, 80, 100]}
-            axisLabel="Reported gross margin, per cent"
-            tickFormat={(v) => `${v}%`}
-            alt={`Tenth to ninetieth percentile bands for six equal-count revenue cohorts. The band width falls from ${one(cohorts[0]!.spread)} points in the smallest cohort to ${one(cohorts[5]!.spread)} in the largest, with no reversal at any step.`}
-          />
-        </div>
-      
-    <Fragment slot="close">
-      <Implication label="What it buys">
-          Size buys a tighter distribution and very little else. Below {money(1e10)} of revenue a
-          size-matched peer median is nearly as wide as the whole universe.
-      </Implication>
-    </Fragment>
-  </Page>
+    <Page
+      title={` Dispersion narrows at every step, from ${one(cohorts[0]!.spread)} points to ${one(cohorts[5]!.spread)} `}
+      col={false}
+      source={` Percentiles exact within each cohort. Cohorts hold ${' '}${Math.min(...cohorts.map((c) => c.n))} to ${Math.max(...cohorts.map((c) => c.n))} filers. `}
+      sourcePad
+    >
+      <div class="s-ex__head">
+        <p class="s-ex__title">Exhibit 4&ensp;Tenth to ninetieth percentile by revenue cohort</p>
+        <p class="s-label">No reversal at any step</p>
+      </div>
+      <div class="s-ex__fig">
+        <Spread
+          rows={spreadRows}
+          width={FULL}
+          height={300}
+          min={-10}
+          max={100}
+          ticks={[0, 20, 40, 60, 80, 100]}
+          axisLabel="Reported gross margin, per cent"
+          tickFormat={(v) => `${v}%`}
+          alt={`Tenth to ninetieth percentile bands for six equal-count revenue cohorts. The band width falls from ${one(cohorts[0]!.spread)} points in the smallest cohort to ${one(cohorts[5]!.spread)} in the largest, with no reversal at any step.`}
+        />
+      </div>
+
+      <Fragment slot="close">
+        <Implication label="What it buys">
+          Size buys a tighter distribution and very little else. Below {money(1e10)} of revenue a size-matched peer median
+          is nearly as wide as the whole universe.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 11 The load path */}
   <Slide n={11} section="02" sections={SECTIONS}>
-    <Page kicker="What the conclusion rests on" title="Three claims carry the conclusion, and each names what breaks it" col={false} source=" Claim D is held off this path and is stated on the next page. " sourcePad>
-        <div class="s-list">
-          {
-            loadPath.map((c) => (
-              <div class="s-list__row">
-                <p class="s-list__num">{c.id}</p>
-                <p class="s-list__term">{c.standing}</p>
-                <div class="s-list__body">
-                  <p>{c.claim}</p>
-                  <p class="s-note" style="padding-top: var(--ct-space-2)">
-                    {c.limit}
-                  </p>
-                </div>
+    <Page
+      kicker="What the conclusion rests on"
+      title="Three claims carry the conclusion, and each names what breaks it"
+      col={false}
+      source=" Claim D is held off this path and is stated on the next page. "
+      sourcePad
+    >
+      <div class="s-list">
+        {
+          loadPath.map((c) => (
+            <div class="s-list__row">
+              <p class="s-list__num">{c.id}</p>
+              <p class="s-list__term">{c.standing}</p>
+              <div class="s-list__body">
+                <p>{c.claim}</p>
+                <p class="s-note" style="padding-top: var(--ct-space-2)">
+                  {c.limit}
+                </p>
               </div>
-            ))
-          }
-        </div>
-      
-    <Fragment slot="close">
-      <Implication label="The conclusion">
-          A peer median summarises a mixture, so distance from it is not by itself evidence about a
-          company.
-      </Implication>
-    </Fragment>
-  </Page>
+            </div>
+          ))
+        }
+      </div>
+
+      <Fragment slot="close">
+        <Implication label="The conclusion">
+          A peer median summarises a mixture, so distance from it is not by itself evidence about a company.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 12 Off the load path */}
   <Slide n={12} section="02" sections={SECTIONS}>
-    <Page kicker="Held, and deliberately unused" title=" We think the high-margin concentration is a business-model population " col={false} source=" Rests on nothing. Testable against SIC codes in the SEC submissions endpoint. " sourcePad>
-        <div class="s-measure">
-          <p class="s-body">
-            Software, licensing, diagnostics: anything where cost of revenue is small by
-            construction. It is the reading we find most plausible and it rests on nothing yet.
-          </p>
-        </div>
-        <div class="s-pad-t">
-          <div class="s-two-up">
-            <div>
-              <div class="s-ex__head s-ex__head--bare">
-                <p class="s-ex__title">What would test it</p>
-              </div>
-              <div class="s-pad-t--sm">
-                <p class="s-body">
-                  SIC codes sit in the SEC submissions endpoint for every one of these filers, so
-                  the sector split is one join away. If the concentration turns out to be spread
-                  across sectors rather than gathered in a few, the reading is wrong.
-                </p>
-              </div>
+    <Page
+      kicker="Held, and deliberately unused"
+      title=" We think the high-margin concentration is a business-model population "
+      col={false}
+      source=" Rests on nothing. Testable against SIC codes in the SEC submissions endpoint. "
+      sourcePad
+    >
+      <div class="s-measure">
+        <p class="s-body">
+          Software, licensing, diagnostics: anything where cost of revenue is small by construction. It is the reading
+          we find most plausible and it rests on nothing yet.
+        </p>
+      </div>
+      <div class="s-pad-t">
+        <div class="s-two-up">
+          <div>
+            <div class="s-ex__head s-ex__head--bare">
+              <p class="s-ex__title">What would test it</p>
             </div>
-            <div>
-              <div class="s-ex__head s-ex__head--bare">
-                <p class="s-ex__title">What it would change</p>
-              </div>
-              <div class="s-pad-t--sm">
-                <p class="s-body">
-                  Claim C would promote from supported to firm, and the conclusion would promote
-                  with it. Nothing else on the preceding pages moves, because nothing else was
-                  allowed to depend on it.
-                </p>
-              </div>
+            <div class="s-pad-t--sm">
+              <p class="s-body">
+                SIC codes sit in the SEC submissions endpoint for every one of these filers, so the sector split is one
+                join away. If the concentration turns out to be spread across sectors rather than gathered in a few, the
+                reading is wrong.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="s-ex__head s-ex__head--bare">
+              <p class="s-ex__title">What it would change</p>
+            </div>
+            <div class="s-pad-t--sm">
+              <p class="s-body">
+                Claim C would promote from supported to firm, and the conclusion would promote with it. Nothing else on
+                the preceding pages moves, because nothing else was allowed to depend on it.
+              </p>
             </div>
           </div>
         </div>
-      
-    <Fragment slot="close">
-      <Implication label="Why it is on this page and not in the argument">
-          Keeping an untested belief out of the load path is the whole discipline. The alternative is
-          a conclusion that quietly rests on something we cannot show you.
-      </Implication>
-    </Fragment>
-  </Page>
+      </div>
+
+      <Fragment slot="close">
+        <Implication label="Why it is on this page and not in the argument">
+          Keeping an untested belief out of the load path is the whole discipline. The alternative is a conclusion that
+          quietly rests on something we cannot show you.
+        </Implication>
+      </Fragment>
+    </Page>
   </Slide>
 
   {/* 13 What follows */}
   <Slide n={13} section="02" sections={SECTIONS}>
-    <Page kicker="What follows" title="Three changes to how a gross margin comparison is set up" col={false} source="Each follows from claims A, B and C, and from nothing else.">
-        <div class="s-list s-list--hero s-list--fill">
-          <div class="s-list__row">
-            <p class="s-list__term">Say which mode</p>
-            <p class="s-list__body">
-              Establish whether the target sits in the low broad mass or the high concentration
-              before comparing anything. Those are different questions with different comparable
-              sets, and averaging across them produces a number that describes neither.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__term">Benchmark the regime, not the size cohort</p>
-            <p class="s-list__body">
-              Size buys a tighter distribution at the top end and very little else. Below
-              {' '}{money(1e10)} of revenue, a size-matched peer median is nearly as wide as the
-              whole universe.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__term">Treat distance from a median as a question</p>
-            <p class="s-list__body">
-              A company fifteen points off the median is unremarkable in this data. It is a prompt to
-              ask which population the peer set was drawn from, not a finding to put in a paper.
-            </p>
-          </div>
+    <Page
+      kicker="What follows"
+      title="Three changes to how a gross margin comparison is set up"
+      col={false}
+      source="Each follows from claims A, B and C, and from nothing else."
+    >
+      <div class="s-list s-list--hero s-list--fill">
+        <div class="s-list__row">
+          <p class="s-list__term">Say which mode</p>
+          <p class="s-list__body">
+            Establish whether the target sits in the low broad mass or the high concentration before comparing anything.
+            Those are different questions with different comparable sets, and averaging across them produces a number
+            that describes neither.
+          </p>
         </div>
-      </Page>
+        <div class="s-list__row">
+          <p class="s-list__term">Benchmark the regime, not the size cohort</p>
+          <p class="s-list__body">
+            Size buys a tighter distribution at the top end and very little else. Below
+            {' '}{money(1e10)} of revenue, a size-matched peer median is nearly as wide as the whole universe.
+          </p>
+        </div>
+        <div class="s-list__row">
+          <p class="s-list__term">Treat distance from a median as a question</p>
+          <p class="s-list__body">
+            A company fifteen points off the median is unremarkable in this data. It is a prompt to ask which population
+            the peer set was drawn from, not a finding to put in a paper.
+          </p>
+        </div>
+      </div>
+    </Page>
   </Slide>
 
   {/* 14 Method */}
   <Slide n={14} section="02" sections={SECTIONS}>
-    <Page kicker="Method" title="One source, one computation, and no paid data" col={false} source={`${universe.source}, retrieved ${universe.retrieved}`}>
-        <div class="s-list s-list--fill">
-          <div class="s-list__row">
-            <p class="s-list__term">Sourcing</p>
-            <p class="s-list__body">
-              The SEC XBRL frames API: us-gaap taxonomy, tags Revenues and GrossProfit, CY2024
-              annual frame, retrieved {universe.retrieved}. Free, public and keyless. No paid data
-              was used and none is needed for this question.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__term">Universe</p>
-            <p class="s-list__body">
-              Every registrant appearing in both frames, {universe.screened.toLocaleString()} filers,
-              of which {universe.kept.toLocaleString()} are kept and {universe.excluded} dropped for
-              a missing, zero or negative revenue denominator. No sector, exchange, size or
-              listing-status filter was applied.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__term">Computation</p>
-            <p class="s-list__body">
-              Gross margin is GrossProfit divided by Revenues, as reported, with no adjustment or
-              normalisation. Densities are Gaussian kernels with bandwidth by Silverman&rsquo;s rule.
-              Cohorts are equal-count by revenue, not chosen boundaries. The surface is a 72 by 96
-              grid over log revenue and margin.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__term">Reproducibility</p>
-            <p class="s-list__body">
-              Every figure on every page of this piece is read from the published dataset at build
-              time rather than typed in, so this rendering and the written brief cannot disagree.
-              The percentiles are exact; band shares are interpolated and good to about a point.
-            </p>
-          </div>
+    <Page
+      kicker="Method"
+      title="One source, one computation, and no paid data"
+      col={false}
+      source={`${universe.source}, retrieved ${universe.retrieved}`}
+    >
+      <div class="s-list s-list--fill">
+        <div class="s-list__row">
+          <p class="s-list__term">Sourcing</p>
+          <p class="s-list__body">
+            The SEC XBRL frames API: us-gaap taxonomy, tags Revenues and GrossProfit, CY2024 annual frame, retrieved {
+              universe.retrieved
+            }. Free, public and keyless. No paid data was used and none is needed for this question.
+          </p>
         </div>
-      </Page>
+        <div class="s-list__row">
+          <p class="s-list__term">Universe</p>
+          <p class="s-list__body">
+            Every registrant appearing in both frames, {universe.screened.toLocaleString()} filers, of which {
+              universe.kept.toLocaleString()
+            } are kept and {universe.excluded} dropped for a missing, zero or negative revenue denominator. No sector, exchange,
+            size or listing-status filter was applied.
+          </p>
+        </div>
+        <div class="s-list__row">
+          <p class="s-list__term">Computation</p>
+          <p class="s-list__body">
+            Gross margin is GrossProfit divided by Revenues, as reported, with no adjustment or normalisation. Densities
+            are Gaussian kernels with bandwidth by Silverman&rsquo;s rule. Cohorts are equal-count by revenue, not
+            chosen boundaries. The surface is a 72 by 96 grid over log revenue and margin.
+          </p>
+        </div>
+        <div class="s-list__row">
+          <p class="s-list__term">Reproducibility</p>
+          <p class="s-list__body">
+            Every figure on every page of this piece is read from the published dataset at build time rather than typed
+            in, so this rendering and the written brief cannot disagree. The percentiles are exact; band shares are
+            interpolated and good to about a point.
+          </p>
+        </div>
+      </div>
+    </Page>
   </Slide>
 
   {/* 15 Not done */}
   <Slide n={15} section="02" sections={SECTIONS}>
-    <Page kicker="What we did not do" title={` Sector, multimodality and the ${universe.excluded} exclusions are all untested `} col={false} source="Each is named in the claim it affects rather than only here.">
-        <div class="s-list s-list--roomy s-list--fill">
-          <div class="s-list__row">
-            <p class="s-list__num">01</p>
-            <p class="s-list__term">No sector control</p>
-            <p class="s-list__body">
-              Named in claim D, which is held off the load path for exactly this reason.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__num">02</p>
-            <p class="s-list__term">No test for multimodality</p>
-            <p class="s-list__body">
-              The second concentration survives the bandwidths we tried. We ran no dip test.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__num">03</p>
-            <p class="s-list__term">No test of the exclusions</p>
-            <p class="s-list__body">
-              Whether the {universe.excluded} dropped filers differ from the kept ones is untested.
-            </p>
-          </div>
-          <div class="s-list__row">
-            <p class="s-list__num">04</p>
-            <p class="s-list__term">No cost-of-revenue adjustment</p>
-            <p class="s-list__body">
-              As-reported gross profit is not perfectly comparable across filers, and policy varies.
-            </p>
-          </div>
+    <Page
+      kicker="What we did not do"
+      title={` Sector, multimodality and the ${universe.excluded} exclusions are all untested `}
+      col={false}
+      source="Each is named in the claim it affects rather than only here."
+    >
+      <div class="s-list s-list--roomy s-list--fill">
+        <div class="s-list__row">
+          <p class="s-list__num">01</p>
+          <p class="s-list__term">No sector control</p>
+          <p class="s-list__body"> Named in claim D, which is held off the load path for exactly this reason. </p>
         </div>
-      </Page>
+        <div class="s-list__row">
+          <p class="s-list__num">02</p>
+          <p class="s-list__term">No test for multimodality</p>
+          <p class="s-list__body"> The second concentration survives the bandwidths we tried. We ran no dip test. </p>
+        </div>
+        <div class="s-list__row">
+          <p class="s-list__num">03</p>
+          <p class="s-list__term">No test of the exclusions</p>
+          <p class="s-list__body">
+            Whether the {universe.excluded} dropped filers differ from the kept ones is untested.
+          </p>
+        </div>
+        <div class="s-list__row">
+          <p class="s-list__num">04</p>
+          <p class="s-list__term">No cost-of-revenue adjustment</p>
+          <p class="s-list__body">
+            As-reported gross profit is not perfectly comparable across filers, and policy varies.
+          </p>
+        </div>
+      </div>
+    </Page>
   </Slide>
 
   {/* 16 Source */}
