@@ -21,6 +21,46 @@ export function assertOneMark<T extends { mark?: boolean; label: string }>(
   }
 }
 
+/* The value-lane half of audit.mjs's table-craft reading, with the same
+   semantics, moved here for the componentised matrices that pass their rows
+   as props, which no source scan can read. A column of figures reads down
+   the page only if it is right-aligned on tabular figures, and a numeric
+   column left in the prose treatment costs the reader the one thing a table
+   is for. The heuristic is the audit's, verbatim: a value is short (26
+   chars or fewer) as well as numeric, because "+$97mm; a 12.5% 2027E
+   margin" opens with a figure and is a sentence; the lane trips at 70%
+   numeric with no cell set num; column 1 is exempt, because a row-name lane
+   may be years; head rows are skipped and fewer than two body rows is not a
+   table. Enforced as a throw for the reason assertOneMark is: measured
+   before it was enforced, with no live violation in either corpus. */
+const NUMERIC = new RegExp(String.raw`^[~<>+-]?[$]?\d[\d,.–—-]*\s*(%|x|bn|mm|M|B|K|bps|days?|yrs?)?`);
+
+type LaneCell = string | { text: string; kind?: string };
+
+export function assertValueLanes(
+  rows: readonly { cells: readonly LaneCell[]; head?: boolean }[],
+  exhibit: string,
+): void {
+  const body = rows.filter((r) => !r.head);
+  if (body.length < 2) return;
+  const grid = body.map((r) =>
+    r.cells.map((c) => (typeof c === 'string' ? { text: c, kind: undefined } : c)),
+  );
+  const cols = Math.min(...grid.map((r) => r.length));
+  for (let c = 1; c < cols; c++) {
+    const cells = grid.map((r) => r[c]!);
+    const numeric = cells.filter((x) => x.text.length <= 26 && NUMERIC.test(x.text)).length;
+    const tagged = cells.filter((x) => x.kind === 'num').length;
+    if (numeric / cells.length >= 0.7 && tagged === 0) {
+      throw new Error(
+        `${exhibit}: column ${c + 1} is ${numeric} of ${cells.length} figures and is not set ` +
+          "as a value lane. Set the cells' kind to 'num', or the reader loses the one thing " +
+          'a table is for.',
+      );
+    }
+  }
+}
+
 /** Round a maximum up to a readable axis top, so bars never touch the frame. */
 export function axisTop(max: number): number {
   if (max <= 0) return 1;

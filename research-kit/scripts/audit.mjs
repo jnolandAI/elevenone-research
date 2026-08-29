@@ -322,10 +322,12 @@ if (share < NUMBER_FLOOR) {
 
    Both readings need the rendered row and cell markup, so this only reaches a
    matrix a page still writes by hand. A `<Matrix>` call carries its rows as a
-   frontmatter array of records, and no source scan can read a prop. The mark
-   budget therefore moved into `Matrix.astro`, which throws on a second mark
-   at render; the value-lane reading has no such home yet, so the count of
-   matrices this pass could not open is printed rather than left implied. */
+   frontmatter array of records, and no source scan can read a prop. Both
+   readings therefore also live in the component: `Matrix.astro` throws on a
+   second mark and on an unset value lane at render (`assertOneMark` and
+   `assertValueLanes` in lib/exhibits.ts, the latter mirroring the heuristic
+   below verbatim). The count of matrices this pass hands off to the
+   component is still printed rather than left implied. */
 const matrices = [];
 let componentised = 0;
 for (const file of files) {
@@ -380,7 +382,7 @@ for (const m of matrices) {
 const scope =
   ` (${matrices.length} hand-written matrix/matrices read` +
   (componentised
-    ? `; ${componentised} <Matrix> call(s) carry their rows as props, where the mark budget is enforced by the component and the value lane is not yet checked at all)`
+    ? `; ${componentised} <Matrix> call(s) carry their rows as props, where the component enforces both the mark budget and the value lane at render)`
     : ')');
 if (craft.length) {
   console.log(`\nwarn  ${craft.length} table craft issue(s)${scope}`);

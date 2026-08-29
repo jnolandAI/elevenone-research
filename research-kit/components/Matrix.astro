@@ -1,5 +1,5 @@
 ---
-import { assertOneMark } from 'research-kit/lib/exhibits';
+import { assertOneMark, assertValueLanes } from 'research-kit/lib/exhibits';
 
 /**
  * The table form. 23 in the corpus carrying 76 rows and 398 cells.
@@ -52,6 +52,12 @@ assertOneMark(
   rows.map((r) => ({ label: text(r.cells[0] ?? ''), mark: r.mark })),
   'Matrix',
 );
+
+/* The value-lane half of the same table-craft reading, for the same reason:
+   audit.mjs reads source and cannot open a rows prop. The audit still runs
+   the identical check on hand-written matrices and prints the count of
+   componentised ones it hands off to this call. */
+assertValueLanes(rows, 'Matrix');
 
 const cellClass = (c: MatrixCell) => {
   if (typeof c === 'string') return 's-matrix__cell';

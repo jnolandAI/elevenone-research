@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
   assertOneMark,
+  assertValueLanes,
   axisTop,
   formatDelta,
   formatLevel,
@@ -61,6 +62,57 @@ describe('the slate budget, as an invariant', () => {
         { ...plot, x1: 0, x2: 100, base: 1 },
       ),
     ).toThrow(/slate budget/);
+  });
+});
+
+describe('the value lane, as an invariant', () => {
+  /* The reading audit.mjs runs on hand-written matrices, moved here for the
+     componentised ones it cannot open, with the same semantics: a column of
+     figures reads down the page only if it is set as a value lane, and the
+     heuristic for "figures" is short (26 chars or fewer) and opening with a
+     number, because "+$97mm; a 12.5% 2027E margin" opens with a figure and
+     is a sentence. */
+  const twoCol = (values: (string | { text: string; kind?: string })[]) =>
+    values.map((v, i) => ({ cells: [`row ${i}`, v] }));
+
+  it('throws when a column is figures and no cell in it is set num', () => {
+    expect(() => assertValueLanes(twoCol(['$44.0M', '12.5%', '3.1x']), 'Matrix')).toThrow(
+      /Matrix: column 2 is 3 of 3 figures and is not set as a value lane/,
+    );
+  });
+
+  it('accepts the lane once any of its cells is set num, matching the audit exactly', () => {
+    // The audit passes a lane on tagged > 0, not on every cell tagged. Same
+    // reading here, so a matrix the audit called ok cannot fail at render.
+    expect(() =>
+      assertValueLanes(twoCol([{ text: '$44.0M', kind: 'num' }, '12.5%', '3.1x']), 'Matrix'),
+    ).not.toThrow();
+  });
+
+  it('leaves a prose column alone', () => {
+    expect(() =>
+      assertValueLanes(twoCol(['Confirmed in the dataroom', 'Open question', 'Not measured']), 'Matrix'),
+    ).not.toThrow();
+  });
+
+  it('reads a figure that opens a sentence as prose, because length gates the heuristic', () => {
+    expect(() =>
+      assertValueLanes(twoCol(['+$97mm; a 12.5% 2027E margin', '+$44mm; the FY26 carry-over', '+$12mm; price already taken']), 'Matrix'),
+    ).not.toThrow();
+  });
+
+  it('holds below the seventy percent threshold', () => {
+    expect(() => assertValueLanes(twoCol(['$44.0M', '12.5%', 'n/a measured']), 'Matrix')).not.toThrow();
+  });
+
+  it('leaves the first column alone, because a row-name lane may be years', () => {
+    const rows = ['2023', '2024', '2025'].map((y) => ({ cells: [y, 'a prose reading of the year'] }));
+    expect(() => assertValueLanes(rows, 'Matrix')).not.toThrow();
+  });
+
+  it('reads body rows only, and needs at least two of them', () => {
+    const head = { cells: ['', '$44.0M'], head: true };
+    expect(() => assertValueLanes([head, { cells: ['a', '$1.0M'] }], 'Matrix')).not.toThrow();
   });
 });
 

@@ -436,6 +436,18 @@ describe('the one-mark budget, wired into the components and not just the librar
     await expect(render(Matrix, { props: { rows, cols: '1fr' } })).rejects.toThrow(/Matrix/);
   });
 
+  it('rejects a Matrix whose figure column is not set as a value lane', async () => {
+    // The other half of the audit's table-craft reading, which lost its view
+    // of componentised matrices the same day the mark budget did, and moved
+    // here the same way. audit.mjs prints the count it cannot open.
+    const rows = [
+      { cells: ['ACV', '$44.0M'] },
+      { cells: ['Margin', '12.5%'] },
+      { cells: ['Multiple', '3.1x'] },
+    ];
+    await expect(render(Matrix, { props: { rows, cols: '1fr 1fr' } })).rejects.toThrow(/value lane/);
+  });
+
   it('rejects a Kpi with two marked values', async () => {
     const items = [
       { value: '1', label: 'a', mark: true },
