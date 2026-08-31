@@ -16,17 +16,20 @@ interface Props {
   height?: number;
   /** Drawing width in user units. A page column by default, a slide passes its own. */
   width?: number;
+  /** Decimals on every label. 0 for a movement in counts. */
+  digits?: number;
   /** An on-chart reading, its leader anchored to the named step. */
   callout?: CalloutSpec;
 }
 
-const { steps, alt, height = 250, width: w = 1199, callout } = Astro.props;
+const { steps, alt, height = 250, width: w = 1199, digits, callout } = Astro.props;
 const width = w;
 const { bars, connectors, baseline } = bridgeLayout(steps, {
   width,
   height,
   plotTop: 30,
   plotBottom: height - 30,
+  digits,
 });
 
 // Three waterfall roles are three categories, not three magnitudes.

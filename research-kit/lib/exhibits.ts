@@ -71,13 +71,24 @@ export function axisTop(max: number): number {
 
 /** A value formatted the way this system formats values: negatives in parens. */
 export function formatDelta(value: number, digits = 1): string {
-  const n = Math.abs(value).toFixed(digits);
+  const n = Math.abs(value).toLocaleString('en-US', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
   if (value < 0) return `(${n})`;
   return `+${n}`;
 }
 
 export function formatLevel(value: number, digits = 1): string {
-  const n = Math.abs(value).toFixed(digits);
+  /* Grouped, because a count is one of the shapes an exhibit has to draw and a
+     bar labelled 4820 is not a count anyone writes. Every house style in the
+     corpus groups thousands, and until 2026-08-31 this function could not: a
+     five-step funnel came out reading 4820, 2146, 874, 396, 181. Grouping is
+     invisible under a thousand, so nothing that already renders moves. */
+  const n = Math.abs(value).toLocaleString('en-US', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
   return value < 0 ? `(${n})` : n;
 }
 
@@ -125,7 +136,12 @@ export interface BridgeLayout {
   top: number;
 }
 
-export function bridgeLayout(steps: readonly BridgeStep[], geom: PlotGeometry): BridgeLayout {
+export interface BridgeGeometry extends PlotGeometry {
+  /** Decimals on every label. 0 for a movement in counts. */
+  digits?: number;
+}
+
+export function bridgeLayout(steps: readonly BridgeStep[], geom: BridgeGeometry): BridgeLayout {
   assertOneMark(steps, 'Bridge');
   if (steps.length === 0) throw new Error('Bridge: no steps');
 
@@ -141,6 +157,8 @@ export function bridgeLayout(steps: readonly BridgeStep[], geom: PlotGeometry): 
   const top = axisTop(Math.max(...spans.flatMap((s) => [s.from, s.to])));
   const plotHeight = geom.plotBottom - geom.plotTop;
   const y = (v: number) => geom.plotBottom - (v / top) * plotHeight;
+
+  const digits = geom.digits ?? 1;
 
   const column = geom.width / steps.length;
   const width = Math.round(column * 0.67);
@@ -160,7 +178,7 @@ export function bridgeLayout(steps: readonly BridgeStep[], geom: PlotGeometry): 
       from,
       to,
       labelY: yTop - 8,
-      valueText: s.anchor ? formatLevel(s.value) : formatDelta(s.value),
+      valueText: s.anchor ? formatLevel(s.value, digits) : formatDelta(s.value, digits),
     };
   });
 
@@ -760,7 +778,10 @@ export function stackLayout(
   const digits = geom.digits ?? 1;
 
   const column = geom.width / columns.length;
-  const width = round(column * 0.54);
+  /* Capped at the same 88 units a column chart is capped at, and for the same
+     reason: three columns on a full-width exhibit take 219 units each and draw
+     as slabs. A composition bar is still a bar. */
+  const width = round(Math.min(column * 0.54, 88));
 
   const laid = columns.map((c, i) => {
     const x = round(i * column + (column - width) / 2);
@@ -775,7 +796,7 @@ export function stackLayout(
         width,
         height: round(h),
         value: v,
-        valueText: geom.share ? `${Math.round(v * factor)}%` : formatLevel(v, digits),
+        valueText: geom.share ? `${formatLevel(v * factor, geom.digits ?? 0)}%` : formatLevel(v, digits),
         segment: s,
         midY: round(cursor + h / 2),
         // A band under 16 units cannot carry an 11px label inside it.
