@@ -74,6 +74,18 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     width: var(--ct-slide-w);
     height: var(--ct-slide-h);
     background: var(--ct-ground);
+    /* The canvas owns its own type, because font-family inherits and .slide is
+       the one element every page's content sits inside: one declaration here
+       reaches every slotted child regardless of which component drew it.
+
+       Until 2026-08-31 the kit set no font-family anywhere and the canvas
+       inherited whatever the host had put on `body`. That read as correct for
+       two consumers because both are single-family systems, where inheriting
+       the right token and inheriting nothing look identical. The third
+       (kit-probe, a serif-display-over-sans-body system) rendered every title
+       in its body face and no gate objected: portability.mjs checks paint
+       properties, and a font is not one. See tests/contract-coverage.test.ts. */
+    font-family: var(--ct-font-body);
     transform-origin: top left;
     /* 100cqw is the container's own width, so the canvas lands exactly on it at
        any size without a media query or a script. */

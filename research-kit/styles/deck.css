@@ -57,7 +57,14 @@
   color: var(--ct-field-text-muted);
 }
 
+/* Display type: the three places a page speaks at large size, and the only
+   places the kit asks for the display face. The kit decides WHICH elements are
+   display type, because that is structure; the brand decides what the display
+   face IS, because that is identity. Both existing systems map display and
+   body to one family, so this split repaints nothing for them and makes a
+   two-family system expressible for the first time. */
 .s-cover__title {
+  font-family: var(--ct-font-display);
   font-size: var(--ct-text-5xl);
   font-weight: var(--ct-weight-light);
   line-height: var(--ct-leading-22);
@@ -124,6 +131,7 @@
 }
 
 .s-display {
+  font-family: var(--ct-font-display);
   font-size: var(--ct-text-5xl);
   font-weight: var(--ct-weight-light);
   line-height: var(--ct-leading-22);
@@ -140,6 +148,7 @@
    exhibits below it prove: a deck exists to reach a conclusion, which is the one
    place this system is allowed to assert. */
 .s-title {
+  font-family: var(--ct-font-display);
   font-size: var(--ct-text-xl);
   font-weight: var(--ct-weight-normal);
   line-height: var(--ct-leading-9);

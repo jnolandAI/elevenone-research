@@ -26,7 +26,20 @@ const SELECTOR = process.argv[4] || '.slide';
     const PROPS = [
       'color', 'background-color', 'fill', 'stroke', 'stroke-width',
       'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
+      // font-family joined this list on 2026-08-31. Its absence was the same
+      // blindness the kit-probe found in the kit itself: portability.mjs
+      // checks only paint properties, deck.css set no family at all, and this
+      // script recorded a font's size and weight but never which face drew it.
+      // A migration could swap a whole type system and every instrument here
+      // would report identical. Border width and radius join for the same
+      // reason and in advance: they are the next properties a brand supplies,
+      // and an instrument that cannot see a property cannot prove a change to
+      // it was inert.
+      'font-family',
       'font-size', 'font-weight', 'letter-spacing', 'line-height',
+      'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+      'border-top-left-radius', 'border-top-right-radius',
+      'border-bottom-left-radius', 'border-bottom-right-radius',
       'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
       'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
       'width', 'height',
