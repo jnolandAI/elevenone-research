@@ -155,7 +155,14 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     width: var(--ct-lane-w);
     flex-shrink: 0;
     overflow: hidden;
-    padding: var(--ct-slide-pad) var(--ct-space-2) var(--ct-slide-pad) 0;
+    /* The right padding separates the ticks from the lane's own rule, and it
+       has to collapse with the lane or the lane does not actually go away:
+       under box-sizing: border-box a width of 0 against 8px of padding still
+       occupies 8px, so --ct-lane-w: 0 left an 8px rail and pushed the content
+       column off its own margin by that much. Caught by slidecheck's margin
+       check on the run that added it. min() ties the two together without
+       asking a brand to remember a second token. */
+    padding: var(--ct-slide-pad) min(var(--ct-space-2), var(--ct-lane-w)) var(--ct-slide-pad) 0;
     border-right: var(--ct-lane-rule-w) solid var(--ct-rule);
   }
 

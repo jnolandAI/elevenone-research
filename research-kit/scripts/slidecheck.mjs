@@ -42,6 +42,45 @@ const SHOT = process.argv[3] || null;
         }
       });
 
+      // 1b. footer furniture that has come off the margin.
+      //
+      // Outside margins vary between houses, and content has to be placed
+      // RELATIVE to them rather than at an absolute inset, or a brand that
+      // widens its margin gets a page number that no longer lines up with
+      // the column above it. The body's own padding is the margin, so the
+      // content edge is the thing to measure against; a raw inset that
+      // happens to equal the padding today is a coincidence waiting to
+      // drift.
+      //
+      // Only checked for furniture that is absolutely positioned. A page
+      // number sitting in the lane is deliberately outside the content
+      // column and is not a finding.
+      const cs = getComputedStyle(body);
+      const edge = {
+        left: bb.left + parseFloat(cs.paddingLeft),
+        right: bb.right - parseFloat(cs.paddingRight),
+      };
+      [
+        ['.slide__num', 'the page number'],
+        ['.slide__mark', 'the firm mark'],
+      ].forEach(([sel, label]) => {
+        const el = slide.querySelector(sel);
+        if (!el) return;
+        if (getComputedStyle(el).position !== 'absolute') return;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 && r.height === 0) return;
+        // Whichever edge it is anchored to is the one that has to agree.
+        const dl = Math.abs(r.left - edge.left);
+        const dr = Math.abs(r.right - edge.right);
+        const off = Math.min(dl, dr);
+        if (off > 1) {
+          out.push(
+            `${n} MARGIN   ${label} sits ${px(off)}px off the content edge; ` +
+              'furniture is placed against the margin, not at a fixed inset',
+          );
+        }
+      });
+
       // 2. two pieces of text occupying the same space
       for (let a = 0; a < leaves.length; a++) {
         for (let b = a + 1; b < leaves.length; b++) {

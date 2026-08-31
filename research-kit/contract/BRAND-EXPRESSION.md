@@ -59,6 +59,31 @@ translation.
 | Slide profile | the `geometry` group | |
 | Art direction, firm mark | `--ct-art-direction`, `--ct-firm-mark` | strings the kit prints and must not know |
 
+## Placement is relative to the margin, never absolute
+
+Outside margins vary between houses, and they are one of the first things a
+brand sets. So everything the kit places has to be positioned **against the
+margin**, not at a fixed inset from the canvas edge: a brand that widens its
+margin should get its page number, footer rule and wordmark moving with the
+content column, not left behind in the new white space.
+
+In practice that means `--ct-slide-pad` is the reference for horizontal
+placement. The body is padded by it, the footer rule spans between it, and
+the firm mark is anchored to it. Where a brand supplies its own inset — the
+page number's, for instance — it should name the pad rather than a spacing
+step that happens to equal it today. The probe's page number was set from a
+32px spacing step that matched its 32px margin by coincidence, which would
+have come apart the moment the margin moved.
+
+Two things enforce this rather than leaving it to care. `slidecheck` measures
+absolutely-positioned footer furniture against the body's own content edge
+and reports anything more than 1px off, so the drift is caught in the render
+whatever caused it. And the lane's internal padding collapses with the lane
+via `min()`, because a `--ct-lane-w: 0` that still occupied 8px of padding
+put every content column 8px off its own margin — invisible to the eye, and
+invisible to `paint-diff`, which compares a deck against itself rather than
+against its margin.
+
 ## Why the floors are part of the offer
 
 A cap is not a restriction on the brand, it is what makes the brand's freedom
