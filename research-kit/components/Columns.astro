@@ -1,6 +1,9 @@
 ---
 import {
   columnLayout,
+  columnLevel,
+  columnBreak,
+  columnSteps,
   calloutLayout,
   textWidth,
   type ColumnGroup,
@@ -36,6 +39,23 @@ interface Props {
    */
   markSeries?: number;
   callout?: CalloutSpec & { series?: number };
+  /**
+   * A level the bars are read against: 100%, breakeven, a threshold. Drawn as
+   * a labelled rule. A page whose commentary names a line has to draw it.
+   */
+  refLine?: { at: number; label: string };
+  /** Index of the last observed group. What follows sits past a drawn break. */
+  solidThrough?: number;
+  /** Caption for the estimated zone, set above the break. */
+  projectedLabel?: string;
+  /**
+   * A rate rail at the right of the plot, headed. One value per series where
+   * the exhibit compares series, one per span where it compares spans. A page
+   * claiming a rate has to carry the rate rather than assert it in the title.
+   */
+  rail?: { head: string; items: { label: string; value: string }[] };
+  /** Rates on the transitions, one fewer than the groups. */
+  steps?: readonly string[];
 }
 
 const {
@@ -49,17 +69,46 @@ const {
   axisLabel,
   markSeries,
   callout,
+  refLine,
+  solidThrough,
+  projectedLabel,
+  rail,
+  steps,
 } = Astro.props;
 const width = w;
 const foot = seriesNames.length > 1 || axisLabel ? 52 : 34;
+// A rate rail takes a lane of its own rather than overprinting the plot, and
+// the plot gives the width back. The rail is sized to its widest string.
+const railWidth = rail
+  ? Math.round(
+      Math.max(
+        textWidth(rail.head, 11),
+        ...rail.items.map((i) => Math.max(textWidth(i.label, 11), textWidth(i.value, 15))),
+      ) + 28,
+    )
+  : 0;
+const plotWidth = width - railWidth;
+// Steps need headroom for the rate above the taller of each pair of tops.
+const plotTop = steps ? 44 : 26;
 const laid = columnLayout(groups, {
-  width,
+  width: plotWidth,
   height,
-  plotTop: 26,
+  plotTop,
   plotBottom: height - foot,
   max,
   digits,
 });
+const refY = refLine ? columnLevel(laid, plotTop, refLine.at) : null;
+const breakX = solidThrough === undefined ? null : columnBreak(laid, solidThrough);
+const stepMarks = steps ? columnSteps(laid, steps) : null;
+if (projectedLabel && breakX === null) {
+  throw new Error('Columns: a projected label with no solidThrough to break at');
+}
+// Three is the ceiling: past that the rail is a table and belongs under the
+// exhibit, and it stops fitting beside a plot of this height.
+if (rail && (rail.items.length < 1 || rail.items.length > 3)) {
+  throw new Error(`Columns: a rail of ${rail.items.length}, one to three expected`);
+}
 
 let co = null;
 if (callout) {
@@ -92,9 +141,9 @@ const keys = seriesNames.map((name) => {
   keyCursor += 16 + textWidth(name, 11) + 26;
   return { name, x };
 });
-if (keyCursor > width) {
+if (keyCursor > plotWidth) {
   throw new Error(
-    `Columns: the series names need ${Math.round(keyCursor)} units and the drawing is ${width}. Shorten them.`,
+    `Columns: the series names need ${Math.round(keyCursor)} units and the plot is ${plotWidth}. Shorten them.`,
   );
 }
 
@@ -123,7 +172,29 @@ if (markSeries !== undefined && (markSeries < 0 || markSeries >= (groups[0]?.val
 ---
 
 <svg class="fig" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={alt}>
-  <line class="base" x1="0" y1={laid.baseline} x2={width} y2={laid.baseline} />
+  <line class="base" x1="0" y1={laid.baseline} x2={plotWidth} y2={laid.baseline} />
+  {
+    refY !== null && refLine && (
+      <>
+        <line class="ref" x1="0" y1={refY} x2={plotWidth} y2={refY} />
+        <text class="ref-lab" x={plotWidth} y={refY - 5} text-anchor="end">
+          {refLine.label}
+        </text>
+      </>
+    )
+  }
+  {
+    breakX !== null && (
+      <>
+        <line class="brk" x1={breakX} y1={plotTop - 12} x2={breakX} y2={laid.baseline} />
+        {projectedLabel && (
+          <text class="brk-lab" x={breakX + 6} y={plotTop - 14}>
+            {projectedLabel}
+          </text>
+        )}
+      </>
+    )
+  }
   {
     laid.groups.map((g) =>
       g.bars.map((b) => (
@@ -171,7 +242,42 @@ if (markSeries !== undefined && (markSeries < 0 || markSeries >= (groups[0]?.val
       </>
     )
   }
-  {axisLabel && <text class="unit" x={width} y={height - 13} text-anchor="end">{axisLabel}</text>}
+  {
+    stepMarks &&
+      stepMarks.map((m) => (
+        <>
+          <path
+            class="step-lead"
+            d={`M ${m.x1} ${m.y1} L ${m.x1} ${m.y - 4} L ${m.x2} ${m.y - 4} L ${m.x2} ${m.y2}`}
+            fill="none"
+          />
+          <text class="step-val" x={m.x} y={m.y} text-anchor="middle">
+            {m.text}
+          </text>
+        </>
+      ))
+  }
+  {
+    rail && (
+      <>
+        <line class="rail-rule" x1={plotWidth + 14} y1={plotTop} x2={plotWidth + 14} y2={laid.baseline} />
+        <text class="rail-head" x={plotWidth + 26} y={plotTop + 10}>
+          {rail.head}
+        </text>
+        {rail.items.map((it, i) => (
+          <>
+            <text class="rail-val" x={plotWidth + 26} y={plotTop + 42 + i * 46}>
+              {it.value}
+            </text>
+            <text class="rail-lab" x={plotWidth + 26} y={plotTop + 58 + i * 46}>
+              {it.label}
+            </text>
+          </>
+        ))}
+      </>
+    )
+  }
+  {axisLabel && <text class="unit" x={plotWidth} y={height - 13} text-anchor="end">{axisLabel}</text>}
   {
     co && (
       <>
@@ -190,6 +296,46 @@ if (markSeries !== undefined && (markSeries < 0 || markSeries >= (groups[0]?.val
   .fig { width: 100%; height: auto; }
 
   .base { stroke: var(--ct-rule); stroke-width: 1; }
+
+  /* A reference line is structure a value is read against, so it is findable
+     rather than recessive: --ct-ex-axis, dashed to keep it off the data. */
+  .ref { stroke: var(--ct-ex-axis); stroke-width: 1; stroke-dasharray: 4 3; }
+
+  .ref-lab,
+  .brk-lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+
+  .brk { stroke: var(--ct-ex-axis); stroke-width: 1; stroke-dasharray: 3 3; }
+
+  .step-lead { stroke: var(--ct-ex-connector); stroke-width: 1; stroke-dasharray: 3 3; }
+
+  .step-val {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-text);
+    font-variant-numeric: tabular-nums;
+    paint-order: stroke;
+    stroke: var(--ct-ground);
+    stroke-width: 3;
+  }
+
+  .rail-rule { stroke: var(--ct-rule); stroke-width: 1; }
+
+  .rail-head,
+  .rail-lab {
+    font-size: var(--ct-text-xs);
+    fill: var(--ct-ex-label-muted);
+  }
+
+  .rail-val {
+    font-size: var(--ct-text-lg);
+    fill: var(--ct-text);
+    font-variant-numeric: tabular-nums;
+  }
 
   .val {
     font-size: var(--ct-text-xs);

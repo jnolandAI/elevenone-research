@@ -1,5 +1,5 @@
 ---
-import { spreadLayout, plotBand, type SpreadRow } from 'research-kit/lib/exhibits';
+import { spreadLayout, plotBand, textWidth, type SpreadRow } from 'research-kit/lib/exhibits';
 
 /**
  * Horizontal value ranges on a shared axis: the football field.
@@ -39,7 +39,12 @@ const {
 
 const width = w;
 // Row labels take the left third; the value readings take a lane at the right.
-const { x1, x2 } = plotBand(width, 0.28, 0.83);
+// Measured, not a flat share, for the reason written up in Bars: 28% of a
+// full-measure drawing is 340 units for labels that need 150, and the rest is
+// a void down the left of the exhibit. The lane never grows past the old
+// share, so nothing that fits today stops fitting.
+const labelNeed = Math.max(...rows.map((r) => textWidth(r.label, 11))) + 16;
+const { x1, x2 } = plotBand(width, Math.min(Math.max(labelNeed / width, 0.06), 0.28), 0.83);
 const plotTop = 22;
 const plotBottom = height - 44;
 const bars = spreadLayout(rows, { width, height, plotTop, plotBottom, x1, x2, min, max });

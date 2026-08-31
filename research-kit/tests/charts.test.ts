@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   columnLayout,
+  columnLevel,
+  columnBreak,
+  columnSteps,
   barsLayout,
   trendLayout,
   stackLayout,
@@ -97,6 +100,57 @@ describe('columns', () => {
         plot,
       ),
     ).toThrow(/slate budget/);
+  });
+
+  /* The three devices a column plot needs beyond the bars. Added after four
+     pages of one deck were found plotting the data and stopping. */
+
+  it('puts a reference line where the value falls, not where the bar ends', () => {
+    const laid = columnLayout([{ label: 'a', values: [50] }], { ...plot, max: 100 });
+    const mid = columnLevel(laid, plot.plotTop, 50);
+    expect(mid).toBeCloseTo((plot.plotTop + plot.plotBottom) / 2, 0);
+    expect(columnLevel(laid, plot.plotTop, 100)).toBe(plot.plotTop);
+    expect(columnLevel(laid, plot.plotTop, 0)).toBe(plot.plotBottom);
+  });
+
+  it('refuses a reference line off the axis, which would draw outside the plot', () => {
+    const laid = columnLayout([{ label: 'a', values: [50] }], { ...plot, max: 100 });
+    expect(() => columnLevel(laid, plot.plotTop, 140)).toThrow(/above the axis top/);
+    expect(() => columnLevel(laid, plot.plotTop, -1)).toThrow(/below the baseline/);
+  });
+
+  it('breaks between the last observed group and the first estimated one', () => {
+    const laid = columnLayout(groups, plot);
+    const x = columnBreak(laid, 0);
+    const a = laid.groups[0]!.bars.at(-1)!;
+    expect(x).toBeGreaterThan(a.x + a.width);
+    expect(x).toBeLessThan(laid.groups[1]!.bars[0]!.x);
+  });
+
+  it('refuses a break that leaves nothing estimated', () => {
+    const laid = columnLayout(groups, plot);
+    expect(() => columnBreak(laid, 2)).toThrow(/no estimated groups/);
+  });
+
+  it('sets one rate on every transition and none on the groups', () => {
+    const laid = columnLayout(groups, plot);
+    const marks = columnSteps(laid, ['44.5%', '40.7%']);
+    expect(marks).toHaveLength(2);
+    expect(marks.map((m) => m.text)).toEqual(['44.5%', '40.7%']);
+    for (const [i, m] of marks.entries()) {
+      // The rate spans the gap between the two bars it is about.
+      expect(m.x1).toBeCloseTo(laid.groups[i]!.bars[0]!.x + laid.groups[i]!.bars[0]!.width, 1);
+      expect(m.x2).toBeCloseTo(laid.groups[i + 1]!.bars[0]!.x, 1);
+      expect(m.x).toBeGreaterThan(m.x1);
+      expect(m.x).toBeLessThan(m.x2);
+      // And it clears both tops, so it cannot land on a value label.
+      expect(m.y).toBeLessThan(Math.min(m.y1, m.y2) - 7);
+    }
+  });
+
+  it('refuses a rate count that does not match the transitions', () => {
+    const laid = columnLayout(groups, plot);
+    expect(() => columnSteps(laid, ['1', '2', '3'])).toThrow(/2 expected/);
   });
 });
 

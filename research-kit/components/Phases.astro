@@ -15,11 +15,21 @@ interface Props {
   alt: string;
   /** Drawing width in user units. A page column by default, a slide passes its own. */
   width?: number;
+  /**
+   * Band thickness. 36 is the corpus default and it is right for a band under
+   * a rail; a page that gives this exhibit the whole measure and has room left
+   * should say so rather than leave the room under the exhibit as a void.
+   */
+  band?: number;
 }
 
-const { phases, alt, width: w = 1199 } = Astro.props;
+const { phases, alt, width: w = 1199, band = 36 } = Astro.props;
 const width = w;
-const height = 104;
+if (band < 24 || band > 120) throw new Error(`Phases: a band of ${band}, 24 to 120 expected`);
+// The label sits above the band and the span below it, at the fixed offsets
+// the corpus uses. Only the band itself grows.
+const bandTop = 30;
+const height = bandTop + band + 38;
 // labelSize and spanSize are --text-sm and --text-xs. The exhibit scales, so
 // they are user units here rather than px, and tokens.test.ts holds them to
 // the values in tokens.css.
@@ -33,15 +43,15 @@ const bands = phaseLayout(phases, { width, gap: 8, labelSize: 13, spanSize: 11 }
         <rect
           class:list={['band', { 'band--mark': b.mark }]}
           x={b.x}
-          y="30"
+          y={bandTop}
           width={b.width}
-          height="36"
+          height={band}
         />
         <text class:list={['name', { 'name--mark': b.mark }]} x={b.labelX} y="20">
           {b.label}
         </text>
         {b.span && (
-          <text class="span" x={b.spanX} y="88">
+          <text class="span" x={b.spanX} y={bandTop + band + 22}>
             {b.span}
           </text>
         )}

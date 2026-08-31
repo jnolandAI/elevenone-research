@@ -42,7 +42,15 @@ const hasNote = rows.some((r) => r.note);
 // rail head clipped mid-word inside a split column and the failure was
 // invisible to the geometry check, because SVG text that overruns its viewBox
 // is silently cut rather than overflowing anything the checker can see.
-const { x1, x2 } = plotBand(width, 0.26, hasNote ? 0.64 : 0.88);
+// The label lane is measured for the same reason the note lane is. A flat 26%
+// share is right for the phrase labels this form exists to carry and absurd
+// for short ones: seven rows reading "95th percentile" were given 316 units of
+// a 1216 drawing, needed 95, and left the rest as a void down the left of the
+// exhibit that no geometry check could see. The lane never grows past the old
+// share, so nothing that fits today stops fitting.
+const labelNeed = Math.max(...rows.map((r) => textWidth(r.label, 11))) + 16;
+const labelShare = Math.min(Math.max(labelNeed / width, 0.06), 0.26);
+const { x1, x2 } = plotBand(width, labelShare, hasNote ? 0.64 : 0.88);
 const noteX = hasNote ? x2 + 34 : 0;
 if (hasNote) {
   const widest = Math.max(

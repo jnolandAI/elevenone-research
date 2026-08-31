@@ -463,6 +463,80 @@ export function columnLayout(
   return { groups: laid, baseline: geom.plotBottom, top };
 }
 
+/**
+ * What a column plot needs beyond the bars, and does not have.
+ *
+ * Three devices, added 2026-08-31 after two blind reviews of one deck named
+ * the same defect on four Columns pages between them: a chart that plots the
+ * data and stops. A ratio against a level that means something needs the level
+ * drawn; a series with estimated periods in it needs the break drawn; a
+ * process drawn as successive steps needs the between-step rates on the
+ * transitions rather than in a footnote. None of the three is a new form.
+ */
+export interface ColumnPlot {
+  groups: ColumnGroupLayout[];
+  baseline: number;
+  top: number;
+}
+
+/** The y of a value on a laid column plot, for a reference line at a level. */
+export function columnLevel(laid: ColumnPlot, plotTop: number, value: number): number {
+  if (value < 0) throw new Error('columnLevel: a reference line below the baseline');
+  if (value > laid.top) {
+    throw new Error(`columnLevel: ${value} is above the axis top of ${laid.top}`);
+  }
+  return round(laid.baseline - (value / laid.top) * (laid.baseline - plotTop));
+}
+
+/** Where the observed periods stop and the estimated ones begin. */
+export function columnBreak(laid: ColumnPlot, after: number): number {
+  if (after < 0 || after >= laid.groups.length - 1) {
+    throw new Error(
+      `columnBreak: ${after} leaves no estimated groups in ${laid.groups.length}`,
+    );
+  }
+  const a = laid.groups[after]!;
+  const b = laid.groups[after + 1]!;
+  const aRight = Math.max(...a.bars.map((x) => x.x + x.width));
+  const bLeft = Math.min(...b.bars.map((x) => x.x));
+  return round((aRight + bLeft) / 2);
+}
+
+export interface ColumnStep {
+  /** Shoulders of the transition, taken from the tops of the two bars. */
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  /** Anchor for the rate, clear of both bar tops and of their value labels. */
+  x: number;
+  y: number;
+  text: string;
+}
+
+/**
+ * The rates on the transitions of a stepped process, one fewer than the
+ * groups. Read off series 0, because a funnel carries one measure.
+ */
+export function columnSteps(laid: ColumnPlot, labels: readonly string[]): ColumnStep[] {
+  if (labels.length !== laid.groups.length - 1) {
+    throw new Error(
+      `columnSteps: ${labels.length} rates for ${laid.groups.length} groups, ` +
+        `${laid.groups.length - 1} expected`,
+    );
+  }
+  return labels.map((text, i) => {
+    const a = laid.groups[i]!.bars[0]!;
+    const b = laid.groups[i + 1]!.bars[0]!;
+    const x1 = round(a.x + a.width);
+    const x2 = round(b.x);
+    // The rate sits above the higher of the two tops, clear of the value
+    // label that already sits 7 above it.
+    const y = round(Math.min(a.y, b.y) - 22);
+    return { x1, y1: round(a.y), x2, y2: round(b.y), x: round((x1 + x2) / 2), y, text };
+  });
+}
+
 /* ---- Bars ---------------------------------------------------------------- */
 
 /**

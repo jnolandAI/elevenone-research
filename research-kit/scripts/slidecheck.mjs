@@ -148,6 +148,10 @@ const SHOT = process.argv[3] || null;
         const EXHIBITS = 'svg, .s-panels, .s-layers, .s-matrix, .s-dense, .s-flow';
         slide.querySelectorAll(EXHIBITS).forEach((svg) => {
           if (!grow.contains(svg)) return;
+          // A drawn exhibit carries .fig. A map legend's swatches are svgs too,
+          // and a 14x10 swatch sitting above the footnote reported 93px of
+          // slack on a page whose exhibit filled its zone. Added 2026-08-31.
+          if (svg.tagName.toLowerCase() === 'svg' && !svg.classList.contains('fig')) return;
           if (svg.closest('.s-split__side')) return;
           // A main column beside a tinted field is not short: the field runs
           // the full height and carries the eye down past the exhibit.
