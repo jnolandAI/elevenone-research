@@ -120,6 +120,15 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     content: var(--ct-firm-mark);
   }
 
+  /* height rather than font-size, because --ct-firm-mark may resolve to a
+     url() as easily as to a string: `content` renders an image just as
+     happily, so a house with a wordmark or a logo already has somewhere to
+     put it and only needed a way to size it. auto by default, which is what
+     a text mark wants. */
+  .slide__mark::after {
+    height: var(--ct-firm-mark-size);
+  }
+
   .slide__mark {
     position: absolute;
     right: var(--ct-slide-pad);
@@ -129,16 +138,25 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     color: var(--ct-text-muted);
   }
 
+  /* The lane carries the waymarker and the page number down one side. Most
+     decks do not have a rail: it is this kit's first consumer's own
+     signature rather than a general shape, so it is removable. A brand sets
+     --ct-lane-w and --ct-lane-rule-w to 0 (and its ticks to 0, which the
+     contract's ordering check asks for anyway) and the rail is gone.
+     overflow is hidden so a collapsed lane clips its own contents instead of
+     spilling them into the measure; at any real width nothing reaches the
+     edge, so it changes nothing for a deck that keeps its rail. */
   .slide__lane {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
     box-sizing: border-box;
-    width: var(--ct-slide-margin);
+    width: var(--ct-lane-w);
     flex-shrink: 0;
+    overflow: hidden;
     padding: var(--ct-slide-pad) var(--ct-space-2) var(--ct-slide-pad) 0;
-    border-right: var(--ct-rule-w-hair) solid var(--ct-rule);
+    border-right: var(--ct-lane-rule-w) solid var(--ct-rule);
   }
 
   .slide__way {
@@ -158,7 +176,19 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     border-top: var(--ct-rule-w-bold) solid var(--ct-mark);
   }
 
+  /* Static by default, which keeps the number at the foot of the lane where
+     every existing page has it. A deck with no rail sets --ct-num-pos to
+     absolute and gives it an inset, which puts it in the footer band
+     instead. Both ends are offered because the footer already has the firm
+     mark at one of them: the first cut gave only a right inset, and the
+     number landed on top of the wordmark. Doing it this way rather than by moving the element keeps the
+     markup identical for everyone: the number changes where it sits without
+     changing where it is in the document. */
   .slide__num {
+    position: var(--ct-num-pos);
+    left: var(--ct-num-left);
+    right: var(--ct-num-right);
+    bottom: var(--ct-num-bottom);
     font-size: var(--ct-text-xs);
     line-height: var(--ct-leading-4);
     color: var(--ct-text-muted);
@@ -166,9 +196,25 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
   }
 
   .slide__body {
+    position: relative;
     flex: 1;
     min-width: 0;
     padding: var(--ct-slide-pad);
+  }
+
+  /* The footer divider: a rule across the measure above the footer
+     furniture, which is one of the commonest things a house template
+     carries and which this kit could not draw. Zero by default, so a deck
+     that does not want one pays nothing. Drawn as a pseudo-element rather
+     than a new div because adding an element would shift every index path
+     after it and turn paint-diff from a proof into noise. */
+  .slide__body::after {
+    content: '';
+    position: absolute;
+    left: var(--ct-slide-pad);
+    right: var(--ct-slide-pad);
+    bottom: var(--ct-foot-rule-pad);
+    border-top: var(--ct-foot-rule-w) solid var(--ct-rule);
   }
 
   .slide__body--full {

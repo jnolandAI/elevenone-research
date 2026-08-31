@@ -150,4 +150,19 @@
   --title-rule-pad: 0;
   --way-tick: 10px;
   --way-tick-here: 18px;
+
+  /* ---- The lane and the footer ----------------------------------------
+     This system keeps its rail: it is one of the few that has one, and the
+     waymarker down the left is a signature rather than a default. The
+     footer draws no divider, and the page number stays at the foot of the
+     lane where it has always been. */
+  --lane-w: 32px;
+  --lane-rule-w: 1px;
+  --num-left: auto;
+  --num-pos: static;
+  --num-right: auto;
+  --num-bottom: auto;
+  --foot-rule-w: 0;
+  --foot-rule-pad: 0;
+  --firm-mark-size: auto;
 }

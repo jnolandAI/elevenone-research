@@ -61,6 +61,9 @@ function adapterCss(overrides: Record<string, string> = {}): string {
     if (n === '--ct-way-tick') return `  ${n}: 10px;`;
     if (n === '--ct-way-tick-here') return `  ${n}: 18px;`;
     if (n === '--ct-slide-margin') return `  ${n}: 32px;`;
+    if (n === '--ct-lane-w') return `  ${n}: 32px;`;
+    if (n === '--ct-lane-rule-w') return `  ${n}: 1px;`;
+    if (n === '--ct-foot-rule-w') return `  ${n}: 0;`;
     return `  ${n}: 16px;`;
   });
   return `:root {\n${lines.join('\n')}\n}`;
@@ -315,14 +318,34 @@ describe('tokencheck', () => {
     // with a wide lane may draw long ticks. Attribution matters: reporting
     // this against --ct-slide-margin would send someone to widen the lane,
     // which was already right.
-    const r = run({ '--ct-way-tick-here': '48px', '--ct-slide-margin': '32px' });
+    const r = run({ '--ct-way-tick-here': '48px', '--ct-lane-w': '32px' });
+    const f = r.findings.filter((x: any) => x.check === 'ordered');
+    expect(f).toHaveLength(1);
+    expect(f[0].token).toBe('--ct-way-tick-here');
+  });
+
+  it('accepts a deck with no rail at all, which is what most decks are', () => {
+    // A rail down one side is this kit's first consumer's signature, not a
+    // general shape. Removing it is saying the same thing twice on purpose:
+    // the lane goes to 0 and so do its ticks, and the ordering check reads
+    // 0 <= 0 <= 0 rather than complaining that a tick overruns a lane that
+    // is not there.
+    const r = run({
+      '--ct-lane-w': '0', '--ct-lane-rule-w': '0',
+      '--ct-way-tick': '0', '--ct-way-tick-here': '0',
+    });
+    expect(r.findings).toEqual([]);
+  });
+
+  it('still refuses a tick drawn into the measure of a deck that kept a narrow rail', () => {
+    const r = run({ '--ct-lane-w': '16px', '--ct-way-tick': '10px', '--ct-way-tick-here': '24px' });
     const f = r.findings.filter((x: any) => x.check === 'ordered');
     expect(f).toHaveLength(1);
     expect(f[0].token).toBe('--ct-way-tick-here');
   });
 
   it('lets a brand with a wide lane draw the long ticks that lane affords', () => {
-    expect(run({ '--ct-way-tick': '30px', '--ct-way-tick-here': '48px', '--ct-slide-margin': '64px' }).findings).toEqual([]);
+    expect(run({ '--ct-way-tick': '30px', '--ct-way-tick-here': '48px', '--ct-lane-w': '64px' }).findings).toEqual([]);
   });
 
   it('registers every check that can produce a measure in MEASURE_ORDER', () => {

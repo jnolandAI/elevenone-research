@@ -89,8 +89,13 @@
       "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"]
     },
     "master": {
-      "description": "The furniture a page carries around its content: the frame the canvas sits in, the rule under an action title, and the waymarker ticks in the lane. This is the layer that makes a template recognisable before a word of it is read, and until 2026-08-31 every value in it was a literal in the kit. What a brand gets is an enumerated vocabulary of values, never a coordinate space: it may say how long a tick is and whether a title is ruled, and it may not say that the title goes at the foot or that the source line is optional. Reading order, zone hierarchy and provenance are the kit's, because moving them changes what the page argues rather than whose page it is.",
-      "names": ["--ct-frame-w", "--ct-title-rule-w", "--ct-title-rule-pad", "--ct-way-tick", "--ct-way-tick-here"]
+      "description": "The furniture a page carries around its content: the frame the canvas sits in, the rule under an action title, the footer band and its divider, and the lane. The lane is the one device here that most decks do not have -- a rail down one side is this kit's first consumer's own signature, not a general shape -- so it is removable: a brand sets --ct-lane-w and --ct-lane-rule-w to 0 and moves the page number into the footer with --ct-num-pos. Most real variation lives in the title and footer bands rather than in a rail, which is why those carry a divider, a placement and a mark size of their own. This is the layer that makes a template recognisable before a word of it is read, and until 2026-08-31 every value in it was a literal in the kit. What a brand gets is an enumerated vocabulary of values, never a coordinate space: it may say how long a tick is and whether a title is ruled, and it may not say that the title goes at the foot or that the source line is optional. Reading order, zone hierarchy and provenance are the kit's, because moving them changes what the page argues rather than whose page it is.",
+      "names": [
+        "--ct-frame-w", "--ct-title-rule-w", "--ct-title-rule-pad",
+        "--ct-lane-w", "--ct-lane-rule-w", "--ct-way-tick", "--ct-way-tick-here",
+        "--ct-num-pos", "--ct-num-left", "--ct-num-right", "--ct-num-bottom",
+        "--ct-foot-rule-w", "--ct-foot-rule-pad", "--ct-firm-mark-size"
+      ]
     },
     "shape": {
       "description": "Corner treatment, named by what the corner belongs to rather than by a size. Panel is a tinted field carrying reading: a commentary rail, a KPI band, an annotation strip, the ink finding. Hard corners and soft corners are one of the loudest signals of whose deck this is, and until 2026-08-31 the kit drew no radius anywhere and a rounded house could not be expressed at all. Capped, because past a point a tinted zone stops reading as a zone and starts reading as a card. Data marks are deliberately NOT offered a radius yet: a rounded bar end shortens the bar a reader measures, so that one needs its own decision rather than a token.",
@@ -104,8 +109,8 @@
       ]
     },
     "geometry": {
-      "description": "The slide profile. Declared per system rather than defaulted, because one system is a document that also renders slides and the other is being changed to slide-first.",
-      "names": ["--ct-slide-w", "--ct-slide-h", "--ct-slide-margin", "--ct-slide-pad", "--ct-slide-measure"]
+      "description": "The slide profile. Declared per system rather than defaulted, because one system is a document that also renders slides and the other is being changed to slide-first. --ct-slide-margin was removed on 2026-08-31 and not replaced: it never meant a margin, it meant the width of the lane down one side, and it now says so as --ct-lane-w in the master group. One name for one thing.",
+      "names": ["--ct-slide-w", "--ct-slide-h", "--ct-slide-pad", "--ct-slide-measure"]
     },
     "art": {
       "description": "A string prepended to every image prompt, so the two brands do not produce imagery that reads as the same model.",
@@ -181,14 +186,16 @@
           "why": "The waymarker's current-section tick is the emphasis: it is drawn longer than its neighbours so a reader can see where in the deck they are. A brand that draws it shorter has not restyled the waymarker, it has pointed it at the wrong section."
         },
         {
-          "names": ["--ct-way-tick-here", "--ct-slide-margin"],
+          "names": ["--ct-way-tick-here", "--ct-lane-w"],
           "blame": "lower",
-          "why": "The lane is the waymarker's home and --ct-slide-margin is the lane's width, so a tick longer than the lane is drawing outside its own furniture band and into the measure. Expressed against the lane rather than against a fixed number, so a brand with a wide lane may draw long ticks and a brand with a narrow one may not."
+          "why": "The lane is the waymarker's home and --ct-lane-w is its width, so a tick longer than the lane is drawing outside its own furniture band and into the measure. Expressed against the lane rather than against a fixed number, so a brand with a wide lane may draw long ticks and a brand with a narrow one may not. A deck with no rail sets the lane to 0 and its ticks to 0, which is the same statement made twice and reads as deliberate rather than as an oversight."
         }
       ],
       "bounded": [
         { "name": "--ct-frame-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
         { "name": "--ct-title-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
+        { "name": "--ct-lane-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
+        { "name": "--ct-foot-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
         { "name": "--ct-rule-w-hair", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
         { "name": "--ct-rule-w-bold", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
         { "name": "--ct-rule-w-heavy", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },

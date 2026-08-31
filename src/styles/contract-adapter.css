@@ -117,6 +117,16 @@
   --ct-way-tick: var(--way-tick);
   --ct-way-tick-here: var(--way-tick-here);
 
+  --ct-lane-w: var(--lane-w);
+  --ct-lane-rule-w: var(--lane-rule-w);
+  --ct-num-pos: var(--num-pos);
+  --ct-num-left: var(--num-left);
+  --ct-num-right: var(--num-right);
+  --ct-num-bottom: var(--num-bottom);
+  --ct-foot-rule-w: var(--foot-rule-w);
+  --ct-foot-rule-pad: var(--foot-rule-pad);
+  --ct-firm-mark-size: var(--firm-mark-size);
+
   /* ---- Type ---- */
   --ct-font-display: var(--font);
   --ct-font-body: var(--font);
@@ -173,7 +183,6 @@
   /* ---- Geometry ---- */
   --ct-slide-w: var(--slide-w);
   --ct-slide-h: var(--slide-h);
-  --ct-slide-margin: var(--slide-margin);
   --ct-slide-pad: var(--slide-pad);
   --ct-slide-measure: var(--slide-measure);
 

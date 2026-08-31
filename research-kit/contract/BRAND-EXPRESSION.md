@@ -51,7 +51,10 @@ translation.
 | Line weight, three steps | `--ct-rule-w-hair`, `-bold`, `-heavy` | `hair <= bold <= heavy`; each within 0.5px–6px |
 | Panel corners | `--ct-radius-panel` | at most 24px, so a zone of the page does not become a card on it |
 | Space scale | the `space` group | the kit chooses steps |
-| Master furniture | `--ct-frame-w`, `--ct-title-rule-w`, `--ct-title-rule-pad`, `--ct-way-tick`, `--ct-way-tick-here` | the here-tick is at least as long as a plain tick, and no longer than the lane; rules are 0 or within the weight bounds |
+| Master furniture: title band | `--ct-title-rule-w`, `--ct-title-rule-pad` | 0, or within the weight bounds |
+| Master furniture: footer band | `--ct-foot-rule-w`, `--ct-foot-rule-pad`, `--ct-num-pos`, `--ct-num-left`, `--ct-num-right`, `--ct-num-bottom`, `--ct-firm-mark-size` | 0, or within the weight bounds |
+| Master furniture: the lane | `--ct-lane-w`, `--ct-lane-rule-w`, `--ct-way-tick`, `--ct-way-tick-here` | the here-tick is at least as long as a plain tick and no longer than the lane |
+| Master furniture: the canvas | `--ct-frame-w` | 0, or within the weight bounds |
 | Panel separation | `--ct-sep-border`, `--ct-sep-shadow` | *declared, not yet consumed — see below* |
 | Slide profile | the `geometry` group | |
 | Art direction, firm mark | `--ct-art-direction`, `--ct-firm-mark` | strings the kit prints and must not know |
@@ -75,28 +78,42 @@ what it would break, and sometimes the right answer is to move the cap.
   needs its own decision rather than a token.
 - **Fill treatment** (solid vs outline vs tint on a data mark). Same
   reasoning: it changes how the mark is read, not just how it looks.
-- **Furniture *placement*, as opposed to furniture treatment.** Which side the
-  lane sits on, where the page number and firm mark sit, what order the
-  furniture band runs in. The `master` group above covers how the furniture is
-  drawn, not where it goes, and the distinction is deliberate: a value can be
-  bounded and a coordinate cannot. Two specific blockers, both worth knowing
-  before anyone tries:
-  - **Lane side** cannot be done with a value token alone. `flex-direction:
-    row-reverse` moves the lane but not the divider it draws, because logical
-    border properties follow writing mode rather than flex direction. Doing it
-    properly means the divider becomes its own element, which shifts every
-    index path after it and turns `paint-diff` from a proof into noise.
-  - **Page-number format** (`05` vs `5` vs `5/32`) is computed in Astro
-    frontmatter, and frontmatter cannot read a CSS custom property at build
-    time. Anything computed in JS needs a different channel from the token
-    contract — a deck config the site exports and the layout threads down.
-    That channel does not exist yet, and inventing it for one string is the
-    wrong trade.
+- **Lane side.** Which side a rail sits on cannot be done with a value token
+  alone: `flex-direction: row-reverse` moves the lane but not the divider it
+  draws, because logical border properties follow writing mode rather than
+  flex direction. Doing it properly means the divider becomes its own
+  element, which shifts every index path after it and turns `paint-diff` from
+  a proof into noise. Low priority: a rail is rare, and a brand that does not
+  want one on the left mostly does not want one at all, which it can already
+  say.
+- **Page-number format** (`05` vs `5` vs `5/32`) is computed in Astro
+  frontmatter, and frontmatter cannot read a CSS custom property at build
+  time. Anything computed in JS needs a different channel from the token
+  contract — a deck config the site exports and the layout threads down. That
+  channel does not exist yet, and inventing it for one string is the wrong
+  trade.
 - **`--ct-sep-border` / `--ct-sep-shadow`.** Declared by the contract, mapped
   by all three adapters, read by no component. The separation group's own
   description claims "components set both, always", which is currently false.
   Recorded in `tests/contract-coverage.test.ts` as an exemption with this
   reason.
+
+## A note on where variation actually shows up
+
+Recorded because it changed what got built. The lane is a rail down one side
+carrying the waymarker and the page number, and it is this kit's first
+consumer's own signature rather than a general shape: most decks do not have
+one. The variation that actually needs expressing lives in the title and
+footer bands — their size and placement, and the standing elements in them
+besides text, which is to say divider rules and a wordmark or logo.
+
+So the lane is removable rather than merely adjustable (set `--ct-lane-w` and
+`--ct-lane-rule-w` to 0, and its ticks with them), and the title and footer
+bands carry the richer vocabulary: a rule each with its own weight and
+spacing, a page number that can sit at either end of the footer or stay in
+the lane, and a firm mark that takes a height because `--ct-firm-mark`
+resolves to a `url()` as happily as to a string. A house with a wordmark in
+the footer already has somewhere to put it.
 
 ## How to add a consumer
 
