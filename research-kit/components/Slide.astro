@@ -64,7 +64,7 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     max-width: var(--ct-slide-w);
     aspect-ratio: 1280 / 720;
     margin-inline: auto;
-    border: 1px solid var(--ct-rule);
+    border: var(--ct-rule-w-hair) solid var(--ct-rule);
     overflow: hidden;
   }
 
@@ -134,7 +134,7 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     width: var(--ct-slide-margin);
     flex-shrink: 0;
     padding: var(--ct-slide-pad) var(--ct-space-2) var(--ct-slide-pad) 0;
-    border-right: 1px solid var(--ct-rule);
+    border-right: var(--ct-rule-w-hair) solid var(--ct-rule);
   }
 
   .slide__way {
@@ -146,12 +146,12 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
 
   .slide__tick {
     width: 10px;
-    border-top: 1px solid var(--ct-rule-firm);
+    border-top: var(--ct-rule-w-hair) solid var(--ct-rule-firm);
   }
 
   .slide__tick--here {
     width: 18px;
-    border-top: 2px solid var(--ct-mark);
+    border-top: var(--ct-rule-w-bold) solid var(--ct-mark);
   }
 
   .slide__num {

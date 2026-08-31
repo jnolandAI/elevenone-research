@@ -14,6 +14,9 @@
   --g90: #2B2B2A;
   --ink: #131312;
 
+  /* 0 is a real step of this scale, and the deck's panels take it: a
+     tinted commentary field is a zone of the page, not a card on it. */
+  --r-none: 0;
   --r-s: 12px;
   --r-m: 18px;
   --r-l: 26px;
@@ -118,4 +121,18 @@
   --slide-margin: 32px;
   --slide-pad: 32px;
   --slide-measure: 1184px;
+
+  /* ---- Line and shape ------------------------------------------------
+     What this system's divisions measure, and how its panels corner. The
+     kit places these (a row divider takes hair, a booktabs panel head
+     takes bold, the ink finding's leading bar takes heavy); this file
+     says what they are, because a weight is identity and belongs beside
+     the ramp and the type scale rather than inside a translation layer.
+
+     The radius is 0 by choice, not by default: this system zones with
+     flat tinted fields and hard corners, and a rounded panel would read
+     as a card floating on the page rather than a zone of it. */
+  --rule-hair: 1px;
+  --rule-bold: 2px;
+  --rule-heavy: 3px;
 }

@@ -95,6 +95,22 @@
   --ct-sep-border: none;
   --ct-sep-shadow: var(--e1);
 
+  /* ---- Line and shape ----
+     The brand-expression half of the contract, added 2026-08-31. The kit
+     chooses which step each division takes; these say what the steps
+     measure. Set to the weights the kit hardcoded until this change, so the
+     render does not move: hair was the 1px division on 22 sites, bold the
+     2px emphatic head and mark tick, heavy the 3px lead panel head and the
+     ink finding's bar.
+
+     The radius is 0 and that is a choice, not a default. This system rules
+     and zones with flat fields and hard corners; a rounded panel would read
+     as a card floating on the page rather than a zone of it. */
+  --ct-rule-w-hair: var(--rule-hair);
+  --ct-rule-w-bold: var(--rule-bold);
+  --ct-rule-w-heavy: var(--rule-heavy);
+  --ct-radius-panel: var(--r-none);
+
   /* ---- Type ---- */
   --ct-font-display: var(--font);
   --ct-font-body: var(--font);

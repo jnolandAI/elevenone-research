@@ -21,6 +21,18 @@
       "value": 0.08,
       "why": "The mark says this value differs from its neighbours. Same measure as series and the same reason: the contract expresses the emphasis job, not the emphasis mechanism."
     },
+    "ruleWeightFloor": {
+      "value": 0.5,
+      "why": "The lightest a division may be drawn, in px. A deck is a fixed 1280 canvas that gets exported and projected, and a rule under half a pixel disappears in both. This is the floor on the brand's freedom, not on the kit's: the kit only ever says which step a division takes."
+    },
+    "ruleWeightCeiling": {
+      "value": 6,
+      "why": "The heaviest a division may be drawn, in px. Past roughly six the line stops dividing two things and becomes a third thing between them, which changes what the page argues rather than how it looks. A brand that wants a heavy rule gets six; a brand that wants a block wants a panel, and panels are a different token."
+    },
+    "panelRadiusCeiling": {
+      "value": 24,
+      "why": "The largest corner radius a tinted panel may take, in px. A commentary rail is a zone of the page, and past roughly 24 on a 1280 canvas it detaches into a card floating above the page instead. The cap exists so a brand can be as soft as it likes without the layout's zoning turning into a set of widgets."
+    },
     "scaleStepDeltaL": {
       "value": 0.03,
       "why": "Adjacent steps of an ordinal or sequential scale must be separable, but a scale is read as a ramp against its own neighbours rather than as independent categories, so the bar sits below the series bar. Measured in OKLab lightness alone, not full OKLab distance: a sequential ramp encodes magnitude, magnitude is read as lightness, and letting chroma pay for lightness would hold a chromatic system to a weaker bar than a neutral one, where chroma cannot substitute."
@@ -71,6 +83,14 @@
         "--ct-leading-9", "--ct-leading-10", "--ct-leading-11", "--ct-leading-12",
         "--ct-leading-14", "--ct-leading-16", "--ct-leading-18", "--ct-leading-22"
       ]
+    },
+    "line": {
+      "description": "How heavily a division is drawn, as three steps. The kit chooses which step each division takes, because the hierarchy between divisions is structure: a booktabs boundary has to read heavier than a row divider or the table stops being a table. The brand chooses what each step measures, because absolute weight is identity, and a house that rules at a hairline and a house that rules at three pixels are drawing the same structure in their own hand. Held to hair <= bold <= heavy so a brand cannot invert the hierarchy, and to a floor and ceiling so a division cannot vanish or become a block.",
+      "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"]
+    },
+    "shape": {
+      "description": "Corner treatment, named by what the corner belongs to rather than by a size. Panel is a tinted field carrying reading: a commentary rail, a KPI band, an annotation strip, the ink finding. Hard corners and soft corners are one of the loudest signals of whose deck this is, and until 2026-08-31 the kit drew no radius anywhere and a rounded house could not be expressed at all. Capped, because past a point a tinted zone stops reading as a zone and starts reading as a card. Data marks are deliberately NOT offered a radius yet: a rounded bar end shortens the bar a reader measures, so that one needs its own decision rather than a token.",
+      "names": ["--ct-radius-panel"]
     },
     "space": {
       "description": "Ten steps on a four-pixel base. No value exists between them.",
@@ -145,6 +165,20 @@
       "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3",
       "--ct-mark", "--ct-mark-soft", "--ct-mark-text",
       "--ct-field", "--ct-field-text", "--ct-field-text-muted"
-    ]
+    ],
+    "lengths": {
+      "ordered": [
+        {
+          "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"],
+          "why": "The kit draws a row divider at hair, an emphatic division at bold and the loudest division a page carries at heavy, and it reads the hierarchy back out of that ordering. A brand that sets bold lighter than hair has not restyled the deck, it has inverted what the deck says about which division matters."
+        }
+      ],
+      "bounded": [
+        { "name": "--ct-rule-w-hair", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
+        { "name": "--ct-rule-w-bold", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
+        { "name": "--ct-rule-w-heavy", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
+        { "name": "--ct-radius-panel", "floor": null, "ceiling": "panelRadiusCeiling" }
+      ]
+    }
   }
 }

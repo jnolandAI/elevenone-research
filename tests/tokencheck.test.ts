@@ -43,6 +43,14 @@ function adapterCss(overrides: Record<string, string> = {}): string {
     if (n.startsWith('--ct-font-')) return `  ${n}: Georgia, serif;`;
     if (n.startsWith('--ct-weight-')) return `  ${n}: 400;`;
     if (n.startsWith('--ct-tracking-')) return `  ${n}: 0em;`;
+    // The line ladder needs real, ordered values: the catch-all below is
+    // 16px, which is over the 6px weight ceiling, so before this branch
+    // existed a complete fixture failed three bounded checks. A fixture that
+    // cannot pass the checks it exists to exercise tests nothing.
+    if (n === '--ct-rule-w-hair') return `  ${n}: 1px;`;
+    if (n === '--ct-rule-w-bold') return `  ${n}: 2px;`;
+    if (n === '--ct-rule-w-heavy') return `  ${n}: 3px;`;
+    if (n === '--ct-radius-panel') return `  ${n}: 0;`;
     return `  ${n}: 16px;`;
   });
   return `:root {\n${lines.join('\n')}\n}`;
@@ -203,6 +211,66 @@ describe('tokencheck', () => {
     const r = run({ '--ct-ex-axis-quiet': '#FEFEFE' });
     expect(r.ok).toBe(false);
     expect(r.findings.some((f: any) => f.check === 'perceptible' && f.token === '--ct-ex-axis-quiet')).toBe(true);
+  });
+
+  /* The brand-expression checks. These are the ones that let a house draw
+     the deck in its own hand without letting it change what the deck says.
+     Colour was already expressible; weight, and whether a panel has corners,
+     were hardcoded in the kit until 2026-08-31, so a rounded house or a
+     heavy-ruled house could not be built at all.
+
+     What is checked is not taste. The kit reads hierarchy out of the
+     ordering of the three weights, so the ordering is an invariant even
+     though every value in it is the brand's. */
+  it('rejects a brand that draws an emphatic division lighter than a plain one', () => {
+    const r = run({ '--ct-rule-w-bold': '0.5px' });
+    const f = r.findings.filter((x: any) => x.check === 'ordered');
+    expect(f).toHaveLength(1);
+    expect(f[0].token).toBe('--ct-rule-w-bold');
+    expect(f[0].message).toMatch(/lighter than --ct-rule-w-hair/);
+  });
+
+  it('accepts a brand that draws every division heavier, as long as the order holds', () => {
+    // The point of the split: a house may rule three times as loud as
+    // another and still be drawing the same structure.
+    const r = run({ '--ct-rule-w-hair': '1px', '--ct-rule-w-bold': '3px', '--ct-rule-w-heavy': '5px' });
+    expect(r.findings).toEqual([]);
+  });
+
+  it('accepts equal steps, because a house may draw two divisions the same weight', () => {
+    // hair <= bold <= heavy, not strictly less: a system that separates its
+    // divisions by colour alone is making a choice, not a mistake.
+    const r = run({ '--ct-rule-w-hair': '1px', '--ct-rule-w-bold': '1px', '--ct-rule-w-heavy': '1px' });
+    expect(r.findings).toEqual([]);
+  });
+
+  it('rejects a division too light to survive an export, and one heavy enough to be a shape', () => {
+    const thin = run({ '--ct-rule-w-hair': '0.25px' }).findings.filter((x: any) => x.check === 'bounded');
+    expect(thin).toHaveLength(1);
+    expect(thin[0].message).toMatch(/under the 0\.5px floor/);
+    const fat = run({ '--ct-rule-w-heavy': '9px' }).findings.filter((x: any) => x.check === 'bounded');
+    expect(fat).toHaveLength(1);
+    expect(fat[0].message).toMatch(/over the 6px ceiling/);
+  });
+
+  it('rejects a panel radius that turns a zone of the page into a floating card', () => {
+    const r = run({ '--ct-radius-panel': '40px' });
+    const f = r.findings.filter((x: any) => x.check === 'bounded');
+    expect(f).toHaveLength(1);
+    expect(f[0].token).toBe('--ct-radius-panel');
+  });
+
+  it('accepts a rounded panel inside the cap, which is the whole point of the token', () => {
+    expect(run({ '--ct-radius-panel': '8px' }).findings).toEqual([]);
+  });
+
+  it('refuses to guess at a length it cannot measure', () => {
+    // A calc() or an em would silently compare wrong. These are compared
+    // against each other and against floors, so unmeasurable is a finding.
+    const r = run({ '--ct-rule-w-bold': 'calc(1px + 2px)' });
+    const f = r.findings.filter((x: any) => x.check === 'length');
+    expect(f).toHaveLength(1);
+    expect(f[0].message).toMatch(/not a plain px length/);
   });
 
   it('registers every check that can produce a measure in MEASURE_ORDER', () => {

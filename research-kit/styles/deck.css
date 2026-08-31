@@ -85,7 +85,7 @@
   width: 100%;
   margin-top: var(--ct-space-6);
   /* The firm divider, one step lighter and still above 3:1. */
-  border-top: 1px solid var(--ct-rule-firm);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule-firm);
 }
 
 /* Furniture on a cover that carries a photograph.
@@ -188,7 +188,7 @@
   margin-top: var(--ct-space-6);
   padding-top: var(--ct-space-3);
   /* Booktabs boundary rule: the heaviest division a page draws. */
-  border-top: 1px solid var(--ct-rule-strong);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
 }
 
 .s-implication__label {
@@ -222,7 +222,7 @@
 .s-pad-t--lg { padding-top: var(--ct-space-8); }
 
 /* A ruled list on a slide. Denser than DefList, which is built for a page. */
-.s-list { border-top: 1px solid var(--ct-rule); }
+.s-list { border-top: var(--ct-rule-w-hair) solid var(--ct-rule); }
 
 /* Roomier rows, for a page like a contents list that has height to spend.
    One spacing step up; not the equal-band fill, which stretches four rows
@@ -233,7 +233,7 @@
   display: flex;
   gap: var(--ct-space-6);
   padding: var(--ct-space-3) 0;
-  border-bottom: 1px solid var(--ct-rule);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 .s-list__num {
@@ -318,7 +318,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-left: 1px solid var(--ct-rule);
+  border-left: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 .s-flow__row {
@@ -337,7 +337,7 @@
   left: 0;
   top: 50%;
   width: 20px;
-  border-top: 2px solid var(--ct-mark);
+  border-top: var(--ct-rule-w-bold) solid var(--ct-mark);
 }
 
 .s-flow__term {
@@ -387,7 +387,7 @@
   gap: var(--ct-space-6);
   padding-bottom: var(--ct-space-2);
   /* Booktabs boundary rule: the heaviest division a page draws. */
-  border-bottom: 1px solid var(--ct-rule-strong);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
 }
 
 /* No closing rule, for a head that sits over a form which draws its own:
@@ -413,7 +413,7 @@
 
 .s-ex__caption {
   padding-top: var(--ct-space-3);
-  border-top: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
   font-size: var(--ct-text-xs);
   line-height: var(--ct-leading-4);
   color: var(--ct-text-muted);
@@ -451,6 +451,7 @@
   flex-direction: column;
   padding: var(--ct-space-4) var(--ct-space-6);
   background: var(--ct-well);
+  border-radius: var(--ct-radius-panel);
 }
 
 .s-split--even .s-split__main,
@@ -487,7 +488,7 @@
 /* The source line, at the foot of the slide where a reader looks for it. */
 .s-source {
   padding-top: var(--ct-space-3);
-  border-top: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
   font-size: var(--ct-text-xs);
   line-height: var(--ct-leading-4);
   color: var(--ct-text-muted);
@@ -499,15 +500,15 @@
   display: flex;
   gap: var(--ct-space-8);
   padding: var(--ct-space-4) 0;
-  border-top: 1px solid var(--ct-rule);
-  border-bottom: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 .s-kpi__item { flex: 1; min-width: 0; }
 
 /* Hairlines between the figures, the way a metric rail separates its cells. */
 .s-kpi__item + .s-kpi__item {
-  border-left: 1px solid var(--ct-rule);
+  border-left: var(--ct-rule-w-hair) solid var(--ct-rule);
   padding-left: var(--ct-space-8);
 }
 
@@ -518,6 +519,7 @@
   border-top: 0;
   border-bottom: 0;
   background: var(--ct-well);
+  border-radius: var(--ct-radius-panel);
 }
 
 /* Five figures across one band. 36px instead of 48, because five 48px
@@ -554,8 +556,8 @@
 .s-finding {
   padding: var(--ct-space-4) 0;
   /* Booktabs boundary rule: the heaviest division a page draws. */
-  border-top: 1px solid var(--ct-rule-strong);
-  border-bottom: 1px solid var(--ct-rule-strong);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
 }
 
 .s-finding__label {
@@ -587,8 +589,9 @@
   padding: var(--ct-space-4) var(--ct-space-6);
   border-top: 0;
   border-bottom: 0;
-  border-left: 3px solid var(--ct-mark);
+  border-left: var(--ct-rule-w-heavy) solid var(--ct-mark);
   background: var(--ct-well);
+  border-radius: var(--ct-radius-panel);
 }
 
 .s-finding--ink .s-finding__label {
@@ -627,7 +630,7 @@
 }
 
 .s-tile {
-  border-top: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
   padding-top: var(--ct-space-4);
   min-width: 0;
 }
@@ -677,7 +680,7 @@
 }
 
 /* A dense list where the term is short and the body carries the weight. */
-.s-dense { border-top: 1px solid var(--ct-rule); }
+.s-dense { border-top: var(--ct-rule-w-hair) solid var(--ct-rule); }
 
 /* A dense list set directly under an exhibit head, whose ink rule already
    opens it: a second rule of its own would double the line, and the first
@@ -692,7 +695,7 @@
   display: flex;
   gap: var(--ct-space-4);
   padding: var(--ct-space-2) 0;
-  border-bottom: 1px solid var(--ct-rule);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 /* The one marked row, the same treatment the text matrix uses: the term takes
@@ -773,7 +776,7 @@
      reads as cramped even though nothing collides (John, 2026-08-26: a rule
      needs breathing room on both sides, everywhere in the deck). */
   padding-bottom: var(--ct-space-3);
-  border-top: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 /* No opening rule, for a strip that follows something which already closed on
@@ -792,6 +795,7 @@
   border-top: 0;
   padding: var(--ct-space-4) var(--ct-space-6);
   background: var(--ct-well);
+  border-radius: var(--ct-radius-panel);
 }
 
 .s-annot__lead {
@@ -845,11 +849,11 @@
 .s-panel__head {
   padding-bottom: var(--ct-space-2);
   /* Booktabs boundary rule: the heaviest division a page draws. */
-  border-top: 2px solid var(--ct-rule-strong);
+  border-top: var(--ct-rule-w-bold) solid var(--ct-rule-strong);
   padding-top: var(--ct-space-3);
 }
 
-.s-panels--lead .s-panel__head { border-top-width: 3px; }
+.s-panels--lead .s-panel__head { border-top-width: var(--ct-rule-w-heavy); }
 
 .s-panel--mark .s-panel__head { border-top-color: var(--ct-mark); }
 
@@ -897,7 +901,7 @@
   margin-top: var(--ct-space-4);
   padding-top: var(--ct-space-3);
   /* A division that recedes and is not held to a floor. */
-  border-top: 1px solid var(--ct-rule);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule);
   font-size: var(--ct-text-xs);
   line-height: var(--ct-leading-4);
   color: var(--ct-text-muted);
@@ -923,8 +927,8 @@
    Local to this deck; promoted to deck.css only if a second deck wants it. */
 .s-matrix {
   /* Booktabs boundary rule: the heaviest division a page draws. */
-  border-top: 1px solid var(--ct-rule-strong);
-  border-bottom: 1px solid var(--ct-rule-strong);
+  border-top: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule-strong);
 }
 
 /* Set directly under an exhibit head, whose ink rule already opens it. */
@@ -942,7 +946,7 @@
      with how much room the page happens to have. */
   padding-block: var(--ct-space-3);
   /* A division that recedes and is not held to a floor. */
-  border-bottom: 1px solid var(--ct-rule);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 .s-matrix__row:last-child {
@@ -950,7 +954,7 @@
 }
 
 .s-matrix__row--head {
-  border-bottom: 1px solid var(--ct-rule);
+  border-bottom: var(--ct-rule-w-hair) solid var(--ct-rule);
 }
 
 .s-matrix__row--head .s-matrix__cell {

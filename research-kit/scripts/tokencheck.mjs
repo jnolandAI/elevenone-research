@@ -22,6 +22,10 @@ const { ok, findings, measures } = checkAdapter({ contract, tokens: resolveToken
 for (const m of [...measures].sort((a, b) => (MEASURE_ORDER[a.check] - MEASURE_ORDER[b.check]) || (a.value - b.value))) {
   const unit = m.check === 'contrast' || (m.check === 'series' && m.pair[1] === '--ct-ground') ? ':1'
     : m.check === 'monotonic' ? ' ΔL' // OKLab lightness only, not full ΔE
+    // The line and shape checks measure pixels, not perceptual distance.
+    // They printed as "dE" for one afternoon, which is a validator lying
+    // about its own units in the one place a reader goes to check a number.
+    : m.check === 'ordered' || m.check === 'bounded' ? 'px'
     : ' dE';
   const mark = m.value >= m.floor ? 'ok  ' : 'FAIL';
   console.log(`${mark} ${m.check.padEnd(9)} ${m.pair[0]} / ${m.pair[1]}  ${m.value.toFixed(3)}${unit} (floor ${m.floor})`);

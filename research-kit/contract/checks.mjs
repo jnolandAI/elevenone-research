@@ -9,7 +9,14 @@ import { parseHex, contrastRatio, deltaEOK, toOklab } from './color.mjs';
    that every check name the fixture actually produces appears as a key here,
    so a new check that forgets to register itself fails a test instead of
    recurring a third time. */
-export const MEASURE_ORDER = { contrast: 0, perceptible: 1, monotonic: 2, series: 3, mark: 4 };
+export const MEASURE_ORDER = {
+  contrast: 0, perceptible: 1, monotonic: 2, series: 3, mark: 4,
+  // The brand-expression checks, added 2026-08-31 with the line and shape
+  // groups. `length` produces findings only (an unparseable value), never a
+  // measure, but it is registered anyway: the cost of an unused entry is
+  // nothing and the cost of a missing one is a NaN in the CLI's comparator.
+  ordered: 5, bounded: 6, length: 7,
+};
 
 /* The spec asks tokencheck to make five checks: presence, contrast,
    monotonic, series, mark. `perceptible` is not one of them: it was added
@@ -160,6 +167,77 @@ export function checkAdapter({ contract, tokens }) {
     measures.push({ check: 'mark', pair: [markToken, neighbour], value, floor });
     if (value < floor) {
       fail('mark', markToken, `${value.toFixed(3)} in OKLab from ${neighbour}, needs ${floor}. The mark can differ by hue or by value; it cannot differ by neither.`);
+    }
+  }
+
+  // 7. Lengths. The brand-expression half of the contract: weights and radii
+  //    are the brand's to choose and the kit's to place. Two things are
+  //    checked, and neither is a matter of taste.
+  //
+  //    Ordering, because the kit reads hierarchy out of it. deck.css draws a
+  //    row divider at hair, an emphatic division at bold and the loudest
+  //    division a page carries at heavy. Those names ARE the structure; the
+  //    numbers behind them are identity. A brand that sets bold lighter than
+  //    hair has not restyled anything, it has inverted what the page says
+  //    about which division matters, which is the one thing brand expression
+  //    is not allowed to do.
+  //
+  //    Bounds, because a division that cannot be seen is not a division and a
+  //    division heavy enough to be a shape is a third element between two
+  //    others. Both change what the page argues rather than how it looks.
+  const lengths = roles.lengths;
+  if (lengths) {
+    // "1px" | "1" | "0.5px" -> number. A length that is not a plain px value
+    // (a calc(), a var() that resolved to another var(), an em) is reported
+    // rather than guessed at: the whole point is that these are comparable.
+    //
+    //    Memoised, so one unmeasurable token is one finding. Each name is
+    //    read by up to three checks (twice by the ordering pass, which sees
+    //    it as both the heavier and the lighter side of a pair, and once by
+    //    the bounds pass), and an uncached version reported the same defect
+    //    three times. A validator that says a thing three times reads as
+    //    three problems.
+    const seen = new Map();
+    const px = (name) => {
+      if (seen.has(name)) return seen.get(name);
+      const raw = tokens.get(name);
+      let out = null;
+      if (raw !== undefined && raw.trim() !== '') {
+        const m = raw.trim().match(/^(-?[0-9]*\.?[0-9]+)(px)?$/);
+        if (m) out = parseFloat(m[1]);
+        else fail('length', name, `resolves to "${raw.trim()}", which is not a plain px length. Weights and radii are compared against each other and against floors, so they have to be measurable.`);
+      }
+      seen.set(name, out);
+      return out;
+    };
+
+    for (const { names, why } of lengths.ordered ?? []) {
+      for (let i = 1; i < names.length; i++) {
+        const lo = px(names[i - 1]);
+        const hi = px(names[i]);
+        if (lo === null || hi === null) continue;
+        measures.push({ check: 'ordered', pair: [names[i], names[i - 1]], value: hi - lo, floor: 0 });
+        if (hi < lo) {
+          fail('ordered', names[i], `${hi}px, lighter than ${names[i - 1]} at ${lo}px. ${why}`);
+        }
+      }
+    }
+
+    for (const { name, floor, ceiling } of lengths.bounded ?? []) {
+      const v = px(name);
+      if (v === null) continue;
+      if (floor) {
+        const f = th(floor);
+        measures.push({ check: 'bounded', pair: [name, `floor ${floor}`], value: v, floor: f });
+        if (v < f) fail('bounded', name, `${v}px is under the ${f}px floor. ${contract.thresholds[floor].why}`);
+      }
+      if (ceiling) {
+        const c = th(ceiling);
+        // Recorded as headroom so the printed row reads the same direction as
+        // every other measure: a positive number passes.
+        measures.push({ check: 'bounded', pair: [name, `ceiling ${ceiling}`], value: c - v, floor: 0 });
+        if (v > c) fail('bounded', name, `${v}px is over the ${c}px ceiling. ${contract.thresholds[ceiling].why}`);
+      }
     }
   }
 
