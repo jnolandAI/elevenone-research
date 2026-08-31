@@ -88,6 +88,10 @@
       "description": "How heavily a division is drawn, as three steps. The kit chooses which step each division takes, because the hierarchy between divisions is structure: a booktabs boundary has to read heavier than a row divider or the table stops being a table. The brand chooses what each step measures, because absolute weight is identity, and a house that rules at a hairline and a house that rules at three pixels are drawing the same structure in their own hand. Held to hair <= bold <= heavy so a brand cannot invert the hierarchy, and to a floor and ceiling so a division cannot vanish or become a block.",
       "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"]
     },
+    "master": {
+      "description": "The furniture a page carries around its content: the frame the canvas sits in, the rule under an action title, and the waymarker ticks in the lane. This is the layer that makes a template recognisable before a word of it is read, and until 2026-08-31 every value in it was a literal in the kit. What a brand gets is an enumerated vocabulary of values, never a coordinate space: it may say how long a tick is and whether a title is ruled, and it may not say that the title goes at the foot or that the source line is optional. Reading order, zone hierarchy and provenance are the kit's, because moving them changes what the page argues rather than whose page it is.",
+      "names": ["--ct-frame-w", "--ct-title-rule-w", "--ct-title-rule-pad", "--ct-way-tick", "--ct-way-tick-here"]
+    },
     "shape": {
       "description": "Corner treatment, named by what the corner belongs to rather than by a size. Panel is a tinted field carrying reading: a commentary rail, a KPI band, an annotation strip, the ink finding. Hard corners and soft corners are one of the loudest signals of whose deck this is, and until 2026-08-31 the kit drew no radius anywhere and a rounded house could not be expressed at all. Capped, because past a point a tinted zone stops reading as a zone and starts reading as a card. Data marks are deliberately NOT offered a radius yet: a rounded bar end shortens the bar a reader measures, so that one needs its own decision rather than a token.",
       "names": ["--ct-radius-panel"]
@@ -171,9 +175,20 @@
         {
           "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"],
           "why": "The kit draws a row divider at hair, an emphatic division at bold and the loudest division a page carries at heavy, and it reads the hierarchy back out of that ordering. A brand that sets bold lighter than hair has not restyled the deck, it has inverted what the deck says about which division matters."
+        },
+        {
+          "names": ["--ct-way-tick", "--ct-way-tick-here"],
+          "why": "The waymarker's current-section tick is the emphasis: it is drawn longer than its neighbours so a reader can see where in the deck they are. A brand that draws it shorter has not restyled the waymarker, it has pointed it at the wrong section."
+        },
+        {
+          "names": ["--ct-way-tick-here", "--ct-slide-margin"],
+          "blame": "lower",
+          "why": "The lane is the waymarker's home and --ct-slide-margin is the lane's width, so a tick longer than the lane is drawing outside its own furniture band and into the measure. Expressed against the lane rather than against a fixed number, so a brand with a wide lane may draw long ticks and a brand with a narrow one may not."
         }
       ],
       "bounded": [
+        { "name": "--ct-frame-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
+        { "name": "--ct-title-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
         { "name": "--ct-rule-w-hair", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
         { "name": "--ct-rule-w-bold", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
         { "name": "--ct-rule-w-heavy", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },

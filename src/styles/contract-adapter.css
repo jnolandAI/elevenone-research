@@ -111,6 +111,12 @@
   --ct-rule-w-heavy: var(--rule-heavy);
   --ct-radius-panel: var(--r-none);
 
+  --ct-frame-w: var(--frame-w);
+  --ct-title-rule-w: var(--title-rule-w);
+  --ct-title-rule-pad: var(--title-rule-pad);
+  --ct-way-tick: var(--way-tick);
+  --ct-way-tick-here: var(--way-tick-here);
+
   /* ---- Type ---- */
   --ct-font-display: var(--font);
   --ct-font-body: var(--font);

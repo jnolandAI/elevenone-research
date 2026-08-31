@@ -154,6 +154,15 @@
   line-height: var(--ct-leading-9);
   letter-spacing: var(--ct-tracking-snug);
   color: var(--ct-text-strong);
+  /* A ruled action title is one of the loudest template signatures there is,
+     and the kit could not draw one at all until 2026-08-31. Both default to
+     zero, which is the treatment every existing page carries, so a system
+     that does not want it pays nothing: a 0 border draws nothing and a 0
+     padding moves nothing. The pad is separate because a rule wants air
+     above it, and a brand that sets one without the other gets a rule
+     jammed under its own descenders. */
+  padding-bottom: var(--ct-title-rule-pad);
+  border-bottom: var(--ct-title-rule-w) solid var(--ct-rule);
 }
 
 .s-body {

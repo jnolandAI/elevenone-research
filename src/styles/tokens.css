@@ -135,4 +135,19 @@
   --rule-hair: 1px;
   --rule-bold: 2px;
   --rule-heavy: 3px;
+
+  /* ---- Master furniture ----------------------------------------------
+     What this system's pages carry around their content. Set to the
+     treatment the kit drew as literals until 2026-08-31, so nothing moves:
+     a hairline frame around the canvas, an unruled action title, and
+     waymarker ticks at 10 rising to 18 for the current section.
+
+     The title rule is 0 by choice. This system separates the title from
+     the body with space, and a ruled title would put a second horizontal
+     line within a few pixels of the exhibit heads below it. */
+  --frame-w: 1px;
+  --title-rule-w: 0;
+  --title-rule-pad: 0;
+  --way-tick: 10px;
+  --way-tick-here: 18px;
 }

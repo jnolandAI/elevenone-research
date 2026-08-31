@@ -211,21 +211,37 @@ export function checkAdapter({ contract, tokens }) {
       return out;
     };
 
-    for (const { names, why } of lengths.ordered ?? []) {
+    for (const { names, why, blame } of lengths.ordered ?? []) {
       for (let i = 1; i < names.length; i++) {
         const lo = px(names[i - 1]);
         const hi = px(names[i]);
         if (lo === null || hi === null) continue;
         measures.push({ check: 'ordered', pair: [names[i], names[i - 1]], value: hi - lo, floor: 0 });
         if (hi < lo) {
-          fail('ordered', names[i], `${hi}px, lighter than ${names[i - 1]} at ${lo}px. ${why}`);
+          // Which token to report against. The constraint is symmetric but
+          // the mistake is not: on the weight ladder the brand set the
+          // heavier step too light (blame the upper name, the default), and
+          // on the tick-against-lane pair it drew the tick too long rather
+          // than the lane too narrow (blame the lower). Reporting the wrong
+          // side sends someone to change the token that was already right.
+          const at = blame === 'lower' ? names[i - 1] : names[i];
+          fail(
+            'ordered',
+            at,
+            `${names[i]} is ${hi}px and ${names[i - 1]} is ${lo}px, so ${names[i]} is the smaller of the two. ${why}`,
+          );
         }
       }
     }
 
-    for (const { name, floor, ceiling } of lengths.bounded ?? []) {
+    for (const { name, floor, ceiling, allowZero } of lengths.bounded ?? []) {
       const v = px(name);
       if (v === null) continue;
+      // Zero is a decision, not a small number. A brand may say "no frame" or
+      // "no rule under the title" and mean it, and that is a different claim
+      // from a rule drawn too faintly to survive an export. Absent is allowed
+      // where the kit's own default is absent; drawn-but-invisible never is.
+      if (allowZero && v === 0) continue;
       if (floor) {
         const f = th(floor);
         measures.push({ check: 'bounded', pair: [name, `floor ${floor}`], value: v, floor: f });

@@ -64,7 +64,11 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
     max-width: var(--ct-slide-w);
     aspect-ratio: 1280 / 720;
     margin-inline: auto;
-    border: var(--ct-rule-w-hair) solid var(--ct-rule);
+    /* The frame the canvas sits in. Its own token rather than the hairline
+       weight, so a house that rules hairline inside the page can still
+       choose to carry no frame around it: those are two decisions and they
+       were one value until 2026-08-31. */
+    border: var(--ct-frame-w) solid var(--ct-rule);
     overflow: hidden;
   }
 
@@ -145,12 +149,12 @@ const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) 
   }
 
   .slide__tick {
-    width: 10px;
+    width: var(--ct-way-tick);
     border-top: var(--ct-rule-w-hair) solid var(--ct-rule-firm);
   }
 
   .slide__tick--here {
-    width: 18px;
+    width: var(--ct-way-tick-here);
     border-top: var(--ct-rule-w-bold) solid var(--ct-mark);
   }
 

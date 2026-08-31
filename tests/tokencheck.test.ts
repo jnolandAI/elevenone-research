@@ -51,6 +51,16 @@ function adapterCss(overrides: Record<string, string> = {}): string {
     if (n === '--ct-rule-w-bold') return `  ${n}: 2px;`;
     if (n === '--ct-rule-w-heavy') return `  ${n}: 3px;`;
     if (n === '--ct-radius-panel') return `  ${n}: 0;`;
+    // Master furniture. --ct-slide-margin is named explicitly because the
+    // waymarker's ticks are checked against it: the catch-all 16px would put
+    // the current-section tick outside its own lane and fail a real check on
+    // a fixture that is supposed to be well-formed.
+    if (n === '--ct-frame-w') return `  ${n}: 1px;`;
+    if (n === '--ct-title-rule-w') return `  ${n}: 0;`;
+    if (n === '--ct-title-rule-pad') return `  ${n}: 0;`;
+    if (n === '--ct-way-tick') return `  ${n}: 10px;`;
+    if (n === '--ct-way-tick-here') return `  ${n}: 18px;`;
+    if (n === '--ct-slide-margin') return `  ${n}: 32px;`;
     return `  ${n}: 16px;`;
   });
   return `:root {\n${lines.join('\n')}\n}`;
@@ -227,7 +237,10 @@ describe('tokencheck', () => {
     const f = r.findings.filter((x: any) => x.check === 'ordered');
     expect(f).toHaveLength(1);
     expect(f[0].token).toBe('--ct-rule-w-bold');
-    expect(f[0].message).toMatch(/lighter than --ct-rule-w-hair/);
+    // The message names both values and which is smaller. It used to say
+    // "lighter", which was right for the weight ladder and wrong the moment
+    // the same check started comparing tick lengths.
+    expect(f[0].message).toMatch(/--ct-rule-w-bold is 0\.5px and --ct-rule-w-hair is 1px/);
   });
 
   it('accepts a brand that draws every division heavier, as long as the order holds', () => {
@@ -271,6 +284,45 @@ describe('tokencheck', () => {
     const f = r.findings.filter((x: any) => x.check === 'length');
     expect(f).toHaveLength(1);
     expect(f[0].message).toMatch(/not a plain px length/);
+  });
+
+  /* Master furniture: the layer that makes a template recognisable before a
+     word of it is read. A brand gets an enumerated vocabulary of values here
+     and never a coordinate space, so what needs guarding is not where things
+     are but whether the furniture still says what it is for. */
+  it('lets a brand carry no frame and no title rule, because absent is a decision', () => {
+    expect(run({ '--ct-frame-w': '0', '--ct-title-rule-w': '0' }).findings).toEqual([]);
+  });
+
+  it('rejects a rule drawn too faintly to survive an export, which is not the same as absent', () => {
+    const r = run({ '--ct-title-rule-w': '0.2px' });
+    const f = r.findings.filter((x: any) => x.check === 'bounded');
+    expect(f).toHaveLength(1);
+    expect(f[0].message).toMatch(/under the 0\.5px floor/);
+  });
+
+  it('rejects a waymarker whose current-section tick is shorter than its neighbours', () => {
+    // The long tick IS the "you are here". Drawing it short does not restyle
+    // the waymarker, it points it at the wrong section.
+    const r = run({ '--ct-way-tick': '14px', '--ct-way-tick-here': '8px' });
+    const f = r.findings.filter((x: any) => x.check === 'ordered');
+    expect(f).toHaveLength(1);
+    expect(f[0].token).toBe('--ct-way-tick-here');
+  });
+
+  it('rejects a tick drawn outside its own lane, and blames the tick rather than the lane', () => {
+    // The cap is the lane's own width rather than a fixed number, so a brand
+    // with a wide lane may draw long ticks. Attribution matters: reporting
+    // this against --ct-slide-margin would send someone to widen the lane,
+    // which was already right.
+    const r = run({ '--ct-way-tick-here': '48px', '--ct-slide-margin': '32px' });
+    const f = r.findings.filter((x: any) => x.check === 'ordered');
+    expect(f).toHaveLength(1);
+    expect(f[0].token).toBe('--ct-way-tick-here');
+  });
+
+  it('lets a brand with a wide lane draw the long ticks that lane affords', () => {
+    expect(run({ '--ct-way-tick': '30px', '--ct-way-tick-here': '48px', '--ct-slide-margin': '64px' }).findings).toEqual([]);
   });
 
   it('registers every check that can produce a measure in MEASURE_ORDER', () => {
