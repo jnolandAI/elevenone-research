@@ -16,10 +16,12 @@ export interface KpiItem {
 interface Props {
   items: KpiItem[];
   dense?: boolean;
+  /** Lift the band off the page with the brand's separation treatment. */
+  sep?: boolean;
   field?: boolean;
 }
 
-const { items, dense = false, field = false, ...rest } = Astro.props;
+const { items, dense = false, field = false, sep = false, ...rest } = Astro.props;
 
 /* One accent per row of figures. Enforced here rather than in a gate for the
    reason spelled out in Matrix.astro: `mark` is a caller-set prop on a
@@ -28,7 +30,7 @@ const { items, dense = false, field = false, ...rest } = Astro.props;
 assertOneMark(items, 'Kpi');
 ---
 
-<div class:list={['s-kpi', { 's-kpi--field': field, 's-kpi--dense': dense }]} {...rest}>
+<div class:list={['s-kpi', { 's-kpi--field': field, 's-kpi--dense': dense, 's-sep': sep }]} {...rest}>
   {
     items.map((item) => (
       <div class="s-kpi__item">

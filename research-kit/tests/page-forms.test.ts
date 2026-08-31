@@ -422,6 +422,51 @@ describe('Kpi and Dense', () => {
   });
 });
 
+describe('separation is an opt-in on one element, not a house style', () => {
+  /* Both shipped decks separate a tinted panel from its ground by fill
+     alone, and that stays the default: no border, no shadow, nothing moves.
+     Where a particular panel reads better lifted, the caller says so for
+     that panel and the brand says what lifted looks like -- one system a
+     real border, the other elevation. The kit never branches on which.
+
+     This is also the fix for a contract that lied: --ct-sep-border and
+     --ct-sep-shadow were declared from the start, mapped by every adapter,
+     and read by nothing, while the separation group's own description
+     claimed "components set both, always". */
+  const cases: [string, any, Record<string, unknown>, Record<string, unknown>][] = [
+    ['Split', Split, { col: true }, { sep: true }],
+    ['Kpi', Kpi, { items: [{ value: '1', label: 'a' }], field: true }, { sep: true }],
+    ['Annot', Annot, { items: [{ lead: 'l', body: 'b' }], field: true }, { sep: true }],
+    ['Finding', Finding, { label: 'L' }, { sep: true }],
+  ];
+
+  it('defaults every panel to flat, so no existing page moves', async () => {
+    for (const [name, Comp, base] of cases) {
+      const html = await render(Comp, { props: base, slots: { default: 'x', rail: 'r' } });
+      expect(html, name).not.toContain('s-sep');
+    }
+  });
+
+  it('marks the one panel a caller asks to lift', async () => {
+    for (const [name, Comp, base, on] of cases) {
+      const html = await render(Comp, { props: { ...base, ...on }, slots: { default: 'x', rail: 'r' } });
+      expect(html, name).toContain('s-sep');
+    }
+  });
+
+  it('puts the treatment behind one class, so the component never branches on a house style', () => {
+    // The kit says "separated". What that means is the brand's, and both
+    // halves are set together: a component that read one and not the other
+    // would work under the system that supplies that half and quietly do
+    // nothing under the other.
+    const css = readFileSync('research-kit/styles/deck.css', 'utf8');
+    const rule = css.match(/\.s-sep\s*\{[^}]*\}/)?.[0];
+    expect(rule, 'no .s-sep rule found').toBeTruthy();
+    expect(rule!).toContain('var(--ct-sep-border)');
+    expect(rule!).toContain('var(--ct-sep-shadow)');
+  });
+});
+
 describe('the one-mark budget, wired into the components and not just the library', () => {
   // assertOneMark itself is covered in exhibits.test.ts. What that cannot
   // prove is that each component actually calls it on its own props: a

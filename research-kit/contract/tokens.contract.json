@@ -68,7 +68,7 @@
       "names": ["--ct-field", "--ct-field-text", "--ct-field-text-muted"]
     },
     "separation": {
-      "description": "How a panel separates from its ground. Components set both, always. One system supplies a real border and no shadow, the other the reverse, and no component ever branches.",
+      "description": "How a panel separates from its ground, WHEN it separates at all. A tinted panel separating by fill alone is the default and is what both shipped decks do; separation is an opt-in the caller makes on one element, judged for that element, and the brand says what it looks like. One system supplies a real border and no shadow, the other the reverse. The .s-sep rule sets both, always, and no component ever branches on which: the branch would be the kit knowing something about a design language it is not entitled to know.",
       "names": ["--ct-sep-border", "--ct-sep-shadow"]
     },
     "type": {

@@ -9,12 +9,14 @@ interface Props {
   label: string;
   /** The inverted field. 6 of 39. */
   ink?: boolean;
+  /** Lift the block off the page with the brand's separation treatment. */
+  sep?: boolean;
 }
 
-const { label, ink = false, ...rest } = Astro.props;
+const { label, ink = false, sep = false, ...rest } = Astro.props;
 ---
 
-<div class:list={['s-finding', { 's-finding--ink': ink }]} {...rest}>
+<div class:list={['s-finding', { 's-finding--ink': ink, 's-sep': sep }]} {...rest}>
   <p class="s-finding__label">{label}</p>
   <p class="s-finding__body"><slot /></p>
 </div>

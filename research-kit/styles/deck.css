@@ -212,6 +212,23 @@
   color: var(--ct-text-strong);
 }
 
+/* Separation, as an opt-in on one element rather than a house style.
+   A tinted panel separates from its ground by fill alone, which is what
+   every page in both shipped decks does and stays the default. Where a
+   particular panel reads better lifted off the page, the caller says so and
+   the BRAND says what that looks like: one system supplies a real border
+   and no shadow, the other the reverse. The component sets both, always,
+   and never branches on which -- the branch would be the kit knowing
+   something about a design language it is not entitled to know.
+
+   This is the pair the contract declared from the start and nothing read
+   until 2026-08-31, which made the separation group's own description
+   ("components set both, always") false for as long as it existed. */
+.s-sep {
+  border: var(--ct-sep-border);
+  box-shadow: var(--ct-sep-shadow);
+}
+
 /* Layout helpers, all of them absolute because a slide is a fixed canvas. */
 .s-stack { display: flex; flex-direction: column; height: 100%; }
 .s-stack--end { justify-content: flex-end; }

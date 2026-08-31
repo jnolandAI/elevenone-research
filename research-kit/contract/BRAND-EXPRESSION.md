@@ -55,7 +55,7 @@ translation.
 | Master furniture: footer band | `--ct-foot-rule-w`, `--ct-foot-rule-pad`, `--ct-num-pos`, `--ct-num-left`, `--ct-num-right`, `--ct-num-bottom`, `--ct-firm-mark-size` | 0, or within the weight bounds |
 | Master furniture: the lane | `--ct-lane-w`, `--ct-lane-rule-w`, `--ct-way-tick`, `--ct-way-tick-here` | the here-tick is at least as long as a plain tick and no longer than the lane |
 | Master furniture: the canvas | `--ct-frame-w` | 0, or within the weight bounds |
-| Panel separation | `--ct-sep-border`, `--ct-sep-shadow` | *declared, not yet consumed — see below* |
+| Panel separation, per element | `--ct-sep-border`, `--ct-sep-shadow` | the brand says what separated looks like; the caller says which panel is separated; default is neither |
 | Slide profile | the `geometry` group | |
 | Art direction, firm mark | `--ct-art-direction`, `--ct-firm-mark` | strings the kit prints and must not know |
 
@@ -117,11 +117,22 @@ what it would break, and sometimes the right answer is to move the cap.
   contract — a deck config the site exports and the layout threads down. That
   channel does not exist yet, and inventing it for one string is the wrong
   trade.
-- **`--ct-sep-border` / `--ct-sep-shadow`.** Declared by the contract, mapped
-  by all three adapters, read by no component. The separation group's own
-  description claims "components set both, always", which is currently false.
-  Recorded in `tests/contract-coverage.test.ts` as an exemption with this
-  reason.
+
+## Separation is an opt-in, not a house style
+
+The one place the expression layer is set per element rather than per brand.
+A tinted panel separating from its ground by fill alone is the default, and
+it is what both shipped decks do on every page. Where a particular panel
+reads better lifted, the caller adds `sep` to that panel and the brand says
+what lifted means: one system supplies a real border and no shadow, the
+other the reverse. The `.s-sep` rule sets both and never branches on which,
+because the branch would be the kit knowing something about a design
+language it is not entitled to know.
+
+Forcing it either way would have been wrong in both directions. Making every
+panel take the brand's separation would have put a hairline border on every
+commentary rail in a shipped deck; leaving the tokens unread kept a contract
+that claimed "components set both, always" while nothing read either.
 
 ## A note on where variation actually shows up
 

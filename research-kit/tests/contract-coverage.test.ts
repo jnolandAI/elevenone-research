@@ -82,11 +82,6 @@ const EXEMPT: Record<string, string> = {
   '--ct-mark-text':
     'Type carried ON the mark. No component paints text on a mark today; the mark ' +
     'is a fill and a rule, never a filled label.',
-  '--ct-sep-border':
-    'The separation group promises "components set both, always... no component ' +
-    'ever branches" and no component sets either. Recorded by the probe as F2. ' +
-    'Panel separation is brand-expression material and is being taken up there.',
-  '--ct-sep-shadow': 'Half of the separation pair above; same reason.',
   '--ct-surface':
     'Panels in this kit sit on --ct-well (a recessed field) rather than on a ' +
     'raised surface. Declared for hosts that raise panels; unused until a ' +
@@ -126,8 +121,8 @@ describe('the contract is a promise the kit keeps', () => {
     expect(stale, `exempted but actually consumed: ${stale.join(', ')}`).toEqual([]);
   });
 
-  it('exempts exactly 14 tokens, so a new one cannot be waved through quietly', () => {
-    expect(Object.keys(EXEMPT).length).toBe(14);
+  it('exempts exactly 12 tokens, so a new one cannot be waved through quietly', () => {
+    expect(Object.keys(EXEMPT).length).toBe(12);
   });
 
   it('gives every exemption a real reason rather than a placeholder', () => {

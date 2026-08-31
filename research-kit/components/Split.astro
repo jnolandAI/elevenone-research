@@ -20,16 +20,18 @@ interface Props {
    * migration's job: its only proof is that paint did not move.
    */
   col?: boolean;
+  /** Lift the rail off the page with the brand's separation treatment. */
+  sep?: boolean;
 }
 
-const { col = true, ...rest } = Astro.props;
+const { col = true, sep = false, ...rest } = Astro.props;
 ---
 
 <div class="s-split s-split--fill" {...rest}>
   <div class:list={['s-split__main', 's-split__main--pad', { 's-col': col }]}>
     <slot />
   </div>
-  <div class="s-split__side s-split__side--field">
+  <div class:list={['s-split__side', 's-split__side--field', { 's-sep': sep }]}>
     <slot name="rail" />
   </div>
 </div>
