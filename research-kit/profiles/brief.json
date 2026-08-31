@@ -1,7 +1,10 @@
 {
   "name": "brief",
   "shape": "A published research brief. One argument, carried end to end.",
-  "pages": { "min": 12, "max": 20 },
+  "pages": {
+    "min": 12,
+    "max": 20
+  },
   "template": "Cover, up to two section openers, six to fourteen working pages, a source page.",
   "title": {
     "medianWords": 8,
@@ -17,11 +20,17 @@
     "thinWords": 120,
     "thinShare": 0.41
   },
-  "forms": { "tableShareCeiling": 0.34 },
+  "forms": {
+    "tableShareCeiling": 0.34
+  },
+  "voice": {
+    "framesPerDeck": 1
+  },
   "measuredFrom": "The strict published population of the ExampleSlides corpus: 51 confidently published decks, 2,744 working pages after excluding covers, dividers, agendas, disclaimers and closings. Census run 2026-08-26.",
   "notes": [
     "These are research numbers, not client-deck numbers. A published research page carries FEWER words than a client deliverable (141 against 162) and its titles are SHORTER by three words at the median. Calibrating a research piece to the deliverable profile produces a page that is too full and a title that is too long.",
     "thinShare is not a defect rate. 41% of published research pages run under 120 words, so a piece with two fifths of its pages thin is in line with the corpus rather than underfull. The deliverable profile treats a thin page as a warning because a client page under 120 words usually is a placeholder; here it is a form.",
-    "numberShareFloor is set below the median share rather than at it. A median is the middle of a distribution, so scoring every piece against it fails half of a well-calibrated corpus by construction."
+    "numberShareFloor is set below the median share rather than at it. A median is the middle of a distribution, so scoring every piece against it fails half of a well-calibrated corpus by construction.",
+    "voice.framesPerDeck is 1, shared with every profile. It comes from the rule in noland-advisory-voice's catalogue rather than from a measurement, so nothing about it is shape-specific: one instance of a catalogued construction can be load-bearing in any document, and a recurring frame is the tell in any document. See the deliverable profile's note for why no rate was fitted."
   ]
 }

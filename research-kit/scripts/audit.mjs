@@ -14,6 +14,8 @@ import { takeProfile } from '../profiles/load.mjs';
  * copy lives and because it needs no browser.
  *
  *   node scripts/audit.mjs --profile <name> [dir]   default dir src/components/argo
+ *     --leads      every sub-head in deck order, to be read as a list
+ *     --register   every catalogued construction, with its sentence
  *
  * --profile is required and has no default. These constants were measured
  * from a client deliverable and were being applied to research pieces, where
@@ -47,6 +49,7 @@ const TITLE_MEDIAN = PROFILE.title.medianWords;
 const NUMBER_SHARE = PROFILE.title.numberShare;
 const NUMBER_FLOOR = PROFILE.title.numberShareFloor;
 const TABLE_CEILING = PROFILE.forms.tableShareCeiling;
+const FRAME_BUDGET = PROFILE.voice.framesPerDeck;
 
 const files = readdirSync(dir)
   .filter((f) => f.endsWith('.astro'))
@@ -118,15 +121,25 @@ function extractProp(tagText, name) {
 // character, not the escape.
 const unescapeJs = (s) => s.replace(/\\(.)/g, '$1');
 
+// Finding and Implication carry their prose as slot children rather than as a
+// prop, and slot children can hold inline markup and {expr} interpolations.
+// Neither is prose: a tag left in place splits the phrase the register census
+// below is trying to match, and an expression is a value, so it collapses to
+// the same '0' extractProp uses.
+const slotText = (s) => s.replace(/<[^>]*>/g, '').replace(/\{[^{}]*\}/g, '0');
+
 const titles = [];
 const exhibits = [];
 const leads = [];
+const findings = [];
+const sources = [];
 let slides = 0;
 let sourced = 0;
 let fullPages = 0;
 
 for (const file of files) {
   const src = readFileSync(join(dir, file), 'utf8');
+  sources.push(src);
 
   // Any class list containing s-title, not the bare attribute. The exact-match
   // form silently skipped every title carrying a spacing modifier alongside it,
@@ -183,6 +196,15 @@ for (const file of files) {
         body: strip(unescapeJs(collapseExpr(bodyRaw))),
       });
     }
+  }
+
+  // A labelled conclusion carries its prose between its tags, not in a prop:
+  // <Finding label="Verdict">the text</Finding>. 40 such blocks on Argo, and
+  // until the register census below nothing read one. Non-greedy to the tag's
+  // own '>', excluding a '>' preceded by '=' so an arrow function inside a
+  // prop does not end the tag early, the same hazard PAGE_TAG_ALL documents.
+  for (const m of src.matchAll(/<(Finding|Implication)\b[\s\S]*?(?<!=)>([\s\S]*?)<\/\1>/g)) {
+    findings.push({ file, text: strip(slotText(m[2])) });
   }
 
   // A slide is sourced if a source line appears between its own <Slide> and
@@ -493,6 +515,145 @@ const echoes = leads.filter((l) => {
 });
 console.log(`${echoes.length} sub-heads restate the opening of their own body`);
 for (const e of echoes.slice(0, 8)) console.log(`        ${e.file}  ${e.text}`);
+
+/* ---- The register census -------------------------------------------------
+   Everything above this line reads titles. `noland-advisory-voice` carries a
+   catalogue of seven constructions that mark a deck as generated, and until
+   2026-08-30 this script gated four TITLE shapes and advised on three
+   sub-head shapes. The catalogue's body-copy entries were counted nowhere at
+   all, on a population of sub-heads and findings the script was already
+   extracting and then discarding after the echo check.
+
+   That is why the residue survived a rewrite and five days: the 2026-08-25
+   review hand-counted roughly 20 "rather than" and 17 "carry" on Project
+   Argo, wrote the numbers into the skill, and nothing could re-measure them.
+
+   These four are the catalogue entries a machine can see. The verdict label
+   is deliberately not among them, and never will be: the skill establishes
+   from a measurement that a pattern wide enough to catch "PM is the genuine
+   sticky tier" also catches "927 VDR files remain triage-deferred", which is
+   the sub-head that is working. The reading pass above is for that one; this
+   census is for the ones a regex gets right, so the reading pass is not spent
+   on them.
+
+   The budget is an absolute count per deck, not a rate, and it comes from the
+   rule rather than from a measurement: "one of these per deck might be
+   load-bearing; as a recurring frame it is the tell." A rate would need a
+   text corpus and there is none — ExampleSlides is images — so the only
+   calibration available would be a single approved deck, which is the
+   one-deck mistake the 2026-08-29 re-baselining retired. The rate per 100
+   blocks still prints, as information about deck length, and decides nothing.
+
+   Soft, like the table share. The corpus this runs on is kept dirty on
+   purpose: Argo is the only deck never voice-rewritten, which makes it the
+   only fixture that can prove the census fires, and hard-failing on it would
+   put `npm run audit` permanently red for a deck that will not ship. The hard
+   gate is the pinned count in research-kit/tests/register-census.test.ts. */
+const REGISTER = [
+  [/\brather than\b/gi, 'the "X rather than Y" reflex'],
+  [/\b(?:carry|carries|carrying|carried)\b/gi, '"carry" as the verb of consequence'],
+];
+
+/* Two more needles were built, measured against Argo, and cut. Recorded here
+   because the obvious move for the next person is to add them back.
+
+   `\bnamed\b` for the catalogue's "named as an intensifier" read 9 hits, and
+   8 of them are the ordinary sense: "named accounts", "named account
+   executives", "Named Lennar opportunities" — the term of art in this deck's
+   own industry — plus "Moody's named the roll-up", which is just the verb.
+   One needle in nine is the tell, and a needle that is wrong eight times out
+   of nine teaches the reader to skip the census.
+
+   `,\s(not|never)\s` for the reversal read 27 hits, and most are load-bearing
+   precision in a matrix cell: "held to direction, not levels", "a
+   balance-sheet vector, not an installer". It is also already gated where the
+   catalogue actually puts it, in SHAPES above, which reads sub-heads: the
+   catalogue's example, "Coordination, not a cornered resource", is a head. In
+   body copy the same shape is usually the right compression. Gating it twice
+   would fire on the wrong population.
+
+   What is left is the pair a machine gets right. That is the whole claim. */
+
+// The deck's copy, and only the deck's copy.
+//
+// Not an enumerated list of prose-carrying props. That is the shape that has
+// failed here before: FORMS named its components by hand, the migration moved
+// 32 exhibits into components it did not name, and the census silently
+// stopped counting them while still printing plausible percentages. A needle
+// that has to be told where to look stops looking wherever nobody updated it.
+//
+// So: strip the comments, then take every string literal and every text child.
+// Over-inclusive by design — a class list is in there — which costs nothing,
+// because these four needles are English phrases and no class list matches
+// one. The denominator is words, not blocks, for the same reason: it stays
+// meaningful when the population is not curated.
+//
+// Comments are stripped first and it is not a detail. Argo's component source
+// carries 13 of its 25 "rather than" instances inside /* */ blocks explaining
+// why a page uses the form it does. That is engineering prose about the deck,
+// not the deck's voice, and counting it would measure how the components are
+// documented. A line comment only counts as one at the start of a line, so a
+// '//' inside a URL in a source line survives.
+//
+// This reads source, not the render. density.mjs reads innerText through a
+// browser and would need no extractor at all, but it needs a dev server; this
+// script's contract is that it runs anywhere with no browser, and that is
+// worth more here than the last few percent of fidelity.
+const CODE_COMMENT = /\/\*[\s\S]*?\*\//g;
+const LINE_COMMENT = /^\s*\/\/.*$/gm;
+const STRING_LITERAL = /'((?:\\.|[^'\\])*)'|"((?:\\.|[^"\\])*)"|`((?:\\.|[^`\\])*)`/g;
+const TEXT_CHILD = />([^<>{}]+)</g;
+
+const copy = strip(
+  sources
+    .map((src) => {
+      const bare = src.replace(CODE_COMMENT, ' ').replace(LINE_COMMENT, ' ');
+      const parts = [];
+      for (const m of bare.matchAll(STRING_LITERAL)) parts.push(unescapeJs(m[1] ?? m[2] ?? m[3]));
+      for (const m of bare.matchAll(TEXT_CHILD)) parts.push(m[1]);
+      return parts.join(' ');
+    })
+    .join(' '),
+);
+const copyWords = copy.split(' ').filter((w) => /[a-z]{3}/i.test(w)).length;
+
+// A fresh regex per use. A shared global one carries lastIndex between calls,
+// which silently under-counts every use after the first — the same defect the
+// coverage guard's needles had.
+const register = REGISTER.map(([re, name]) => ({
+  name,
+  count: (copy.match(new RegExp(re.source, re.flags)) || []).length,
+}));
+const over = register.filter((r) => r.count > FRAME_BUDGET);
+
+console.log(`\nregister census  ${copyWords} words of deck copy read, comments excluded`);
+for (const r of register.filter((r) => r.count)) {
+  const per1k = ((r.count / copyWords) * 1000).toFixed(1);
+  console.log(`      ${r.name.padEnd(36)} ${r.count}  (${per1k} per 1,000 words)`);
+}
+if (over.length) {
+  console.log(
+    `      ${over.length} of them run over the budget of ${FRAME_BUDGET} per deck. One instance\n` +
+      '      can be load-bearing; a recurring frame is the tell. The replacement\n' +
+      '      grammar for each is in noland-advisory-voice.',
+  );
+} else {
+  console.log('ok    no catalogued construction runs over budget');
+}
+
+// A count is not actionable on its own: the writer has to see the sentence.
+// --register prints every hit in its own context, the way --leads prints the
+// full sub-head list for the reading test.
+if (process.argv.includes('--register')) {
+  console.log('\nevery catalogued construction, in context:');
+  for (const [re, name] of REGISTER) {
+    const g = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g');
+    for (const m of copy.matchAll(g)) {
+      const from = Math.max(0, m.index - 55);
+      console.log(`  ${name}\n    ...${copy.slice(from, m.index + m[0].length + 55)}...`);
+    }
+  }
+}
 
 if (process.argv.includes('--leads')) {
   console.log('\nevery sub-head, in deck order:');

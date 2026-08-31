@@ -1,7 +1,10 @@
 {
   "name": "report",
   "shape": "A published research report. Several sections, each carrying its own argument.",
-  "pages": { "min": 30, "max": 60 },
+  "pages": {
+    "min": 30,
+    "max": 60
+  },
   "template": "Cover, executive summary, four to six sections with openers, working pages, methodology, appendix.",
   "title": {
     "medianWords": 8,
@@ -17,10 +20,16 @@
     "thinWords": 120,
     "thinShare": 0.41
   },
-  "forms": { "tableShareCeiling": 0.34 },
+  "forms": {
+    "tableShareCeiling": 0.34
+  },
+  "voice": {
+    "framesPerDeck": 1
+  },
   "measuredFrom": "The same strict published population as the brief profile. Census run 2026-08-26.",
   "notes": [
     "Every page-level constant here is identical to the brief profile, and that is a finding rather than an oversight. The census measured page-level craft across the published population without splitting it by document length, and nothing in it suggests a longer research piece writes a denser page or a longer title. Only the page budget and the section template differ.",
-    "Should a later census split the population by length and find the page-level numbers diverge, these two files stop being duplicates and the difference goes here."
+    "Should a later census split the population by length and find the page-level numbers diverge, these two files stop being duplicates and the difference goes here.",
+    "voice.framesPerDeck is 1, shared with every profile. It comes from the rule in noland-advisory-voice's catalogue rather than from a measurement, so nothing about it is shape-specific: one instance of a catalogued construction can be load-bearing in any document, and a recurring frame is the tell in any document. See the deliverable profile's note for why no rate was fitted."
   ]
 }

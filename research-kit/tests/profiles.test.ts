@@ -32,6 +32,7 @@ describe('the profile set', () => {
       expect(typeof p.density.thinWords).toBe('number');
       expect(typeof p.density.thinShare).toBe('number');
       expect(typeof p.forms.tableShareCeiling).toBe('number');
+      expect(typeof p.voice.framesPerDeck).toBe('number');
       expect(p.measuredFrom.length).toBeGreaterThan(20);
     });
 
@@ -115,6 +116,27 @@ describe('the research profiles carry the census numbers, not the deliverable on
     expect(report.title).toEqual(brief.title);
     expect(report.density).toEqual(brief.density);
   });
+});
+
+describe('the register budget is the same in every profile, because it is a rule', () => {
+  // Every other constant here was measured and differs by shape.
+  // voice.framesPerDeck was not measured, and saying so is the point: it
+  // mechanises one sentence from noland-advisory-voice's catalogue, "one of
+  // these per deck might be load-bearing; as a recurring frame it is the
+  // tell." Fitting a rate instead would need a corpus of deck TEXT, and there
+  // is none - ExampleSlides is PNGs - so the only sample available is one
+  // rewritten deck, and a constant fitted to one deck is what the 2026-08-29
+  // re-baselining retired.
+  for (const name of NAMES) {
+    it(`${name} budgets one instance, and no profile bargains for more`, () => {
+      expect(loadProfile(name).voice.framesPerDeck).toBe(1);
+    });
+
+    it(`${name} records that the budget came from the rule, not a measurement`, () => {
+      const notes: string[] = loadProfile(name).notes;
+      expect(notes.some((n) => n.includes('framesPerDeck'))).toBe(true);
+    });
+  }
 });
 
 describe('the loader refuses to guess', () => {
