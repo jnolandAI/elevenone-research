@@ -1,0 +1,8 @@
+# The seeded canvases. Eight megabytes between them and fully regenerable:
+# most of the bytes are the design-canvas editor payload, which is not ours.
+#   node build-canvas.cjs, then re-seed with the /design skill's helper.
+eleven-one-*.html
+
+# Scratch. preview.cjs and lab.cjs write here; serve.cjs logs here.
+_preview/
+_probe.json

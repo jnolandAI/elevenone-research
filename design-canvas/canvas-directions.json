@@ -1,0 +1,669 @@
+{
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Report"
+    },
+    {
+      "id": "page-2",
+      "name": "Site"
+    },
+    {
+      "id": "page-3",
+      "name": "Ember candidates"
+    },
+    {
+      "id": "page-4",
+      "name": "Gradient palettes"
+    },
+    {
+      "id": "page-5",
+      "name": "Gradients"
+    },
+    {
+      "id": "page-6",
+      "name": "Application"
+    },
+    {
+      "id": "page-7",
+      "name": "Hero images"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 0,
+      "w": 2680,
+      "h": 820,
+      "title": "What varies"
+    },
+    {
+      "file": "EmberCover.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Cover"
+    },
+    {
+      "file": "EmberCoverLight.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Cover, light"
+    },
+    {
+      "file": "EmberSection.dc.html",
+      "page": "page-1",
+      "x": 2800,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Section"
+    },
+    {
+      "file": "EmberRead.dc.html",
+      "page": "page-1",
+      "x": 4200,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Read"
+    },
+    {
+      "file": "EmberExhibit.dc.html",
+      "page": "page-1",
+      "x": 5600,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Exhibit"
+    },
+    {
+      "file": "EmberPanel.dc.html",
+      "page": "page-1",
+      "x": 7000,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Panel"
+    },
+    {
+      "file": "EmberClose.dc.html",
+      "page": "page-1",
+      "x": 8400,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Ember  Close"
+    },
+    {
+      "file": "SignalCover.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Cover"
+    },
+    {
+      "file": "SignalCoverLight.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Cover, light"
+    },
+    {
+      "file": "SignalSection.dc.html",
+      "page": "page-1",
+      "x": 2800,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Section"
+    },
+    {
+      "file": "SignalRead.dc.html",
+      "page": "page-1",
+      "x": 4200,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Read"
+    },
+    {
+      "file": "SignalExhibit.dc.html",
+      "page": "page-1",
+      "x": 5600,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Exhibit"
+    },
+    {
+      "file": "SignalPanel.dc.html",
+      "page": "page-1",
+      "x": 7000,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Panel"
+    },
+    {
+      "file": "SignalClose.dc.html",
+      "page": "page-1",
+      "x": 8400,
+      "y": 1940,
+      "w": 1280,
+      "h": 720,
+      "title": "Signal  Close"
+    },
+    {
+      "file": "PigmentCover.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Cover"
+    },
+    {
+      "file": "PigmentCoverLight.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Cover, light"
+    },
+    {
+      "file": "PigmentSection.dc.html",
+      "page": "page-1",
+      "x": 2800,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Section"
+    },
+    {
+      "file": "PigmentRead.dc.html",
+      "page": "page-1",
+      "x": 4200,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Read"
+    },
+    {
+      "file": "PigmentExhibit.dc.html",
+      "page": "page-1",
+      "x": 5600,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Exhibit"
+    },
+    {
+      "file": "PigmentPanel.dc.html",
+      "page": "page-1",
+      "x": 7000,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Panel"
+    },
+    {
+      "file": "PigmentClose.dc.html",
+      "page": "page-1",
+      "x": 8400,
+      "y": 2860,
+      "w": 1280,
+      "h": 720,
+      "title": "Pigment  Close"
+    },
+    {
+      "file": "AchromaticCover.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Cover"
+    },
+    {
+      "file": "AchromaticCoverLight.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Cover, light"
+    },
+    {
+      "file": "AchromaticSection.dc.html",
+      "page": "page-1",
+      "x": 2800,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Section"
+    },
+    {
+      "file": "AchromaticRead.dc.html",
+      "page": "page-1",
+      "x": 4200,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Read"
+    },
+    {
+      "file": "AchromaticExhibit.dc.html",
+      "page": "page-1",
+      "x": 5600,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Exhibit"
+    },
+    {
+      "file": "AchromaticPanel.dc.html",
+      "page": "page-1",
+      "x": 7000,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Panel"
+    },
+    {
+      "file": "AchromaticClose.dc.html",
+      "page": "page-1",
+      "x": 8400,
+      "y": 3780,
+      "w": 1280,
+      "h": 720,
+      "title": "Achromatic  Close"
+    },
+    {
+      "file": "EmberWebHome.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2100,
+      "title": "Ember  Home"
+    },
+    {
+      "file": "EmberWebResearch.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 1500,
+      "title": "Ember  Research"
+    },
+    {
+      "file": "EmberWebArticle.dc.html",
+      "page": "page-2",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 2260,
+      "title": "Ember  Article"
+    },
+    {
+      "file": "SignalWebHome.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 2460,
+      "w": 1440,
+      "h": 2100,
+      "title": "Signal  Home"
+    },
+    {
+      "file": "SignalWebResearch.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 2460,
+      "w": 1440,
+      "h": 1500,
+      "title": "Signal  Research"
+    },
+    {
+      "file": "SignalWebArticle.dc.html",
+      "page": "page-2",
+      "x": 3120,
+      "y": 2460,
+      "w": 1440,
+      "h": 2260,
+      "title": "Signal  Article"
+    },
+    {
+      "file": "PigmentWebHome.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 4920,
+      "w": 1440,
+      "h": 2100,
+      "title": "Pigment  Home"
+    },
+    {
+      "file": "PigmentWebResearch.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 4920,
+      "w": 1440,
+      "h": 1500,
+      "title": "Pigment  Research"
+    },
+    {
+      "file": "PigmentWebArticle.dc.html",
+      "page": "page-2",
+      "x": 3120,
+      "y": 4920,
+      "w": 1440,
+      "h": 2260,
+      "title": "Pigment  Article"
+    },
+    {
+      "file": "AchromaticWebHome.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 7380,
+      "w": 1440,
+      "h": 2100,
+      "title": "Achromatic  Home"
+    },
+    {
+      "file": "AchromaticWebResearch.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 7380,
+      "w": 1440,
+      "h": 1500,
+      "title": "Achromatic  Research"
+    },
+    {
+      "file": "AchromaticWebArticle.dc.html",
+      "page": "page-2",
+      "x": 3120,
+      "y": 7380,
+      "w": 1440,
+      "h": 2260,
+      "title": "Achromatic  Article"
+    },
+    {
+      "file": "EmberWarmRow.dc.html",
+      "page": "page-3",
+      "x": 0,
+      "y": 0,
+      "w": 9504,
+      "h": 818,
+      "title": "Ember, warm only  all seven pages, one set of chips"
+    },
+    {
+      "file": "EmberSteelRow.dc.html",
+      "page": "page-3",
+      "x": 0,
+      "y": 1038,
+      "w": 9504,
+      "h": 818,
+      "title": "Ember, steel end  all seven pages, one set of chips"
+    },
+    {
+      "file": "PaletteMeridian.dc.html",
+      "page": "page-4",
+      "x": 0,
+      "y": 0,
+      "w": 1740,
+      "h": 984,
+      "title": "Meridian  One saturation profile, five positions on the wheel."
+    },
+    {
+      "file": "PaletteDaylight.dc.html",
+      "page": "page-4",
+      "x": 1880,
+      "y": 0,
+      "w": 1740,
+      "h": 984,
+      "title": "Daylight  Deep ends vary widely. Every one resolves to light, and none turns warm."
+    },
+    {
+      "file": "PaletteDuotone.dc.html",
+      "page": "page-4",
+      "x": 0,
+      "y": 1194,
+      "w": 1740,
+      "h": 984,
+      "title": "Duotone  Two temperatures at once, crossing through a neutral middle."
+    },
+    {
+      "file": "PaletteAsh.dc.html",
+      "page": "page-4",
+      "x": 1880,
+      "y": 1194,
+      "w": 1740,
+      "h": 984,
+      "title": "Ash  Both ends neutral. Colour only in the middle of the climb."
+    },
+    {
+      "file": "Gradients.dc.html",
+      "page": "page-5",
+      "x": 0,
+      "y": 0,
+      "w": 2076,
+      "h": 1462,
+      "title": "The gradient set  eleven, locked"
+    },
+    {
+      "file": "MeridianPairs.dc.html",
+      "page": "page-5",
+      "x": 0,
+      "y": 1702,
+      "w": 2076,
+      "h": 1054,
+      "title": "Shape studies  the six crossings, stretched and thrown off centre"
+    },
+    {
+      "file": "Figures.dc.html",
+      "page": "page-6",
+      "x": 0,
+      "y": 0,
+      "w": 2104,
+      "h": 1364,
+      "title": "Figures  six specimens on the gradient set"
+    },
+    {
+      "file": "Stipple.dc.html",
+      "page": "page-6",
+      "x": 0,
+      "y": 1604,
+      "w": 2684,
+      "h": 1950,
+      "title": "Stipple  density carries tone, and the forms dissolve"
+    },
+    {
+      "file": "DotArt.dc.html",
+      "page": "page-6",
+      "x": 0,
+      "y": 3794,
+      "w": 2756,
+      "h": 1094,
+      "title": "Halftone  a lattice, kept for hard-edged objects"
+    },
+    {
+      "file": "Heroes.dc.html",
+      "page": "page-7",
+      "x": 0,
+      "y": 0,
+      "w": 3840,
+      "h": 1260,
+      "title": "Hero images  pictures of things"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "rep-ember",
+      "page": "page-1",
+      "x": -580,
+      "y": 1060,
+      "w": 440,
+      "text": "Ember\n\nColour is light. The surface emits it.\n\nTradeoff: Warmest and most atmospheric of the four, and the least neutral. Its field travels violet to cream the long way round, through rose, which is where the reference gradients live. On white it is the most obviously designed of the four and the hardest to keep quiet on a dense page."
+    },
+    {
+      "id": "rep-signal",
+      "page": "page-1",
+      "x": -580,
+      "y": 1980,
+      "w": 440,
+      "text": "Signal\n\nColour is one hue. Brightness carries the quantity.\n\nTradeoff: The most disciplined and the easiest to hold across a hundred pages. Its field is a single-hue wash, so nothing ever clashes and nothing ever surprises. Also the least distinctive: a blue ramp on a dark ground is what every analytics product already looks like."
+    },
+    {
+      "id": "rep-pigment",
+      "page": "page-1",
+      "x": -580,
+      "y": 2900,
+      "w": 440,
+      "text": "Pigment\n\nColour is ink. The surface is screened, not lit.\n\nTradeoff: The only one of the four that looks printed rather than rendered, and the best greyscale survivor: its light ramp keeps a luminance gap of 0.076 across six samples. The screening costs fine detail, so the two summits read as texture before they read as position."
+    },
+    {
+      "id": "rep-achromatic",
+      "page": "page-1",
+      "x": -580,
+      "y": 3820,
+      "w": 440,
+      "text": "Achromatic\n\nNo colour in the field. One accent, in the interface only.\n\nTradeoff: This is the current constitution, and it is the null the other three have to beat. It never fights the type and it prints anywhere. It also cannot encode a second variable, so every exhibit that needs one has to spend position or shape instead."
+    },
+    {
+      "id": "how-to-read",
+      "page": "page-1",
+      "x": -580,
+      "y": 40,
+      "w": 440,
+      "text": "Read DOWN a column to compare one page across all four directions.\nRead ACROSS a row to see one direction built out.\n\nHeld constant everywhere: type, words, objects, layout, and which pages are dark or light. Only palette and surface treatment vary.\n\nColumns 1 and 2 are the same cover on a dark ground and on white. Columns 4, 5 and 7 are white pages. The site is on the second page."
+    },
+    {
+      "id": "web-ember",
+      "page": "page-2",
+      "x": -580,
+      "y": 40,
+      "w": 440,
+      "text": "Ember on the site.\n\nColour is light. The surface emits it."
+    },
+    {
+      "id": "web-signal",
+      "page": "page-2",
+      "x": -580,
+      "y": 2500,
+      "w": 440,
+      "text": "Signal on the site.\n\nColour is one hue. Brightness carries the quantity."
+    },
+    {
+      "id": "web-pigment",
+      "page": "page-2",
+      "x": -580,
+      "y": 4960,
+      "w": 440,
+      "text": "Pigment on the site.\n\nColour is ink. The surface is screened, not lit."
+    },
+    {
+      "id": "web-achromatic",
+      "page": "page-2",
+      "x": -580,
+      "y": 7420,
+      "w": 440,
+      "text": "Achromatic on the site.\n\nNo colour in the field. One accent, in the interface only."
+    },
+    {
+      "id": "site-note",
+      "page": "page-2",
+      "x": -580,
+      "y": -300,
+      "w": 440,
+      "text": "The same four directions at 1440 wide.\n\nHome carries a dark hero and a light body, so both grounds are on one page. Research and Article are white pages with the field doing the work.\n\nTitles in brackets are placeholders for unpublished work, not findings."
+    },
+    {
+      "id": "var-emberwarm",
+      "page": "page-3",
+      "x": -580,
+      "y": 40,
+      "w": 440,
+      "text": "Ember, warm only\n\nColour is light, and the light is fire. One warm family, no cool end."
+    },
+    {
+      "id": "var-embersteel",
+      "page": "page-3",
+      "x": -580,
+      "y": 1078,
+      "w": 440,
+      "text": "Ember, steel end\n\nColour is light. The cool end is blue rather than violet."
+    },
+    {
+      "id": "variant-note",
+      "page": "page-3",
+      "x": -580,
+      "y": -420,
+      "w": 440,
+      "text": "Ember with the rose and the violet removed, two ways.\n\nEmber as built hits the purple and pink band at 19 of 41 field samples. Both rows here are clear of it, and clear of green.\n\nWarm only is one family, red through amber to cream, 61 to 66 degrees of hue. Steel end keeps a cool anchor but makes it blue: blending in OKLab runs blue to orange through the desaturated middle, so the path never reaches purple.\n\nEach row is ONE artboard holding all seven pages, so its chips move every page at once. Six of the seven carry a field and follow the chips. The exhibit does not: its colour is encoding, and encoding stays on the encoding ramp.\n\nEverything else is Ember. Same blob layout, same grain, same dots, same words."
+    },
+    {
+      "id": "palette-note",
+      "page": "page-4",
+      "x": -600,
+      "y": 0,
+      "w": 460,
+      "text": "Four gradient palettes. Pick the RULE, not the colours.\n\nThe system stays black, white and grey. Colour arrives only as a gradient, and only where one earns its place: a report cover, the site hero, a figure that needs a field behind it. One piece runs warm and the next cool without looking like a different brand, because what makes them a family is how they are built, not what hue they are.\n\nEach palette carries five gradients, including a near-neutral one, because a palette with no quiet member forces colour onto pieces that do not want it.\n\nEvery gradient is shown on both grounds. A gradient that works on a dark cover and dies on paper is not usable here: four of the seven report pages are white.\n\nThey are rendered as fields, with the same soft masses and grain the real boards use. The same anchors drawn as a flat linear ramp look like a different thing entirely."
+    },
+    {
+      "id": "palette-how",
+      "page": "page-4",
+      "x": -600,
+      "y": 620,
+      "w": 460,
+      "text": "What differs between the four:\n\nMERIDIAN holds one journey and moves it around the wheel. Arcs 44 to 59 degrees. Most cohesive, least surprising.\n\nDAYLIGHT varies the deep end and fixes the destination: every gradient resolves to light, and none of them turns warm on the way up. The light ends are cyan, lilac and pale yellow-green.\n\nDUOTONE holds two temperatures at once and crosses between them through a desaturated middle. Arcs to 208 degrees. This is what the current covers already do, so it is the incumbent.\n\nASH keeps both ends neutral and lets colour live only in the middle of the climb. Closest to the system as it stands, and the one that risks looking like no decision was made."
+    },
+    {
+      "id": "set-note",
+      "page": "page-5",
+      "x": -620,
+      "y": 0,
+      "w": 470,
+      "text": "THE GRADIENT SET. Eleven, locked.\n\nFive singles held inside one hue family, and six crossings that run between two of them. This is the whole of the system colour. Everything else stays black, white and grey: rules, borders, labels, axes and panels are never coloured, and a gradient appears only on a cover, a hero, or a figure that needs a field behind it.\n\nThe source of record is gradients.json, emitted by build-gradients.cjs. It carries the OKLCH anchors so the real ramp can be rebuilt, plus nine hex stops and a CSS string so a stylesheet or a chart does not have to do OKLab arithmetic.\n\ngradients-check.cjs holds the invariants: ids unique and tokenised, every anchor inside sRGB, no gradient flat by accident, no ramp that reverses direction mid-path, and the emitted json matching the module. It currently passes with no failures and no notes.\n\nWhat is NOT decided: which gradient goes on what, and how often a piece is allowed one at all."
+    },
+    {
+      "id": "stipple-note",
+      "page": "page-6",
+      "x": -620,
+      "y": 1700,
+      "w": 470,
+      "text": "STIPPLE: illustration, and only illustration.\n\nNothing on the stipple board is derived from a dataset. These carry the IDEA of a piece rather than its numbers: a study about fragmentation gets a mass that disperses, one about consolidation gets a field that narrows to a point.\n\nData belongs on the figures board, where it is labelled and sourced. An earlier version forced one dataset through every illustrative shape and produced weak illustrations AND weak figures at once, because the data had to bend to suit a shape and the shape had to bend to suit the data.\n\nWHY STIPPLE BEATS THE HALFTONE below. The halftone puts a dot at every lattice site and varies its RADIUS. It reads as mechanical, because the eye finds the lattice before it finds the subject, and it cannot dissolve: a lattice has the same number of sites everywhere and can only make them smaller.\n\nStipple inverts that. Size is nearly constant, positions are irregular, and tone comes from how MANY dots land. That buys dissolution, which is the move every reference has in it.\n\nThe glyph matters too. A mark with a direction reads as a thing rather than as a dot, and a field of them reads as a flock.\n\nThe halftone is kept, not superseded: it still suits a hard-edged object with flat faces."
+    },
+    {
+      "id": "apply-note",
+      "page": "page-6",
+      "x": -620,
+      "y": 0,
+      "w": 470,
+      "text": "The set, applied.\n\nFIGURES. Six specimens, every one drawn from the CY2024 margin data in this repository. Three use colour as ENCODING rather than atmosphere, which is a departure from the rule that colour is a field and never furniture.\n\nThat rule still holds for rules, borders, labels, axes and ticks, which are greyscale on every figure. What has changed: a gradient may carry an ORDERED variable, because a ramp reads as ordered in a way a set of distinct hues does not. Cohort runs small to large and density runs low to high. A gradient may never carry an unordered category.\n\nDOT CONSTRUCTIONS. The gradient runs across the whole frame and only the dots reveal it. Nothing between them is painted, so the ground stays exactly as dark or as white as it was.\n\nThe mechanism is that form and colour are carried separately: coverage drives dot SIZE, position drives dot COLOUR. Colour a face by its own orientation instead and the object reads as a heatmap of itself.\n\nThe massing is illustration and is labelled as such. The surface is the real joint density, 2,186 filers."
+    },
+    {
+      "id": "hero-note",
+      "page": "page-7",
+      "x": -620,
+      "y": 0,
+      "w": 470,
+      "text": "HERO IMAGES. The pipeline, not the five subjects.\n\nA subject is a function that paints greys onto a canvas: white is full dot density, black is none. That canvas is read back once as a density field and stippled. Anything that can be DRAWN can be stippled, so a traced skyline, a wordmark or a client logo enters the same way and comes out looking like the others.\n\nThese five exist so the sixth has something to be consistent with. Adding one means writing one paint function in _subjects.js.\n\nTwo rules decide whether a subject reads:\n\nSILHOUETTE FIRST. If it is not recognisable as a flat cut-out it will not become recognisable once it is made of dots. The crane boom is what makes the port a port; without it the same drawing is a warehouse.\n\nDETAIL AS TONE, NOT LINE. A stipple cannot draw anything thinner than its own dot pitch, so panel gaps, window grids and structure are painted as areas of different grey, never as strokes.\n\nCounts here are five times the forms board. These have to be READ rather than felt, and a rack row at nine thousand marks is a smear."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-7"
+  }
+}

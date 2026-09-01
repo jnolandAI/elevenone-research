@@ -1,0 +1,491 @@
+{
+  "set": "Eleven One Research gradients",
+  "rule": "The system is black, white and grey. Colour appears only as one of these gradients, and only on a cover, a hero, or a figure that needs a field. Rules, borders, labels, axes and panels stay greyscale.",
+  "space": "OKLCH anchors, blended through OKLab. Saturation was specified as a fraction of the sRGB ceiling at each lightness and hue.",
+  "gradients": [
+    {
+      "id": "cobalt",
+      "name": "Cobalt",
+      "kind": "single",
+      "note": "Held inside one hue family.",
+      "anchors": [
+        [
+          0.34,
+          0.1985,
+          272
+        ],
+        [
+          0.46,
+          0.2096,
+          262
+        ],
+        [
+          0.62,
+          0.1521,
+          250
+        ],
+        [
+          0.86,
+          0.0372,
+          238
+        ]
+      ],
+      "stops": [
+        "#20159B",
+        "#1C2BAD",
+        "#123DBE",
+        "#0451CC",
+        "#136BD4",
+        "#2782DB",
+        "#579DE1",
+        "#8ABAE5",
+        "#BBD5E7"
+      ],
+      "css": "linear-gradient(180deg, #20159B 0%, #1C2BAD 13%, #123DBE 25%, #0451CC 38%, #136BD4 50%, #2782DB 63%, #579DE1 75%, #8ABAE5 88%, #BBD5E7 100%)",
+      "peakChroma": 0.21,
+      "meanChroma": 0.158,
+      "ceilingUsed": 0.8,
+      "hueArc": 35
+    },
+    {
+      "id": "iris",
+      "name": "Iris",
+      "kind": "single",
+      "note": "Held inside one hue family.",
+      "anchors": [
+        [
+          0.38,
+          0.1925,
+          292
+        ],
+        [
+          0.52,
+          0.2675,
+          304
+        ],
+        [
+          0.66,
+          0.2427,
+          316
+        ],
+        [
+          0.86,
+          0.0583,
+          330
+        ]
+      ],
+      "stops": [
+        "#4B169D",
+        "#6315B6",
+        "#7C11D0",
+        "#941BE3",
+        "#AA38EA",
+        "#C14CF1",
+        "#D174F1",
+        "#DD9EEB",
+        "#E8C4E3"
+      ],
+      "css": "linear-gradient(180deg, #4B169D 0%, #6315B6 13%, #7C11D0 25%, #941BE3 38%, #AA38EA 50%, #C14CF1 63%, #D174F1 75%, #DD9EEB 88%, #E8C4E3 100%)",
+      "peakChroma": 0.266,
+      "meanChroma": 0.209,
+      "ceilingUsed": 0.851,
+      "hueArc": 39
+    },
+    {
+      "id": "ember",
+      "name": "Ember",
+      "kind": "single",
+      "note": "Held inside one hue family.",
+      "anchors": [
+        [
+          0.4,
+          0.1452,
+          8
+        ],
+        [
+          0.54,
+          0.2136,
+          20
+        ],
+        [
+          0.66,
+          0.2027,
+          34
+        ],
+        [
+          0.86,
+          0.0442,
+          60
+        ]
+      ],
+      "stops": [
+        "#821339",
+        "#9E1339",
+        "#BA0F38",
+        "#D21A36",
+        "#E13734",
+        "#F04D31",
+        "#F57756",
+        "#F1A386",
+        "#E8CBB5"
+      ],
+      "css": "linear-gradient(180deg, #821339 0%, #9E1339 13%, #BA0F38 25%, #D21A36 38%, #E13734 50%, #F04D31 63%, #F57756 75%, #F1A386 88%, #E8CBB5 100%)",
+      "peakChroma": 0.212,
+      "meanChroma": 0.168,
+      "ceilingUsed": 0.863,
+      "hueArc": 52
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "kind": "single",
+      "note": "Held inside one hue family.",
+      "anchors": [
+        [
+          0.48,
+          0.0963,
+          160
+        ],
+        [
+          0.62,
+          0.1768,
+          148
+        ],
+        [
+          0.76,
+          0.2197,
+          138
+        ],
+        [
+          0.88,
+          0.1029,
+          120
+        ]
+      ],
+      "stops": [
+        "#1C6E4A",
+        "#198149",
+        "#139445",
+        "#1EA740",
+        "#3FB839",
+        "#58C92E",
+        "#80D44C",
+        "#A9DC73",
+        "#CEE294"
+      ],
+      "css": "linear-gradient(180deg, #1C6E4A 0%, #198149 13%, #139445 25%, #1EA740 38%, #3FB839 50%, #58C92E 63%, #80D44C 75%, #A9DC73 88%, #CEE294 100%)",
+      "peakChroma": 0.218,
+      "meanChroma": 0.163,
+      "ceilingUsed": 0.844,
+      "hueArc": 39
+    },
+    {
+      "id": "slate",
+      "name": "Slate",
+      "kind": "single",
+      "note": "Held inside one hue family.",
+      "anchors": [
+        [
+          0.34,
+          0.0123,
+          250
+        ],
+        [
+          0.5,
+          0.0172,
+          248
+        ],
+        [
+          0.7,
+          0.0165,
+          246
+        ],
+        [
+          0.88,
+          0.0038,
+          244
+        ]
+      ],
+      "stops": [
+        "#33393E",
+        "#42484F",
+        "#515961",
+        "#636B74",
+        "#78818A",
+        "#8F98A1",
+        "#A6ADB4",
+        "#BDC2C7",
+        "#D5D8DA"
+      ],
+      "css": "linear-gradient(180deg, #33393E 0%, #42484F 13%, #515961 25%, #636B74 38%, #78818A 50%, #8F98A1 63%, #A6ADB4 75%, #BDC2C7 88%, #D5D8DA 100%)",
+      "peakChroma": 0.018,
+      "meanChroma": 0.014,
+      "ceilingUsed": 0.108,
+      "hueArc": 0
+    },
+    {
+      "id": "cobalt-iris",
+      "name": "Cobalt to Iris",
+      "kind": "crossing",
+      "note": "Neighbours on the ridge. No waypoint needed: everything between blue and violet is vivid, so the whole arc stays saturated.",
+      "anchors": [
+        [
+          0.34,
+          0.1985,
+          272
+        ],
+        [
+          0.48,
+          0.2781,
+          284
+        ],
+        [
+          0.62,
+          0.2518,
+          304
+        ],
+        [
+          0.84,
+          0.0817,
+          326
+        ]
+      ],
+      "stops": [
+        "#20159B",
+        "#3714BA",
+        "#4D10DA",
+        "#651BF1",
+        "#8135F7",
+        "#9F46FC",
+        "#B76CFA",
+        "#CE94F2",
+        "#E7B8E7"
+      ],
+      "css": "linear-gradient(180deg, #20159B 0%, #3714BA 13%, #4D10DA 25%, #651BF1 38%, #8135F7 50%, #9F46FC 63%, #B76CFA 75%, #CE94F2 88%, #E7B8E7 100%)",
+      "peakChroma": 0.276,
+      "meanChroma": 0.22,
+      "ceilingUsed": 0.909,
+      "hueArc": 54
+    },
+    {
+      "id": "iris-ember",
+      "name": "Iris to Ember",
+      "kind": "crossing",
+      "note": "The ridge continues through magenta into red. The most saturated crossing in the set, and the one that most needs a dark ground to sit on.",
+      "anchors": [
+        [
+          0.38,
+          0.1838,
+          300
+        ],
+        [
+          0.52,
+          0.2383,
+          326
+        ],
+        [
+          0.64,
+          0.2612,
+          352
+        ],
+        [
+          0.84,
+          0.0505,
+          30
+        ]
+      ],
+      "stops": [
+        "#541593",
+        "#73179D",
+        "#9213A8",
+        "#B10EAD",
+        "#CE15A7",
+        "#EB129F",
+        "#F657A4",
+        "#F390AE",
+        "#EABFB7"
+      ],
+      "css": "linear-gradient(180deg, #541593 0%, #73179D 13%, #9213A8 25%, #B10EAD 38%, #CE15A7 50%, #EB129F 63%, #F657A4 75%, #F390AE 88%, #EABFB7 100%)",
+      "peakChroma": 0.259,
+      "meanChroma": 0.2,
+      "ceilingUsed": 0.904,
+      "hueArc": 91
+    },
+    {
+      "id": "cobalt-ember",
+      "name": "Cobalt to Ember",
+      "kind": "crossing",
+      "note": "Far apart, so the route is chosen rather than inherited: through magenta at 336, which is the vivid way round. Straight across would pass through the flattest part of the space.",
+      "anchors": [
+        [
+          0.34,
+          0.2123,
+          268
+        ],
+        [
+          0.48,
+          0.2524,
+          300
+        ],
+        [
+          0.62,
+          0.2703,
+          336
+        ],
+        [
+          0.82,
+          0.0617,
+          20
+        ]
+      ],
+      "stops": [
+        "#1411A3",
+        "#3F15B4",
+        "#6212C6",
+        "#8513D0",
+        "#AA1ECB",
+        "#D216C4",
+        "#E453C0",
+        "#E988BB",
+        "#EAB5B4"
+      ],
+      "css": "linear-gradient(180deg, #1411A3 0%, #3F15B4 13%, #6212C6 25%, #8513D0 38%, #AA1ECB 50%, #D216C4 63%, #E453C0 75%, #E988BB 88%, #EAB5B4 100%)",
+      "peakChroma": 0.267,
+      "meanChroma": 0.211,
+      "ceilingUsed": 0.871,
+      "hueArc": 112
+    },
+    {
+      "id": "moss-ember",
+      "name": "Moss to Ember",
+      "kind": "crossing",
+      "note": "Green into red by way of yellow. This one DESCENDS, because the two ends want opposite lightnesses: sRGB holds its vivid greens up near 0.82 and its vivid reds down near 0.52, and climbing through yellow instead put the whole crossing in the flattest part of the space.",
+      "anchors": [
+        [
+          0.82,
+          0.2113,
+          150
+        ],
+        [
+          0.72,
+          0.157,
+          112
+        ],
+        [
+          0.62,
+          0.1462,
+          58
+        ],
+        [
+          0.5,
+          0.1892,
+          24
+        ]
+      ],
+      "stops": [
+        "#33E875",
+        "#77D358",
+        "#98BC35",
+        "#ADA60C",
+        "#BA8E0A",
+        "#C37509",
+        "#C25B17",
+        "#BD4022",
+        "#B71827"
+      ],
+      "css": "linear-gradient(180deg, #33E875 0%, #77D358 13%, #98BC35 25%, #ADA60C 38%, #BA8E0A 50%, #C37509 63%, #C25B17 75%, #BD4022 88%, #B71827 100%)",
+      "peakChroma": 0.211,
+      "meanChroma": 0.161,
+      "ceilingUsed": 0.909,
+      "hueArc": 126
+    },
+    {
+      "id": "cobalt-moss",
+      "name": "Cobalt to Moss",
+      "kind": "crossing",
+      "note": "The pair with no vivid route. Blue to green passes through cyan, where sRGB has almost no chroma, and the long way round is a rainbow. Built with a deliberately neutral middle instead: the crossing reads as a crossing rather than as mud.",
+      "anchors": [
+        [
+          0.36,
+          0.2248,
+          268
+        ],
+        [
+          0.52,
+          0.0153,
+          252
+        ],
+        [
+          0.7,
+          0.1285,
+          168
+        ],
+        [
+          0.88,
+          0.1323,
+          132
+        ]
+      ],
+      "stops": [
+        "#1713B0",
+        "#2A449B",
+        "#4B5D84",
+        "#617376",
+        "#579081",
+        "#3FAE8B",
+        "#5CC48F",
+        "#8CD78F",
+        "#B7EA8D"
+      ],
+      "css": "linear-gradient(180deg, #1713B0 0%, #2A449B 13%, #4B5D84 25%, #617376 38%, #579081 50%, #3FAE8B 63%, #5CC48F 75%, #8CD78F 88%, #B7EA8D 100%)",
+      "peakChroma": 0.225,
+      "meanChroma": 0.106,
+      "ceilingUsed": 0.541,
+      "hueArc": 137
+    },
+    {
+      "id": "slate-iris",
+      "name": "Slate to Iris",
+      "kind": "crossing",
+      "note": "The quiet member into a loud one. Starts as grey and only becomes a colour halfway up, so it can carry a page that needs restraint at one end and an accent at the other.",
+      "anchors": [
+        [
+          0.3,
+          0.0084,
+          250
+        ],
+        [
+          0.48,
+          0.0933,
+          286
+        ],
+        [
+          0.66,
+          0.2377,
+          312
+        ],
+        [
+          0.86,
+          0.0608,
+          330
+        ]
+      ],
+      "stops": [
+        "#2B2E32",
+        "#3B3D54",
+        "#4D4B77",
+        "#67569C",
+        "#8E59C3",
+        "#B559EB",
+        "#CB77F5",
+        "#DA9FEE",
+        "#E9C3E4"
+      ],
+      "css": "linear-gradient(180deg, #2B2E32 0%, #3B3D54 13%, #4D4B77 25%, #67569C 38%, #8E59C3 50%, #B559EB 63%, #CB77F5 75%, #DA9FEE 88%, #E9C3E4 100%)",
+      "peakChroma": 0.233,
+      "meanChroma": 0.119,
+      "ceilingUsed": 0.514,
+      "hueArc": 53
+    }
+  ]
+}

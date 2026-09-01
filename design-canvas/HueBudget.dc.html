@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Martian+Mono:wght@200..600&amp;display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #005CCC; text-decoration: none; }
+    a:hover { color: #0647C1; }
+    .mono { font-family: 'Martian Mono', ui-monospace, monospace; font-weight: 300; letter-spacing: -0.012em; font-variant-numeric: tabular-nums; }
+    .k { font-size: 13px; line-height: 20px; font-weight: 500; }
+    .v { font-size: 12px; line-height: 18px; color: #4A4A48; }
+  </style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 900px; overflow: hidden; background: #F4F4F3; font-family: 'Familjen Grotesk', system-ui, sans-serif; color: #131312; display: flex; flex-direction: column; gap: 22px; padding: 44px 64px 40px 64px;">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 10px; max-width: 720px;">
+      <h1 style="margin: 0; font-size: 28px; line-height: 36px; font-weight: 500; letter-spacing: -0.02em;">How much of the spectrum a brand actually needs</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 24px; color: #4A4A48; text-wrap: pretty;">Each pair is one ramp and what a greyscale print keeps of it. The number that decides whether something reads as a rainbow is how far around the hue wheel it travels. Two of the restricted ramps hold a wider minimum luminance gap than the full sweep does, which means they are better ordinal scales as well as quieter ones.</p>
+    </div>
+    <span class="mono" style="font-size: 10px; line-height: 15px; color: #8C8C8A; text-align: right; white-space: pre-line; flex-shrink: 0;">Arc measured in OKLCH hue
+Samples taken at t = 0, 0.2 &#8230; 1.0
+Chroma below 0.012 ignored</span>
+  </div>
+
+  <canvas id="budget" width="2304" height="1000" style="width: 1152px; height: 500px; display: block;"></canvas>
+
+  <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; margin-top: 2px;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="k">Full spectrum</span>
+      <span class="v mono">280&#176; arc</span>
+      <span class="v">Not ordered. Closest pair 0.018 apart.</span>
+      <span class="v" style="color: #6C6C6A;">The two rainbow references only.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="k">D. Single hue</span>
+      <span class="v mono">8&#176; arc &#183; gap 0.072</span>
+      <span class="v">Ordered, and the strictest thing that is still not grey.</span>
+      <span class="v" style="color: #6C6C6A;">arc-x-research, the teal poster.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="k">E. Diverging</span>
+      <span class="v mono">163&#176; arc &#183; gap 0.004</span>
+      <span class="v">The only one that carries a sign. Collapses in greyscale by design.</span>
+      <span class="v" style="color: #6C6C6A;">The blue-red density chart, the orange-blue pack.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="k">F. Achromatic</span>
+      <span class="v mono">0&#176; arc &#183; gap 0.072</span>
+      <span class="v">Answers the question by declining it. Your engine already does this.</span>
+      <span class="v" style="color: #6C6C6A;">The Midjourney series, Palantir.</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="k">G. Two anchor</span>
+      <span class="v mono">155&#176; arc &#183; gap 0.076</span>
+      <span class="v">Widest gap of the five. Warm at the light end, so it is not simply blue.</span>
+      <span class="v" style="color: #6C6C6A;">AIUC, the caitsdesign spheres.</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"chroma":{"editor":"range","default":1,"min":0.2,"max":1.6,"step":0.05,"section":"Hue budget","tsType":"number"}}'>
+/* Four hue budgets, all built the same way: anchors in OKLCH, blended through
+   OKLab. Blending in Lab is what keeps a two-colour scale from turning into a
+   rainbow on the way: the path runs through the desaturated middle instead of
+   around the hue wheel. */
+
+function lch2lab(L, C, H) {
+  var h = H * Math.PI / 180;
+  return [L, C * Math.cos(h), C * Math.sin(h)];
+}
+function lab2rgb(L, a, b) {
+  var l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  var m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  var s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  var l = l_ * l_ * l_, m = m_ * m_ * m_, s = s_ * s_ * s_;
+  var r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  var g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  var bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+  function f(x) { x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(Math.max(x, 0), 1 / 2.4) - 0.055; return Math.max(0, Math.min(1, x)); }
+  return [Math.round(f(r) * 255), Math.round(f(g) * 255), Math.round(f(bl) * 255)];
+}
+function labLerp(A, B, t) {
+  return lab2rgb(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t);
+}
+
+/* D. SINGLE HUE. One hue, 250 degrees. Everything else is lightness and
+   chroma. This is arc-x-research and the teal poster: the most disciplined
+   thing that is still not greyscale. */
+function rampD(t, k) {
+  var C = (k == null ? 1 : k);
+  return lab2rgb.apply(null, lch2lab(0.95 - 0.50 * t, (0.02 + 0.15 * t) * C, 250));
+}
+
+/* E. DIVERGING. Two anchors either side of a near-white middle. The only
+   ramp here that encodes a sign: below the median reads warm, above reads
+   cool, and the crossing is the median itself. The 3D density chart and the
+   orange-blue gradient pack are both this. */
+var E_LO = lch2lab(0.56, 0.165, 32);
+var E_MID = lch2lab(0.955, 0.006, 85);
+var E_HI = lch2lab(0.53, 0.155, 255);
+function rampE(t, k) {
+  var C = (k == null ? 1 : k);
+  var lo = [E_LO[0], E_LO[1] * C, E_LO[2] * C];
+  var hi = [E_HI[0], E_HI[1] * C, E_HI[2] * C];
+  return t < 0.5 ? labLerp(lo, E_MID, t * 2) : labLerp(E_MID, hi, (t - 0.5) * 2);
+}
+
+/* F. ACHROMATIC. No hue at all. The Midjourney series is this: white points
+   on black, and the only variable is how much light reaches you. */
+function rampF(t) {
+  var v = Math.round(255 * Math.pow(t, 0.75));
+  return [v, v, v];
+}
+
+/* G. TWO ANCHOR. Warm cream to deep violet-blue, blended through Lab so the
+   middle desaturates rather than passing through green. This is the AIUC
+   mesh and the caitsdesign spheres. */
+var G_A = lch2lab(0.965, 0.032, 82);
+var G_B = lch2lab(0.44, 0.150, 288);
+function rampG(t, k) {
+  var C = (k == null ? 1 : k);
+  return labLerp([G_A[0], G_A[1] * C, G_A[2] * C], [G_B[0], G_B[1] * C, G_B[2] * C], t);
+}
+
+
+/* The original full sweep, kept here only so the restricted ramps have
+   something to be measured against. */
+function dispFullL(t) { return 0.60 + 0.17 * Math.exp(-Math.pow(t - 0.34, 2) / (2 * 0.27 * 0.27)); }
+function dispFull(t, k) { return lab2rgb.apply(null, lch2lab(dispFullL(t), 0.150 * (k == null ? 1 : k), 25 + t * 280)); }
+
+function greyOf(c) {
+  function f(v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+  var Y = 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
+  var g = Math.round((Y <= 0.0031308 ? 12.92 * Y : 1.055 * Math.pow(Y, 1 / 2.4) - 0.055) * 255);
+  return [g, g, g];
+}
+
+class Component extends DCLogic {
+  componentDidMount() { this.draw(); }
+  componentDidUpdate() { this.draw(); }
+
+  draw() {
+    var cv = document.getElementById('budget');
+    if (!cv) { requestAnimationFrame(this.draw.bind(this)); return; }
+    var ctx = cv.getContext('2d');
+    var S = 2, w = cv.width;
+    var k = this.props.chroma != null ? this.props.chroma : 1;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+
+    var rows = [
+      { f: dispFull, label: 'Full spectrum, the version already on the canvas', arc: '280 deg' },
+      { f: rampD, label: 'D. Single hue', arc: '8 deg' },
+      { f: rampE, label: 'E. Diverging, crossing on the median', arc: '163 deg' },
+      { f: rampF, label: 'F. Achromatic', arc: '0 deg' },
+      { f: rampG, label: 'G. Two anchor, cream to violet-blue', arc: '155 deg' }
+    ];
+
+    var y = 18 * S, rowH = 44 * S, greyH = 15 * S, gapV = 34 * S;
+
+    for (var r = 0; r < rows.length; r++) {
+      var row = rows[r];
+
+      ctx.fillStyle = '#4A4A48';
+      ctx.font = (12 * S) + 'px "Familjen Grotesk", system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(row.label, 0, y - 8 * S);
+
+      ctx.fillStyle = '#8C8C8A';
+      ctx.font = (10 * S) + 'px "Martian Mono", ui-monospace, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(row.arc, w, y - 8 * S);
+      ctx.textAlign = 'left';
+
+      for (var px = 0; px < w; px++) {
+        var t = px / (w - 1);
+        var c = row.f(t, k);
+        ctx.fillStyle = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+        ctx.fillRect(px, y, 1, rowH);
+        var g = greyOf(c);
+        ctx.fillStyle = 'rgb(' + g[0] + ',' + g[1] + ',' + g[2] + ')';
+        ctx.fillRect(px, y + rowH + 3 * S, 1, greyH);
+      }
+
+      /* Six sample ticks, the positions a series scale would take. */
+      for (var i = 0; i < 6; i++) {
+        var tx = Math.round((i / 5) * (w - 1));
+        ctx.fillStyle = '#F4F4F3';
+        ctx.fillRect(tx, y, 1 * S, rowH);
+      }
+
+      y += rowH + greyH + gapV;
+    }
+  }
+
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

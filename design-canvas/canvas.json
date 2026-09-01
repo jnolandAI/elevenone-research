@@ -1,0 +1,446 @@
+{
+  "pages": [
+    {
+      "id": "page-4",
+      "name": "Stack"
+    },
+    {
+      "id": "page-5",
+      "name": "Terrain"
+    },
+    {
+      "id": "page-6",
+      "name": "Instrument"
+    },
+    {
+      "id": "page-1",
+      "name": "Early: treatment"
+    },
+    {
+      "id": "page-2",
+      "name": "Early: hue"
+    },
+    {
+      "id": "page-3",
+      "name": "Early: objects"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "A. Screened"
+    },
+    {
+      "file": "DirectionB.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "B. Bled"
+    },
+    {
+      "file": "DirectionC.dc.html",
+      "page": "page-1",
+      "x": 2800,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "C. Instrument"
+    },
+    {
+      "file": "Figure.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "The encoding test"
+    },
+    {
+      "file": "Spectrum.dc.html",
+      "page": "page-1",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 900,
+      "title": "The generator"
+    },
+    {
+      "file": "SingleHue.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "D. Single hue"
+    },
+    {
+      "file": "TwoAnchor.dc.html",
+      "page": "page-2",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "G. Two anchor"
+    },
+    {
+      "file": "Diverging.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "E. Diverging"
+    },
+    {
+      "file": "Achromatic.dc.html",
+      "page": "page-2",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "F. Achromatic"
+    },
+    {
+      "file": "HueBudget.dc.html",
+      "page": "page-2",
+      "x": 2800,
+      "y": 0,
+      "w": 1280,
+      "h": 900,
+      "title": "The hue budget"
+    },
+    {
+      "file": "Terrain.dc.html",
+      "page": "page-3",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "H. Terrain"
+    },
+    {
+      "file": "Ridges.dc.html",
+      "page": "page-3",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "L. Ridges"
+    },
+    {
+      "file": "Wireframe.dc.html",
+      "page": "page-3",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "I. Wireframe"
+    },
+    {
+      "file": "Planes.dc.html",
+      "page": "page-3",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "J. Stacked planes"
+    },
+    {
+      "file": "StackCover.dc.html",
+      "page": "page-4",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Stack  Cover  ·  dark"
+    },
+    {
+      "file": "StackSection.dc.html",
+      "page": "page-4",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Stack  Section  ·  dark"
+    },
+    {
+      "file": "StackRead.dc.html",
+      "page": "page-4",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Stack  Reading page  ·  light"
+    },
+    {
+      "file": "StackExhibit.dc.html",
+      "page": "page-4",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Stack  Exhibit  ·  light"
+    },
+    {
+      "file": "TerrainCover.dc.html",
+      "page": "page-5",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Terrain  Cover  ·  dark"
+    },
+    {
+      "file": "TerrainSection.dc.html",
+      "page": "page-5",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Terrain  Section  ·  dark"
+    },
+    {
+      "file": "TerrainRead.dc.html",
+      "page": "page-5",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Terrain  Reading page  ·  light"
+    },
+    {
+      "file": "TerrainExhibit.dc.html",
+      "page": "page-5",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Terrain  Exhibit  ·  light"
+    },
+    {
+      "file": "InstrumentCover.dc.html",
+      "page": "page-6",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Instrument  Cover  ·  dark"
+    },
+    {
+      "file": "InstrumentSection.dc.html",
+      "page": "page-6",
+      "x": 1400,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Instrument  Section  ·  dark"
+    },
+    {
+      "file": "InstrumentRead.dc.html",
+      "page": "page-6",
+      "x": 0,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Instrument  Reading page  ·  light"
+    },
+    {
+      "file": "InstrumentExhibit.dc.html",
+      "page": "page-6",
+      "x": 1400,
+      "y": 880,
+      "w": 1280,
+      "h": 720,
+      "title": "Instrument  Exhibit  ·  light"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "how-to-read",
+      "page": "page-1",
+      "x": 0,
+      "y": -300,
+      "w": 620,
+      "text": "TREATMENT. Three ways of putting the same field on a page: screened through the mark's lattice, bled smooth off the edge, or emitted on a dark ground.\n\nThese all use the full 280 degree sweep. The Hue budget page asks the separate question of how much of that spectrum to admit at all."
+    },
+    {
+      "id": "dir-a",
+      "page": "page-1",
+      "x": 700,
+      "y": -300,
+      "w": 300,
+      "text": "A. SCREENED\n\nThe field is the six cohort KDEs, summed, pushed through the mark's own 15 degree lattice. Hue is margin, dot area is density, 6,506 marks at the default cell. Colour arrives already speaking your language: the mark and the field are the same drawing.\n\nTradeoff: the screen caps how atmospheric it can get. Next to the references it will read restrained."
+    },
+    {
+      "id": "dir-b",
+      "page": "page-1",
+      "x": 1400,
+      "y": -300,
+      "w": 300,
+      "text": "B. BLED\n\nSmooth dispersion, no screen, running off the bottom edge. Closest to AIUC and arc-x-research. Immediately contemporary and the easiest to like.\n\nTradeoff: it is the reference pile's look rather than yours, it means nothing, and it is the exact blurred field PRODUCT.md calls a smudge."
+    },
+    {
+      "id": "dir-c",
+      "page": "page-1",
+      "x": 2800,
+      "y": -300,
+      "w": 300,
+      "text": "C. INSTRUMENT\n\nDark ground, dispersion as emission, additive so overlaps brighten the way real spectra do. Palantir's numbered brackets and arrow lists.\n\nTradeoff: it breaks two standing rules at once. Tracked uppercase, which the modern-register rule bars, and the apparatus turns imagery into a labelled diagram carrying numbers, which the imagery rule bars."
+    },
+    {
+      "id": "fig-note",
+      "page": "page-1",
+      "x": 2800,
+      "y": 880,
+      "w": 340,
+      "text": "THE ENCODING TEST\n\nSix real KDEs, Silverman bandwidth 0.046, drawn twice with identical marks and opacity. Left in the greyscale spine, right in dispersion.\n\nThis is the artboard that decides whether colour is doing work. If the left panel reads fine, colour is decoration and the honest answer is to drop it."
+    },
+    {
+      "id": "spec-note",
+      "page": "page-1",
+      "x": 2800,
+      "y": 1240,
+      "w": 340,
+      "text": "THE GENERATOR\n\nOne hue arc, 25 to 305 degrees in OKLCH at fixed chroma. Two lightness laws.\n\nPhotopic follows the eye's sensitivity curve, so it is physically derived, but it is not ordered: its closest pair sits 0.018 apart in luminance and dies in a greyscale print.\n\nThe ordinal law descends steadily and holds 0.049. Superseded in part by the Hue budget page, where two restricted ramps beat both."
+    },
+    {
+      "id": "budget-intro",
+      "page": "page-2",
+      "x": 0,
+      "y": -320,
+      "w": 700,
+      "text": "HUE BUDGET. Four answers to how much of the spectrum gets admitted, with the treatment held constant at screened so hue is the only thing changing. Same cover, same data, same 15 degree lattice.\n\nRe-reading your references: most of them are not rainbows. arc-x-research and the teal poster are one hue. The blue-red density chart and the orange-blue pack are diverging pairs. The Midjourney series and Palantir have no hue at all. Only the blurred rectangle and the Serge poster sweep the full spectrum, and those were the two I built the first generator from."
+    },
+    {
+      "id": "opt-d",
+      "page": "page-2",
+      "x": 4200,
+      "y": 0,
+      "w": 340,
+      "text": "D. SINGLE HUE\n\nOne hue at 250 degrees. Lightness and chroma carry everything else. Travels 8 degrees of arc, so it can never read as a rainbow under any settings.\n\nStrictly ordered, minimum luminance gap 0.072, four times the full sweep's. Survives a greyscale print intact.\n\nThis is the smallest possible departure from greyscale absolutely. If the argument for colour is only that greyscale ran out of separations, this is the honest amount to add."
+    },
+    {
+      "id": "opt-g",
+      "page": "page-2",
+      "x": 4200,
+      "y": 380,
+      "w": 340,
+      "text": "G. TWO ANCHOR\n\nWarm cream to deep violet-blue, blended through OKLab rather than around the hue wheel, which is what keeps the middle desaturated instead of green.\n\nWidest minimum gap of all five at 0.076, and strictly ordered. The warm light end means it does not simply read as a blue brand.\n\nMy pick of the four. It is the AIUC mesh done with a defensible scale underneath it."
+    },
+    {
+      "id": "opt-e",
+      "page": "page-2",
+      "x": 4200,
+      "y": 760,
+      "w": 340,
+      "text": "E. DIVERGING\n\nThe only one that carries a sign. Warm below the median, cool above, and the neutral crossing is placed on 0.388 itself rather than on the middle of the axis. The field is literally the subtitle: the peer median sits between two of them.\n\nTradeoff: a diverging scale collapses in greyscale by design. Its two mid-tones sit 0.004 apart, because sign is in the hue and greyscale throws hue away."
+    },
+    {
+      "id": "opt-f",
+      "page": "page-2",
+      "x": 4200,
+      "y": 1140,
+      "w": 340,
+      "text": "F. ACHROMATIC\n\nThe null option, and it deserves to be on the wall. No hue at all: brightness is density, white points on black, which is exactly the Midjourney series.\n\nThis is your existing engine used at cover scale with the substrate inverted. It costs nothing, breaks no standing rule except the light substrate, and if it holds its own against the other three then the whole colour question answers itself."
+    },
+    {
+      "id": "obj-intro",
+      "page": "page-3",
+      "x": 0,
+      "y": -340,
+      "w": 700,
+      "text": "OBJECTS. Composition is F: light on a dark ground. What is added is hue, on the one principle that holds on an emissive ground. Real emission gets hotter as it gets brighter, so the ramp runs cool and dim at low density to warm and bright at high, and lightness rises the whole way. Brightness alone still carries the quantity, so the chroma chip goes to 0 and you are back at F having lost only the warmth.\n\nThe object is not a shape chosen to look like something. It is the joint density surface already in your dataset: 72 rows by 96 columns, revenue left to right on a log scale, margin front to back, elevation is how many filers fall in each cell. It has two summits. That is the title."
+    },
+    {
+      "id": "obj-h",
+      "page": "page-3",
+      "x": 2800,
+      "y": 0,
+      "w": 340,
+      "text": "H. TERRAIN\n\nAll 6,912 cells as points of light, radius and colour both rising with elevation. The Midjourney mountain, except every vertex is a real count.\n\nThe sparse corner (tiny revenue, high margin, almost nobody there) falls under the type on purpose. Only 4 bright marks land behind the title block."
+    },
+    {
+      "id": "obj-l",
+      "page": "page-3",
+      "x": 2800,
+      "y": 380,
+      "w": 340,
+      "text": "L. RIDGES\n\nThe surface cut into 36 sections, drawn far to near, each filled with the ground so the nearer ones occlude the farther.\n\nThe most legible of the four as a landform: this is where you can actually see that the second ridge at 70% margin is a separate rise and not a shoulder of the main peak."
+    },
+    {
+      "id": "obj-i",
+      "page": "page-3",
+      "x": 2800,
+      "y": 760,
+      "w": 340,
+      "text": "I. WIREFRAME\n\nThe same surface as a mesh, colour tracking elevation along each wire rather than flat per line. Both summits carried on dashed leaders with the counts beside them.\n\nClosest to the Palantir page, and the one that most obviously turns imagery into a labelled diagram. Worth deciding whether you want that on a cover or only inside a piece."
+    },
+    {
+      "id": "obj-j",
+      "page": "page-3",
+      "x": 2800,
+      "y": 1140,
+      "w": 340,
+      "text": "J. STACKED PLANES\n\nPalantir’s exploded layers, with the layers meaning something: one sheet per revenue cohort, smallest at the bottom, each carrying its own density across margin as a dot lattice.\n\nThe stack is the six distributions, seen edge on. Shallower projection than the other three, because six sheets need the vertical room."
+    },
+    {
+      "id": "lang-stack",
+      "page": "page-4",
+      "x": 2800,
+      "y": 0,
+      "w": 420,
+      "text": "STACK  —  everything is a sheet at a depth.\n\nDepth is the only hierarchy device. The cover explodes the six cohorts into six sheets. The section page is one sheet lit among five. The reading page puts the claim block on a lifted sheet with its stack visible behind it, and the page itself carries receding edges. The exhibit is the same six cohorts seen near to far.\n\nThis is the one built on J, which you liked. Its risk is that depth is a strong device and it has to earn its keep on every page, including pages with nothing to stack."
+    },
+    {
+      "id": "read-stack",
+      "page": "page-4",
+      "x": 2800,
+      "y": 560,
+      "w": 420,
+      "text": "All four pages carry the same real content: the brief’s own lede, its heading, Claim A with its standing and all three rows, and the six-cohort exhibit with p10 to p90 spreads of 72.2, 67.9, 60.1, 59.1, 55.4 and 52.7 points.\n\nSo the only thing changing between the three pages is the language. Compare the reading pages against each other first: covers flatter everything, and a language lives or dies on the page a reader actually spends time with."
+    },
+    {
+      "id": "lang-terrain",
+      "page": "page-5",
+      "x": 2800,
+      "y": 0,
+      "w": 420,
+      "text": "TERRAIN  —  everything is a surface with elevation.\n\nFields rather than objects, and the widest colour of the three. The cover is the luminous landscape. The section reduces it to contour bands. The reading page ghosts the contours behind the column and sets the claim block in a tinted valley. The exhibit is the six cohorts as ridgelines, front occluding back.\n\nThe most atmospheric and the most immediately striking. Its risk is that atmosphere is hard to keep honest, and a light reading page wants less of it than a dark cover does."
+    },
+    {
+      "id": "read-terrain",
+      "page": "page-5",
+      "x": 2800,
+      "y": 560,
+      "w": 420,
+      "text": "All four pages carry the same real content: the brief’s own lede, its heading, Claim A with its standing and all three rows, and the six-cohort exhibit with p10 to p90 spreads of 72.2, 67.9, 60.1, 59.1, 55.4 and 52.7 points.\n\nSo the only thing changing between the three pages is the language. Compare the reading pages against each other first: covers flatter everything, and a language lives or dies on the page a reader actually spends time with."
+    },
+    {
+      "id": "lang-instrument",
+      "page": "page-6",
+      "x": 2800,
+      "y": 0,
+      "w": 420,
+      "text": "INSTRUMENT  —  everything is a measured construction.\n\nNothing floats; everything is dimensioned. The cover carries leader lines to both summits with their coordinates. The section is a dimensioned base plane. The reading page keeps registration marks and a hard rule on the claim block. The exhibit lays all six flat and measures the p10 to p90 spread on the right, so the narrowing is measured rather than asserted.\n\nNearly achromatic by default: its chroma sits at 0.35 where the others sit near 0.9. Colour appears only inside figures. This is the closest to Palantir and the closest to your existing constitution."
+    },
+    {
+      "id": "read-instrument",
+      "page": "page-6",
+      "x": 2800,
+      "y": 560,
+      "w": 420,
+      "text": "All four pages carry the same real content: the brief’s own lede, its heading, Claim A with its standing and all three rows, and the six-cohort exhibit with p10 to p90 spreads of 72.2, 67.9, 60.1, 59.1, 55.4 and 52.7 points.\n\nSo the only thing changing between the three pages is the language. Compare the reading pages against each other first: covers flatter everything, and a language lives or dies on the page a reader actually spends time with."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-4"
+  }
+}

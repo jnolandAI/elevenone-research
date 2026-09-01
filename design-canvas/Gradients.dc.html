@@ -1,0 +1,868 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Martian+Mono:wght@200..600&amp;display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #005CCC; text-decoration: none; }
+    a:hover { color: #131312; }
+    .mk circle { fill: #131312; }
+    .mono { font-family: 'Martian Mono', ui-monospace, monospace; font-weight: 300; letter-spacing: -0.012em; font-variant-numeric: tabular-nums; }
+    
+  </style>
+</helmet>
+<div style="position: relative; width: 2076px; height: 1462px; overflow: hidden; background: #F4F4F3; font-family: 'Familjen Grotesk', system-ui, sans-serif; color: #131312; padding: 48px; box-sizing: border-box;">
+  <div style="display: flex; flex-direction: column; gap: 10px; height: 168px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 32px;">
+      <div style="display: flex; align-items: center; gap: 11px;">
+        <svg class="mk" style="width: 20px; height: 20px; display: block;" viewBox="0 0 100 100" role="img" aria-label="Eleven One Research"><g><circle cx="92.07" cy="8.73" r="6.45"/><circle cx="20.08" cy="9.38" r="1.31"/><circle cx="36.97" cy="20.30" r="3.72"/><circle cx="69.93" cy="28.25" r="6.45"/><circle cx="22.23" cy="40.54" r="3.72"/><circle cx="49.76" cy="49.61" r="6.45"/><circle cx="79.01" cy="57.74" r="9.39"/><circle cx="28.24" cy="70.00" r="6.45"/><circle cx="57.76" cy="78.98" r="9.39"/><circle cx="86.74" cy="86.74" r="11.00"/><circle cx="7.51" cy="92.28" r="6.45"/></g></svg>
+        <span style="font-size: 12px; line-height: 18px; color: #4A4A48;">Eleven One Research</span>
+      </div>
+      <span class="mono" style="font-size: 10px; color: #8C8C8A;">Gradient set</span>
+    </div>
+    <div style="display: flex; gap: 48px; align-items: flex-start; margin-top: 4px;">
+      <div style="width: 320px; flex-shrink: 0;">
+        <h1 style="margin: 0; font-size: 27px; line-height: 33px; font-weight: 500; letter-spacing: -0.02em;">The gradient set</h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px; line-height: 21px; color: #4A4A48; text-wrap: pretty;">Eleven gradients. The system's colour, in full.</p>
+      </div>
+      <p style="margin: 0; max-width: 900px; font-size: 13px; line-height: 21px; color: #6C6C6A; text-wrap: pretty;">The system is black, white and grey. Colour appears only as one of these eleven and only where a gradient earns its place: a report cover, the site hero, a figure that needs a field behind it. Every rule, border, label, axis and panel stays greyscale, and nothing else in the system is coloured. One piece can run cobalt and the next moss without either looking like a different brand, because what makes them a family is how they are built. Saturation is specified as a fraction of what sRGB allows at each lightness and hue rather than as a fixed number, which is why they hold up beside each other instead of some looking washed out.</p>
+    </div>
+  </div>
+
+    <div style="display: flex; align-items: baseline; gap: 14px; height: 40px;">
+      <span class="mono" style="font-size: 11px; letter-spacing: 0.08em; color: #4A4A48;">SINGLE</span>
+      <span style="font-size: 13px; color: #8C8C8A;">Held inside one hue family.</span>
+    </div>
+    <div style="display: flex; gap: 36px; align-items: flex-start;">
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Cobalt</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">cobalt</span>
+        <canvas id="d0" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p0" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.210 &#183; 35&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Iris</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">iris</span>
+        <canvas id="d1" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p1" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.266 &#183; 39&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Ember</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">ember</span>
+        <canvas id="d2" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p2" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.212 &#183; 52&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Moss</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">moss</span>
+        <canvas id="d3" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p3" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.218 &#183; 39&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Slate</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">slate</span>
+        <canvas id="d4" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p4" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.018 &#183; 0&#176; arc</span>
+      </div>
+    </div>
+  <div style="height: 34px;"></div>
+
+    <div style="display: flex; align-items: baseline; gap: 14px; height: 40px;">
+      <span class="mono" style="font-size: 11px; letter-spacing: 0.08em; color: #4A4A48;">CROSSING</span>
+      <span style="font-size: 13px; color: #8C8C8A;">Running between two members. The route is chosen, not inherited.</span>
+    </div>
+    <div style="display: flex; gap: 36px; align-items: flex-start;">
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Cobalt to Iris</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">cobalt-iris</span>
+        <canvas id="d5" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p5" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.276 &#183; 54&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Iris to Ember</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">iris-ember</span>
+        <canvas id="d6" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p6" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.259 &#183; 91&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Cobalt to Ember</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">cobalt-ember</span>
+        <canvas id="d7" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p7" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.267 &#183; 112&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Moss to Ember</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">moss-ember</span>
+        <canvas id="d8" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p8" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.211 &#183; 126&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Cobalt to Moss</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">cobalt-moss</span>
+        <canvas id="d9" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p9" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.225 &#183; 137&#176; arc</span>
+      </div>
+      <div style="display: flex; flex-direction: column; width: 300px; flex-shrink: 0;">
+        <span style="font-size: 15px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em;">Slate to Iris</span>
+        <span class="mono" style="font-size: 10px; line-height: 18px; color: #8C8C8A;">slate-iris</span>
+        <canvas id="d10" width="600" height="500" style="width: 300px; height: 250px; display: block; background: #131312;"></canvas>
+        <div style="height: 10px;"></div>
+        <canvas id="p10" width="600" height="420" style="width: 300px; height: 210px; display: block; background: #FFFFFF; outline: 1px solid #E4E4E2; outline-offset: -1px;"></canvas>
+        <span class="mono" style="font-size: 10px; line-height: 30px; color: #8C8C8A;">peak 0.233 &#183; 53&#176; arc</span>
+      </div>
+    </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"chroma":{"editor":"range","default":1,"min":0,"max":1.6,"step":0.05,"section":"Gradients","tsType":"number"},"grain":{"editor":"range","default":0.06,"min":0,"max":0.16,"step":0.005,"section":"Gradients","tsType":"number"}}'>
+/* Shared by all twelve language pages: colour, projection, and the chart
+   primitives. Each language picks from this; none of them adds a colour or a
+   geometry of its own outside it. */
+
+function lchToLab(L, C, H) { var h = H * Math.PI / 180; return [L, C * Math.cos(h), C * Math.sin(h)]; }
+function labToRgb(L, a, b) {
+  var l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  var m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  var s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  var l = l_ * l_ * l_, m = m_ * m_ * m_, s = s_ * s_ * s_;
+  var r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  var g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  var bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+  function f(x) { x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(Math.max(x, 0), 1 / 2.4) - 0.055; return Math.max(0, Math.min(1, x)); }
+  return [Math.round(f(r) * 255), Math.round(f(g) * 255), Math.round(f(bl) * 255)];
+}
+function anchorRamp(anchors, t, k) {
+  var C = (k == null ? 1 : k);
+  t = t < 0 ? 0 : (t > 1 ? 1 : t);
+  var seg = t * (anchors.length - 1);
+  var i = Math.min(Math.floor(seg), anchors.length - 2), f = seg - i;
+  var A = lchToLab(anchors[i][0], anchors[i][1] * C, anchors[i][2]);
+  var B = lchToLab(anchors[i + 1][0], anchors[i + 1][1] * C, anchors[i + 1][2]);
+  return labToRgb(A[0] + (B[0] - A[0]) * f, A[1] + (B[1] - A[1]) * f, A[2] + (B[2] - A[2]) * f);
+}
+/* The inverse, so a colour picked in the editor can be read back as OKLCH
+   anchors. anchorRamp blends in OKLab; a hex the user picked has to arrive in
+   the same space or the ramp it defines is not the ramp they chose. */
+function rgbToLch(r, g, b) {
+  function f(v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+  var R = f(r), G = f(g), B = f(b);
+  var l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  var m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  var s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  var L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  var A = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+  var Bb = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+  var H = Math.atan2(Bb, A) * 180 / Math.PI;
+  if (H < 0) H += 360;
+  return { L: L, C: Math.sqrt(A * A + Bb * Bb), H: H };
+}
+function hexToLch(h) {
+  h = String(h).replace('#', '');
+  if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  return rgbToLch(parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16));
+}
+
+/* The waypoint between two ramp ends.
+
+   This is the whole job. Blending runs in OKLab, so two ends far apart in hue
+   meet through the desaturated middle only if the waypoint is actually
+   desaturated; left chromatic, the path takes a shortcut and picks up a hue
+   nobody chose. Ends that are close need the opposite, a waypoint at full
+   chroma, or the middle of a warm ramp goes muddy. So both the waypoint's
+   chroma factor and how far its hue leans toward the far end follow the gap. */
+function endGap(A, B) {
+  var dH = ((B.H - A.H) % 360 + 540) % 360 - 180;
+  var gap = Math.abs(dH);
+  return {
+    dH: dH,
+    gap: gap,
+    cf: 1.30 - 0.85 * Math.min(1, Math.max(0, (gap - 40) / 110)),
+    hm: 0.5 * (1 - Math.min(1, gap / 150))
+  };
+}
+
+/* The field on a DARK ground, from its two ends. Deep and cool at t=0,
+   bright and warm at t=1, which is the direction an additive field runs. */
+function fieldFromEnds(coolHex, warmHex, spread, balance) {
+  var A = hexToLch(coolHex), B = hexToLch(warmHex), g = endGap(A, B);
+  return [
+    [A.L, A.C, A.H],
+    [A.L + (B.L - A.L) * balance, Math.min(A.C, B.C) * g.cf, A.H + g.dH * g.hm],
+    [B.L, B.C, B.H],
+    [B.L + (B.L - A.L) * 0.44, B.C * 0.72, B.H + spread]
+  ];
+}
+
+/* The same two ends on PAPER. Multiply is identity against white, so this one
+   runs the other way: palest at t=0, deepest at t=1, more ink meaning more of
+   the thing. Same hues, same waypoint rule, lightness rebuilt for a white
+   ground rather than inherited from the picked colours. */
+function paperFromEnds(coolHex, warmHex, spread, balance) {
+  var A = hexToLch(coolHex), B = hexToLch(warmHex), g = endGap(A, B);
+  /* The waypoint leans toward whichever end it sits next to, which is the
+     warm one here and the cool one on dark. Leaning it cool on paper put a
+     blue in the middle of the wash that neither picked colour asked for:
+     the deep end is not reached until t=1 and the middle should still be
+     holding the warm. */
+  var mid = 0.64 - 0.09 * balance;
+  return [
+    [0.955, B.C * 0.42, B.H + spread],
+    [0.800, B.C * 1.18, B.H],
+    [mid, Math.min(A.C, B.C) * g.cf, B.H - g.dH * g.hm],
+    [0.385, A.C * 1.05, A.H]
+  ];
+}
+
+function rgbs(a) { return 'rgb(' + a[0] + ',' + a[1] + ',' + a[2] + ')'; }
+function rgba(a, o) { return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + o + ')'; }
+
+/* DARK. Emission: cool and dim at low density, warm and bright at high, with
+   lightness rising the whole way, so brightness alone still carries the
+   quantity and chroma 0 degrades cleanly to white on black. */
+var A_EMIT = [[0.22, 0.105, 295], [0.45, 0.125, 258], [0.68, 0.110, 215], [0.97, 0.045, 92]];
+function emit(t, k) { return anchorRamp(A_EMIT, t, k); }
+
+/* LIGHT. The same journey with the ends swapped, because on paper more ink
+   means more of the thing. Warm and pale at low, cool and deep at high. */
+var A_INK = [[0.965, 0.030, 82], [0.780, 0.075, 205], [0.560, 0.130, 250], [0.360, 0.140, 288]];
+function ink(t, k) { return anchorRamp(A_INK, t, k); }
+
+/* The greyscale spine, unchanged. */
+var GREY = { w: '#FFFFFF', g05: '#FAFAF9', g10: '#F4F4F3', g20: '#EBEBEA', g30: '#DEDEDD', g40: '#C9C9C7', g50: '#AEAEAC', g60: '#8C8C8A', g70: '#6C6C6A', g80: '#4A4A48', g90: '#2B2B2A', ink: '#131312' };
+
+function isoPoint(u, v, h, o) {
+  var a = (u - 0.5) * o.sx, b = (v - 0.5) * o.sy;
+  return [o.ox + (a - b) * 0.8660254, o.oy + (a + b) * 0.5 - h * o.hz];
+}
+
+function sampleAt(arr, m) {
+  var p = (m + 0.05) / 1.05 * (arr.length - 1);
+  if (p <= 0) return arr[0];
+  if (p >= arr.length - 1) return arr[arr.length - 1];
+  var i = Math.floor(p), f = p - i;
+  return arr[i] * (1 - f) + arr[i + 1] * f;
+}
+
+/* Chart primitives. A hairline baseline, ticks below it, and nothing else:
+   no grid, no box, no frame. Shared so three languages that draw completely
+   different exhibits still agree on what an axis is. */
+function axisX(ctx, x0, y, w, S, ticks, fmt, col) {
+  ctx.strokeStyle = col || GREY.g30;
+  ctx.lineWidth = 1 * S;
+  ctx.beginPath(); ctx.moveTo(x0, y + 0.5 * S); ctx.lineTo(x0 + w, y + 0.5 * S); ctx.stroke();
+  ctx.fillStyle = GREY.g60;
+  ctx.font = (10 * S) + 'px "Martian Mono", ui-monospace, monospace';
+  ctx.textAlign = 'center';
+  for (var i = 0; i < ticks.length; i++) {
+    var px = x0 + ticks[i] * w;
+    ctx.strokeStyle = col || GREY.g30;
+    ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, y + 5 * S); ctx.stroke();
+    ctx.fillText(fmt(ticks[i]), px, y + 19 * S);
+  }
+  ctx.textAlign = 'left';
+}
+
+function kdePath(ctx, arr, x0, base, w, h, peak, close) {
+  ctx.beginPath();
+  if (close) ctx.moveTo(x0, base);
+  for (var i = 0; i <= 200; i++) {
+    var m = i / 200;
+    var px = x0 + m * w;
+    var py = base - (sampleAt(arr, m) / peak) * h;
+    if (i === 0 && !close) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  if (close) { ctx.lineTo(x0 + w, base); ctx.closePath(); }
+}
+
+function maxOf(rows) {
+  var m = 0;
+  for (var i = 0; i < rows.length; i++) for (var j = 0; j < rows[i].length; j++) if (rows[i][j] > m) m = rows[i][j];
+  return m;
+}
+
+/* Rendering primitives for the reference look.
+
+   The four directions were built out of two moves: one linear gradient across
+   the frame, and a hairline wireframe. That produces a flat diagonal wash with
+   a lit mesh on it, which is not what the references do. The references are
+   built out of four different moves, and these are them.
+
+     fxField     several large soft masses, most of them centred off frame
+     fxGrain     film grain, in the pixels, not a CSS overlay at 0.06
+     fxDots      an object built from particles rather than strokes
+     fxCloud     a distribution drawn as diffuse spectral dust
+
+   Everything here is deterministic. fxRand is seeded, so a board renders the
+   same twice and a diff means a change. */
+
+function fxRand(seed) {
+  var s = (seed >>> 0) || 1;
+  return function () {
+    s ^= s << 13; s >>>= 0;
+    s ^= s >> 17;
+    s ^= s << 5; s >>>= 0;
+    return s / 4294967296;
+  };
+}
+
+/* One soft mass.
+
+   A two-stop radial gradient shows a visible ring wherever the falloff changes
+   slope, and the reference gradients have no edge anywhere in them. So: 20
+   stops on a cosine-squared falloff, which has zero derivative at both ends
+   and therefore no ring to find. */
+function fxMass(ctx, cx, cy, r, col, a) {
+  if (a <= 0 || r <= 0) return;
+  var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+  for (var i = 0; i <= 20; i++) {
+    var u = i / 20;
+    var f = Math.cos(u * Math.PI / 2);
+    f = f * f;
+    g.addColorStop(u, 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (a * f).toFixed(4) + ')');
+  }
+  ctx.fillStyle = g;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+}
+
+/* A field. Blobs are placed in fractions of the frame and sized in fractions
+   of its width, so the same spec works at 1280 and at 1440. Centres outside
+   0..1 are the point: a mass whose centre is off the frame never shows the
+   viewer where it begins. */
+function fxField(ctx, W, H, ramp, k, blobs, mode) {
+  ctx.save();
+  ctx.globalCompositeOperation = mode || 'source-over';
+  for (var i = 0; i < blobs.length; i++) {
+    var b = blobs[i];
+    fxMass(ctx, b.x * W, b.y * H, b.r * W, ramp(b.t, k), b.a);
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* Grain, in the pixels.
+
+   The CSS feTurbulence overlay at 0.06 is invisible at any size a reader will
+   look at. This is monochrome dust: half the pixels darken, half lighten, so
+   the mean is unmoved and only the texture arrives. `scale` coarsens it; the
+   references are grainier than one device pixel. */
+/* Tiles are cached. Building one is 65,536 iterations of the PRNG and a
+   quarter-megabyte allocation, and a board with eleven gradients on two
+   grounds asks for twenty-two of them per render. Uncached that was three and
+   a half seconds a draw, repeated on every slider move. Keyed by the three
+   things that determine the pixels. */
+var FX_TILES = {};
+
+function fxGrainTile(size, amp, seed) {
+  var key = size + '|' + amp + '|' + seed;
+  if (FX_TILES[key]) return FX_TILES[key];
+  var c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  var g = c.getContext('2d');
+  var img = g.createImageData(size, size);
+  var d = img.data, rnd = fxRand(seed);
+  for (var i = 0; i < size * size; i++) {
+    var v = rnd() - 0.5, o = i * 4;
+    var lit = v >= 0;
+    d[o] = d[o + 1] = d[o + 2] = lit ? 255 : 0;
+    d[o + 3] = Math.round(Math.abs(v) * 2 * amp * 255);
+  }
+  g.putImageData(img, 0, 0);
+  FX_TILES[key] = c;
+  return c;
+}
+
+function fxGrain(ctx, W, H, amp, seed, scale) {
+  if (!(amp > 0)) return;
+  var tile = fxGrainTile(256, amp, seed || 7);
+  var s = scale || 1, step = 256 * s;
+  ctx.save();
+  ctx.globalCompositeOperation = 'source-over';
+  for (var y = 0; y < H; y += step) {
+    for (var x = 0; x < W; x += step) ctx.drawImage(tile, x, y, step, step);
+  }
+  ctx.restore();
+}
+
+/* An object built from particles.
+
+   Same surface, same projection, same marks as the wireframe. The difference
+   is that elevation is carried by dot radius and dot opacity instead of by
+   stroke weight, and the mesh underneath drops to a substrate. */
+function fxDots(ctx, S, O, opt) {
+  var G = opt.grid, ROWS = opt.rows, COLS = opt.cols, MAX = opt.max;
+  var ramp = opt.ramp, k = opt.k;
+  var rnd = fxRand(opt.seed || 11);
+  var stepR = opt.stepR || 2, stepC = opt.stepC || 2;
+  var lo = opt.lo == null ? 0 : opt.lo, hi = opt.hi == null ? 1 : opt.hi;
+
+  if (opt.web > 0) {
+    ctx.save();
+    ctx.globalCompositeOperation = opt.mode || 'source-over';
+    ctx.lineWidth = 0.7 * S;
+    for (var r = 0; r < ROWS; r += opt.webStep || 6) {
+      ctx.beginPath();
+      for (var c = 0; c < COLS; c++) {
+        var h = G[r][c] / MAX;
+        var p = isoPoint(c / (COLS - 1), r / (ROWS - 1), h, O);
+        if (c === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+      }
+      ctx.strokeStyle = rgba(ramp(lo + (hi - lo) * 0.5, k), opt.web);
+      ctx.stroke();
+    }
+    for (var c2 = 0; c2 < COLS; c2 += opt.webStep || 6) {
+      ctx.beginPath();
+      for (var r2 = 0; r2 < ROWS; r2++) {
+        var h2 = G[r2][c2] / MAX;
+        var p2 = isoPoint(c2 / (COLS - 1), r2 / (ROWS - 1), h2, O);
+        if (r2 === 0) ctx.moveTo(p2[0], p2[1]); else ctx.lineTo(p2[0], p2[1]);
+      }
+      ctx.strokeStyle = rgba(ramp(lo + (hi - lo) * 0.5, k), opt.web * 0.8);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.globalCompositeOperation = opt.mode || 'source-over';
+  for (var r3 = 0; r3 < ROWS; r3 += stepR) {
+    for (var c3 = 0; c3 < COLS; c3 += stepC) {
+      var h3 = G[r3][c3] / MAX;
+      if (h3 < (opt.floor == null ? 0.015 : opt.floor)) continue;
+      var jx = (rnd() - 0.5) * (opt.jitter || 0), jy = (rnd() - 0.5) * (opt.jitter || 0);
+      var p3 = isoPoint((c3 + jx) / (COLS - 1), (r3 + jy) / (ROWS - 1), h3, O);
+      var t = lo + (hi - lo) * h3;
+      ctx.fillStyle = rgba(ramp(t, k), (opt.aLo || 0.14) + (opt.aHi || 0.78) * Math.pow(h3, 0.65));
+      var rad = ((opt.rLo == null ? 0.5 : opt.rLo) + (opt.rHi == null ? 3.4 : opt.rHi) * Math.pow(h3, 1.25)) * S;
+      ctx.beginPath(); ctx.arc(p3[0], p3[1], rad, 0, 6.283185); ctx.fill();
+    }
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+}
+
+/* A distribution as dust.
+
+   The chart references do not draw a filled area under a curve. They scatter
+   the density into the plane and lay one hairline on top, so the spread reads
+   as spread and the estimate reads as an estimate. Points are rejection
+   sampled against the curve, so density on the page IS the density in the
+   data: no point is placed above the curve it belongs to. */
+function fxCloud(ctx, arr, x0, base, w, h, peak, opt) {
+  var n = opt.n || 4000, rnd = fxRand(opt.seed || 3);
+  var ramp = opt.ramp, k = opt.k;
+  ctx.save();
+  ctx.globalCompositeOperation = opt.mode || 'source-over';
+  /* `soft` feathers the top edge. Rejection sampling with a hard cut puts a
+     crisp boundary exactly where the curve is, which reads as a filled area
+     with a ragged top: the reference clouds have no boundary at all. Points
+     above the curve survive with a Gaussian probability in the overshoot, so
+     the density decays through the edge instead of stopping at it. */
+  var soft = opt.soft || 0;
+  var placed = 0, guard = 0;
+  while (placed < n && guard < n * 60) {
+    guard++;
+    var u = rnd(), v = rnd() * (1 + soft);
+    var y = sampleAt(arr, u) / peak;
+    var over = v - y;
+    var fade = 1;
+    if (over > 0) {
+      if (soft <= 0) continue;
+      fade = Math.exp(-(over / soft) * (over / soft) * 2.2);
+      if (rnd() > fade) continue;
+    }
+    placed++;
+    var px = x0 + u * w;
+    var py = base - v * h;
+    var t = (opt.tByX ? u : v / (1 + soft));
+    ctx.fillStyle = rgba(ramp(opt.t0 + (opt.t1 - opt.t0) * t, k), ((opt.aLo || 0.05) + (opt.aHi || 0.30) * (1 - v)) * fade);
+    var rad = (opt.rad || 1.5) * (0.5 + rnd());
+    ctx.beginPath(); ctx.arc(px, py, rad, 0, 6.283185); ctx.fill();
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* The field as a CSS gradient, at runtime.
+
+   fieldBlobCss in _dirs.cjs does this at generation time for washes that sit
+   behind markup. Those cannot follow a tweak chip, because they are baked
+   into the style attribute. This is the same construction in the browser, so
+   a board can hand the result to a template slot from renderVals and the wash
+   moves with everything else. Same nine-stop cosine-squared falloff. */
+function fxFieldCss(anchors, blobs, k) {
+  var out = [];
+  for (var i = 0; i < blobs.length; i++) {
+    var b = blobs[i];
+    var c = anchorRamp(anchors, b.t, k == null ? 1 : k);
+    var stops = [];
+    for (var j = 0; j <= 8; j++) {
+      var u = j / 8;
+      var f = Math.cos(u * Math.PI / 2); f = f * f;
+      stops.push('rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (b.a * f).toFixed(3) + ') ' + Math.round(u * 100) + '%');
+    }
+    var r = (b.r * 100).toFixed(1);
+    out.push('radial-gradient(ellipse ' + r + '% ' + r + '% at ' + (b.x * 100).toFixed(1) + '% ' + (b.y * 100).toFixed(1) + '%, ' + stops.join(', ') + ')');
+  }
+  return out.join(', ');
+}
+
+/* An organic mass, rather than a rectangle of field.
+
+   A gradient judged as a filled square reads flatter than the same gradient
+   as a shape with an edge and a direction: the reference work is nearly all
+   shapes. Masses are placed around a wobbling outline and one sits at the
+   centre, so the result has a soft boundary the eye can find without there
+   being an actual edge anywhere. Colour runs across the blob rather than out
+   from the middle, which is what stops it reading as a glow. */
+function fxOrganic(ctx, cx, cy, R, ramp, k, opt) {
+  var n = opt.n || 9;
+  var axis = opt.axis == null ? 2.2 : opt.axis;
+  ctx.save();
+  ctx.globalCompositeOperation = opt.mode || 'source-over';
+  for (var i = 0; i < n; i++) {
+    var ang = (i / n) * 6.283185 + (opt.rot || 0.4);
+    var wob = 0.60 + 0.40 * Math.sin(ang * 2 + 0.9) * 0.5 + 0.22 * Math.sin(ang * 3 + 2.1);
+    var d = R * (opt.spread == null ? 0.42 : opt.spread) * (0.55 + wob);
+    var t = opt.t0 + (opt.t1 - opt.t0) * (0.5 + 0.5 * Math.cos(ang - axis));
+    /* ex and ey stretch the placement, not the masses, so a shape can be
+       wide or tall without its edges hardening on the squeezed axis. */
+    fxMass(ctx, cx + Math.cos(ang) * d * (opt.ex == null ? 1 : opt.ex),
+      cy + Math.sin(ang) * d * (opt.ey == null ? 1 : opt.ey),
+      R * (0.58 + 0.20 * wob), ramp(t, k), opt.a == null ? 0.55 : opt.a);
+  }
+  /* The centre mass. Its boost is separate because the two grounds want
+     opposite things: on paper the masses multiply and a strong core reads as
+     depth, on a dark ground they ADD and a strong core stacks straight to
+     white, which is what turned every crossing into a blown-out middle. */
+  fxMass(ctx, cx, cy, R * 0.78, ramp((opt.t0 + opt.t1) / 2, k),
+    (opt.a == null ? 0.55 : opt.a) * (opt.core == null ? 1.15 : opt.core));
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* Colour that exists only inside the dots.
+
+   A gradient runs across the whole frame in SCREEN space. A mask says where
+   the object is. Dots are placed on a regular lattice, and each one takes the
+   gradient's colour at its own position. The ground between them is never
+   painted, so the object is made of colour without any colour being laid
+   down: the gradient is inferred from the dots rather than shown.
+
+   The mask returns coverage, 0 to 1, and coverage drives dot RADIUS, not
+   colour. That separation is the whole trick. Form comes from the size of the
+   dots, colour comes from where they sit, and the two never interfere: a
+   surface can turn away from the light and stay the same hue, which is what
+   stops it reading as a heatmap of itself.
+
+   A hexagonal lattice by default. On a square one the eye finds the rows and
+   columns before it finds the object. */
+function fxDotArt(ctx, W, H, ramp, k, opt) {
+  var pitch = opt.pitch || 14;
+  var rMax = opt.rMax == null ? pitch * 0.46 : opt.rMax;
+  var hex = opt.hex !== false;
+  var rowH = pitch * (hex ? 0.8660254 : 1);
+  var ax = opt.axis || [0, 0, 1, 1];
+  var dx = ax[2] - ax[0], dy = ax[3] - ax[1];
+  var len2 = dx * dx + dy * dy || 1;
+  var aLo = opt.aLo == null ? 0.30 : opt.aLo;
+  var aHi = opt.aHi == null ? 1.00 : opt.aHi;
+  var rPow = opt.rPow == null ? 0.55 : opt.rPow;
+  var floor = opt.floor == null ? 0.03 : opt.floor;
+  var lo = opt.t0 == null ? 0 : opt.t0, hi = opt.t1 == null ? 1 : opt.t1;
+
+  ctx.save();
+  ctx.globalCompositeOperation = opt.mode || 'source-over';
+  for (var r = 0; r * rowH <= H + rowH; r++) {
+    var y = r * rowH;
+    var off = (hex && (r % 2)) ? pitch * 0.5 : 0;
+    for (var x = off; x <= W + pitch; x += pitch) {
+      var u = x / W, v = y / H;
+      var cov = opt.mask(u, v, x, y);
+      if (!(cov > floor)) continue;
+      if (cov > 1) cov = 1;
+      var t = ((u - ax[0]) * dx + (v - ax[1]) * dy) / len2;
+      t = t < 0 ? 0 : (t > 1 ? 1 : t);
+      /* t0/t1 restrict which part of the gradient the object reads from. On
+         paper the pale end of a ramp is invisible against the page, so an
+         object there uses the deep half and still reads as the same gradient. */
+      t = lo + (hi - lo) * t;
+      var c = ramp(t, k);
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (aLo + (aHi - aLo) * cov).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, rMax * Math.pow(cov, rPow), 0, 6.283185);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* Is a point inside a projected face? Faces arrive already projected, as flat
+   arrays of x,y pairs, because the projection happens once per face rather
+   than once per lattice point. */
+function fxInPoly(px, py, p) {
+  var inside = false;
+  for (var i = 0, j = p.length - 2; i < p.length; j = i, i += 2) {
+    var xi = p[i], yi = p[i + 1], xj = p[j], yj = p[j + 1];
+    if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/* Stipple.
+
+   fxDotArt puts a dot at every lattice site and varies its RADIUS. That is a
+   halftone, and it reads as mechanical because the eye finds the lattice
+   before it finds the subject. The reference work does the opposite: dot size
+   is nearly constant and what varies is how MANY dots land in a given area.
+   Tone comes from density, and the positions are irregular.
+
+   So: rejection sampling against a density field. Candidates are thrown at
+   the frame and kept with probability equal to the field, which makes the
+   count per unit area proportional to the field by construction, with no
+   lattice anywhere. Colour still comes from where a dot lands, so a gradient
+   crosses the whole image while only the dots reveal it.
+
+   `glyph` matters more than it looks. The murmuration reference is not built
+   from circles: a mark with a direction to it reads as a thing rather than as
+   a dot, and a field of them reads as a flock. */
+function fxStipple(ctx, W, H, ramp, k, opt) {
+  var rnd = fxRand(opt.seed || 5);
+  var want = opt.count || 6000;
+  var ax = opt.axis || [0, 0, 1, 1];
+  var dx = ax[2] - ax[0], dy = ax[3] - ax[1];
+  var len2 = dx * dx + dy * dy || 1;
+  var lo = opt.t0 == null ? 0 : opt.t0, hi = opt.t1 == null ? 1 : opt.t1;
+  var rMin = opt.rMin == null ? 0.8 : opt.rMin;
+  var rMax = opt.rMax == null ? 2.4 : opt.rMax;
+  var aLo = opt.aLo == null ? 0.55 : opt.aLo;
+  var aHi = opt.aHi == null ? 1.0 : opt.aHi;
+  var glyph = opt.glyph || 'dot';
+  var dens = opt.density;
+
+  /* An envelope, not blind rejection.
+
+     Throwing candidates at the whole frame and keeping them with probability
+     equal to the density is correct and ruinously slow: a form that occupies
+     a twentieth of the frame at a tenth of full density needs two hundred
+     candidates per mark, and each one costs a density evaluation. Eight
+     panels of that took five seconds, and the canvas runtime kills a preview
+     that stops answering it. This board shipped broken for exactly that
+     reason, and no check here could see it, because the smoke test makes
+     drawing free and never looks at the clock.
+
+     So: sample the field once onto a coarse grid, pick a CELL in proportion
+     to its weight, then jitter inside it. Acceptance is against the cell's
+     own maximum rather than against 1, so it stays near certain wherever the
+     field is smooth and only does real work at a hard edge.
+
+     Each cell is probed at four points: the mean becomes its weight and the
+     max its envelope. Probing only the centre would under-estimate any cell a
+     hard edge crosses, and Erosion, Threshold and Skyline are all hard
+     edges. */
+  var G = opt.grid || 72;
+  var w = [], env = [], cum = [], run = 0, i;
+  for (i = 0; i < G * G; i++) {
+    var gx = i % G, gy = (i / G) | 0;
+    var m = 0, mx = 0;
+    for (var q = 0; q < 4; q++) {
+      var su = (gx + (q & 1 ? 0.75 : 0.25)) / G;
+      var sv = (gy + (q & 2 ? 0.75 : 0.25)) / G;
+      var d0 = dens(su, sv);
+      if (!(d0 > 0)) d0 = 0;
+      m += d0 * 0.25;
+      if (d0 > mx) mx = d0;
+    }
+    w[i] = m;
+    env[i] = mx * 1.18;
+    run += m;
+    cum[i] = run;
+  }
+  if (!(run > 0)) return 0;
+
+  var placed = 0, guard = 0, cap = want * 8;
+  var CACHE = {};
+  ctx.save();
+  ctx.globalCompositeOperation = opt.mode || 'source-over';
+  ctx.lineCap = 'round';
+  while (placed < want && guard < cap) {
+    guard++;
+    var target = rnd() * run;
+    var a0 = 0, b0 = G * G - 1;
+    while (a0 < b0) { var mid = (a0 + b0) >> 1; if (cum[mid] < target) a0 = mid + 1; else b0 = mid; }
+    var e = env[a0];
+    if (!(e > 0)) continue;
+    var cx0 = a0 % G, cy0 = (a0 / G) | 0;
+    var u = (cx0 + rnd()) / G, v = (cy0 + rnd()) / G;
+    var d = dens(u, v);
+    if (!(d > 0)) continue;
+    if (d < e && rnd() > d / e) continue;
+    placed++;
+    var x = u * W, y = v * H;
+    var t = ((u - ax[0]) * dx + (v - ax[1]) * dy) / len2;
+    t = t < 0 ? 0 : (t > 1 ? 1 : t);
+    var dd = d > 1 ? 1 : d;
+
+    /* Quantise, then cache the style string.
+
+       Every mark otherwise costs a full OKLCH to sRGB conversion, which is
+       two cube roots and three powers, plus a toFixed and four concatenations
+       to build the rgba string. At tens of thousands of marks that was the
+       single most expensive thing on the board, well ahead of the density
+       field. 128 steps of position and 32 of alpha are more resolution than a
+       stipple can show, and they turn tens of thousands of conversions into
+       at most four thousand. */
+    var ti = (t * 127) | 0, ai = (dd * 31) | 0;
+    var key = ti * 32 + ai;
+    var style = CACHE[key];
+    if (style === undefined) {
+      var c = ramp(lo + (hi - lo) * (ti / 127), k);
+      style = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (aLo + (aHi - aLo) * (ai / 31)).toFixed(3) + ')';
+      CACHE[key] = style;
+    }
+    ctx.fillStyle = style;
+    ctx.strokeStyle = style;
+    var r = rMin + (rMax - rMin) * rnd() * rnd();
+    if (glyph === 'square') {
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    } else if (glyph === 'dash') {
+      var an = (opt.angle == null ? 1.35 : opt.angle) + (rnd() - 0.5) * (opt.spin == null ? 0.5 : opt.spin);
+      ctx.lineWidth = r * 0.9;
+      ctx.beginPath();
+      ctx.moveTo(x - Math.cos(an) * r * 2.2, y - Math.sin(an) * r * 2.2);
+      ctx.lineTo(x + Math.cos(an) * r * 2.2, y + Math.sin(an) * r * 2.2);
+      ctx.stroke();
+    } else if (glyph === 'bird') {
+      /* Two strokes meeting at a point. Enough of a wing to read as one at
+         two millimetres and as texture at arm's length. */
+      var bb = (opt.angle == null ? 0 : opt.angle) + (rnd() - 0.5) * (opt.spin == null ? 0.9 : opt.spin);
+      var sz = r * 2.1, ca = Math.cos(bb), sa = Math.sin(bb);
+      ctx.lineWidth = Math.max(0.7, r * 0.62);
+      ctx.beginPath();
+      ctx.moveTo(x - ca * sz - sa * sz * 0.55, y - sa * sz + ca * sz * 0.55);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + ca * sz - sa * sz * 0.55, y + sa * sz + ca * sz * 0.55);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, 6.283185);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+  return placed;
+}
+
+/* A density field painted as ordinary shapes.
+
+   The abstract forms are closed-form maths, which is fine for a wash and
+   hopeless for anything that has to be RECOGNISED. A server rack is not an
+   equation; it is forty rectangles.
+
+   So: paint the subject onto a small offscreen canvas in greys, where white
+   is full density and black is none, then read it back once and hand out a
+   sampler. After that the subject is just a drawing function, and anything
+   that can be drawn can be stippled: a traced skyline, a wordmark, a logo,
+   a silhouette off a photograph.
+
+   Sampled at a fraction of the real size, because the stipple only ever asks
+   for a coarse envelope and a few thousand point queries. Bilinear on the way
+   out, so a hard edge lands somewhere sensible instead of on a pixel
+   boundary, and so the grain of the mask never shows through as its own
+   texture. */
+function fxMaskFrom(paint, W, H, sub) {
+  var s = sub || 3;
+  var c = document.createElement('canvas');
+  var cw = Math.max(4, Math.round(W / s)), ch = Math.max(4, Math.round(H / s));
+  c.width = cw; c.height = ch;
+  var g = c.getContext('2d');
+  g.fillStyle = '#000000';
+  g.fillRect(0, 0, cw, ch);
+  g.save();
+  g.scale(cw / W, ch / H);
+  paint(g, W, H);
+  g.restore();
+  var d = g.getImageData(0, 0, cw, ch).data;
+  return function (u, v) {
+    var x = u * cw - 0.5, y = v * ch - 0.5;
+    var x0 = Math.floor(x), y0 = Math.floor(y);
+    var fx = x - x0, fy = y - y0;
+    var x1 = x0 + 1, y1 = y0 + 1;
+    if (x0 < 0) x0 = 0; if (y0 < 0) y0 = 0;
+    if (x1 > cw - 1) x1 = cw - 1; if (y1 > ch - 1) y1 = ch - 1;
+    if (x0 > cw - 1) x0 = cw - 1; if (y0 > ch - 1) y0 = ch - 1;
+    var a = d[(y0 * cw + x0) * 4], b = d[(y0 * cw + x1) * 4];
+    var e = d[(y1 * cw + x0) * 4], f = d[(y1 * cw + x1) * 4];
+    return ((a + (b - a) * fx) + ((e + (f - e) * fx) - (a + (b - a) * fx)) * fy) / 255;
+  };
+}
+
+var A = [[[0.34,0.1985,272],[0.46,0.2096,262],[0.62,0.1521,250],[0.86,0.0372,238]],[[0.38,0.1925,292],[0.52,0.2675,304],[0.66,0.2427,316],[0.86,0.0583,330]],[[0.4,0.1452,8],[0.54,0.2136,20],[0.66,0.2027,34],[0.86,0.0442,60]],[[0.48,0.0963,160],[0.62,0.1768,148],[0.76,0.2197,138],[0.88,0.1029,120]],[[0.34,0.0123,250],[0.5,0.0172,248],[0.7,0.0165,246],[0.88,0.0038,244]],[[0.34,0.1985,272],[0.48,0.2781,284],[0.62,0.2518,304],[0.84,0.0817,326]],[[0.38,0.1838,300],[0.52,0.2383,326],[0.64,0.2612,352],[0.84,0.0505,30]],[[0.34,0.2123,268],[0.48,0.2524,300],[0.62,0.2703,336],[0.82,0.0617,20]],[[0.82,0.2113,150],[0.72,0.157,112],[0.62,0.1462,58],[0.5,0.1892,24]],[[0.36,0.2248,268],[0.52,0.0153,252],[0.7,0.1285,168],[0.88,0.1323,132]],[[0.3,0.0084,250],[0.48,0.0933,286],[0.66,0.2377,312],[0.86,0.0608,330]]];
+class Component extends DCLogic {
+  componentDidMount() { this.draw(); }
+  componentDidUpdate() { this.draw(); }
+  paint(d, pcv, anchors, k, gr) {
+    var ramp = function (t, kk) { return anchorRamp(anchors, t, kk); };
+    var dc = d.getContext('2d');
+    dc.globalCompositeOperation = 'source-over'; dc.globalAlpha = 1;
+    dc.fillStyle = '#131312'; dc.fillRect(0, 0, d.width, d.height);
+    fxField(dc, d.width, d.height, ramp, k, [{"x":0.82,"y":0.1,"r":0.76,"t":0.86,"a":0.98},{"x":0.1,"y":1.02,"r":0.82,"t":0.2,"a":0.96},{"x":1.1,"y":0.62,"r":0.5,"t":0.58,"a":0.72}], 'lighter');
+    fxGrain(dc, d.width, d.height, gr, 7, 1);
+
+    var pc = pcv.getContext('2d');
+    pc.globalCompositeOperation = 'source-over'; pc.globalAlpha = 1;
+    pc.fillStyle = '#FFFFFF'; pc.fillRect(0, 0, pcv.width, pcv.height);
+    fxOrganic(pc, pcv.width * 0.5, pcv.height * 0.52, pcv.width * 0.40, ramp, k, {
+      t0: 0.05, t1: 0.95, a: 0.60, mode: 'multiply', axis: 2.4
+    });
+    fxGrain(pc, pcv.width, pcv.height, gr * 0.8, 9, 1);
+  }
+  draw() {
+    if (!document.getElementById('d0')) { requestAnimationFrame(this.draw.bind(this)); return; }
+    var k = this.props.chroma != null ? this.props.chroma : 1;
+    var gr = this.props.grain != null ? this.props.grain : 0.06;
+      this.paint(document.getElementById('d0'), document.getElementById('p0'), A[0], k, gr);
+      this.paint(document.getElementById('d1'), document.getElementById('p1'), A[1], k, gr);
+      this.paint(document.getElementById('d2'), document.getElementById('p2'), A[2], k, gr);
+      this.paint(document.getElementById('d3'), document.getElementById('p3'), A[3], k, gr);
+      this.paint(document.getElementById('d4'), document.getElementById('p4'), A[4], k, gr);
+      this.paint(document.getElementById('d5'), document.getElementById('p5'), A[5], k, gr);
+      this.paint(document.getElementById('d6'), document.getElementById('p6'), A[6], k, gr);
+      this.paint(document.getElementById('d7'), document.getElementById('p7'), A[7], k, gr);
+      this.paint(document.getElementById('d8'), document.getElementById('p8'), A[8], k, gr);
+      this.paint(document.getElementById('d9'), document.getElementById('p9'), A[9], k, gr);
+      this.paint(document.getElementById('d10'), document.getElementById('p10'), A[10], k, gr);
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

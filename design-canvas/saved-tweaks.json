@@ -1,0 +1,13 @@
+{
+  "_note": "Tweak values saved from the published canvas by John, read back with seed-canvas --extract. The generator does NOT read this file: it is here so a rebuild cannot silently lose them. Bake them into _variants.cjs when they are decided.",
+  "source": "artifact f26c1b51, version 1788269066-fed1",
+  "EmberSteelRow.dc.html": {
+    "chroma": 1,
+    "grain": 0.075,
+    "coolEnd": "#002254",
+    "warmEnd": "#348483",
+    "warmSpread": 70,
+    "balance": 0.61,
+    "_generatorDefaults": { "coolEnd": "#002254", "warmEnd": "#7E3F1A", "warmSpread": 38, "balance": 0.444 }
+  }
+}
