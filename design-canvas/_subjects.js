@@ -190,34 +190,83 @@ function subjCity(g, W, H) {
 }
 
 /* ----------------------------------------------------------------- energy */
-/* Turbines. The most legible silhouette in the set: three blades and a tower
-   and nothing else needed. */
+/* Turbines.
+
+   The first version was a pinwheel on a stick and it looked cheap: blades
+   drawn as straight tapers from a wide root to a needle tip, so at stipple
+   density both ends thinned into nothing and what survived was three spindly
+   spokes. Three faults, all worth keeping written down.
+
+   A BLADE IS NOT A TRIANGLE. Its chord is widest about a third of the way out
+   and it narrows from there, so it is drawn as four points with a shoulder
+   rather than two. The tip keeps real width, because a tip thinner than the
+   dot pitch is not a tip, it is a gap.
+
+   THE NACELLE IS WHAT MAKES IT A TURBINE. Without the body behind the hub the
+   silhouette is a child's windmill. It is short, it is horizontal, and it is
+   the one detail that settles what the object is.
+
+   ROTOR ANGLES ARE CHOSEN, NOT SCATTERED. Multiples of an arbitrary constant
+   read as three machines caught mid-fault. One blade near vertical on the
+   nearest turbine and a small offset on the others reads as a working field. */
 function subjEnergy(g, W, H) {
   var base = H * 0.86;
-  var T = [[0.24, 1.00], [0.53, 0.78], [0.76, 0.58]];
+  /* x, scale, rotor phase. The near one is upright, so the eye gets a clean
+     three-blade star before it has to read the two behind it. */
+  var T = [[0.26, 1.00, -1.5708, SUB_SOLID], [0.55, 0.74, -1.1, SUB_FACE], [0.79, 0.52, -1.9, SUB_SIDE]];
+
   for (var i = 0; i < T.length; i++) {
-    var cx = T[i][0] * W, s = T[i][1];
-    var th = H * 0.56 * s, tw = W * 0.016 * s;
+    var cx = T[i][0] * W, s = T[i][1], tone = T[i][3];
+    var th = H * 0.54 * s;
     var hubY = base - th;
-    subPoly(g, [cx - tw * 1.5, base, cx + tw * 1.5, base, cx + tw * 0.55, hubY, cx - tw * 0.55, hubY],
-      i === 0 ? SUB_SOLID : SUB_FACE);
-    var R = W * 0.145 * s, rot = i * 0.7;
+    var tw = W * 0.020 * s;
+
+    /* Tower. A shallow taper with a flare at the foot; a parallel column
+       reads as a pipe. */
+    subPoly(g, [
+      cx - tw * 1.55, base, cx + tw * 1.55, base,
+      cx + tw * 0.95, base - th * 0.12, cx + tw * 0.46, hubY,
+      cx - tw * 0.46, hubY, cx - tw * 0.95, base - th * 0.12
+    ], tone);
+
+    /* Nacelle, sitting behind the hub and reaching back. */
+    subPoly(g, [
+      cx - tw * 0.55, hubY - tw * 0.80, cx + tw * 2.60, hubY - tw * 0.62,
+      cx + tw * 3.05, hubY, cx + tw * 2.60, hubY + tw * 0.62,
+      cx - tw * 0.55, hubY + tw * 0.80
+    ], tone);
+
+    /* Three blades. Root, shoulder at a third of span, then a tip that keeps
+       width. Drawn as a closed quad per side of the spar. */
+    var R = W * 0.150 * s, rot = T[i][2];
     for (var b = 0; b < 3; b++) {
       var a = rot + b * 2.0944;
-      var ex = cx + Math.cos(a) * R, ey = hubY + Math.sin(a) * R;
+      var ca = Math.cos(a), sa = Math.sin(a);
+      var nx = -sa, ny = ca;
+      var root = tw * 0.62, shoulder = tw * 1.15, tip = tw * 0.34;
+      var sh = R * 0.34;
       subPoly(g, [
-        cx + Math.cos(a + 1.5708) * tw * 0.9, hubY + Math.sin(a + 1.5708) * tw * 0.9,
-        ex + Math.cos(a + 1.5708) * tw * 0.18, ey + Math.sin(a + 1.5708) * tw * 0.18,
-        ex, ey,
-        cx + Math.cos(a - 1.5708) * tw * 0.9, hubY + Math.sin(a - 1.5708) * tw * 0.9
-      ], i === 0 ? SUB_SOLID : SUB_FACE);
+        cx + nx * root, hubY + ny * root,
+        cx + ca * sh + nx * shoulder, hubY + sa * sh + ny * shoulder,
+        cx + ca * R + nx * tip, hubY + sa * R + ny * tip,
+        cx + ca * R * 1.02, hubY + sa * R * 1.02,
+        cx + ca * R - nx * tip, hubY + sa * R - ny * tip,
+        cx + ca * sh - nx * shoulder * 0.55, hubY + sa * sh - ny * shoulder * 0.55,
+        cx - nx * root, hubY - ny * root
+      ], tone);
     }
+
+    /* Hub, last and solid, so the three blades read as joined. */
     g.fillStyle = SUB_SOLID;
     g.beginPath();
-    g.arc(cx, hubY, tw * 1.25, 0, 6.283185);
+    g.arc(cx, hubY, tw * 1.05, 0, 6.283185);
     g.fill();
   }
-  subRect(g, 0, base, W, H * 0.010, SUB_SIDE);
+
+  /* Ground, as a band of tone rather than a rule. A hairline reads as a
+     drawn line under the object; a band reads as the ground it stands on. */
+  subRect(g, 0, base, W, H * 0.020, SUB_SIDE);
+  subRect(g, 0, base + H * 0.020, W, H * 0.030, SUB_GHOST);
 }
 
 /* ----------------------------------------------------------------- a mark */

@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Martian+Mono:wght@200..600&amp;display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #2B2B2A; text-decoration: none; }
+    a:hover { color: #131312; }
+    .mk circle { fill: #131312; }
+    .mono { font-family: 'Martian Mono', ui-monospace, monospace; font-weight: 300; letter-spacing: -0.012em; font-variant-numeric: tabular-nums; }
+    
+  </style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; background: #FFFFFF; font-family: 'Familjen Grotesk', system-ui, sans-serif; color: #131312;">
+  
+  <div style="position: relative; display: flex; flex-direction: column; height: 100%; padding: 40px 64px 30px 64px; box-sizing: border-box;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid #EBEBEA; flex-shrink: 0;">
+      <span class="mono" style="font-size: 9px; letter-spacing: 0.06em; color: #8C8C8A;">ELEVEN ONE RESEARCH &#183; PIECE 001</span>
+      <span class="mono" style="font-size: 9px; letter-spacing: 0.06em; color: #8C8C8A;">04 &#183; THE CLAIM</span>
+    </div>
+    
+    <div style="flex-grow: 1; display: flex; gap: 56px; padding-top: 34px; align-items: flex-start;">
+      <div style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px;">
+        <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #8C8C8A;">CLAIM 1 OF 3</span>
+        <p style="margin: 0; font-size: 21px; line-height: 30px; font-weight: 500; letter-spacing: -0.02em; text-wrap: pretty;">Half the universe reports a gross margin between 23.1% and 59.7%, and about one company in six sits within five points of the 38.8% median.</p>
+      </div>
+      <div style="flex-grow: 1; display: flex; flex-direction: column; border-top: 1px solid #DEDEDD;">
+        
+        <div style="display: flex; gap: 28px; padding: 17px 0; border-bottom: 1px solid #EBEBEA;">
+          <span class="mono" style="width: 92px; flex-shrink: 0; font-size: 9px; letter-spacing: 0.06em; color: #8C8C8A; padding-top: 3px;">RESTS ON</span>
+          <p style="margin: 0; font-size: 13px; line-height: 21px; color: #4A4A48; text-wrap: pretty;">SEC XBRL frames, us-gaap Revenues and GrossProfit, CY2024 annual. 2,186 registrants, retrieved 2026-08-05.</p>
+        </div>
+        <div style="display: flex; gap: 28px; padding: 17px 0; border-bottom: 1px solid #EBEBEA;">
+          <span class="mono" style="width: 92px; flex-shrink: 0; font-size: 9px; letter-spacing: 0.06em; color: #8C8C8A; padding-top: 3px;">ASSUMES</span>
+          <p style="margin: 0; font-size: 13px; line-height: 21px; color: #4A4A48; text-wrap: pretty;">As-reported gross profit is comparable across filers, which it is not perfectly: cost-of-revenue policy varies. The one-in-six figure is interpolated from 2.6-point bins and is good to about a point. The percentiles are exact.</p>
+        </div>
+        <div style="display: flex; gap: 28px; padding: 17px 0; border-bottom: 1px solid #EBEBEA;">
+          <span class="mono" style="width: 92px; flex-shrink: 0; font-size: 9px; letter-spacing: 0.06em; color: #8C8C8A; padding-top: 3px;">BREAKS IF</span>
+          <p style="margin: 0; font-size: 13px; line-height: 21px; color: #4A4A48; text-wrap: pretty;">The 221 excluded filers are not random with respect to margin. We have not tested that.</p>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-shrink: 0; padding-top: 10px;">
+      <span class="mono" style="font-size: 9px; color: #8C8C8A;">Retrieved 2026-08-05</span>
+      <span class="mono" style="font-size: 9px; color: #8C8C8A;">18</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"chroma":{"editor":"range","default":1,"min":0,"max":1.6,"step":0.05,"section":"Body Claim","tsType":"number"},"grain":{"editor":"range","default":0.05,"min":0,"max":0.12,"step":0.005,"section":"Body Claim","tsType":"number"}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

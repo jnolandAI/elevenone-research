@@ -1,18 +1,6 @@
 {
   "pages": [
     {
-      "id": "page-1",
-      "name": "Report"
-    },
-    {
-      "id": "page-2",
-      "name": "Site"
-    },
-    {
-      "id": "page-3",
-      "name": "Ember candidates"
-    },
-    {
       "id": "page-4",
       "name": "Gradient palettes"
     },
@@ -27,395 +15,33 @@
     {
       "id": "page-7",
       "name": "Hero images"
+    },
+    {
+      "id": "page-8",
+      "name": "Homepages"
+    },
+    {
+      "id": "page-9",
+      "name": "Report covers"
+    },
+    {
+      "id": "page-10",
+      "name": "Body pages"
+    },
+    {
+      "id": "page-11",
+      "name": "The whole set"
     }
   ],
   "artboards": [
     {
       "file": "Main.dc.html",
-      "page": "page-1",
-      "x": 0,
-      "y": 0,
-      "w": 2680,
-      "h": 820,
-      "title": "What varies"
-    },
-    {
-      "file": "EmberCover.dc.html",
-      "page": "page-1",
-      "x": 0,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Cover"
-    },
-    {
-      "file": "EmberCoverLight.dc.html",
-      "page": "page-1",
-      "x": 1400,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Cover, light"
-    },
-    {
-      "file": "EmberSection.dc.html",
-      "page": "page-1",
-      "x": 2800,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Section"
-    },
-    {
-      "file": "EmberRead.dc.html",
-      "page": "page-1",
-      "x": 4200,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Read"
-    },
-    {
-      "file": "EmberExhibit.dc.html",
-      "page": "page-1",
-      "x": 5600,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Exhibit"
-    },
-    {
-      "file": "EmberPanel.dc.html",
-      "page": "page-1",
-      "x": 7000,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Panel"
-    },
-    {
-      "file": "EmberClose.dc.html",
-      "page": "page-1",
-      "x": 8400,
-      "y": 1020,
-      "w": 1280,
-      "h": 720,
-      "title": "Ember  Close"
-    },
-    {
-      "file": "SignalCover.dc.html",
-      "page": "page-1",
-      "x": 0,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Cover"
-    },
-    {
-      "file": "SignalCoverLight.dc.html",
-      "page": "page-1",
-      "x": 1400,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Cover, light"
-    },
-    {
-      "file": "SignalSection.dc.html",
-      "page": "page-1",
-      "x": 2800,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Section"
-    },
-    {
-      "file": "SignalRead.dc.html",
-      "page": "page-1",
-      "x": 4200,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Read"
-    },
-    {
-      "file": "SignalExhibit.dc.html",
-      "page": "page-1",
-      "x": 5600,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Exhibit"
-    },
-    {
-      "file": "SignalPanel.dc.html",
-      "page": "page-1",
-      "x": 7000,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Panel"
-    },
-    {
-      "file": "SignalClose.dc.html",
-      "page": "page-1",
-      "x": 8400,
-      "y": 1940,
-      "w": 1280,
-      "h": 720,
-      "title": "Signal  Close"
-    },
-    {
-      "file": "PigmentCover.dc.html",
-      "page": "page-1",
-      "x": 0,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Cover"
-    },
-    {
-      "file": "PigmentCoverLight.dc.html",
-      "page": "page-1",
-      "x": 1400,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Cover, light"
-    },
-    {
-      "file": "PigmentSection.dc.html",
-      "page": "page-1",
-      "x": 2800,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Section"
-    },
-    {
-      "file": "PigmentRead.dc.html",
-      "page": "page-1",
-      "x": 4200,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Read"
-    },
-    {
-      "file": "PigmentExhibit.dc.html",
-      "page": "page-1",
-      "x": 5600,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Exhibit"
-    },
-    {
-      "file": "PigmentPanel.dc.html",
-      "page": "page-1",
-      "x": 7000,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Panel"
-    },
-    {
-      "file": "PigmentClose.dc.html",
-      "page": "page-1",
-      "x": 8400,
-      "y": 2860,
-      "w": 1280,
-      "h": 720,
-      "title": "Pigment  Close"
-    },
-    {
-      "file": "AchromaticCover.dc.html",
-      "page": "page-1",
-      "x": 0,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Cover"
-    },
-    {
-      "file": "AchromaticCoverLight.dc.html",
-      "page": "page-1",
-      "x": 1400,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Cover, light"
-    },
-    {
-      "file": "AchromaticSection.dc.html",
-      "page": "page-1",
-      "x": 2800,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Section"
-    },
-    {
-      "file": "AchromaticRead.dc.html",
-      "page": "page-1",
-      "x": 4200,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Read"
-    },
-    {
-      "file": "AchromaticExhibit.dc.html",
-      "page": "page-1",
-      "x": 5600,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Exhibit"
-    },
-    {
-      "file": "AchromaticPanel.dc.html",
-      "page": "page-1",
-      "x": 7000,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Panel"
-    },
-    {
-      "file": "AchromaticClose.dc.html",
-      "page": "page-1",
-      "x": 8400,
-      "y": 3780,
-      "w": 1280,
-      "h": 720,
-      "title": "Achromatic  Close"
-    },
-    {
-      "file": "EmberWebHome.dc.html",
-      "page": "page-2",
-      "x": 0,
-      "y": 0,
-      "w": 1440,
-      "h": 2100,
-      "title": "Ember  Home"
-    },
-    {
-      "file": "EmberWebResearch.dc.html",
-      "page": "page-2",
-      "x": 1560,
-      "y": 0,
-      "w": 1440,
-      "h": 1500,
-      "title": "Ember  Research"
-    },
-    {
-      "file": "EmberWebArticle.dc.html",
-      "page": "page-2",
-      "x": 3120,
-      "y": 0,
-      "w": 1440,
-      "h": 2260,
-      "title": "Ember  Article"
-    },
-    {
-      "file": "SignalWebHome.dc.html",
-      "page": "page-2",
-      "x": 0,
-      "y": 2460,
-      "w": 1440,
-      "h": 2100,
-      "title": "Signal  Home"
-    },
-    {
-      "file": "SignalWebResearch.dc.html",
-      "page": "page-2",
-      "x": 1560,
-      "y": 2460,
-      "w": 1440,
-      "h": 1500,
-      "title": "Signal  Research"
-    },
-    {
-      "file": "SignalWebArticle.dc.html",
-      "page": "page-2",
-      "x": 3120,
-      "y": 2460,
-      "w": 1440,
-      "h": 2260,
-      "title": "Signal  Article"
-    },
-    {
-      "file": "PigmentWebHome.dc.html",
-      "page": "page-2",
-      "x": 0,
-      "y": 4920,
-      "w": 1440,
-      "h": 2100,
-      "title": "Pigment  Home"
-    },
-    {
-      "file": "PigmentWebResearch.dc.html",
-      "page": "page-2",
-      "x": 1560,
-      "y": 4920,
-      "w": 1440,
-      "h": 1500,
-      "title": "Pigment  Research"
-    },
-    {
-      "file": "PigmentWebArticle.dc.html",
-      "page": "page-2",
-      "x": 3120,
-      "y": 4920,
-      "w": 1440,
-      "h": 2260,
-      "title": "Pigment  Article"
-    },
-    {
-      "file": "AchromaticWebHome.dc.html",
-      "page": "page-2",
-      "x": 0,
-      "y": 7380,
-      "w": 1440,
-      "h": 2100,
-      "title": "Achromatic  Home"
-    },
-    {
-      "file": "AchromaticWebResearch.dc.html",
-      "page": "page-2",
-      "x": 1560,
-      "y": 7380,
-      "w": 1440,
-      "h": 1500,
-      "title": "Achromatic  Research"
-    },
-    {
-      "file": "AchromaticWebArticle.dc.html",
-      "page": "page-2",
-      "x": 3120,
-      "y": 7380,
-      "w": 1440,
-      "h": 2260,
-      "title": "Achromatic  Article"
-    },
-    {
-      "file": "EmberWarmRow.dc.html",
-      "page": "page-3",
-      "x": 0,
-      "y": 0,
-      "w": 9504,
-      "h": 818,
-      "title": "Ember, warm only  all seven pages, one set of chips"
-    },
-    {
-      "file": "EmberSteelRow.dc.html",
-      "page": "page-3",
-      "x": 0,
-      "y": 1038,
-      "w": 9504,
-      "h": 818,
-      "title": "Ember, steel end  all seven pages, one set of chips"
+      "page": "page-4",
+      "x": -100,
+      "y": -1300,
+      "w": 2200,
+      "h": 1080,
+      "title": "The visual system"
     },
     {
       "file": "PaletteMeridian.dc.html",
@@ -506,113 +132,171 @@
       "w": 3840,
       "h": 1260,
       "title": "Hero images  pictures of things"
+    },
+    {
+      "file": "AppHomeHero.dc.html",
+      "page": "page-8",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2000,
+      "title": "Home  Hero in the band"
+    },
+    {
+      "file": "AppHomeField.dc.html",
+      "page": "page-8",
+      "x": 1580,
+      "y": 0,
+      "w": 1440,
+      "h": 2000,
+      "title": "Home  Field in the band"
+    },
+    {
+      "file": "AppHomeForm.dc.html",
+      "page": "page-8",
+      "x": 3160,
+      "y": 0,
+      "w": 1440,
+      "h": 2000,
+      "title": "Home  Form on a paper band"
+    },
+    {
+      "file": "AppHomeQuiet.dc.html",
+      "page": "page-8",
+      "x": 4740,
+      "y": 0,
+      "w": 1440,
+      "h": 2000,
+      "title": "Home  colour once, below the fold"
+    },
+    {
+      "file": "AppCoverHero.dc.html",
+      "page": "page-9",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  Hero alone"
+    },
+    {
+      "file": "AppCoverFieldHero.dc.html",
+      "page": "page-9",
+      "x": 1440,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  Field under a Hero"
+    },
+    {
+      "file": "AppCoverField.dc.html",
+      "page": "page-9",
+      "x": 2880,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  Field alone"
+    },
+    {
+      "file": "AppCoverPaper.dc.html",
+      "page": "page-9",
+      "x": 0,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  Hero on paper"
+    },
+    {
+      "file": "AppCoverForm.dc.html",
+      "page": "page-9",
+      "x": 1440,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  Form, against the rule"
+    },
+    {
+      "file": "AppCoverSlate.dc.html",
+      "page": "page-9",
+      "x": 2880,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Cover  the piece that declines colour"
+    },
+    {
+      "file": "AppBodyOpen.dc.html",
+      "page": "page-10",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  opening, no device"
+    },
+    {
+      "file": "AppBodySection.dc.html",
+      "page": "page-10",
+      "x": 1440,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  section opener, Field"
+    },
+    {
+      "file": "AppBodyFigure.dc.html",
+      "page": "page-10",
+      "x": 2880,
+      "y": 0,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  one figure, gradient as encoding"
+    },
+    {
+      "file": "AppBodyPair.dc.html",
+      "page": "page-10",
+      "x": 0,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  two figures, no colour"
+    },
+    {
+      "file": "AppBodyRead.dc.html",
+      "page": "page-10",
+      "x": 1440,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  running text, Form in the margin"
+    },
+    {
+      "file": "AppBodyClaim.dc.html",
+      "page": "page-10",
+      "x": 2880,
+      "y": 1020,
+      "w": 1280,
+      "h": 720,
+      "title": "Body  the claim, no device"
+    },
+    {
+      "file": "SetOnDark.dc.html",
+      "page": "page-11",
+      "x": 0,
+      "y": 0,
+      "w": 2592,
+      "h": 1690,
+      "title": "The whole set  eleven members, one subject"
+    },
+    {
+      "file": "SetOnPaper.dc.html",
+      "page": "page-11",
+      "x": 0,
+      "y": 1950,
+      "w": 2044,
+      "h": 1314,
+      "title": "The set on paper  six members, one ordered encoding"
     }
   ],
   "annotations": [
-    {
-      "id": "rep-ember",
-      "page": "page-1",
-      "x": -580,
-      "y": 1060,
-      "w": 440,
-      "text": "Ember\n\nColour is light. The surface emits it.\n\nTradeoff: Warmest and most atmospheric of the four, and the least neutral. Its field travels violet to cream the long way round, through rose, which is where the reference gradients live. On white it is the most obviously designed of the four and the hardest to keep quiet on a dense page."
-    },
-    {
-      "id": "rep-signal",
-      "page": "page-1",
-      "x": -580,
-      "y": 1980,
-      "w": 440,
-      "text": "Signal\n\nColour is one hue. Brightness carries the quantity.\n\nTradeoff: The most disciplined and the easiest to hold across a hundred pages. Its field is a single-hue wash, so nothing ever clashes and nothing ever surprises. Also the least distinctive: a blue ramp on a dark ground is what every analytics product already looks like."
-    },
-    {
-      "id": "rep-pigment",
-      "page": "page-1",
-      "x": -580,
-      "y": 2900,
-      "w": 440,
-      "text": "Pigment\n\nColour is ink. The surface is screened, not lit.\n\nTradeoff: The only one of the four that looks printed rather than rendered, and the best greyscale survivor: its light ramp keeps a luminance gap of 0.076 across six samples. The screening costs fine detail, so the two summits read as texture before they read as position."
-    },
-    {
-      "id": "rep-achromatic",
-      "page": "page-1",
-      "x": -580,
-      "y": 3820,
-      "w": 440,
-      "text": "Achromatic\n\nNo colour in the field. One accent, in the interface only.\n\nTradeoff: This is the current constitution, and it is the null the other three have to beat. It never fights the type and it prints anywhere. It also cannot encode a second variable, so every exhibit that needs one has to spend position or shape instead."
-    },
-    {
-      "id": "how-to-read",
-      "page": "page-1",
-      "x": -580,
-      "y": 40,
-      "w": 440,
-      "text": "Read DOWN a column to compare one page across all four directions.\nRead ACROSS a row to see one direction built out.\n\nHeld constant everywhere: type, words, objects, layout, and which pages are dark or light. Only palette and surface treatment vary.\n\nColumns 1 and 2 are the same cover on a dark ground and on white. Columns 4, 5 and 7 are white pages. The site is on the second page."
-    },
-    {
-      "id": "web-ember",
-      "page": "page-2",
-      "x": -580,
-      "y": 40,
-      "w": 440,
-      "text": "Ember on the site.\n\nColour is light. The surface emits it."
-    },
-    {
-      "id": "web-signal",
-      "page": "page-2",
-      "x": -580,
-      "y": 2500,
-      "w": 440,
-      "text": "Signal on the site.\n\nColour is one hue. Brightness carries the quantity."
-    },
-    {
-      "id": "web-pigment",
-      "page": "page-2",
-      "x": -580,
-      "y": 4960,
-      "w": 440,
-      "text": "Pigment on the site.\n\nColour is ink. The surface is screened, not lit."
-    },
-    {
-      "id": "web-achromatic",
-      "page": "page-2",
-      "x": -580,
-      "y": 7420,
-      "w": 440,
-      "text": "Achromatic on the site.\n\nNo colour in the field. One accent, in the interface only."
-    },
-    {
-      "id": "site-note",
-      "page": "page-2",
-      "x": -580,
-      "y": -300,
-      "w": 440,
-      "text": "The same four directions at 1440 wide.\n\nHome carries a dark hero and a light body, so both grounds are on one page. Research and Article are white pages with the field doing the work.\n\nTitles in brackets are placeholders for unpublished work, not findings."
-    },
-    {
-      "id": "var-emberwarm",
-      "page": "page-3",
-      "x": -580,
-      "y": 40,
-      "w": 440,
-      "text": "Ember, warm only\n\nColour is light, and the light is fire. One warm family, no cool end."
-    },
-    {
-      "id": "var-embersteel",
-      "page": "page-3",
-      "x": -580,
-      "y": 1078,
-      "w": 440,
-      "text": "Ember, steel end\n\nColour is light. The cool end is blue rather than violet."
-    },
-    {
-      "id": "variant-note",
-      "page": "page-3",
-      "x": -580,
-      "y": -420,
-      "w": 440,
-      "text": "Ember with the rose and the violet removed, two ways.\n\nEmber as built hits the purple and pink band at 19 of 41 field samples. Both rows here are clear of it, and clear of green.\n\nWarm only is one family, red through amber to cream, 61 to 66 degrees of hue. Steel end keeps a cool anchor but makes it blue: blending in OKLab runs blue to orange through the desaturated middle, so the path never reaches purple.\n\nEach row is ONE artboard holding all seven pages, so its chips move every page at once. Six of the seven carry a field and follow the chips. The exhibit does not: its colour is encoding, and encoding stays on the encoding ramp.\n\nEverything else is Ember. Same blob layout, same grain, same dots, same words."
-    },
     {
       "id": "palette-note",
       "page": "page-4",
@@ -660,10 +344,170 @@
       "y": 0,
       "w": 470,
       "text": "HERO IMAGES. The pipeline, not the five subjects.\n\nA subject is a function that paints greys onto a canvas: white is full dot density, black is none. That canvas is read back once as a density field and stippled. Anything that can be DRAWN can be stippled, so a traced skyline, a wordmark or a client logo enters the same way and comes out looking like the others.\n\nThese five exist so the sixth has something to be consistent with. Adding one means writing one paint function in _subjects.js.\n\nTwo rules decide whether a subject reads:\n\nSILHOUETTE FIRST. If it is not recognisable as a flat cut-out it will not become recognisable once it is made of dots. The crane boom is what makes the port a port; without it the same drawing is a warehouse.\n\nDETAIL AS TONE, NOT LINE. A stipple cannot draw anything thinner than its own dot pitch, so panel gaps, window grids and structure are painted as areas of different grey, never as strokes.\n\nCounts here are five times the forms board. These have to be READ rather than felt, and a rack row at nine thousand marks is a smear."
+    },
+    {
+      "id": "home-note-0",
+      "page": "page-8",
+      "x": 0,
+      "y": 2060,
+      "w": 1320,
+      "text": "A named subject behind the headline. It says what the practice looks at before a word is read, and it is the only one of the four that could not be any other research site."
+    },
+    {
+      "id": "home-note-1",
+      "page": "page-8",
+      "x": 1580,
+      "y": 2060,
+      "w": 1320,
+      "text": "The band is weather. Quietest of the four behind a long headline and the one that will still look right when the featured piece changes, because it is about nothing in particular."
+    },
+    {
+      "id": "home-note-2",
+      "page": "page-8",
+      "x": 3160,
+      "y": 2060,
+      "w": 1320,
+      "text": "A light band, and a Form rather than a subject. Decoration doing the work a Hero would do, which is allowed here in a way it is not on a cover: nobody expects a homepage band to be a picture of anything."
+    },
+    {
+      "id": "home-note-3",
+      "page": "page-8",
+      "x": 4740,
+      "y": 2060,
+      "w": 1320,
+      "text": "No colour in the band. It carries the same field construction as the second board with the chroma taken out, because flat black read as a failed render rather than as a decision. The page spends its entire colour budget on one figure, where the gradient carries an ordered variable and is therefore doing work rather than setting a mood."
+    },
+    {
+      "id": "home-key",
+      "page": "page-8",
+      "x": -640,
+      "y": 0,
+      "w": 480,
+      "text": "FOUR HOMEPAGES. The hero band is the only thing that varies.\n\nNavigation, stats, cards, the featured figure and the footer are identical on all four, and all four run cobalt-iris. What moves is which device sits in the band, and on the fourth, whether there is a device at all.\n\nThe site is the harder test. A cover has nothing on it but the image and the title; a homepage makes a device share the page with navigation, three cards and a footer, and survive the featured piece changing next month.\n\nTWO THINGS ARE FIXED HERE THAT PAGE 2 GETS WRONG.\n\nFurniture is greyscale. The subscribe chip, the nav links and the section rules are grey on every one of these. The boards on page 2 colour all three off the direction accent, which is the thing the constitution forbids: a gradient is atmosphere or it is an ordered encoding, and it is never applied to an interface element.\n\nThe cards carry a hairline, not a gradient. Page 2 puts an 84 pixel wash on top of every card. That is a gradient spent on three pieces of furniture, and it is why those boards have no colour left to spend on anything that matters.\n\nThe featured figure below the fold is coloured on all four, and it is the same figure. On the fourth board it is the ONLY colour on the page."
+    },
+    {
+      "id": "cov-note-0",
+      "page": "page-9",
+      "x": 0,
+      "y": 774,
+      "w": 1200,
+      "text": "One device. The subject is the whole image and the ground stays black behind it. This is the shape the guidance recommends for the front of a piece."
+    },
+    {
+      "id": "cov-note-1",
+      "page": "page-9",
+      "x": 1440,
+      "y": 774,
+      "w": 1200,
+      "text": "Two devices in one composition, which the guidance allows only here and has never tested. The field runs at half its alpha and is held to the deep end of the ramp, because on a dark ground a field and a stipple composite additively and go to white together. At full strength the racks came out of a lit sky and stopped reading as an object."
+    },
+    {
+      "id": "cov-note-2",
+      "page": "page-9",
+      "x": 2880,
+      "y": 774,
+      "w": 1200,
+      "text": "No subject at all. The type is the cover and the field is weather behind it. Cheapest of the six to make, and the hardest to tell apart from the next piece that does the same thing."
+    },
+    {
+      "id": "cov-note-3",
+      "page": "page-9",
+      "x": 0,
+      "y": 1794,
+      "w": 1200,
+      "text": "The same device on white. The stipple reads the deep half of the ramp only, because the pale end of any gradient is invisible against the page. Marks are opaque here rather than additive, so density does all the work."
+    },
+    {
+      "id": "cov-note-4",
+      "page": "page-9",
+      "x": 1440,
+      "y": 1794,
+      "w": 1200,
+      "text": "An abstract Form fronting a piece, which the guidance forbids: a reader cannot name it, so it says the piece is about dissolution in general rather than about margin. Here to be judged, not to be copied."
+    },
+    {
+      "id": "cov-note-5",
+      "page": "page-9",
+      "x": 2880,
+      "y": 1794,
+      "w": 1200,
+      "text": "The same field construction run in slate. A report rendered entirely in slate is a correct outcome, not a failure to pick one of the other ten, and this is what that costs and what it buys."
+    },
+    {
+      "id": "cover-key",
+      "page": "page-9",
+      "x": -640,
+      "y": 0,
+      "w": 480,
+      "text": "SIX COVERS, ONE PIECE. The device is the variable.\n\nIdentical type, identical words, an identical title block in the quiet left third. Five run cobalt-ember and the sixth runs slate, which is the whole point of the sixth.\n\ncobalt-ember rather than iris-ember, and that choice is a finding rather than a preference. iris-ember spends seven of its nine stops inside magenta, so a Hero drawn on it comes out one colour and the stipple never shows that it is made of a gradient at all. A crossing needs a wide hue arc before a subject can carry it.\n\nWHAT EACH ONE IS FOR.\n\n1 and 2 are the same question twice. One puts a Hero on black and nothing else; the other runs a Field underneath it, which is the single exception the guidance allows to one-device-per-page and the thing it is least sure about.\n\n3 is the cheap one. No subject, just weather behind the type. It works, and it will look exactly like the next piece that does it.\n\n4 is the same device on paper, because four of the seven report pages are white and a cover that only works on black is half a system.\n\n5 breaks the rule on purpose. The guidance says a Form cannot front a piece because a reader cannot name it. Judge whether that is true rather than taking it.\n\n6 declines colour. A report rendered entirely in slate is a correct outcome, not a failure to choose."
+    },
+    {
+      "id": "bod-note-0",
+      "page": "page-10",
+      "x": 0,
+      "y": 774,
+      "w": 1200,
+      "text": "No colour anywhere. This is the default page and most pages of most pieces are this page. Everything else on this sheet has to beat it."
+    },
+    {
+      "id": "bod-note-1",
+      "page": "page-10",
+      "x": 1440,
+      "y": 774,
+      "w": 1200,
+      "text": "One device, and the only thing on the page. A section opener is where atmosphere is the entire job, so nothing else is asked to share the page with it."
+    },
+    {
+      "id": "bod-note-2",
+      "page": "page-10",
+      "x": 2880,
+      "y": 774,
+      "w": 1200,
+      "text": "The gradient carries cohort, which is ordered, so a ramp is allowed to hold it and the ramp becomes the legend. Axes, ticks, labels and the baseline stay grey, which is the part of the rule that did not change."
+    },
+    {
+      "id": "bod-note-3",
+      "page": "page-10",
+      "x": 0,
+      "y": 1794,
+      "w": 1200,
+      "text": "The same decision as the page before, answered the other way. Both exhibits could have taken the ramp and neither needed it, and a report where every exhibit is coloured has no emphasis left to spend."
+    },
+    {
+      "id": "bod-note-4",
+      "page": "page-10",
+      "x": 1440,
+      "y": 1794,
+      "w": 1200,
+      "text": "A Form at the size a Form belongs: a margin, quiet, carrying the idea of the argument beside it and no data at all. This is the one page on the sheet where a device and running text share the paper."
+    },
+    {
+      "id": "bod-note-5",
+      "page": "page-10",
+      "x": 2880,
+      "y": 1794,
+      "w": 1200,
+      "text": "The page the practice is actually selling, and it has no image on it at all. Rules and panel edges are grey here for the same reason they are grey on the pages that do carry a device."
+    },
+    {
+      "id": "body-key",
+      "page": "page-10",
+      "x": -640,
+      "y": 0,
+      "w": 480,
+      "text": "SIX BODY PAGES FROM ONE PIECE, in reading order.\n\nThese are not six alternatives. They are a sequence, and the thing to judge is the RATE. Pages 2, 8, 9, 12, 15 and 18 of a report that runs to about twenty.\n\nAS BUILT: two pages carry a device outright, one carries a small Form in the margin, and three carry nothing at all.\n\nThat is the budget table in the skill, made visible. It is proposed and it has never been looked at, so it is the thing on this page most worth arguing with.\n\nTHE SAME DECISION, TWICE, ANSWERED BOTH WAYS. Page 9 lets the gradient carry cohort, which is ordered and therefore allowed. Page 12 has two exhibits that could equally have taken the ramp and neither does. If every exhibit is coloured there is no emphasis left to spend on the one that matters, and if none is, the rule that a gradient may carry an ordered variable is never used.\n\nWHAT DID NOT CHANGE. Every rule, tick, axis, label, panel edge and folio on all six pages is grey, including on the two pages that carry a device and the one that runs a field under the running head.\n\nOne correction from building these. The figures read the DEEP HALF of the ramp, not all of it. The first pass ran cohort across the full range and the largest cohort landed at the pale end, which against white is nothing: six ordered series where the sixth is invisible is a five-series chart with a bug in it."
+    },
+    {
+      "id": "set-key",
+      "page": "page-11",
+      "x": -640,
+      "y": 0,
+      "w": 480,
+      "text": "THE WHOLE SET, DOING ONE JOB.\n\nEleven covers on the first board, identical in every respect except which member of the set they run. Same subject, same crop, same dissolve, same mark density, same ground. Reading across is reading the set.\n\nIT IS A SWATCH SHEET, and the rule that a piece runs ONE gradient throughout still holds. This is a reference sheet rather than a piece. The distinction matters: pages 8, 9 and 10 hold the gradient constant on purpose so the device is the only thing moving, and the cost of that control is that every board on them is a violet.\n\nWHAT TO LOOK FOR.\n\nHue arc, printed next to every name. cobalt-ember at 112 degrees shows the gradient across the subject; iris-ember at 91 does not, because seven of its nine stops sit inside magenta. A Field has room to show a whole ramp. A Hero only sees the ramp where the subject happens to be, so the arc matters more here than anywhere else in the system.\n\nThe two quiet members. slate and slate-iris are how the system declines colour, and they have to look like a decision rather than an absence.\n\ncobalt-moss, built differently from the other ten. Blue to green has no vivid route in sRGB, so it crosses a deliberately neutral middle. Do not expect it to match its neighbours for saturation; the neutral middle is what it is for.\n\nTHE SECOND BOARD is the set on paper, carrying an ordered encoding. A gradient behaves differently there: an additive field on black shows a whole ramp, and ink on white loses the pale end completely.\n\nBOTH ARE ONE ARTBOARD EACH, and that is not a layout preference. Built as eleven separate cover artboards, exactly one of them painted: every artboard is its own iframe with its own copy of the runtime, and the canvas will not carry eleven stipples mounting together. Every check in the directory passed it, because every check measures a board on its own."
     }
   ],
   "launch": {
     "view": "canvas",
-    "page": "page-7"
+    "page": "page-11"
   }
 }

@@ -10,125 +10,172 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Martian+Mono:wght@200..600&amp;display=swap">
   <style>
     body { margin: 0; }
-    a { color: #005CCC; text-decoration: none; }
+    a { color: #2B2B2A; text-decoration: none; }
     a:hover { color: #131312; }
     .mk circle { fill: #131312; }
     .mono { font-family: 'Martian Mono', ui-monospace, monospace; font-weight: 300; letter-spacing: -0.012em; font-variant-numeric: tabular-nums; }
     
   </style>
 </helmet>
-<div style="position: relative; width: 2680px; height: 820px; overflow: hidden; background: #F4F4F3; font-family: 'Familjen Grotesk', system-ui, sans-serif; color: #131312; display: flex; flex-direction: column; padding: 40px 56px 36px 56px;">
+<div style="position: relative; width: 2200px; height: 1080px; overflow: hidden; background: #F4F4F3; font-family: 'Familjen Grotesk', system-ui, sans-serif; color: #131312; padding: 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 26px;">
   
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 32px;">
       <div style="display: flex; align-items: center; gap: 11px;">
-        <svg class="mk" style="width: 20px; height: 20px; display: block;" viewBox="0 0 100 100" role="img" aria-label="Eleven One Research"><g><circle cx="92.07" cy="8.73" r="6.45"/><circle cx="20.08" cy="9.38" r="1.31"/><circle cx="36.97" cy="20.30" r="3.72"/><circle cx="69.93" cy="28.25" r="6.45"/><circle cx="22.23" cy="40.54" r="3.72"/><circle cx="49.76" cy="49.61" r="6.45"/><circle cx="79.01" cy="57.74" r="9.39"/><circle cx="28.24" cy="70.00" r="6.45"/><circle cx="57.76" cy="78.98" r="9.39"/><circle cx="86.74" cy="86.74" r="11.00"/><circle cx="7.51" cy="92.28" r="6.45"/></g></svg>
+        <svg style="width: 20px; height: 20px; display: block;" viewBox="0 0 100 100" role="img" aria-label="Eleven One Research"><g fill="#131312"><circle cx="92.07" cy="8.73" r="6.45"/><circle cx="20.08" cy="9.38" r="1.31"/><circle cx="36.97" cy="20.30" r="3.72"/><circle cx="69.93" cy="28.25" r="6.45"/><circle cx="22.23" cy="40.54" r="3.72"/><circle cx="49.76" cy="49.61" r="6.45"/><circle cx="79.01" cy="57.74" r="9.39"/><circle cx="28.24" cy="70.00" r="6.45"/><circle cx="57.76" cy="78.98" r="9.39"/><circle cx="86.74" cy="86.74" r="11.00"/><circle cx="7.51" cy="92.28" r="6.45"/></g></svg>
         <span style="font-size: 12px; line-height: 18px; color: #4A4A48;">Eleven One Research</span>
       </div>
-      <span class="mono" style="font-size: 10px; color: #8C8C8A;">Design directions</span>
+      <span class="mono" style="font-size: 10px; color: #8C8C8A;">The visual system &#183; what is decided and what is not</span>
     </div>
-  <div style="display: flex; gap: 56px; margin-top: 26px; align-items: flex-start;">
-    <div style="width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px;">
-      <h1 style="margin: 0; font-size: 26px; line-height: 33px; font-weight: 500; letter-spacing: -0.02em; text-wrap: pretty;">Four directions, one variable</h1>
-      <p style="margin: 0; font-size: 13px; line-height: 21px; color: #2B2B2A; text-wrap: pretty;">Every column is the same page. Same type, same words, same objects, same layout, same dark and light assignment. Only the palette and how colour meets the surface change.</p>
-      <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Three ramps, not two. The field is atmosphere and runs on both grounds; the two encoding ramps carry quantity. Field hue travel is capped near 160 degrees, the budget the accepted ramps already travel. The rejected full-spectrum generator swept 280.</p>
-      <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Each board carries a chroma slider. Pull any direction to 0 and it collapses to Achromatic, the null the other three have to beat.</p>
+
+  <div style="display: flex; gap: 56px; align-items: flex-start;">
+    <div style="width: 420px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px;">
+      <h1 style="margin: 0; font-size: 34px; line-height: 40px; font-weight: 500; letter-spacing: -0.028em; text-wrap: pretty;">The system is black, white and grey. Colour is the exception.</h1>
+      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #4A4A48; text-wrap: pretty;">Colour only ever arrives as a gradient, and only where a gradient earns its place. Rules, borders, keylines, labels, axes, ticks, table strokes, panel edges and page numbers are greyscale on every page, including the pages that carry an image.</p>
+      <p style="margin: 0; font-size: 13px; line-height: 21px; color: #6C6C6A; text-wrap: pretty;">Judgement about WHEN to use what does not live in this repository. It lives in the <span class="mono" style="font-size: 12px; color: #2B2B2A;">elevenone-design</span> skill, which carries the four devices, the rules for choosing between them, and the craft constraints that were learned by getting them wrong. <span class="mono" style="font-size: 12px; color: #2B2B2A;">gradients.json</span> is the source of record for the colour itself.</p>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px; flex-grow: 1;">
-      
-      <div style="display: flex; flex-direction: column; gap: 11px;">
-        <div style="display: flex; align-items: baseline; gap: 12px;">
-          <h3 style="margin: 0; font-size: 19px; line-height: 25px; font-weight: 500; letter-spacing: -0.02em;">Ember</h3>
-          <span class="mono" style="font-size: 10px; color: #8C8C8A;">additive</span>
-        </div>
-        <p style="margin: 0; font-size: 13px; line-height: 20px; color: #2B2B2A; min-height: 40px; text-wrap: pretty;">Colour is light. The surface emits it.</p>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON PAPER</span>
-          <div style="height: 40px; background: radial-gradient(ellipse 40.0% 40.0% at 88.0% 92.0%, rgba(255,133,116,0.850) 0%, rgba(255,133,116,0.818) 13%, rgba(255,133,116,0.726) 25%, rgba(255,133,116,0.588) 38%, rgba(255,133,116,0.425) 50%, rgba(255,133,116,0.262) 63%, rgba(255,133,116,0.124) 75%, rgba(255,133,116,0.032) 88%, rgba(255,133,116,0.000) 100%), radial-gradient(ellipse 36.0% 36.0% at 106.0% 44.0%, rgba(255,185,149,0.700) 0%, rgba(255,185,149,0.673) 13%, rgba(255,185,149,0.597) 25%, rgba(255,185,149,0.484) 38%, rgba(255,185,149,0.350) 50%, rgba(255,185,149,0.216) 63%, rgba(255,185,149,0.103) 75%, rgba(255,185,149,0.027) 88%, rgba(255,185,149,0.000) 100%), radial-gradient(ellipse 48.0% 48.0% at 42.0% 116.0%, rgba(217,83,129,0.750) 0%, rgba(217,83,129,0.721) 13%, rgba(217,83,129,0.640) 25%, rgba(217,83,129,0.519) 38%, rgba(217,83,129,0.375) 50%, rgba(217,83,129,0.231) 63%, rgba(217,83,129,0.110) 75%, rgba(217,83,129,0.029) 88%, rgba(217,83,129,0.000) 100%), radial-gradient(ellipse 30.0% 30.0% at 10.0% 104.0%, rgba(176,50,137,0.500) 0%, rgba(176,50,137,0.481) 13%, rgba(176,50,137,0.427) 25%, rgba(176,50,137,0.346) 38%, rgba(176,50,137,0.250) 50%, rgba(176,50,137,0.154) 63%, rgba(176,50,137,0.073) 75%, rgba(176,50,137,0.019) 88%, rgba(176,50,137,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON DARK</span>
-          <div style="height: 40px; background: #131312; background-image: radial-gradient(ellipse 50.0% 50.0% at 80.0% 26.0%, rgba(146,71,0,0.900) 0%, rgba(146,71,0,0.866) 13%, rgba(146,71,0,0.768) 25%, rgba(146,71,0,0.622) 38%, rgba(146,71,0,0.450) 50%, rgba(146,71,0,0.278) 63%, rgba(146,71,0,0.132) 75%, rgba(146,71,0,0.034) 88%, rgba(146,71,0,0.000) 100%), radial-gradient(ellipse 44.0% 44.0% at 104.0% 70.0%, rgba(151,0,48,0.750) 0%, rgba(151,0,48,0.721) 13%, rgba(151,0,48,0.640) 25%, rgba(151,0,48,0.519) 38%, rgba(151,0,48,0.375) 50%, rgba(151,0,48,0.231) 63%, rgba(151,0,48,0.110) 75%, rgba(151,0,48,0.029) 88%, rgba(151,0,48,0.000) 100%), radial-gradient(ellipse 58.0% 58.0% at 52.0% 106.0%, rgba(91,0,115,0.660) 0%, rgba(91,0,115,0.635) 13%, rgba(91,0,115,0.563) 25%, rgba(91,0,115,0.456) 38%, rgba(91,0,115,0.330) 50%, rgba(91,0,115,0.204) 63%, rgba(91,0,115,0.097) 75%, rgba(91,0,115,0.025) 88%, rgba(91,0,115,0.000) 100%), radial-gradient(ellipse 46.0% 46.0% at 30.0% -12.0%, rgba(129,0,97,0.300) 0%, rgba(129,0,97,0.289) 13%, rgba(129,0,97,0.256) 25%, rgba(129,0,97,0.207) 38%, rgba(129,0,97,0.150) 50%, rgba(129,0,97,0.093) 63%, rgba(129,0,97,0.044) 75%, rgba(129,0,97,0.011) 88%, rgba(129,0,97,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON DARK</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #200745;"></div><div style="height: 26px; background: #272563;"></div><div style="height: 26px; background: #284183;"></div><div style="height: 26px; background: #245E9F;"></div><div style="height: 26px; background: #277EAE;"></div><div style="height: 26px; background: #2A9EBE;"></div><div style="height: 26px; background: #71BDC8;"></div><div style="height: 26px; background: #BBD9CF;"></div><div style="height: 26px; background: #FFF5D4;"></div></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON PAPER</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #FEF1D0;"></div><div style="height: 26px; background: #F9CFB5;"></div><div style="height: 26px; background: #F2AE9B;"></div><div style="height: 26px; background: #E48F89;"></div><div style="height: 26px; background: #CB7485;"></div><div style="height: 26px; background: #B35A81;"></div><div style="height: 26px; background: #944A81;"></div><div style="height: 26px; background: #733F82;"></div><div style="height: 26px; background: #543282;"></div></div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 9px;">
-          <div style="width: 13px; height: 13px; background: #B0641C; flex-shrink: 0;"></div>
-          <span class="mono" style="font-size: 10px; color: #6C6C6A;">#B0641C interface accent</span>
-        </div>
-        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Warmest and most atmospheric of the four, and the least neutral. Its field travels violet to cream the long way round, through rose, which is where the reference gradients live. On white it is the most obviously designed of the four and the hardest to keep quiet on a dense page.</p>
+
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 22px;">
+      <div>
+        <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #8C8C8A;">DECIDED &#183; ELEVEN GRADIENTS, CLOSED</span>
+        <div style="display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap;">
+
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #20159B 0%, #1C2BAD 13%, #123DBE 25%, #0451CC 38%, #136BD4 50%, #2782DB 63%, #579DE1 75%, #8ABAE5 88%, #BBD5E7 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">cobalt</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 11px;">
-        <div style="display: flex; align-items: baseline; gap: 12px;">
-          <h3 style="margin: 0; font-size: 19px; line-height: 25px; font-weight: 500; letter-spacing: -0.02em;">Signal</h3>
-          <span class="mono" style="font-size: 10px; color: #8C8C8A;">flat</span>
-        </div>
-        <p style="margin: 0; font-size: 13px; line-height: 20px; color: #2B2B2A; min-height: 40px; text-wrap: pretty;">Colour is one hue. Brightness carries the quantity.</p>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON PAPER</span>
-          <div style="height: 40px; background: radial-gradient(ellipse 40.0% 40.0% at 88.0% 92.0%, rgba(121,187,255,0.850) 0%, rgba(121,187,255,0.818) 13%, rgba(121,187,255,0.726) 25%, rgba(121,187,255,0.588) 38%, rgba(121,187,255,0.425) 50%, rgba(121,187,255,0.262) 63%, rgba(121,187,255,0.124) 75%, rgba(121,187,255,0.032) 88%, rgba(121,187,255,0.000) 100%), radial-gradient(ellipse 36.0% 36.0% at 106.0% 44.0%, rgba(171,215,255,0.700) 0%, rgba(171,215,255,0.673) 13%, rgba(171,215,255,0.597) 25%, rgba(171,215,255,0.484) 38%, rgba(171,215,255,0.350) 50%, rgba(171,215,255,0.216) 63%, rgba(171,215,255,0.103) 75%, rgba(171,215,255,0.027) 88%, rgba(171,215,255,0.000) 100%), radial-gradient(ellipse 48.0% 48.0% at 42.0% 116.0%, rgba(57,141,232,0.750) 0%, rgba(57,141,232,0.721) 13%, rgba(57,141,232,0.640) 25%, rgba(57,141,232,0.519) 38%, rgba(57,141,232,0.375) 50%, rgba(57,141,232,0.231) 63%, rgba(57,141,232,0.110) 75%, rgba(57,141,232,0.029) 88%, rgba(57,141,232,0.000) 100%), radial-gradient(ellipse 30.0% 30.0% at 10.0% 104.0%, rgba(0,105,206,0.500) 0%, rgba(0,105,206,0.481) 13%, rgba(0,105,206,0.427) 25%, rgba(0,105,206,0.346) 38%, rgba(0,105,206,0.250) 50%, rgba(0,105,206,0.154) 63%, rgba(0,105,206,0.073) 75%, rgba(0,105,206,0.019) 88%, rgba(0,105,206,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON DARK</span>
-          <div style="height: 40px; background: #131312; background-image: radial-gradient(ellipse 50.0% 50.0% at 80.0% 26.0%, rgba(0,43,126,0.900) 0%, rgba(0,43,126,0.866) 13%, rgba(0,43,126,0.768) 25%, rgba(0,43,126,0.622) 38%, rgba(0,43,126,0.450) 50%, rgba(0,43,126,0.278) 63%, rgba(0,43,126,0.132) 75%, rgba(0,43,126,0.034) 88%, rgba(0,43,126,0.000) 100%), radial-gradient(ellipse 44.0% 44.0% at 104.0% 70.0%, rgba(0,51,165,0.750) 0%, rgba(0,51,165,0.721) 13%, rgba(0,51,165,0.640) 25%, rgba(0,51,165,0.519) 38%, rgba(0,51,165,0.375) 50%, rgba(0,51,165,0.231) 63%, rgba(0,51,165,0.110) 75%, rgba(0,51,165,0.029) 88%, rgba(0,51,165,0.000) 100%), radial-gradient(ellipse 58.0% 58.0% at 52.0% 106.0%, rgba(0,18,106,0.660) 0%, rgba(0,18,106,0.635) 13%, rgba(0,18,106,0.563) 25%, rgba(0,18,106,0.456) 38%, rgba(0,18,106,0.330) 50%, rgba(0,18,106,0.204) 63%, rgba(0,18,106,0.097) 75%, rgba(0,18,106,0.025) 88%, rgba(0,18,106,0.000) 100%), radial-gradient(ellipse 46.0% 46.0% at 30.0% -12.0%, rgba(0,29,140,0.300) 0%, rgba(0,29,140,0.289) 13%, rgba(0,29,140,0.256) 25%, rgba(0,29,140,0.207) 38%, rgba(0,29,140,0.150) 50%, rgba(0,29,140,0.093) 63%, rgba(0,29,140,0.044) 75%, rgba(0,29,140,0.011) 88%, rgba(0,29,140,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON DARK</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #05152E;"></div><div style="height: 26px; background: #0F2B4F;"></div><div style="height: 26px; background: #1A4372;"></div><div style="height: 26px; background: #2B5D94;"></div><div style="height: 26px; background: #477BB0;"></div><div style="height: 26px; background: #6499CD;"></div><div style="height: 26px; background: #8BB8E2;"></div><div style="height: 26px; background: #B6D6F3;"></div><div style="height: 26px; background: #E3F4FF;"></div></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON PAPER</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #E7F4FF;"></div><div style="height: 26px; background: #C7DFF7;"></div><div style="height: 26px; background: #A7CAEF;"></div><div style="height: 26px; background: #87B3E3;"></div><div style="height: 26px; background: #6899D1;"></div><div style="height: 26px; background: #487FBF;"></div><div style="height: 26px; background: #3367A7;"></div><div style="height: 26px; background: #24518E;"></div><div style="height: 26px; background: #153B75;"></div></div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 9px;">
-          <div style="width: 13px; height: 13px; background: #0054AE; flex-shrink: 0;"></div>
-          <span class="mono" style="font-size: 10px; color: #6C6C6A;">#0054AE interface accent</span>
-        </div>
-        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">The most disciplined and the easiest to hold across a hundred pages. Its field is a single-hue wash, so nothing ever clashes and nothing ever surprises. Also the least distinctive: a blue ramp on a dark ground is what every analytics product already looks like.</p>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #4B169D 0%, #6315B6 13%, #7C11D0 25%, #941BE3 38%, #AA38EA 50%, #C14CF1 63%, #D174F1 75%, #DD9EEB 88%, #E8C4E3 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">iris</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 11px;">
-        <div style="display: flex; align-items: baseline; gap: 12px;">
-          <h3 style="margin: 0; font-size: 19px; line-height: 25px; font-weight: 500; letter-spacing: -0.02em;">Pigment</h3>
-          <span class="mono" style="font-size: 10px; color: #8C8C8A;">screened</span>
-        </div>
-        <p style="margin: 0; font-size: 13px; line-height: 20px; color: #2B2B2A; min-height: 40px; text-wrap: pretty;">Colour is ink. The surface is screened, not lit.</p>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON PAPER</span>
-          <div style="height: 40px; background: radial-gradient(ellipse 40.0% 40.0% at 88.0% 92.0%, rgba(234,162,211,0.850) 0%, rgba(234,162,211,0.818) 13%, rgba(234,162,211,0.726) 25%, rgba(234,162,211,0.588) 38%, rgba(234,162,211,0.425) 50%, rgba(234,162,211,0.262) 63%, rgba(234,162,211,0.124) 75%, rgba(234,162,211,0.032) 88%, rgba(234,162,211,0.000) 100%), radial-gradient(ellipse 36.0% 36.0% at 106.0% 44.0%, rgba(248,200,204,0.700) 0%, rgba(248,200,204,0.673) 13%, rgba(248,200,204,0.597) 25%, rgba(248,200,204,0.484) 38%, rgba(248,200,204,0.350) 50%, rgba(248,200,204,0.216) 63%, rgba(248,200,204,0.103) 75%, rgba(248,200,204,0.027) 88%, rgba(248,200,204,0.000) 100%), radial-gradient(ellipse 48.0% 48.0% at 42.0% 116.0%, rgba(181,119,213,0.750) 0%, rgba(181,119,213,0.721) 13%, rgba(181,119,213,0.640) 25%, rgba(181,119,213,0.519) 38%, rgba(181,119,213,0.375) 50%, rgba(181,119,213,0.231) 63%, rgba(181,119,213,0.110) 75%, rgba(181,119,213,0.029) 88%, rgba(181,119,213,0.000) 100%), radial-gradient(ellipse 30.0% 30.0% at 10.0% 104.0%, rgba(143,84,207,0.500) 0%, rgba(143,84,207,0.481) 13%, rgba(143,84,207,0.427) 25%, rgba(143,84,207,0.346) 38%, rgba(143,84,207,0.250) 50%, rgba(143,84,207,0.154) 63%, rgba(143,84,207,0.073) 75%, rgba(143,84,207,0.019) 88%, rgba(143,84,207,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON DARK</span>
-          <div style="height: 40px; background: #131312; background-image: radial-gradient(ellipse 50.0% 50.0% at 80.0% 26.0%, rgba(145,75,0,0.900) 0%, rgba(145,75,0,0.866) 13%, rgba(145,75,0,0.768) 25%, rgba(145,75,0,0.622) 38%, rgba(145,75,0,0.450) 50%, rgba(145,75,0,0.278) 63%, rgba(145,75,0,0.132) 75%, rgba(145,75,0,0.034) 88%, rgba(145,75,0,0.000) 100%), radial-gradient(ellipse 44.0% 44.0% at 104.0% 70.0%, rgba(151,0,69,0.750) 0%, rgba(151,0,69,0.721) 13%, rgba(151,0,69,0.640) 25%, rgba(151,0,69,0.519) 38%, rgba(151,0,69,0.375) 50%, rgba(151,0,69,0.231) 63%, rgba(151,0,69,0.110) 75%, rgba(151,0,69,0.029) 88%, rgba(151,0,69,0.000) 100%), radial-gradient(ellipse 58.0% 58.0% at 52.0% 106.0%, rgba(95,0,137,0.660) 0%, rgba(95,0,137,0.635) 13%, rgba(95,0,137,0.563) 25%, rgba(95,0,137,0.456) 38%, rgba(95,0,137,0.330) 50%, rgba(95,0,137,0.204) 63%, rgba(95,0,137,0.097) 75%, rgba(95,0,137,0.025) 88%, rgba(95,0,137,0.000) 100%), radial-gradient(ellipse 46.0% 46.0% at 30.0% -12.0%, rgba(125,0,120,0.300) 0%, rgba(125,0,120,0.289) 13%, rgba(125,0,120,0.256) 25%, rgba(125,0,120,0.207) 38%, rgba(125,0,120,0.150) 50%, rgba(125,0,120,0.093) 63%, rgba(125,0,120,0.044) 75%, rgba(125,0,120,0.011) 88%, rgba(125,0,120,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON DARK</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #2E165B;"></div><div style="height: 26px; background: #492E73;"></div><div style="height: 26px; background: #67448D;"></div><div style="height: 26px; background: #865DA2;"></div><div style="height: 26px; background: #A67AAE;"></div><div style="height: 26px; background: #C796B9;"></div><div style="height: 26px; background: #DDB4C2;"></div><div style="height: 26px; background: #EED2C9;"></div><div style="height: 26px; background: #FEF1D0;"></div></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON PAPER</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #FFF2D2;"></div><div style="height: 26px; background: #F3D8D0;"></div><div style="height: 26px; background: #E6BECE;"></div><div style="height: 26px; background: #D3A5CA;"></div><div style="height: 26px; background: #B68DC4;"></div><div style="height: 26px; background: #9A74BC;"></div><div style="height: 26px; background: #815FAF;"></div><div style="height: 26px; background: #694CA0;"></div><div style="height: 26px; background: #523891;"></div></div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 9px;">
-          <div style="width: 13px; height: 13px; background: #5B3F9B; flex-shrink: 0;"></div>
-          <span class="mono" style="font-size: 10px; color: #6C6C6A;">#5B3F9B interface accent</span>
-        </div>
-        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">The only one of the four that looks printed rather than rendered, and the best greyscale survivor: its light ramp keeps a luminance gap of 0.076 across six samples. The screening costs fine detail, so the two summits read as texture before they read as position.</p>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #821339 0%, #9E1339 13%, #BA0F38 25%, #D21A36 38%, #E13734 50%, #F04D31 63%, #F57756 75%, #F1A386 88%, #E8CBB5 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">ember</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 11px;">
-        <div style="display: flex; align-items: baseline; gap: 12px;">
-          <h3 style="margin: 0; font-size: 19px; line-height: 25px; font-weight: 500; letter-spacing: -0.02em;">Achromatic</h3>
-          <span class="mono" style="font-size: 10px; color: #8C8C8A;">flat</span>
-        </div>
-        <p style="margin: 0; font-size: 13px; line-height: 20px; color: #2B2B2A; min-height: 40px; text-wrap: pretty;">No colour in the field. One accent, in the interface only.</p>
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON PAPER</span>
-          <div style="height: 40px; background: radial-gradient(ellipse 40.0% 40.0% at 88.0% 92.0%, rgba(175,175,175,0.850) 0%, rgba(175,175,175,0.818) 13%, rgba(175,175,175,0.726) 25%, rgba(175,175,175,0.588) 38%, rgba(175,175,175,0.425) 50%, rgba(175,175,175,0.262) 63%, rgba(175,175,175,0.124) 75%, rgba(175,175,175,0.032) 88%, rgba(175,175,175,0.000) 100%), radial-gradient(ellipse 36.0% 36.0% at 106.0% 44.0%, rgba(208,208,208,0.700) 0%, rgba(208,208,208,0.673) 13%, rgba(208,208,208,0.597) 25%, rgba(208,208,208,0.484) 38%, rgba(208,208,208,0.350) 50%, rgba(208,208,208,0.216) 63%, rgba(208,208,208,0.103) 75%, rgba(208,208,208,0.027) 88%, rgba(208,208,208,0.000) 100%), radial-gradient(ellipse 48.0% 48.0% at 42.0% 116.0%, rgba(129,129,129,0.750) 0%, rgba(129,129,129,0.721) 13%, rgba(129,129,129,0.640) 25%, rgba(129,129,129,0.519) 38%, rgba(129,129,129,0.375) 50%, rgba(129,129,129,0.231) 63%, rgba(129,129,129,0.110) 75%, rgba(129,129,129,0.029) 88%, rgba(129,129,129,0.000) 100%), radial-gradient(ellipse 30.0% 30.0% at 10.0% 104.0%, rgba(90,90,90,0.500) 0%, rgba(90,90,90,0.481) 13%, rgba(90,90,90,0.427) 25%, rgba(90,90,90,0.346) 38%, rgba(90,90,90,0.250) 50%, rgba(90,90,90,0.154) 63%, rgba(90,90,90,0.073) 75%, rgba(90,90,90,0.019) 88%, rgba(90,90,90,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">FIELD, ON DARK</span>
-          <div style="height: 40px; background: #131312; background-image: radial-gradient(ellipse 50.0% 50.0% at 80.0% 26.0%, rgba(27,27,27,0.900) 0%, rgba(27,27,27,0.866) 13%, rgba(27,27,27,0.768) 25%, rgba(27,27,27,0.622) 38%, rgba(27,27,27,0.450) 50%, rgba(27,27,27,0.278) 63%, rgba(27,27,27,0.132) 75%, rgba(27,27,27,0.034) 88%, rgba(27,27,27,0.000) 100%), radial-gradient(ellipse 44.0% 44.0% at 104.0% 70.0%, rgba(39,39,39,0.750) 0%, rgba(39,39,39,0.721) 13%, rgba(39,39,39,0.640) 25%, rgba(39,39,39,0.519) 38%, rgba(39,39,39,0.375) 50%, rgba(39,39,39,0.231) 63%, rgba(39,39,39,0.110) 75%, rgba(39,39,39,0.029) 88%, rgba(39,39,39,0.000) 100%), radial-gradient(ellipse 58.0% 58.0% at 52.0% 106.0%, rgba(19,19,19,0.660) 0%, rgba(19,19,19,0.635) 13%, rgba(19,19,19,0.563) 25%, rgba(19,19,19,0.456) 38%, rgba(19,19,19,0.330) 50%, rgba(19,19,19,0.204) 63%, rgba(19,19,19,0.097) 75%, rgba(19,19,19,0.025) 88%, rgba(19,19,19,0.000) 100%), radial-gradient(ellipse 46.0% 46.0% at 30.0% -12.0%, rgba(27,27,27,0.300) 0%, rgba(27,27,27,0.289) 13%, rgba(27,27,27,0.256) 25%, rgba(27,27,27,0.207) 38%, rgba(27,27,27,0.150) 50%, rgba(27,27,27,0.093) 63%, rgba(27,27,27,0.044) 75%, rgba(27,27,27,0.011) 88%, rgba(27,27,27,0.000) 100%);"></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON DARK</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #0B0B0B;"></div><div style="height: 26px; background: #222222;"></div><div style="height: 26px; background: #3B3B3B;"></div><div style="height: 26px; background: #575757;"></div><div style="height: 26px; background: #747474;"></div><div style="height: 26px; background: #949494;"></div><div style="height: 26px; background: #B5B5B5;"></div><div style="height: 26px; background: #D8D8D8;"></div><div style="height: 26px; background: #FCFCFC;"></div></div>
-          <span class="mono" style="font-size: 9px; color: #8C8C8A; letter-spacing: 0.06em;">ENCODING, ON PAPER</span>
-          <div style="display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 0;"><div style="height: 26px; background: #F5F5F5;"></div><div style="height: 26px; background: #DBDBDB;"></div><div style="height: 26px; background: #C2C2C2;"></div><div style="height: 26px; background: #A8A8A8;"></div><div style="height: 26px; background: #8C8C8C;"></div><div style="height: 26px; background: #717171;"></div><div style="height: 26px; background: #525252;"></div><div style="height: 26px; background: #333333;"></div><div style="height: 26px; background: #161616;"></div></div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 9px;">
-          <div style="width: 13px; height: 13px; background: #005CCC; flex-shrink: 0;"></div>
-          <span class="mono" style="font-size: 10px; color: #6C6C6A;">#005CCC interface accent</span>
-        </div>
-        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">This is the current constitution, and it is the null the other three have to beat. It never fights the type and it prints anywhere. It also cannot encode a second variable, so every exhibit that needs one has to spend position or shape instead.</p>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #1C6E4A 0%, #198149 13%, #139445 25%, #1EA740 38%, #3FB839 50%, #58C92E 63%, #80D44C 75%, #A9DC73 88%, #CEE294 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">moss</span>
       </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #33393E 0%, #42484F 13%, #515961 25%, #636B74 38%, #78818A 50%, #8F98A1 63%, #A6ADB4 75%, #BDC2C7 88%, #D5D8DA 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">slate</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #20159B 0%, #3714BA 13%, #4D10DA 25%, #651BF1 38%, #8135F7 50%, #9F46FC 63%, #B76CFA 75%, #CE94F2 88%, #E7B8E7 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">cobalt-iris</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #541593 0%, #73179D 13%, #9213A8 25%, #B10EAD 38%, #CE15A7 50%, #EB129F 63%, #F657A4 75%, #F390AE 88%, #EABFB7 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">iris-ember</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #1411A3 0%, #3F15B4 13%, #6212C6 25%, #8513D0 38%, #AA1ECB 50%, #D216C4 63%, #E453C0 75%, #E988BB 88%, #EAB5B4 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">cobalt-ember</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #33E875 0%, #77D358 13%, #98BC35 25%, #ADA60C 38%, #BA8E0A 50%, #C37509 63%, #C25B17 75%, #BD4022 88%, #B71827 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">moss-ember</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #1713B0 0%, #2A449B 13%, #4B5D84 25%, #617376 38%, #579081 50%, #3FAE8B 63%, #5CC48F 75%, #8CD78F 88%, #B7EA8D 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">cobalt-moss</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; width: 158px;">
+        <div style="height: 46px; background: linear-gradient(90deg, #2B2E32 0%, #3B3D54 13%, #4D4B77 25%, #67569C 38%, #8E59C3 50%, #B559EB 63%, #CB77F5 75%, #DA9FEE 88%, #E9C3E4 100%);"></div>
+        <span class="mono" style="font-size: 9px; color: #6C6C6A;">slate-iris</span>
+      </div>
+        </div>
+        <p style="margin: 12px 0 0 0; font-size: 12px; line-height: 19px; color: #6C6C6A; max-width: 1400px; text-wrap: pretty;">Five singles held inside one hue family, six crossings running between two. A piece runs ONE of them throughout. <span style="color: #2B2B2A;">slate</span> is the most important member: it carries almost no chroma and exists so colour is never forced onto a piece that does not want it. A report rendered entirely in slate is a correct outcome. Do not invent a twelfth.</p>
+      </div>
+
+      <div>
+        <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #8C8C8A;">DECIDED &#183; FOUR DEVICES, NOT INTERCHANGEABLE</span>
+        <div style="margin-top: 4px;">
+      <div style="display: flex; gap: 18px; padding: 11px 0; border-bottom: 1px solid #EBEBEA;">
+        <span style="width: 132px; flex-shrink: 0; font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Field</span>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-size: 13px; line-height: 20px; color: #2B2B2A;">A soft gradient wash, no marks.</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A;">Covers, section openers, the site hero, behind a headline.</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 18px; padding: 11px 0; border-bottom: 1px solid #EBEBEA;">
+        <span style="width: 132px; flex-shrink: 0; font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Shape</span>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-size: 13px; line-height: 20px; color: #2B2B2A;">A gradient in an organic mass.</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A;">Decoration. A margin, a corner, beside a pull quote.</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 18px; padding: 11px 0; border-bottom: 1px solid #EBEBEA;">
+        <span style="width: 132px; flex-shrink: 0; font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Form</span>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-size: 13px; line-height: 20px; color: #2B2B2A;">An abstract stipple: dispersion, convergence, erosion.</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A;">Illustration of an idea. Margin, background, divider. Never data.</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 18px; padding: 11px 0; border-bottom: 1px solid #EBEBEA;">
+        <span style="width: 132px; flex-shrink: 0; font-size: 14px; font-weight: 500; letter-spacing: -0.01em;">Hero</span>
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <span style="font-size: 13px; line-height: 20px; color: #2B2B2A;">A recognisable subject in dots: racks, a port, a city, a mark.</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A;">The image at the front of a piece. One per piece.</span>
+        </div>
+      </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 56px; align-items: flex-start; flex-grow: 1;">
+    <div style="width: 420px; flex-shrink: 0;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #8C8C8A;">OPEN, AND NOT PRETENDED OTHERWISE</span>
+      <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 10px;">
+        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #4A4A48; text-wrap: pretty;">How often a piece is allowed each device. The budget in the skill is proposed and has never been validated. The six body pages are the first time it has been visible.</p>        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #4A4A48; text-wrap: pretty;">Whether the eight abstract Forms are the right eight.</p>        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #4A4A48; text-wrap: pretty;">Whether a Hero belongs in a homepage band at all, or whether a band that changes every month wants a Field that is about nothing.</p>        <p style="margin: 0; font-size: 12px; line-height: 19px; color: #4A4A48; text-wrap: pretty;">How many members of the set a practice can hold in rotation before its pieces stop looking related to each other.</p>
+      </div>
+    </div>
+    <div style="flex-grow: 1;">
+      <span class="mono" style="font-size: 10px; letter-spacing: 0.06em; color: #8C8C8A;">THE PAGES</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; margin-top: 4px;">
+
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Gradient palettes</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Four constructions the set was chosen between. Superseded, kept as the record.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Gradients</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">The set as it stands, plus the six crossings stretched and thrown off centre.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Application</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Figures on the set, the eight abstract Forms, and the halftone kept for hard-edged objects.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Hero images</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Five subjects, and the pipeline that turns anything drawable into one.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Homepages</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Four bands. The device is the variable and everything else is held.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Report covers</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Six covers, one piece. Same words, same title block, different device.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">Body pages</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Six pages of one report in reading order. Judge the RATE, not the pages.</span>
+        </div>
+        <div style="display: flex; gap: 16px; padding: 9px 0; border-bottom: 1px solid #EBEBEA;">
+          <span style="width: 132px; flex-shrink: 0; font-size: 13px; font-weight: 500; letter-spacing: -0.01em;">The whole set</span>
+          <span style="font-size: 12px; line-height: 19px; color: #6C6C6A; text-wrap: pretty;">Every member doing one job, on dark and on paper.</span>
+        </div>
+      </div>
+      <p style="margin: 14px 0 0 0; font-size: 11px; line-height: 18px; color: #8C8C8A; text-wrap: pretty;">Four earlier pages have been retired: the four-direction report matrix, the same four on the site, and the two Ember candidate rows. They were the argument that led to the set rather than the set, they are written up in <span class="mono">README.md</span>, and between them they were three fifths of the weight of this file. A canvas that will not mount is worth less than a record in git.</p>
     </div>
   </div>
 </div>
 </x-dc>
 <script data-dc-script data-props='{}'>
-class Component extends DCLogic {}
+class Component extends DCLogic {
+  componentDidMount() {}
+  renderVals() { return {}; }
+}
 </script>
 </body>
 </html>

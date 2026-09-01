@@ -7,8 +7,9 @@ set" below. `gradients.json` is its source of record. Everything else in this
 directory is the argument that led there, kept because the reasoning is worth
 more than the conclusion when the next question comes.
 
-Still open: how often a piece is allowed each device. `PRODUCT.md` remains the
-constitution and has not yet been amended to carry any of this.
+Still open: how often a piece is allowed each device. Pages 8, 9 and 10 build
+that budget out so it can be argued with. `PRODUCT.md` remains the constitution
+and has not yet been amended to carry any of this.
 
 **Judgement about WHEN to use what does not live here.** It lives in the
 `elevenone-design` skill, outside the repo at
@@ -272,6 +273,172 @@ node build-figures.cjs
   0.866 * (sx + sy) / 2 either side of its origin, so at sx 0.70W the low
   corner of the distribution was being cut off the page. It is sized from the
   frame now rather than chosen.
+
+## The system applied
+
+Pages 8, 9 and 10. Pages 5 to 7 settle what the system IS; these settle what
+it looks like when it is used, which is the part still open.
+
+**One thing varies inside each group and it is the DEVICE.** Which gradient
+goes on a piece is decided: any of the eleven, one per piece. How often a piece
+is allowed a device is not, so that is what moves. Homepages are all
+`cobalt-iris`; covers and body pages are all `cobalt-ember` and are ONE piece
+rather than two groups, because a cover and the pages behind it share a
+gradient or they are not one report.
+
+Two boards break the hold on purpose. `AppCoverSlate` runs in slate and
+`AppHomeQuiet` runs greyscale above the fold, because a piece that wants no
+colour is a correct outcome and it has to be visible beside the ones that do.
+
+Generators: `_applied.cjs` (shared: the figure functions, the blob layouts, the
+per-board preamble), then `build-covers.cjs`, `build-bodies.cjs` and
+`build-homes.cjs`.
+
+### Six covers
+
+Identical type, identical words, an identical title block in the quiet left
+third. Hero alone; Field under a Hero; Field alone; the same Hero on paper; a
+Form where the guidance says a Form does not belong; and the cover that
+declines colour.
+
+### Six body pages, in reading order
+
+Not six alternatives. A sequence, and the thing to judge is the RATE: two of
+the six carry a device outright, one carries a Form in the margin, and three
+carry nothing at all. That is the budget table in the skill, made visible for
+the first time.
+
+The same decision appears twice with different answers. Page 9 lets the
+gradient carry cohort, which is ordered and therefore allowed. Page 12 has two
+exhibits that could equally have taken the ramp and neither does.
+
+### Four homepages
+
+The hero band is the only variable. The site is the harder test: a cover has
+nothing on it but the image and the title, while a homepage makes a device
+share the page with navigation, three cards and a footer, and survive the
+featured piece changing next month.
+
+Two things are fixed here that the page 2 boards get wrong, and both are the
+standing furniture rule rather than anything new. The subscribe chip, the nav
+links and the section rules are grey. The cards carry a hairline instead of an
+84 pixel gradient strip, because a strip is a gradient spent on a component.
+
+### The whole set, on one page
+
+Page 11. Two boards. `SetOnDark` holds eleven cover panels, identical in every
+respect except which member of the set they run: same subject, same crop, same
+dissolve, same mark density. `SetOnPaper` puts six of the members through the
+same ordered encoding on white.
+
+Two boards and not seventeen, and that is not a layout preference. Built as
+eleven separate cover artboards plus a figure sheet, exactly one of the twelve
+ever painted.
+
+This page exists because holding the gradient constant on pages 8 to 10 is the
+right control and has one cost: every board on those pages is a violet, so the
+canvas stopped showing what the set can do. It is a swatch sheet and it says so
+on its face. The rule that a PIECE runs one gradient throughout is untouched.
+
+`moss-ember` is on the paper board to be rejected rather than adopted. Green to
+red is the classic colour-blind trap, so it may never carry an encoding
+whatever it does for a cover. A rule with no counter-example beside it does not
+get followed.
+
+### What building these cost
+
+Five faults, all of them found by looking rather than by a check.
+
+- **A Hero on a narrow-arc crossing comes out one colour.** `iris-ember` arcs
+  91 degrees and spends seven of its nine stops inside magenta. The port and
+  the racks read as flat pink and the gradient was invisible. Swapping to
+  `cobalt-ember` at 112 degrees fixed it with no other change. A Field has room
+  to show a whole ramp; a Hero only sees the ramp where the subject happens to
+  be, so the arc matters more for a Hero than for anything else.
+- **An ordered encoding on paper has to use the deep half of the ramp.** The
+  first ridgeline ran cohort across the full range and the largest cohort
+  landed at the pale end, which against white is nothing. Six ordered series
+  where the sixth is invisible is a five-series chart with a bug in it. The
+  three figure functions now squeeze t into roughly 0.03 to 0.66, and the grey
+  ladder is squeezed the same way so the two versions have the same contrast.
+- **`placed` scales the two axes independently.** A skyline given 0.60 of the
+  width and 0.86 of the height is squeezed 30 per cent and comes out as a row
+  of spikes. Equal fractions hold the subject at the aspect it was drawn for.
+- **A subject with ground on all four sides reads as a diagram of itself.**
+  Every Hero now runs out of the frame on the side away from the title.
+- **A Field under a Hero has to be held down.** At full strength the two
+  composite additively on black and the racks came out of a lit sky. Half alpha
+  and stops capped near t 0.42, which is the answer to an open question that
+  had never been tested.
+
+### The fault that four checks could not see
+
+Every artboard is its own sandboxed iframe carrying its own copy of the
+runtime. Enough of them mounting together take the canvas past its patience and
+every frame on the page comes back with `Preview stopped: the preview stopped
+answering the editor (replaced by a navigation, or unresponsive for too long).`
+
+`dc-smoke`, `dc-paint`, `dc-markup` and `time-board` all passed a canvas on
+which one artboard in twelve rendered, because every one of them measures a
+board ALONE. `time-board` is blind twice over: its own header says the stub
+charges for property access and nothing for drawing, so forty thousand arc
+fills cost it about what four hundred do, and it runs one file at a time.
+
+The axis is marks TIMES boards, not marks:
+
+| | boards | canvas | marks | |
+|---|---|---|---|---|
+| Hero images | 1 | 12.4 Mpx | 242k | works |
+| Report covers, after cuts | 6 | 14.2 Mpx | 82k | works |
+| Report covers, before | 6 | 22.1 Mpx | 264k | fails |
+| The whole set, as 12 boards | 12 | 44.3 Mpx | 528k | fails |
+
+`page-load.cjs` is the check, and its budget is those four observations rather
+than any theory. Three things came out of it: comparison sheets are one board
+with many panels, the backing store runs at 1.6 rather than 2 (a stipple loses
+almost nothing to it, because its detail is where marks land and not their
+edges), and the applied boards run about 40 per cent of the marks they did.
+
+It still cannot see everything. The canvas degrades ACROSS a session, because
+the runtime keeps the iframes of pages already visited: page 8 mounts cleanly
+from a fresh load and fails when it is the third heavy page opened. Keeping
+every page well inside the budget is what buys headroom for that.
+
+Three pages were over that budget when it was first written, and all three
+were superseded exploration: 82.3, 30.8 and 41.2 Mpx against a 30 Mpx cap, 43
+of the canvas's 71 artboards, and about three fifths of its weight. They have
+been retired, the file went from 6.4 MB to 3.9 MB, and every remaining page is
+inside the budget. See **Retired** below.
+
+### And what the second pass cost
+
+Five more, all of them found by looking.
+
+- **A closed kde path puts a hard vertical wall at each end of the fill.** The
+  estimate is not near zero at the edge of its domain, so the straight line
+  down to the baseline is tall, and at this width every ridge read as a
+  rectangle with a wavy top. The tint on top of it accumulated down the stack
+  into one pale wash. The fill is white now and only the curve is coloured:
+  white keeps the occlusion, which is what the fill was ever for, and shows
+  neither fault. Overlap is 1.32 of the row pitch, between the 1.4 that ate the
+  lower cohorts and the 1.15 that flattened all six.
+- **A dissolve that ends at the frame edge never happens.** A subject stops at
+  its own base well short of the frame, where a falloff measured to the frame
+  is still at four fifths. The fade takes a PAIR of values and the second one
+  is placed at the object.
+- **A blade drawn as a straight taper to a point is a spindle.** Both ends fall
+  under the dot pitch. The turbines have a shoulder a third of the way out and
+  a tip with real width now, plus the nacelle, which is the detail that decides
+  whether the thing is a turbine or a child's windmill.
+- **Flat black reads as a failed render.** `AppHomeQuiet` had no device in its
+  band on purpose and the first question it got was whether it had rendered.
+  Declining colour is not declining to draw: it carries the field construction
+  through four neutral anchors now.
+- **A board that builds its canvas ids renders empty in the preview and passes
+  every check.** `preview.cjs` prefixes ids per board and rewrites only literal
+  `getElementById` calls, and its own comment says so. The stub in dc-smoke and
+  dc-paint resolves ids from a map that was never prefixed, so all four checks
+  passed a board that showed nothing. Ids are written out one per canvas.
 
 ## The gradient set
 
@@ -753,20 +920,41 @@ Both were arithmetic that nobody had looked at.
   from 720 to 620, which it can afford because it sets in two lines either way.
   Clearance is 90px to the headline and 30px inside the frame, by construction.
 
-## Superseded
+## Retired
 
-The earlier exploration is still on disk and still builds, but is no longer on
-the canvas. `Stack`, `Terrain` and `Instrument` (four pages each, via
-`build-pages.cjs` and `build-langs.cjs`) conflated the object with the style,
-which is the axis that was wrong: rendering a real object and drawing an
-abstract one are not a choice, they both belong to one system. Also kept:
-`Main`, `DirectionB`, `DirectionC`, `Figure`, `Spectrum` (treatment);
-`SingleHue`, `TwoAnchor`, `Diverging`, `Achromatic`, `HueBudget` (hue budget);
-`Terrain`, `Ridges`, `Wireframe`, `Planes` (objects). Their canvas manifest is
-`canvas.json`; the live one is `canvas-directions.json`.
+**The four directions are gone from the repository, not just from the canvas.**
+Deleted: `build-directions.cjs` (the 28 report boards), `build-web.cjs` (the 12
+site boards), `build-variants.cjs`, `_variants.cjs` and `build-rows.cjs` (the
+two Ember candidate rows), `hue-path.cjs` (an analysis script that read
+`_variants.cjs`), and the 43 generated artboards they produced.
+
+They were the argument that led to the set rather than the set. The argument
+is written up above, which is the part worth keeping, and the boards are in
+git at `262448b` if the pictures are ever wanted again.
+
+The reason they went is not tidiness. They were 43 of the canvas's 71
+artboards and about three fifths of its weight, every artboard is its own
+iframe, the runtime keeps the iframes of pages already visited, and the canvas
+had stopped mounting: `page-load.cjs` had three pages over budget and all
+three were these. Walking three heavy pages in one session now works, which it
+did not before. A canvas that will not mount is worth less than a record in
+git.
+
+`Main.dc.html` was the key to that matrix and is rebuilt by `build-main.cjs`
+as the key to the canvas as it stands: what is decided, what each page is, and
+what is open. It carries no canvas element.
+
+**Still on disk and still building, but not on the canvas.** `Stack`,
+`Terrain` and `Instrument` (four pages each, via `build-pages.cjs` and
+`build-langs.cjs`) conflated the object with the style, which is the axis that
+was wrong: rendering a real object and drawing an abstract one are not a
+choice, they both belong to one system. Also there: `Figure`, `Spectrum`
+(treatment); `SingleHue`, `TwoAnchor`, `Diverging`, `Achromatic`, `HueBudget`
+(hue budget); `Terrain`, `Ridges`, `Wireframe`, `Planes` (objects). Their
+manifest is `canvas.json`; the live one is `canvas-directions.json`.
 
 Note that `build-hues.cjs` also emits `Main.dc.html` and would overwrite the
-new key board. Run `build-directions.cjs` after it if you run it at all.
+key board. Run `build-main.cjs` after it if you run it at all.
 
 ## Data provenance
 
