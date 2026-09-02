@@ -19,9 +19,10 @@ import { test, expect } from '@playwright/test';
  * asserted a count for it.
  */
 const PAGES: { path: string; count: number }[] = [
-  // The hero from HomeHero.astro (1) plus the six subject cards from
-  // Coverage.astro (port, datacenter, wind, robotics, grid, urban).
-  { path: '/', count: 7 },
+  // The homepage carries no dot render since the band became a field
+  // (docs/field.md). Zero is a recorded expectation: if a component starts
+  // calling dotAsset again, this is what notices.
+  { path: '/', count: 0 },
   // The briefs index lists brief metadata only; it renders no dotAsset image.
   { path: '/briefs', count: 0 },
   // The brief detail page is where BriefHero, Figure and DataFigure live, and

@@ -149,7 +149,8 @@ test('the sitemap excludes the draft brief and lists a real page', async ({ requ
 test('the homepage hero ships a real image at explicit dimensions', async ({ page, request }) => {
   await page.goto('/');
   const img = page.locator('main img').first();
-  await expect(img).toHaveAttribute('alt', /.+/);
+  // Decorative, so the alt is present and empty. An absent alt is the fault.
+  await expect(img).toHaveAttribute('alt', '');
   await expect(img).toHaveAttribute('width', /^\d+$/);
   await expect(img).toHaveAttribute('height', /^\d+$/);
 
@@ -158,23 +159,6 @@ test('the homepage hero ships a real image at explicit dimensions', async ({ pag
   const src = await img.getAttribute('src');
   const res = await request.get(src!);
   expect(res.status(), src!).toBe(200);
-});
-
-test('the coverage strip renders six described images', async ({ page, request }) => {
-  await page.goto('/');
-  const imgs = page.locator('section img[loading="lazy"]');
-  await expect(imgs).toHaveCount(6);
-  for (let i = 0; i < 6; i++) {
-    const img = imgs.nth(i);
-    await expect(img).toHaveAttribute('alt', /.+/);
-
-    // Same reasoning as the hero test: a 404 leaves width, height and alt
-    // structurally intact, so each src has to be fetched rather than merely
-    // asserted on.
-    const src = await img.getAttribute('src');
-    const res = await request.get(src!);
-    expect(res.status(), `coverage image ${i + 1} of 6, src ${src}`).toBe(200);
-  }
 });
 
 test('the sitemap lists the briefs index and still excludes the draft', async ({ request }) => {

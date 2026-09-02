@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -488,9 +488,14 @@ describe('the fog band holds both ridge and scatter', () => {
 
   // The roles a subject actually renders at, read from the shipped manifest
   // rather than from a list here: the point is to cover what is published.
-  const manifest = JSON.parse(
-    readFileSync(fileURLToPath(new URL('../public/assets/dot/manifest.json', import.meta.url)), 'utf8'),
-  ) as Record<string, { subject: string; role: string }>;
+  // Task 5 stopped shipping the library, so nothing is published on this
+  // branch; the per-role cases below generate none and only the ridge-list
+  // case still runs. This mirrors dot.ts's own loadManifest(): absence is
+  // not this file's error to raise.
+  const manifestPath = fileURLToPath(new URL('../public/assets/dot/manifest.json', import.meta.url));
+  const manifest = existsSync(manifestPath)
+    ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as Record<string, { subject: string; role: string }>)
+    : {};
   const rolesOf = (id: string) =>
     [...new Set(Object.values(manifest).filter((a) => a.subject === id).map((a) => a.role))].sort();
 

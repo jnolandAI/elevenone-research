@@ -1,4 +1,5 @@
-import manifest from '../../public/assets/dot/manifest.json';
+import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /** Subject captions, from the library table in docs/dot-imagery.md. */
 export const SUBJECTS: Record<string, { name: string; covers: string }> = {
@@ -11,6 +12,17 @@ export const SUBJECTS: Record<string, { name: string; covers: string }> = {
 };
 
 interface Entry { w: number; h: number; role: string; subject: string; webp?: string; engine_version?: string }
+
+// The library is not shipped with the site. A static JSON import would make
+// its absence a build error in every module that touches this file, which is
+// the wrong place for it: the seam should stay importable and fail only when
+// something asks it for an image.
+const MANIFEST = fileURLToPath(new URL('../../public/assets/dot/manifest.json', import.meta.url));
+
+export function loadManifest(): Record<string, Entry> {
+  if (!existsSync(MANIFEST)) return {};
+  return JSON.parse(readFileSync(MANIFEST, 'utf8')) as Record<string, Entry>;
+}
 
 export interface DotAsset { src: string; width: number; height: number; alt: string }
 
@@ -29,12 +41,12 @@ export interface DotAsset { src: string; width: number; height: number; alt: str
  * manifest instead of only the real, already-consistent one.
  */
 export function manifestEngineVersion(
-  entries: Record<string, Entry> = manifest as Record<string, Entry>,
+  entries: Record<string, Entry> = loadManifest(),
 ): string {
   const names = Object.keys(entries);
   if (names.length === 0) {
     throw new Error(
-      'public/assets/dot/manifest.json is empty. Render the library: python scripts/render_dot.py --all --role <role>, once per role.',
+      'public/assets/dot/manifest.json is empty or absent. The library is not shipped with the site. Render it: python scripts/render_dot.py --all --role <role>, once per role.',
     );
   }
   const missing = names.filter((name) => !entries[name].engine_version);
@@ -67,8 +79,12 @@ export function manifestEngineVersion(
  * Throws rather than returning a fallback. A hero that 404s still renders a
  * structurally correct page, so a silent miss reaches a visitor.
  */
-export function dotAsset(subject: string, role: string): DotAsset {
-  manifestEngineVersion();
+export function dotAsset(
+  subject: string,
+  role: string,
+  entries: Record<string, Entry> = loadManifest(),
+): DotAsset {
+  manifestEngineVersion(entries);
   const meta = SUBJECTS[subject];
   if (!meta) {
     throw new Error(
@@ -76,7 +92,7 @@ export function dotAsset(subject: string, role: string): DotAsset {
     );
   }
   const key = `${subject}-${role}-dot.png`;
-  const entry = (manifest as Record<string, Entry>)[key];
+  const entry = entries[key];
   if (!entry) {
     throw new Error(`No manifest entry for ${key}. Render it first.`);
   }
