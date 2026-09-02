@@ -27,7 +27,7 @@ falsifier on the page.
 
 ## Contracts
 
-Three documents in `docs/` are the contracts the code is written against, not commentary about
+Four documents in `docs/` are the contracts the code is written against, not commentary about
 it. Where a test or a generator enforces one of their rules, it cites the document by name.
 
 - [`docs/dot-imagery.md`](docs/dot-imagery.md): the imagery engine's constants, roles, and rules
