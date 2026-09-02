@@ -1,0 +1,28 @@
+{
+  "home-wide.png": {
+    "w": 2400,
+    "h": 900,
+    "webp": "home-wide.webp",
+    "gradient": "cobalt-iris",
+    "grain": 0.06,
+    "seed": 17,
+    "scale": 1,
+    "composite": "lighter",
+    "fx_sha": "ce514502795c61716d1ee3a893c7e67ea289356316b76360c9175a4bb1d52969",
+    "png_sha": "d5571387d635ec1d06e3abe711f33353b5b52b0d4c28691b1968d2129fe3bc88",
+    "webp_sha": "aa219bce502137075a0d1f3d818605d99de1aa974d72ae238a8ccd88f37e5ec0"
+  },
+  "home-narrow.png": {
+    "w": 1200,
+    "h": 1200,
+    "webp": "home-narrow.webp",
+    "gradient": "cobalt-iris",
+    "grain": 0.06,
+    "seed": 17,
+    "scale": 1,
+    "composite": "lighter",
+    "fx_sha": "ce514502795c61716d1ee3a893c7e67ea289356316b76360c9175a4bb1d52969",
+    "png_sha": "1cbe9b8ce617e2db3aebeba4c7d6c7a51d3efe82fccb0cbe7a8846d905844109",
+    "webp_sha": "e1cf6c11a407aff40890ae76de864a0a1766911ceb4fb23383c654a62e48bbf6"
+  }
+}
