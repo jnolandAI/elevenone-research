@@ -1,17 +1,48 @@
 ---
 import Base from '../layouts/Base.astro';
 import HomeHero from '../components/home/HomeHero.astro';
-import Working from '../components/home/Working.astro';
+import Section from '../components/site/Section.astro';
+import Ledger from '../components/site/Ledger.astro';
+
+const work = [
+  {
+    label: 'Commercial and market diligence',
+    body: 'Analysis of a market, a customer base or a competitive position in support of a live transaction, delivered as a written report with its sources and its data included.',
+  },
+  {
+    label: 'Sector and competitor research',
+    body: 'Research produced against a question a client has written down, such as the structure of a sector or the position of a competitor, and delivered as a written document.',
+  },
+  {
+    label: 'Sector reports',
+    body: 'Reports on a sector or a cross-sector question, written once and sold as finished documents as they are published. The full text of a report is visible before it is bought.',
+  },
+];
 ---
 <Base
   title="Eleven One Research"
-  description="Independent research and analysis for decisions that are hard to reverse. Every brief shows what it rests on, what it assumes and what would make it wrong."
+  description="Independent research and analysis for private equity investors and the management teams of the companies they own."
   current="home"
   dark
 >
   <HomeHero
-    headline="Research for decisions that are hard to reverse."
-    standfirst="Every load-bearing claim carries its source, its assumption and its falsifier on the page. Every figure is recomputable from the dataset published beside it."
+    headline="Decision-grade intelligence for operators and investors."
+    standfirst="Eleven One Research produces written research and analysis for private equity investors and the management teams of the companies they own, on decisions such as an acquisition, a market entry, a competitive response or a question in front of the board."
   />
-  <Working />
+
+  <Section label="The practice" id="practice">
+    <p>Eleven One Research is an independent research and analysis practice. It sells written analysis, delivered as a document, and it is run by one person with ten years in private-equity-backed consulting and operating roles. Every piece of work names its sources and includes the data behind its figures.</p>
+  </Section>
+
+  <Section label="Work" id="work">
+    <Ledger rows={work} />
+  </Section>
+
+  <Section label="Background" id="background">
+    <p>The practice is run by one person whose experience includes management consulting at Alvarez &amp; Marsal and at a middle-market M&amp;A and operations consulting firm, an integration role at a private-equity-backed specialty industrial manufacturer, and a vice president role for integrations and strategic projects at a private-equity-backed manufacturer of anatomic pathology products. Most of that work involved acquisitions, integrations and operating plans that were presented to boards and sponsors.</p>
+  </Section>
+
+  <Section label="Contact" id="contact">
+    <p>Inquiries can be sent to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>.</p>
+  </Section>
 </Base>

@@ -1,68 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import Working from '../src/components/home/Working.astro';
 import HomeHero from '../src/components/home/HomeHero.astro';
-
-const src = readFileSync('src/components/home/Working.astro', 'utf8');
-
-describe('the working section', () => {
-  // A substring check on the raw source would pass unchanged if the entire
-  // <dl> were deleted and the four words survived in a comment. Rendering
-  // through the container ties the assertion to the construct that actually
-  // shows a row: a <dt> label paired with a <dd> that has real content.
-  it('renders four labelled rows, each with a non-empty value', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(Working);
-    for (const label of ['Claim', 'Source', 'Assumption', 'Falsifier']) {
-      // [^>]* tolerates the data-astro-cid-* attributes the container
-      // injects onto every element under its dev-mode compile.
-      const match = html.match(new RegExp(`<dt[^>]*>${label}</dt>\\s*<dd[^>]*>([^<]+)</dd>`));
-      expect(match, label).toBeTruthy();
-      expect(match![1].trim().length, label).toBeGreaterThan(0);
-    }
-  });
-
-  // Brief 001 is published: null and excluded from the sitemap, but / is
-  // canonical and indexed. A filled-in figure here would put a finding on the
-  // page a reader has no way to check, which is the exact failure the device
-  // exists to prevent. Each row's own rendered value, not just the source
-  // text, has to carry no digit: a percentage, a sample size or a date would
-  // all read as the regression this guards against.
-  it('presents no numeric finding, since nothing is published to back one', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(Working);
-    for (const label of ['Claim', 'Source', 'Assumption', 'Falsifier']) {
-      const match = html.match(new RegExp(`<dt[^>]*>${label}</dt>\\s*<dd[^>]*>([^<]+)</dd>`));
-      expect(match, label).toBeTruthy();
-      expect(match![1], label).not.toMatch(/\d/);
-    }
-    const intro = html.match(/<p[^>]*class="intro"[^>]*>([\s\S]*?)<\/p>/);
-    expect(intro, 'intro').toBeTruthy();
-    expect(intro![1], 'intro').not.toMatch(/\d/);
-  });
-
-  // Claim.astro links to #c-{id} on the brief's claim rail and depends on the
-  // highlight script. There is no rail here, so borrowing it would ship
-  // anchors that resolve to nothing.
-  it('does not reuse the interactive Claim component', () => {
-    expect(src).not.toMatch(/import\s+Claim\s+from/);
-    expect(src).not.toMatch(/href=\{?["'`]#c-/);
-  });
-
-  it('claims no track record, which the brand rules forbid implying', () => {
-    expect(src).not.toMatch(/\b(client|clients|case study|case studies|testimonial)\b/i);
-  });
-
-  // The section used to derive its rows from Brief 001 via getEntry, which
-  // put a real but unpublished finding on the indexed homepage. There is no
-  // longer any data to derive: a regression back to a content dependency
-  // would reintroduce that same failure by a different route.
-  it('has no dependency on brief content', () => {
-    expect(src).not.toMatch(/getEntry/);
-    expect(src).not.toMatch(/astro:content/);
-  });
-});
 
 const hero = readFileSync('src/components/home/HomeHero.astro', 'utf8');
 const index = readFileSync('src/pages/index.astro', 'utf8');
@@ -90,13 +29,10 @@ describe('the band', () => {
     expect(html).toMatch(/<img[^>]*fetchpriority="high"/);
   });
 
-  // The band is weather, not a subject. A decorative image announces itself
-  // to a screen reader as nothing, which is correct.
   it('gives the field an empty alt, since it is decorative', () => {
     expect(hero).toMatch(/alt=""/);
   });
 
-  // The nav's height and the band's pull-up are one token.
   it('pulls up behind the nav by exactly the nav token', () => {
     expect(hero).toMatch(/margin-top:\s*calc\(-1 \* var\(--nav-h\)\)/);
     expect(hero).toMatch(/padding-top:\s*var\(--nav-h\)/);
@@ -111,9 +47,37 @@ describe('the band', () => {
     expect(hero).not.toMatch(/<script/);
   });
 
-  it('opens the page on the band, with the coverage strip gone', () => {
-    expect(index).toMatch(/<Base[^>]*\sdark[\s>]/);
-    expect(index).not.toMatch(/Coverage/);
-    expect(existsSync('src/components/home/Coverage.astro')).toBe(false);
+  // The headline is John's, word for word, and it is the one place the
+  // phrase is used on the site.
+  it('carries the headline exactly', () => {
+    expect(index).toContain('headline="Decision-grade intelligence for operators and investors."');
+  });
+});
+
+describe('the body of the homepage', () => {
+  // Working.astro taught the claim apparatus on the homepage. The apparatus
+  // came off every brand page on 2026-09-02; the homepage body is now four
+  // ruled sections in the page grammar.
+  it('no longer carries the working section', () => {
+    expect(existsSync('src/components/home/Working.astro')).toBe(false);
+    expect(index).not.toMatch(/Working/);
+  });
+
+  it('opens on the band and then runs four sections, in order', () => {
+    const labels = [...index.matchAll(/<Section\s+label="([^"]+)"/g)].map((m) => m[1]);
+    expect(labels).toEqual(['The practice', 'Work', 'Background', 'Contact']);
+    expect(index.indexOf('<HomeHero')).toBeLessThan(index.indexOf('<Section'));
+  });
+
+  it('lists three kinds of work in the ledger', () => {
+    const rows = [...index.matchAll(/label:\s*'([^']+)'/g)].map((m) => m[1]);
+    expect(rows).toEqual(['Commercial and market diligence', 'Sector and competitor research', 'Sector reports']);
+  });
+
+  it('reaches a human at the brand address', () => {
+    const link = index.match(/href="mailto:([^"]+)"\s*>([^<]+)</);
+    expect(link, 'index.astro has no mailto link').toBeTruthy();
+    expect(link![1].trim()).toBe(link![2].trim());
+    expect(link![1]).toMatch(/@elevenoneresearch\.com$/);
   });
 });
