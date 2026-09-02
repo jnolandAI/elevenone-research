@@ -121,6 +121,15 @@ output size.
 | `social` | 1200 × 630  | 6     | Open Graph and link previews              |
 | `cover`  | 1600 × 2000 | 9     | Report PDF cover, portrait                |
 
+**2 September 2026.** The `hero` and `card` roles no longer ship on the site.
+The homepage band is a field rendered from `design-canvas` (see
+`docs/field.md`), and the coverage strip is gone with it, so nothing on the
+site references a dot render and `public/assets/dot/` is no longer
+committed. The engine, this document and the roles above stay as the
+halftone lane for hard-edged objects; `python scripts/render_dot.py --all
+--role <role>` recreates the directory and the library when something
+needs one.
+
 Four renderings share the constants: **dot** (the default), **hatch** (better in
 print at small sizes), **contour** (marching squares, for anything geographic or
 surface-like), and **ascii** (loudest, use sparingly, outputs `.txt`).

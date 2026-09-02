@@ -13,6 +13,13 @@ them, and `canvas.json`, which is not the canvas. `canvas-directions.json` is,
 despite its name. What stays in this directory is what the live set is built
 from, and `archive/README.md` says what moved and why.
 
+The site consumes this directory. `scripts/render_field.mjs` in the repo root
+draws the homepage band from `_fx.js`, `_lang.js`, `_applied.cjs`'s `A_SITE`
+and `BLOBS_HOME`, and the `cobalt-iris` entry in `gradients.json`. A change to
+any of those is a change to the site; `node scripts/render_field.mjs --check`
+says whether the shipped render still matches, and `docs/field.md` is the
+contract.
+
 Still open: how often a piece is allowed each device. Pages 8, 9 and 10 build
 that budget out so it can be argued with. `PRODUCT.md` remains the constitution
 and has not yet been amended to carry any of this.
