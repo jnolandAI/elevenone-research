@@ -2,7 +2,10 @@
 import Mark from './Mark.astro';
 
 interface Props {
-  current?: 'home' | 'work' | 'method' | 'about';
+  // 'briefs' stays a legal value because /briefs is still a page and passes
+  // it, even though the nav has no Briefs entry to mark while nothing is
+  // published.
+  current?: 'home' | 'work' | 'method' | 'about' | 'briefs';
   print?: boolean;
   /** The nav is sitting on the homepage band. Paper type, inverse mark, not sticky. */
   onDark?: boolean;
