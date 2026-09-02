@@ -1,80 +1,72 @@
 ---
-import { dotAsset } from '../../lib/dot';
+import { fieldAsset } from '../../lib/field';
 
 interface Props {
-  /** The seam for later per-brief rotation. Never hardcode the path. */
-  subject?: string;
   headline: string;
   standfirst: string;
 }
-const { subject = 'grid', headline, standfirst } = Astro.props;
-const img = dotAsset(subject, 'hero');
+const { headline, standfirst } = Astro.props;
+
+// Two renders, chosen by the picture element. The image cannot follow the
+// viewport, so a tall crop is drawn for narrow screens rather than squeezed
+// out of the wide one. docs/field.md.
+const wide = fieldAsset('home-wide');
+const narrow = fieldAsset('home-narrow');
 ---
-<div class="hero frame">
-  <h1>{headline}</h1>
-  <p class="stand">{standfirst}</p>
-  <div class="surface">
-    <!-- Native size, never resampled. See scripts/webp_derive.py for why. -->
+<div class="band">
+  <picture class="field">
+    <source media="(max-width: 899px)" srcset={narrow.src} width={narrow.width} height={narrow.height} />
     <img
-      src={img.src}
-      width={img.width}
-      height={img.height}
-      alt={img.alt}
+      src={wide.src}
+      width={wide.width}
+      height={wide.height}
+      alt=""
       fetchpriority="high"
       decoding="async"
     />
+  </picture>
+  <div class="frame hero">
+    <h1>{headline}</h1>
+    <p class="stand">{standfirst}</p>
   </div>
 </div>
 
 <style>
-  /* No overflow clip. The render's own per-edge dissolve is the only edge
-     treatment the imagery gets, and a clip here cuts it off before a reader
-     sees it. e2e/dot-imagery.spec.ts holds this line, because a future layout
-     problem is very likely to be solved the way this one originally was. */
-  .hero { position: relative; padding: 84px 0 66px; }
-  /* left starts past both h1's and .stand's measured right edge (47.2% and
-     45.6% of the hero box, at this copy length) rather than the brief's 34%,
-     so the render never sits under the type at all. That decision is below,
-     next to .clearing's removal, because the two are the same finding.
+  /* Full bleed, and it starts at the top of the page. main begins below the
+     nav, so the band pulls itself up by the nav's height and pads by the
+     same amount: the nav then sits on the band, transparent, and the h1
+     stays inside main where the skip link can reach it. Both numbers are
+     --nav-h so they cannot disagree.
 
-     right is 0, not the -10% this shipped with. The bleed existed to push the
-     render's hard frame edge out of view, which the 1.2 dissolve now handles
-     inside the image itself. */
-  .surface { position: absolute; left: 50%; right: 0; top: 12%; pointer-events: none; }
-  /* The render carries a flat #FCFCFB field, which the imagery doc says gives
-     images "no edge". That holds only on a matching surface, and the page
-     ground runs #F6F6F5 to #EAEAE9, so the field showed as a lighter
-     rectangle. `darken` takes the per-channel minimum: the field loses to the
-     ground and disappears, the dots win and stay. No stacking context on
-     .surface, or the blend has nothing to blend with.
+     The ground is --ink before the image arrives and past its edges, which
+     is also the ground the render was drawn on. */
+  .band {
+    position: relative;
+    background: var(--ink);
+    margin-top: calc(-1 * var(--nav-h));
+    padding-top: var(--nav-h);
+    overflow: hidden;
+  }
 
-     A radial `.clearing` overlay was tried first, to fade the field under the
-     type the way BriefHero.astro:53-58 does. It cannot work here: `darken`
-     always keeps the darker of image and backdrop, so a dot pixel (~19) wins
-     against any lightening laid behind it, at any opacity. Softening the
-     dots under text needs the image to not be there, not a lighter backdrop
-     behind it. Moving .surface clear of both h1 and .stand fixes the actual
-     problem and makes the gradient unnecessary, so it was deleted rather
-     than kept as decoration with nothing left to fade. */
-  .surface img { display: block; width: 100%; height: auto; mix-blend-mode: darken; }
+  /* The image fills the band and is cropped, which a field is drawn to
+     survive: a mass whose centre is off the frame never shows where it
+     begins, so a crop has no edge to find. Anchored left because BLOBS_HOME
+     keeps the left third quiet and that is where the type is. No blend mode:
+     the render carries its own ground, so there is nothing to blend with. */
+  .field { position: absolute; inset: 0; display: block; }
+  .field img {
+    display: block; width: 100%; height: 100%;
+    object-fit: cover; object-position: left center;
+  }
 
-  /* Deliberately no z-index on .surface. A z-index on a positioned element
-     opens a stacking context, and a stacking context is exactly what stops
-     .surface img's mix-blend-mode from reaching the page background behind
-     it: it was tried with one first and the field just sat there as a
-     rectangle. h1 and .stand carry z-index instead, which is enough on its
-     own to keep the type above the image without boxing it into a context,
-     and matters if a future subject or a longer headline brings them back
-     into range of each other. */
-  h1, .stand { position: relative; z-index: 1; }
+  .hero { position: relative; padding-top: 84px; padding-bottom: 96px; }
   h1 {
     font-size: clamp(33px, 5vw, 58px); font-weight: 500; letter-spacing: -.036em;
-    line-height: 1.05; margin: 0; color: var(--ink); max-width: 15ch;
+    line-height: 1.05; margin: 0; color: var(--band-text); max-width: 15ch;
   }
-  .stand { font-size: 17.5px; line-height: 1.66; color: var(--g80); max-width: 48ch; margin: 26px 0 0; }
+  .stand { font-size: 17.5px; line-height: 1.66; color: var(--band-text-muted); max-width: 48ch; margin: 26px 0 0; }
 
   @media (max-width: 900px) {
-    .hero { padding: 60px 0 44px; }
-    .surface { position: static; left: auto; right: auto; top: auto; margin: 34px 0 0; }
+    .hero { padding-top: 60px; padding-bottom: 64px; }
   }
 </style>

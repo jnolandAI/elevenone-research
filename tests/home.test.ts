@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Working from '../src/components/home/Working.astro';
-import Coverage from '../src/components/home/Coverage.astro';
-import { SUBJECTS } from '../src/lib/dot';
+import HomeHero from '../src/components/home/HomeHero.astro';
 
 const src = readFileSync('src/components/home/Working.astro', 'utf8');
 
@@ -65,48 +64,56 @@ describe('the working section', () => {
   });
 });
 
-const coverage = readFileSync('src/components/home/Coverage.astro', 'utf8');
+const hero = readFileSync('src/components/home/HomeHero.astro', 'utf8');
+const index = readFileSync('src/pages/index.astro', 'utf8');
 
-describe('the coverage strip', () => {
-  // A substring check on the import line would still pass if SUBJECTS were
-  // imported and left unused beside a second, hardcoded card list: the
-  // Working-section test above shows the fix for that, rendering through the
-  // container and asserting a real value from the source of truth reaches the
-  // output. Do the same here: every subject's display name in SUBJECTS has to
-  // actually appear in the rendered markup, which a hardcoded list beside an
-  // unused import would not reproduce unless it happened to duplicate all six
-  // names verbatim.
-  it('is driven by the shared subject table rather than a second hardcoded list', async () => {
-    expect(coverage).toMatch(/from\s+['"]\.\.\/\.\.\/lib\/dot['"]/);
-    expect(coverage).toContain('SUBJECTS');
+describe('the band', () => {
+  // docs/field.md is the contract. The band is the only place on the site
+  // proper where colour appears, and it appears as an image, which is why
+  // the greyscale sweep in tokens.test.ts still passes: colour is a field,
+  // never a value in the CSS.
+  it('draws the field from public/assets/field and nothing from the dot library', () => {
+    expect(hero).toMatch(/from\s+['"]\.\.\/\.\.\/lib\/field['"]/);
+    expect(hero).not.toMatch(/assets\/dot|lib\/dot/);
+  });
 
+  it('renders one picture, one narrow source, one image with an empty alt', async () => {
     const container = await AstroContainer.create();
-    const html = await container.renderToString(Coverage);
-    const names = Object.values(SUBJECTS).map((s) => s.name);
-    expect(names.length).toBeGreaterThan(0);
-    for (const name of names) expect(html, name).toContain(name);
+    const html = await container.renderToString(HomeHero, {
+      props: { headline: 'A headline', standfirst: 'A standfirst.' },
+    });
+    expect(html.match(/<picture/g)).toHaveLength(1);
+    expect(html.match(/<source /g)).toHaveLength(1);
+    expect(html).toMatch(/<source[^>]*media="\(max-width: 899px\)"[^>]*srcset="\/assets\/field\/home-narrow\.webp"/);
+    expect(html).toMatch(/<img[^>]*src="\/assets\/field\/home-wide\.webp"[^>]*alt=""/);
+    expect(html).toMatch(/<img[^>]*width="2400"[^>]*height="900"/);
+    expect(html).toMatch(/<img[^>]*fetchpriority="high"/);
   });
 
-  it('lazy-loads, because all six sit below the fold', () => {
-    expect(coverage).toMatch(/loading=["']lazy["']/);
+  // The band is weather, not a subject. A decorative image announces itself
+  // to a screen reader as nothing, which is correct.
+  it('gives the field an empty alt, since it is decorative', () => {
+    expect(hero).toMatch(/alt=""/);
   });
 
-  // Six industrial images in a row is exactly the shape that implies a
-  // portfolio. The brand rules forbid implying a track record.
-  it('frames subjects covered, never work delivered', () => {
-    expect(coverage).not.toMatch(/\b(client|clients|case study|case studies|portfolio|our work|engagements delivered)\b/i);
+  // The nav's height and the band's pull-up are one token.
+  it('pulls up behind the nav by exactly the nav token', () => {
+    expect(hero).toMatch(/margin-top:\s*calc\(-1 \* var\(--nav-h\)\)/);
+    expect(hero).toMatch(/padding-top:\s*var\(--nav-h\)/);
   });
 
-  // The negative check above only proves forbidden words are absent, which
-  // stays green even if the disclaimer sentence itself is deleted outright:
-  // "not testimonial" is true of a blank page too. That sentence is the
-  // only thing standing between six industrial renders in a row and a
-  // portfolio implication, so its presence gets its own assertion, on the
-  // rendered HTML rather than a source substring, matching the pattern the
-  // Working section's test above already uses.
-  it('actually carries the coverage-not-delivery disclaimer, not just the absence of forbidden words', async () => {
-    const container = await AstroContainer.create();
-    const html = await container.renderToString(Coverage);
-    expect(html).toContain('They describe coverage of the drawing system, not work delivered.');
+  it('holds the quiet edge under the headline at any crop', () => {
+    expect(hero).toMatch(/object-fit:\s*cover/);
+    expect(hero).toMatch(/object-position:\s*left center/);
+  });
+
+  it('ships no client script', () => {
+    expect(hero).not.toMatch(/<script/);
+  });
+
+  it('opens the page on the band, with the coverage strip gone', () => {
+    expect(index).toMatch(/<Base[^>]*\sdark[\s>]/);
+    expect(index).not.toMatch(/Coverage/);
+    expect(existsSync('src/components/home/Coverage.astro')).toBe(false);
   });
 });
