@@ -29,10 +29,13 @@ describe('the band', () => {
     expect(html).toMatch(/<img[^>]*fetchpriority="high"/);
   });
 
+  // The band is weather, not a subject. A decorative image announces itself
+  // to a screen reader as nothing, which is correct.
   it('gives the field an empty alt, since it is decorative', () => {
     expect(hero).toMatch(/alt=""/);
   });
 
+  // The nav's height and the band's pull-up are one token.
   it('pulls up behind the nav by exactly the nav token', () => {
     expect(hero).toMatch(/margin-top:\s*calc\(-1 \* var\(--nav-h\)\)/);
     expect(hero).toMatch(/padding-top:\s*var\(--nav-h\)/);
@@ -61,6 +64,15 @@ describe('the body of the homepage', () => {
   it('no longer carries the working section', () => {
     expect(existsSync('src/components/home/Working.astro')).toBe(false);
     expect(index).not.toMatch(/Working/);
+  });
+
+  // The nav sits on the band and is only legible there because Base passes
+  // dark through to it. Nothing else asserts it: e2e measures the image,
+  // not the nav, so dropping the prop would ship ink-coloured links over a
+  // near-black band with every test green.
+  it('opens the page on the band, with the coverage strip gone', () => {
+    expect(index).toMatch(/<Base[^>]*\sdark[\s>]/);
+    expect(existsSync('src/components/home/Coverage.astro')).toBe(false);
   });
 
   it('opens on the band and then runs four sections, in order', () => {

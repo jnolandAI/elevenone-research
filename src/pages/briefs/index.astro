@@ -12,11 +12,17 @@ const briefs = all
     minutes: readTime(b.body ?? ''),
     ...b.data,
   }));
+
+// Briefs left the nav on 2026-09-02 while nothing is published, and this
+// page still carries the copy the rest of the site retired. It stays live
+// for a direct link and stays out of search until Brief 001 goes out; the
+// noindex comes off in the same change that puts the link back.
 ---
 <Base
   title="Briefs · Eleven One Research"
   description="Independent research and analysis for decisions that are hard to reverse. Every brief shows what it rests on, what it assumes and what would make it wrong."
   current="briefs"
+  noindex
 >
   <div class="frame">
     <header class="lede">

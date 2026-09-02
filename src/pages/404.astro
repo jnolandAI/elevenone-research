@@ -1,11 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
 import Opener from '../components/site/Opener.astro';
-import Section from '../components/site/Section.astro';
 ---
 <Base title="Not found · Eleven One Research" description="There is no page at this address.">
   <Opener title="Not found" standfirst="There is no page at this address, or it has moved." />
-  <Section label="Homepage">
+  <div class="frame">
     <p>The homepage is at <a href="/">elevenoneresearch.com</a>.</p>
-  </Section>
+  </div>
 </Base>
+
+<style>
+  /* One sentence under the opener. A ruled section with a label would be
+     the page grammar applied to nothing it needs to organise. */
+  p { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 28px 0 0; }
+  a {
+    color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-thickness: 1px; text-decoration-color: var(--g40);
+  }
+</style>

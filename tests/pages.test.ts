@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 
-// src/components/home/* is unchecked otherwise: this file only reads
-// src/pages/*.astro directly, so a component mounted on a page (Working.astro
-// on index.astro, say) never has its own copy swept for an em dash, a first
-// person pronoun, or an invented track record.
+// Components are swept as well as pages: this file reads src/pages/*.astro
+// directly, so anything mounted on a page from src/components/home or
+// src/components/site would otherwise never have its own copy checked for
+// an em dash, a first person pronoun, or an invented track record.
 // src/components/site/* holds the page grammar every page composes, so its
 // markup is on every page and gets the same sweep as the home components.
 const homeComponents = [
@@ -20,12 +20,10 @@ const pages = [
   ...homeComponents.map((path) => ({ name: path, src: readFileSync(path, 'utf8') })),
 ];
 
-// Working.astro's four visible rows come from a brief's own frontmatter
-// (src/content/briefs), not from copy typed into the component, so the
-// sweep above never sees the actual words that reach the homepage. An em
-// dash, a first person pronoun or invented track-record language in a
-// brief's claims renders straight through Working.astro and nothing above
-// would have caught it.
+// Briefs are swept too, but separately. A brief's claims render straight
+// onto its page, and an em dash, a first person pronoun or invented
+// track-record language in one would reach a reader without any of the
+// page sweeps above seeing it.
 //
 // Kept out of `pages` rather than folded in: a research brief legitimately
 // reports dollar figures as data ("$1.44bn of revenue"), which is not the

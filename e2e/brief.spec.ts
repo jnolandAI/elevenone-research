@@ -147,7 +147,9 @@ test('the sitemap excludes the draft brief and lists a real page', async ({ requ
   const res = await request.get('/sitemap-0.xml');
   expect(res.ok()).toBeTruthy();
   const xml = await res.text();
-  expect(xml).not.toContain('001-gross-margin');
+  // The path, not the slug. /pieces/001-gross-margin/ is a real, listed page
+  // that shares the slug, and the bare substring matched it.
+  expect(xml).not.toContain('/briefs/001-gross-margin');
   expect(xml).toContain('/work/');
 });
 
@@ -169,7 +171,7 @@ test('the homepage hero ships a real image at explicit dimensions', async ({ pag
 test('the sitemap lists the briefs index and still excludes the draft', async ({ request }) => {
   const xml = await (await request.get('/sitemap-0.xml')).text();
   expect(xml).toContain('/briefs');
-  expect(xml).not.toContain('001-gross-margin');
+  expect(xml).not.toContain('/briefs/001-gross-margin');
 });
 
 // The brief hero lays a halftone field of the brief's own dataset behind the

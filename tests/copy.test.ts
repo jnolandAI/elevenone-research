@@ -7,7 +7,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 // This file catches what a machine gets right: banned words, the plural
 // first person, em dashes, and heading shape.
 const FILES = [
-  ...['index', 'work', 'method', 'about', '404'].map((p) => `src/pages/${p}.astro`),
+  // Every page at the top level of src/pages. The briefs and pieces
+  // directories are out of scope by decision and are not read here.
+  ...readdirSync('src/pages').filter((f) => f.endsWith('.astro')).map((f) => `src/pages/${f}`),
   ...readdirSync('src/components/home').filter((f) => f.endsWith('.astro')).map((f) => `src/components/home/${f}`),
   ...readdirSync('src/components/site').filter((f) => f.endsWith('.astro')).map((f) => `src/components/site/${f}`),
   'src/components/Footer.astro',

@@ -4,3 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Reports became Work on 2026-09-02. Astro emits a meta-refresh page for the
+# old path; this makes it a 301 at the edge for the crawlers that had it.
+[[redirects]]
+  from = "/reports"
+  to = "/work"
+  status = 301
+  force = true

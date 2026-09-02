@@ -24,7 +24,7 @@ const sources = [
 
   <Section label="Sources" id="sources">
     <Ledger rows={sources} />
-    <p class="after">The practice does not use paid data subscriptions, and every source cited in a piece of work is one that the reader can open.</p>
+    <p>The practice does not use paid data subscriptions, and every source cited in a piece of work is one that the reader can open.</p>
   </Section>
 
   <Section label="Figures" id="figures">
@@ -35,9 +35,3 @@ const sources = [
     <p>A published piece of work is dated and is not edited after publication. If a finding is later revised, the revision is published as a dated addendum, and the original stays as it was.</p>
   </Section>
 </Base>
-
-<style>
-  /* A paragraph after a ledger gets the ledger's row spacing above it, so
-     it reads as the last line of the list rather than as a new block. */
-  .after { margin-top: 18px; }
-</style>

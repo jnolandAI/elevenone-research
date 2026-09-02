@@ -28,6 +28,11 @@ const { label, id } = Astro.props;
   }
   .body :global(p) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; }
   .body :global(p:last-child) { margin-bottom: 0; }
+  /* A paragraph that follows a ledger takes the ledger's own row spacing
+     above it, so it reads as the last line of the list. A page cannot set
+     this itself: its scoped selector loses to the global paragraph rule
+     here. */
+  .body :global(dl + p) { margin-top: 18px; }
   .body :global(a) {
     color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
     text-decoration-thickness: 1px; text-decoration-color: var(--g40);
