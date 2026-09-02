@@ -9,9 +9,9 @@
    as four drawings of the same thing rather than four unrelated pictures. */
 const fs = require('fs');
 
-const GRIDJS = fs.readFileSync('grid.js', 'utf8');
+const GRIDJS = fs.readFileSync('../grid.js', 'utf8');
 const DARK = fs.readFileSync('_dark.js', 'utf8');
-const KDEJS = fs.readFileSync('kde.js', 'utf8');
+const KDEJS = fs.readFileSync('../kde.js', 'utf8');
 
 const MARK = '<circle cx="92.07" cy="8.73" r="6.45"/><circle cx="20.08" cy="9.38" r="1.31"/><circle cx="36.97" cy="20.30" r="3.72"/><circle cx="69.93" cy="28.25" r="6.45"/><circle cx="22.23" cy="40.54" r="3.72"/><circle cx="49.76" cy="49.61" r="6.45"/><circle cx="79.01" cy="57.74" r="9.39"/><circle cx="28.24" cy="70.00" r="6.45"/><circle cx="57.76" cy="78.98" r="9.39"/><circle cx="86.74" cy="86.74" r="11.00"/><circle cx="7.51" cy="92.28" r="6.45"/>';
 

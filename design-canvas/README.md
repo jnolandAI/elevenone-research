@@ -7,6 +7,12 @@ set" below. `gradients.json` is its source of record. Everything else in this
 directory is the argument that led there, kept because the reasoning is worth
 more than the conclusion when the next question comes.
 
+The parts of that argument the set closed are in `archive/`: the four
+directions, the early hue and object studies, the checks that only measured
+them, and `canvas.json`, which is not the canvas. `canvas-directions.json` is,
+despite its name. What stays in this directory is what the live set is built
+from, and `archive/README.md` says what moved and why.
+
 Still open: how often a piece is allowed each device. Pages 8, 9 and 10 build
 that budget out so it can be argued with. `PRODUCT.md` remains the constitution
 and has not yet been amended to carry any of this.

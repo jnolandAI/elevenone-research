@@ -20,6 +20,9 @@ falsifier on the page.
 | `scripts/render_mark.py` | The mark generator. Single source of truth |
 | `docs/` | The contracts the generators and the brief format are held to |
 | `references/legacy-imagery/` | Superseded imagery, kept for reference and never published |
+| `design-canvas/` | The eleven-gradient set, its generators and its checks |
+| `design-canvas/archive/` | The four directions and the early hue studies the set replaced |
+| `prototypes/archive/` | Colour-system prototypes the set replaced, all of them accent-based |
 
 ## Contracts
 

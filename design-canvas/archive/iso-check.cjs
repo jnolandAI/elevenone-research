@@ -1,5 +1,5 @@
 const fs=require('fs');
-eval(fs.readFileSync('grid.js','utf8'));
+eval(fs.readFileSync('../grid.js','utf8'));
 eval(fs.readFileSync('_dark.js','utf8'));
 const O={ox:1500,oy:900,sx:1280,sy:820,hz:400}, W=2560, H=1440;
 let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9, off=0, tot=0;
