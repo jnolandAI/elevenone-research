@@ -1,7 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
 import Opener from '../components/site/Opener.astro';
+import Section from '../components/site/Section.astro';
 ---
-<Base title="Work · Eleven One Research" description="Commercial and market diligence, sector and competitor research, and sector reports, each delivered as a written document with its sources and data included." current="work">
-  <Opener kicker="Eleven One Research" title="Work" />
+<Base
+  title="Work · Eleven One Research"
+  description="Commercial and market diligence, sector and competitor research, and sector reports, each delivered as a written document with its sources and data included."
+  current="work"
+>
+  <Opener
+    kicker="Eleven One Research"
+    title="Work"
+    standfirst="Eleven One Research produces three kinds of written work. Each is delivered as a document with its sources and its data included."
+  />
+
+  <Section label="Commercial and market diligence" id="diligence">
+    <p>The usual question is whether a market, a customer base or a competitive position supports the case for a transaction. The work covers the size and growth of the market, the concentration and durability of the customer base, the position of the target against its competitors, and the assumptions in the investment case that depend on those findings.</p>
+    <p>The deliverable is a written report. Where the report relies on a figure, the source of the figure and the data behind it are included.</p>
+  </Section>
+
+  <Section label="Sector and competitor research" id="research">
+    <p>The usual question is one that a management team or an investor has written down and needs answered in a form that can be circulated, such as the structure of a sector, the economics of a segment, the position and likely behavior of a competitor, or the evidence for a growth plan.</p>
+    <p>The work is scoped to the question and delivered as a document. Public data is used wherever it is sufficient to answer the question well, and the report says where it is not.</p>
+  </Section>
+
+  <Section label="Sector reports" id="reports">
+    <p>Reports on a sector or a cross-sector question, written to be read by more than one buyer and sold as finished documents. The full text of a report is visible before it is bought, and the dataset behind each figure is published with it.</p>
+    <p>Reports are added to this site as they are completed.</p>
+  </Section>
+
+  <Section label="Contact" id="contact">
+    <p>Inquiries about any of the three can be sent to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>.</p>
+  </Section>
 </Base>
