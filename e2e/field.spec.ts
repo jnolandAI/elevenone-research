@@ -66,14 +66,14 @@ for (const width of [1440, 390]) {
       };
     });
 
-    // Cover.
+    // The field covers the band, and the width chose the right render.
     expect(Math.abs(r.img.l - r.band.l), 'left').toBeLessThanOrEqual(1);
     expect(Math.abs(r.img.r - r.band.r), 'right').toBeLessThanOrEqual(1);
     expect(Math.abs(r.img.t - r.band.t), 'top').toBeLessThanOrEqual(1);
     expect(Math.abs(r.img.b - r.band.b), 'bottom').toBeLessThanOrEqual(1);
     expect(r.src, 'which render').toContain(width < 900 ? 'home-narrow' : 'home-wide');
 
-    // Quiet third.
+    // The headline sits on the quiet third of what is displayed.
     const brightest = Math.max(...r.thirds);
     expect(
       r.underH1,
