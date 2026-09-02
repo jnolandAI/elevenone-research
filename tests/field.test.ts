@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { fieldAsset } from '../src/lib/field';
 
 // The contract this file holds the assets to is docs/field.md.
 const DIR = 'public/assets/field';
@@ -96,5 +97,27 @@ describe('the field renders', () => {
     for (const m of Object.values(manifest)) {
       expect(webpImageChunk(join(DIR, m.webp)), `${m.webp} is not lossy`).toBe('VP8 ');
     }
+  });
+});
+
+describe('fieldAsset()', () => {
+  it('resolves a render to the WebP the band ships, with the PNG beside it', () => {
+    const a = fieldAsset('home-wide');
+    expect(a.src).toBe('/assets/field/home-wide.webp');
+    expect(a.png).toBe('/assets/field/home-wide.png');
+    expect(a.width).toBe(2400);
+    expect(a.height).toBe(900);
+  });
+
+  // A band that 404s still renders a structurally correct page, so the
+  // build has to be the thing that fails.
+  it('throws on a name the manifest does not carry, and says what it does carry', () => {
+    expect(() => fieldAsset('home-square')).toThrow(/home-square/);
+    expect(() => fieldAsset('home-square')).toThrow(/home-wide/);
+  });
+
+  it('throws when an entry has no derived webp', () => {
+    const entries = { 'x.png': { w: 1, h: 1 } } as any;
+    expect(() => fieldAsset('x', entries)).toThrow(/webp/i);
   });
 });
