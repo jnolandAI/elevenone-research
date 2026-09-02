@@ -24,6 +24,9 @@ const DRAFTS = draftSlugs();
 
 export default defineConfig({
   site: 'https://elevenoneresearch.com',
+  // Reports became Work on 2026-09-02. A static redirect page is enough for
+  // a link in an old email.
+  redirects: { '/reports': '/work' },
   integrations: [
     mdx(),
     sitemap({

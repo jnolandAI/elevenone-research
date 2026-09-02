@@ -107,11 +107,16 @@ test('a draft is not linked from the index and says it is a draft', async ({ pag
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 });
 
-test('the four routes exist and the nav marks the current one', async ({ page }) => {
-  for (const [path, label] of [['/briefs', 'Briefs'], ['/reports', 'Reports'], ['/method', 'Method'], ['/about', 'About']]) {
+test('the three routes exist and the nav marks the current one', async ({ page }) => {
+  for (const [path, label] of [['/work', 'Work'], ['/method', 'Method'], ['/about', 'About']]) {
     await page.goto(path!);
     await expect(page.locator(`nav a[aria-current="page"]`)).toHaveText(label!);
   }
+});
+
+test('/reports redirects to /work', async ({ page }) => {
+  await page.goto('/reports');
+  await expect(page).toHaveURL('http://localhost:4321/work');
 });
 
 test('the homepage marks no nav item current, since it has no nav link of its own', async ({ page }) => {
@@ -143,7 +148,7 @@ test('the sitemap excludes the draft brief and lists a real page', async ({ requ
   expect(res.ok()).toBeTruthy();
   const xml = await res.text();
   expect(xml).not.toContain('001-gross-margin');
-  expect(xml).toContain('/reports/');
+  expect(xml).toContain('/work/');
 });
 
 test('the homepage hero ships a real image at explicit dimensions', async ({ page, request }) => {

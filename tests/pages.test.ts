@@ -5,12 +5,15 @@ import { readFileSync, readdirSync } from 'node:fs';
 // src/pages/*.astro directly, so a component mounted on a page (Working.astro
 // on index.astro, say) never has its own copy swept for an em dash, a first
 // person pronoun, or an invented track record.
-const homeComponents = readdirSync('src/components/home')
-  .filter((f) => f.endsWith('.astro'))
-  .map((f) => `src/components/home/${f}`);
+// src/components/site/* holds the page grammar every page composes, so its
+// markup is on every page and gets the same sweep as the home components.
+const homeComponents = [
+  ...readdirSync('src/components/home').filter((f) => f.endsWith('.astro')).map((f) => `src/components/home/${f}`),
+  ...readdirSync('src/components/site').filter((f) => f.endsWith('.astro')).map((f) => `src/components/site/${f}`),
+];
 
 const pages = [
-  ...['index', 'reports', 'method', 'about', '404'].map((p) => ({
+  ...['index', 'work', 'method', 'about', '404'].map((p) => ({
     name: p,
     src: readFileSync(`src/pages/${p}.astro`, 'utf8'),
   })),
@@ -85,25 +88,26 @@ describe('the structural pages', () => {
 });
 
 describe('site-wide navigation targets', () => {
-  // The briefs index moved from / to /briefs. Every link labelled Briefs has
-  // to move with it, and nothing did until a reviewer read the footer by hand.
-  // Fault injection: point either link back at "/" and this turns red.
-  it('sends the footer Briefs link to the briefs index, not the homepage', () => {
-    const src = readFileSync('src/components/Footer.astro', 'utf8');
-    const briefsLinks = [...src.matchAll(/href=["']([^"']+)["'][^>]*>\s*Briefs\s*</g)];
-    expect(briefsLinks.length, 'Footer.astro has no Briefs link').toBeGreaterThan(0);
-    for (const m of briefsLinks) expect(m[1], 'Footer.astro').toBe('/briefs');
+  // Briefs left the nav and the footer on 2026-09-02 because nothing was
+  // published and the first thing a reader clicked said so. The route stays,
+  // so publishing Brief 001 is a content change. This case says: while no
+  // brief carries a published date, no chrome links to the index. When one
+  // does, this case is the thing to delete, and the link goes back.
+  it('links to Briefs from nowhere while nothing is published', () => {
+    const published = readdirSync('src/content/briefs')
+      .filter((f) => f.endsWith('.mdx'))
+      .some((f) => !/^published:\s*null\s*$/m.test(readFileSync(`src/content/briefs/${f}`, 'utf8').split('---')[1] ?? ''));
+    expect(published, 'a brief is published; put the Briefs link back and retire this case').toBe(false);
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(nav).not.toMatch(/href:\s*['"]\/briefs['"]/);
+    expect(footer).not.toMatch(/href=["']\/briefs["']/);
   });
 
-  it('sends the nav Briefs link to the briefs index, not the homepage', () => {
-    // Nav builds its links from a data array, not literal anchors, so the
-    // footer's text-based regex above has nothing to match here: the label
-    // and href never appear next to rendered markup in this file, only in
-    // the array entry. Match the entry itself instead.
-    const src = readFileSync('src/components/Nav.astro', 'utf8');
-    const entry = src.match(/key:\s*['"]briefs['"],\s*label:\s*['"]Briefs['"],\s*href:\s*['"]([^'"]+)['"]/);
-    expect(entry, 'Nav.astro has no briefs link entry').toBeTruthy();
-    expect(entry![1], 'Nav.astro').toBe('/briefs');
+  it('carries Work, Method and About in the nav, in that order', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const labels = [...nav.matchAll(/label:\s*['"]([^'"]+)['"]/g)].map((m) => m[1]);
+    expect(labels).toEqual(['Work', 'Method', 'About']);
   });
 });
 

@@ -2,7 +2,7 @@
 import Mark from './Mark.astro';
 
 interface Props {
-  current?: 'home' | 'briefs' | 'reports' | 'method' | 'about';
+  current?: 'home' | 'work' | 'method' | 'about';
   print?: boolean;
   /** The nav is sitting on the homepage band. Paper type, inverse mark, not sticky. */
   onDark?: boolean;
@@ -10,8 +10,7 @@ interface Props {
 const { current, print = false, onDark = false } = Astro.props;
 
 const links = [
-  { key: 'briefs', label: 'Briefs', href: '/briefs' },
-  { key: 'reports', label: 'Reports', href: '/reports' },
+  { key: 'work', label: 'Work', href: '/work' },
   { key: 'method', label: 'Method', href: '/method' },
   { key: 'about', label: 'About', href: '/about' },
 ] as const;
