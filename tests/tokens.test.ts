@@ -65,6 +65,17 @@ describe('design tokens', () => {
     }
   });
 
+  // The band is the one place on the site where type sits on ink rather than
+  // on paper. Its tokens are aliases to greys the spine already has, plus one
+  // translucent hairline, so the twelve-grey rule above still holds and the
+  // hex sweep below still has nothing to find.
+  it('carries the band tokens as neutral aliases and one translucent rule', () => {
+    expect(value('nav-h')).toBe('60px');
+    expect(value('band-text')).toBe('var(--g05)');
+    expect(value('band-text-muted')).toBe('var(--g40)');
+    expect(value('band-rule')).toBe('rgba(244, 244, 243, 0.10)');
+  });
+
   it('introduces no colour: every token is neutral or a shadow', () => {
     // any hex token must have R, G and B within 4 of each other
     const hexes = [...css.matchAll(/#([0-9A-Fa-f]{6})\b/g)].map((m) => m[1]!);

@@ -15,9 +15,11 @@ interface Props {
   noindex?: boolean;
   /** Shown only on a brief, where printing is the PDF story. */
   print?: boolean;
+  /** The page opens on the band. Only index.astro sets it. */
+  dark?: boolean;
 }
 
-const { title, description, current, noindex = false, print = false } = Astro.props;
+const { title, description, current, noindex = false, print = false, dark = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
@@ -43,7 +45,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <div class="ground"></div>
     <div class="noise"></div>
     <a class="skip" href="#main">Skip to the document</a>
-    <Nav current={current} print={print} />
+    <Nav current={current} print={print} onDark={dark} />
     <main id="main">
       <slot />
     </main>

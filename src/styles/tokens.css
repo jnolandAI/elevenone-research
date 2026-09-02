@@ -23,6 +23,17 @@
   --r-xl: 40px;
   --pill: 999px;
 
+  /* The band. The nav's height is a token because HomeHero pulls itself up
+     behind the nav by exactly this much, and two numbers that have to agree
+     should be one number. The three band tokens are aliases to the spine:
+     type on ink uses the paper end of the same twelve greys. --band-rule is
+     --g10 at ten per cent, because a hairline over a field has to be
+     translucent to read as a rule rather than as a bar. */
+  --nav-h: 60px;
+  --band-text: var(--g05);
+  --band-text-muted: var(--g40);
+  --band-rule: rgba(244, 244, 243, 0.10);
+
   /* Separation is elevation, not a 1px border. */
   --e1: 0 1px 2px rgba(20,20,18,.05), 0 2px 8px rgba(20,20,18,.035);
   --e2: 0 1px 2px rgba(20,20,18,.05), 0 8px 24px rgba(20,20,18,.055);

@@ -4,8 +4,10 @@ import Mark from './Mark.astro';
 interface Props {
   current?: 'home' | 'briefs' | 'reports' | 'method' | 'about';
   print?: boolean;
+  /** The nav is sitting on the homepage band. Paper type, inverse mark, not sticky. */
+  onDark?: boolean;
 }
-const { current, print = false } = Astro.props;
+const { current, print = false, onDark = false } = Astro.props;
 
 const links = [
   { key: 'briefs', label: 'Briefs', href: '/briefs' },
@@ -14,10 +16,10 @@ const links = [
   { key: 'about', label: 'About', href: '/about' },
 ] as const;
 ---
-<header class="nav">
+<header class:list={['nav', { dark: onDark }]}>
   <div class="frame">
     <a class="brand" href="/">
-      <Mark size={19} />Eleven One <span>Research</span>
+      <Mark size={19} inverse={onDark} />Eleven One <span>Research</span>
     </a>
     <nav aria-label="Primary">
       {links.map((l) => (
@@ -56,7 +58,7 @@ const links = [
   }
   .nav :global(.frame) {
     display: flex; align-items: center; gap: 24px;
-    padding-top: 14px; padding-bottom: 14px;
+    height: var(--nav-h);
   }
   .brand {
     font-size: 15px; font-weight: 600; letter-spacing: -.02em;
@@ -74,6 +76,22 @@ const links = [
     transition: transform .3s var(--ez), box-shadow .3s; white-space: nowrap;
   }
   .print:hover { transform: translateY(-1px); box-shadow: var(--e2); }
+
+  /* On the band. Transparent so the field shows through, paper type, and
+     not sticky: a transparent nav that followed the reader off the band
+     would put paper links over paper. The hairline is --band-rule rather
+     than the light shadow, for the same reason the band's own rules are. */
+  .nav.dark {
+    position: relative;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 1px 0 var(--band-rule);
+  }
+  .nav.dark .brand { color: var(--band-text); }
+  .nav.dark .brand span { color: var(--band-text-muted); }
+  .nav.dark .l { color: var(--band-text-muted); }
+  .nav.dark .l:hover, .nav.dark .l[aria-current] { color: var(--band-text); }
 
   @media (max-width: 900px) {
     nav { display: none; }
