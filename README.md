@@ -59,8 +59,10 @@ python scripts/build_dot_pages.py          # rebuild the two generated pages
 ```
 
 Edit `prototypes/dot-engine.js` and you must run `build_dot_pages.py`, or the two generated
-pages go stale without any test noticing. Edit `design-canvas/_fx.js`, `_applied.cjs` or
-`gradients.json` and you must run `render_field.mjs`, or `npm test` fails on the sha.
+pages go stale without any test noticing. Edit `design-canvas/_fx.js` and `npm test` fails
+on the sha until you run `render_field.mjs`. Edit `_applied.cjs` or `gradients.json` and
+nothing fails on its own: run `node scripts/render_field.mjs --check`, which is the only
+thing that notices.
 
 ## Deployment
 

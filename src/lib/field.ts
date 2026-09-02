@@ -1,4 +1,6 @@
 import manifest from '../../public/assets/field/manifest.json';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /** One entry of public/assets/field/manifest.json, written by scripts/render_field.mjs. */
 interface Entry {
@@ -46,6 +48,13 @@ export function fieldAsset(
   }
   if (!entry.webp) {
     throw new Error(`Field render ${key} has no derived webp. Render again: node scripts/render_field.mjs`);
+  }
+  // The manifest can name a file that is not there, if someone deleted a
+  // render and left the manifest behind. A 404 reaches a visitor; a throw
+  // here reaches the build.
+  const onDisk = fileURLToPath(new URL(`../../public/assets/field/${entry.webp}`, import.meta.url));
+  if (!existsSync(onDisk)) {
+    throw new Error(`Field render ${entry.webp} is named in the manifest but is not on disk. Render again: node scripts/render_field.mjs`);
   }
   return {
     src: `/assets/field/${entry.webp}`,

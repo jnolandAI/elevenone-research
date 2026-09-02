@@ -120,4 +120,9 @@ describe('fieldAsset()', () => {
     const entries = { 'x.png': { w: 1, h: 1 } } as any;
     expect(() => fieldAsset('x', entries)).toThrow(/webp/i);
   });
+
+  it('throws when the manifest names a webp that is not on disk', () => {
+    const entries = { 'ghost.png': { w: 1, h: 1, webp: 'ghost.webp' } } as any;
+    expect(() => fieldAsset('ghost', entries)).toThrow(/not on disk/);
+  });
 });

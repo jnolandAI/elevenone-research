@@ -38,8 +38,9 @@ by the same code:
   `cobalt-iris` anchors in `gradients.json`, so the manifest's claim is
   checked rather than typed.
 - **Four masses, `BLOBS_HOME`.** Required from `_applied.cjs`, not copied.
-  Three sit off the right and bottom edges and one faint one off the top
-  left, which is what keeps the left third quiet for the headline.
+  One sits near the right edge, one off it, one off the bottom, and a
+  faint one off the top. Nothing is placed in the left third, which is
+  what keeps it quiet for the headline.
 - **Additive, on ink.** `lighter` compositing on `#131312`, which is also
   `--ink`, so the band's CSS ground and the image's ground are the same
   value and there is no seam where one meets the other.

@@ -75,6 +75,10 @@ for (const width of [1440, 390]) {
 
     // The headline sits on the quiet third of what is displayed.
     const brightest = Math.max(...r.thirds);
+    // An all-black field passes the ratio below trivially, and nothing else
+    // on the branch looks at pixels. Say that there is a field at all.
+    const darkest = Math.min(...r.thirds);
+    expect(brightest, `thirds ${r.thirds.map((t) => t.toFixed(1)).join(' / ')}; the field is flat`).toBeGreaterThan(darkest + 8);
     expect(
       r.underH1,
       `under the h1 ${r.underH1.toFixed(1)} against brightest third ${brightest.toFixed(1)}; thirds ${r.thirds.map((t) => t.toFixed(1)).join(' / ')}`,

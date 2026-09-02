@@ -489,13 +489,21 @@ describe('the fog band holds both ridge and scatter', () => {
   // The roles a subject actually renders at, read from the shipped manifest
   // rather than from a list here: the point is to cover what is published.
   // Task 5 stopped shipping the library, so nothing is published on this
-  // branch; the per-role cases below generate none and only the ridge-list
-  // case still runs. This mirrors dot.ts's own loadManifest(): absence is
-  // not this file's error to raise.
+  // branch; the per-role cases below generate none, and both the ridge-list
+  // and the scatter-list cases still run. This mirrors dot.ts's own
+  // loadManifest(): absence is not this file's error to raise.
   const manifestPath = fileURLToPath(new URL('../public/assets/dot/manifest.json', import.meta.url));
   const manifest = existsSync(manifestPath)
     ? (JSON.parse(readFileSync(manifestPath, 'utf8')) as Record<string, { subject: string; role: string }>)
     : {};
+
+  // The library is not shipped (docs/dot-imagery.md, under Roles), so the
+  // per-role cases below generate nothing. Say so, or the suite passes by
+  // running fewer tests than it did and nobody sees the number move.
+  it('generates no per-role case, because no library is shipped', () => {
+    expect(Object.keys(manifest)).toHaveLength(0);
+  });
+
   const rolesOf = (id: string) =>
     [...new Set(Object.values(manifest).filter((a) => a.subject === id).map((a) => a.role))].sort();
 

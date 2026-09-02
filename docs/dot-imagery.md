@@ -26,7 +26,7 @@ same house, because the screen does the work rather than the subject.
 | `scripts/render_dot.py`         | Production CLI                                                 |
 | `scripts/webp_derive.py`        | Derives a lossless WebP delivery asset beside each PNG, at native size |
 | `public/assets/dot/`            | Rendered output: PNGs, their derived WebPs, plus `manifest.json` |
-| `src/components/home/`          | First production consumer: `HomeHero.astro` and `Coverage.astro` |
+| `src/components/home/`          | Formerly the first production consumer. The site proper has no consumer today; the homepage band is a field, see `docs/field.md` |
 | `tests/dot-engine.test.ts`      | Unit tests for the engine's pure functions, loaded without a browser |
 
 Both pages inline the same engine, so no scene, role or constant can differ

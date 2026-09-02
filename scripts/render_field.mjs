@@ -37,7 +37,7 @@ const OUT = join(ROOT, 'public', 'assets', 'field');
 
 const A = require(join(CANVAS, '_applied.cjs'));
 const gradientsFile = require(join(CANVAS, 'gradients.json'));
-const GRADIENTS = Array.isArray(gradientsFile) ? gradientsFile : gradientsFile.gradients;
+const GRADIENTS = gradientsFile.gradients;
 
 // docs/field.md fixes every one of these. Change them there first.
 const GRADIENT = 'cobalt-iris';
@@ -95,9 +95,14 @@ async function render(browser, size, quality) {
 async function withBrowser(fn) {
   // The same software-GL flags render_dot.py launches with, so the render
   // does not depend on whatever GPU the machine has.
-  const browser = await chromium.launch({
-    args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
-  });
+  let browser;
+  try {
+    browser = await chromium.launch({
+      args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+    });
+  } catch (e) {
+    throw new Error(`Chromium did not launch. If it is not installed, run: npx playwright install chromium\n${e.message}`);
+  }
   try {
     return await fn(browser);
   } finally {
