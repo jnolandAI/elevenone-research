@@ -1,12 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import Prose from '../components/Prose.astro';
+import Opener from '../components/site/Opener.astro';
+import Section from '../components/site/Section.astro';
 ---
-<Base title="Not found · Eleven One Research" description="That page does not exist.">
-  <Prose
-    title="Not found"
-    standfirst="That page does not exist, or it has moved."
-  >
-    <p><a href="/">Go to the homepage</a>.</p>
-  </Prose>
+<Base title="Not found · Eleven One Research" description="There is no page at this address.">
+  <Opener title="Not found" standfirst="There is no page at this address, or it has moved." />
+  <Section label="Homepage">
+    <p>The homepage is at <a href="/">elevenoneresearch.com</a>.</p>
+  </Section>
 </Base>

@@ -1,29 +1,38 @@
 ---
 import Base from '../layouts/Base.astro';
-import Prose from '../components/Prose.astro';
+import Opener from '../components/site/Opener.astro';
+import Section from '../components/site/Section.astro';
+import Ledger from '../components/site/Ledger.astro';
+
+// The roles are listed most recent first. The order was taken from the order
+// in which John lists them elsewhere and is his to correct.
+const roles = [
+  { label: 'Vice president, integrations and strategic projects', body: 'A private-equity-backed manufacturer of anatomic pathology products.' },
+  { label: 'Management consultant', body: 'A middle-market M&A and operations consulting firm.' },
+  { label: 'Integration lead', body: 'A private-equity-backed specialty industrial manufacturer.' },
+  { label: 'Management consultant', body: 'Alvarez & Marsal.' },
+];
 ---
 <Base
   title="About · Eleven One Research"
-  description="Independent research and analysis, written by someone who has held the operating and PE-backed roles the analysis is about."
+  description="Eleven One Research is an independent research and analysis practice producing written work for investors and the management teams of the companies they own."
   current="about"
 >
-  <Prose
+  <Opener
+    kicker="Eleven One Research"
     title="About"
-    standfirst="Eleven One Research is an independent research and analysis practice. It sells decision-grade written analysis rather than hours."
-  >
-    <h2>Who this is for</h2>
-    <p>Private equity professionals, corporate strategy teams and management consultants working on a decision that is hard to reverse: an acquisition, a market entry, a competitive response, a board question with a date on it.</p>
-    <p>People who read working documents for a living and can tell the difference between rigour and the appearance of it. That audience is the reason the apparatus is on the page rather than in an endnote.</p>
+    standfirst="Eleven One Research is an independent research and analysis practice. It produces written work for investors and for the management teams of the companies they own."
+  />
 
-    <h2>What makes the work different</h2>
-    <p>The analysis is produced by someone who has held operating and PE-backed roles rather than only modelled them: Alvarez &amp; Marsal, Mirion Technologies, The Keystone Group, and VP Strategy at StatLab Medical Products.</p>
-    <p>That is the one difference a research vendor cannot truthfully copy. The work is written by an operator who has had to live with this class of decision.</p>
+  <Section label="The practice" id="practice">
+    <p>The practice sells written analysis, delivered as a document, on decisions such as an acquisition, a market entry, a competitive response or a question in front of a board. Its readers are private equity deal teams and operating partners, corporate strategy teams and management consultants. Every piece of work names its sources and includes the data behind its figures.</p>
+  </Section>
 
-    <h2>How the practice runs</h2>
-    <p>Published work is the proof and engagements are the product. Briefs are published to demonstrate method and judgment, and they are free to read in full, because a demonstration you have to pay for is not a demonstration.</p>
-    <p>The practice is deliberately low-touch. You should be able to read a brief, judge the thinking, and decide, without a call and without joining anything.</p>
+  <Section label="Background" id="background">
+    <Ledger rows={roles} />
+  </Section>
 
-    <h2>Getting in touch</h2>
-    <p>Write to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>.</p>
-  </Prose>
+  <Section label="Contact" id="contact">
+    <p>Inquiries can be sent to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>.</p>
+  </Section>
 </Base>
