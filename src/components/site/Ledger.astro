@@ -1,0 +1,32 @@
+---
+interface Props {
+  rows: { label: string; body: string }[];
+}
+const { rows } = Astro.props;
+---
+<dl class="ledger">
+  {rows.map((r) => (
+    <div class="row">
+      <dt class="mono">{r.label}</dt>
+      <dd>{r.body}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  /* Rows and hairlines, no surface. A card around a row makes it an object
+     on the page; a hairline makes it a line in a list, which is what a
+     ledger is. */
+  .ledger { margin: 0; }
+  .row {
+    display: grid; grid-template-columns: 200px 1fr; gap: 0 32px;
+    padding: 18px 0; border-top: 1px solid var(--g20);
+  }
+  .row:first-child { border-top: 0; padding-top: 0; }
+  dt { font-size: 12.5px; line-height: 1.6; color: var(--g80); margin: 2px 0 0; }
+  dd { margin: 0; font-size: 16.5px; line-height: 1.7; color: var(--g80); max-width: 62ch; }
+
+  @media (max-width: 620px) {
+    .row { grid-template-columns: 1fr; gap: 6px 0; }
+  }
+</style>

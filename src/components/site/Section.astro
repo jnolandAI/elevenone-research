@@ -1,0 +1,41 @@
+---
+interface Props {
+  label: string;
+  id?: string;
+}
+const { label, id } = Astro.props;
+---
+<section class="sec frame" id={id}>
+  <h2 class="mono">{label}</h2>
+  <div class="body"><slot /></div>
+</section>
+
+<style>
+  /* A rule, a label at the left, the content at the right. The 220px label
+     column against a fluid body is the 30/70 split the research corpus uses
+     for framing and method pages; 50/50 would make the label a column of
+     its own. The rule is --g60 because a division has to be findable
+     against the ground, and --g20 is a hairline for inside a block. */
+  .sec {
+    margin-top: 72px; padding-top: 22px;
+    border-top: 1px solid var(--g60);
+    display: grid; grid-template-columns: 220px 1fr; gap: 0 40px;
+    align-items: start;
+  }
+  h2 {
+    font-size: 11.5px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--g80); margin: 4px 0 0;
+  }
+  .body :global(p) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; }
+  .body :global(p:last-child) { margin-bottom: 0; }
+  .body :global(a) {
+    color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-thickness: 1px; text-decoration-color: var(--g40);
+    transition: text-decoration-color .25s;
+  }
+  .body :global(a:hover) { text-decoration-color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .sec { grid-template-columns: 1fr; gap: 14px 0; margin-top: 56px; }
+  }
+</style>
