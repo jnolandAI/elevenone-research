@@ -84,9 +84,11 @@ describe('columns', () => {
     expect(() => columnLayout(many, plot)).toThrow(/ten is the ceiling/);
   });
 
-  it('refuses a fourth series', () => {
-    expect(() => columnLayout([{ label: 'a', values: [1, 2, 3, 4] }], plot)).toThrow(
-      /three is the ceiling/,
+  it('refuses a seventh series', () => {
+    // Six since 2026-09-02, when the contract gained series 4 to 6 as an
+    // optional extension; the ceiling was three while the contract had three.
+    expect(() => columnLayout([{ label: 'a', values: [1, 2, 3, 4, 5, 6, 7] }], plot)).toThrow(
+      /six is the ceiling/,
     );
   });
 

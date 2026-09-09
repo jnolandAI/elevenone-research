@@ -117,12 +117,16 @@ const panels = sparkLayout(series, {
     stroke-width: 1.25;
   }
 
-  .panel__line--mark { stroke: var(--ct-mark); stroke-width: 1.5; }
-  .panel__line--total { stroke: var(--ct-ex-series-1); stroke-width: 1.5; }
+  /* The marked panel keeps the first series colour, which is what a marked
+     line in a Trend keeps; the unmarked panels are already muted, since the
+     default line is the fill. A total is ink. Until 2026-09-02 the marked
+     line took --ct-mark and the total took series-1. */
+  .panel__line--mark { stroke: var(--ct-ex-series-1); stroke-width: 1.5; }
+  .panel__line--total { stroke: var(--ct-rule-strong); stroke-width: 1.5; }
 
   .panel__end { fill: var(--ct-ex-fill); }
-  .panel__end--mark { fill: var(--ct-mark); }
-  .panel__end--total { fill: var(--ct-ex-series-1); }
+  .panel__end--mark { fill: var(--ct-ex-series-1); }
+  .panel__end--total { fill: var(--ct-rule-strong); }
 
   /* Five panels at 131px need 655px. Below the md breakpoint they wrap to two
      up, which keeps the shared vertical scale meaningful: panels still line up

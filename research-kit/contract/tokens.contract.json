@@ -1,12 +1,12 @@
 {
-  "version": 1,
+  "version": 3,
   "thresholds": {
     "bodyContrast": {
       "value": 4.5,
       "why": "WCAG 1.4.3 for text under 18px. Both systems set body at 15px, so the body floor is the one that binds."
     },
     "graphicalContrast": {
-      "value": 3.0,
+      "value": 3,
       "why": "WCAG 1.4.11 for non-text objects. An axis or a connector has to be findable against its ground without being as loud as type."
     },
     "recessiveDeltaEOK": {
@@ -41,119 +41,38 @@
   "groups": {
     "surface": {
       "description": "The grounds a page and its panels sit on, and the rules that divide them. Ground is the page, surface is a panel raised off it, well is a recessed field. Rule-firm is the divider held to a contrast floor; rule is a quieter division that is not. Rule-strong is the heaviest division a page draws, above rule-firm: a booktabs boundary or a threshold that has to read as a statement rather than as scaffolding. Held to the same non-text floor as rule-firm, and expected to sit well above it.",
-      "names": ["--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm", "--ct-rule-strong"]
+      "names": [
+        "--ct-ground",
+        "--ct-surface",
+        "--ct-well",
+        "--ct-rule",
+        "--ct-rule-firm",
+        "--ct-rule-strong"
+      ]
     },
     "text": {
       "description": "Type colour by job, not by size. Muted is secondary and label type, strong is the emphatic end, on-field is type over a full-bleed divider.",
-      "names": ["--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field"]
+      "names": [
+        "--ct-text",
+        "--ct-text-muted",
+        "--ct-text-strong",
+        "--ct-text-on-field"
+      ]
     },
     "exhibit": {
       "description": "Exhibit primitives. Axis is structure you must be able to find and is held to the non-text contrast floor; axis-quiet is a rule that recedes, held only to being perceptible against its ground. Connector is structure, held to the same non-text contrast floor as axis. Fill is the default mark body, fill-quiet is a recessive tint used behind or beside a mark rather than as a mark body carrying data on its own. Label-muted is tick and axis type. A connector also covers structure drawn at a mark to separate it from the field behind it, which is the same thin-structure job at the same floor.",
-      "names": ["--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted"]
+      "names": [
+        "--ct-ex-axis",
+        "--ct-ex-axis-quiet",
+        "--ct-ex-connector",
+        "--ct-ex-fill",
+        "--ct-ex-fill-quiet",
+        "--ct-ex-label-muted"
+      ]
     },
     "scales": {
       "description": "Three scales with three different jobs. Ordinal encodes rank across four levels. Sequential encodes magnitude across five steps and must ramp monotonically. Series encodes category across three lines and must be mutually separable rather than ordered.",
       "names": [
-        "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
-        "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
-        "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"
-      ]
-    },
-    "mark": {
-      "description": "The single marked value on an exhibit. Mark is the body, mark-soft is the field a mark sits on so the mark still reads against it, mark-text is type carried on the mark. A mark must also stand apart from every categorical series, because a chart carrying both devices puts them side by side and a marked value that is the colour of a category is not marked. It must also stand apart from every step of every scale. A mark says this value differs from its neighbours; a scale says this value is larger than its neighbours. A mark that is the colour of a magnitude is making the second claim while meaning the first.",
-      "names": ["--ct-mark", "--ct-mark-soft", "--ct-mark-text"]
-    },
-    "field": {
-      "description": "The full-bleed colour field of a divider or statement page, and the type carried on it. Field-text-muted is secondary type on a full-bleed field, where field-text is the primary. A cover carries a title and a kicker and the kicker has to recede without falling below the body floor.",
-      "names": ["--ct-field", "--ct-field-text", "--ct-field-text-muted"]
-    },
-    "separation": {
-      "description": "How a panel separates from its ground, WHEN it separates at all. A tinted panel separating by fill alone is the default and is what both shipped decks do; separation is an opt-in the caller makes on one element, judged for that element, and the brand says what it looks like. One system supplies a real border and no shadow, the other the reverse. The .s-sep rule sets both, always, and no component ever branches on which: the branch would be the kit knowing something about a design language it is not entitled to know.",
-      "names": ["--ct-sep-border", "--ct-sep-shadow"]
-    },
-    "type": {
-      "description": "Three families, ten sizes, five weights, four tracking values bound to size band, and leading on a four-pixel baseline. A system with one family aliases all three family names to it.",
-      "names": [
-        "--ct-font-display", "--ct-font-body", "--ct-font-mono",
-        "--ct-text-xs", "--ct-text-sm", "--ct-text-base", "--ct-text-md", "--ct-text-lg",
-        "--ct-text-xl", "--ct-text-2xl", "--ct-text-3xl", "--ct-text-4xl", "--ct-text-5xl",
-        "--ct-weight-light", "--ct-weight-normal", "--ct-weight-medium", "--ct-weight-semibold", "--ct-weight-bold",
-        "--ct-tracking-tight", "--ct-tracking-snug", "--ct-tracking-normal", "--ct-tracking-wide",
-        "--ct-leading-4", "--ct-leading-5", "--ct-leading-6", "--ct-leading-7", "--ct-leading-8",
-        "--ct-leading-9", "--ct-leading-10", "--ct-leading-11", "--ct-leading-12",
-        "--ct-leading-14", "--ct-leading-16", "--ct-leading-18", "--ct-leading-22"
-      ]
-    },
-    "line": {
-      "description": "How heavily a division is drawn, as three steps. The kit chooses which step each division takes, because the hierarchy between divisions is structure: a booktabs boundary has to read heavier than a row divider or the table stops being a table. The brand chooses what each step measures, because absolute weight is identity, and a house that rules at a hairline and a house that rules at three pixels are drawing the same structure in their own hand. Held to hair <= bold <= heavy so a brand cannot invert the hierarchy, and to a floor and ceiling so a division cannot vanish or become a block.",
-      "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"]
-    },
-    "master": {
-      "description": "The furniture a page carries around its content: the frame the canvas sits in, the rule under an action title, the footer band and its divider, and the lane. The lane is the one device here that most decks do not have -- a rail down one side is this kit's first consumer's own signature, not a general shape -- so it is removable: a brand sets --ct-lane-w and --ct-lane-rule-w to 0 and moves the page number into the footer with --ct-num-pos. Most real variation lives in the title and footer bands rather than in a rail, which is why those carry a divider, a placement and a mark size of their own. This is the layer that makes a template recognisable before a word of it is read, and until 2026-08-31 every value in it was a literal in the kit. What a brand gets is an enumerated vocabulary of values, never a coordinate space: it may say how long a tick is and whether a title is ruled, and it may not say that the title goes at the foot or that the source line is optional. Reading order, zone hierarchy and provenance are the kit's, because moving them changes what the page argues rather than whose page it is.",
-      "names": [
-        "--ct-frame-w", "--ct-title-rule-w", "--ct-title-rule-pad",
-        "--ct-lane-w", "--ct-lane-rule-w", "--ct-way-tick", "--ct-way-tick-here",
-        "--ct-num-pos", "--ct-num-left", "--ct-num-right", "--ct-num-bottom",
-        "--ct-foot-rule-w", "--ct-foot-rule-pad", "--ct-firm-mark-size"
-      ]
-    },
-    "shape": {
-      "description": "Corner treatment, named by what the corner belongs to rather than by a size. Panel is a tinted field carrying reading: a commentary rail, a KPI band, an annotation strip, the ink finding. Hard corners and soft corners are one of the loudest signals of whose deck this is, and until 2026-08-31 the kit drew no radius anywhere and a rounded house could not be expressed at all. Capped, because past a point a tinted zone stops reading as a zone and starts reading as a card. Data marks are deliberately NOT offered a radius yet: a rounded bar end shortens the bar a reader measures, so that one needs its own decision rather than a token.",
-      "names": ["--ct-radius-panel"]
-    },
-    "space": {
-      "description": "Ten steps on a four-pixel base. No value exists between them.",
-      "names": [
-        "--ct-space-1", "--ct-space-2", "--ct-space-3", "--ct-space-4", "--ct-space-6",
-        "--ct-space-8", "--ct-space-12", "--ct-space-16", "--ct-space-24", "--ct-space-32"
-      ]
-    },
-    "geometry": {
-      "description": "The slide profile. Declared per system rather than defaulted, because one system is a document that also renders slides and the other is being changed to slide-first. --ct-slide-margin was removed on 2026-08-31 and not replaced: it never meant a margin, it meant the width of the lane down one side, and it now says so as --ct-lane-w in the master group. One name for one thing.",
-      "names": ["--ct-slide-w", "--ct-slide-h", "--ct-slide-pad", "--ct-slide-measure"]
-    },
-    "art": {
-      "description": "A string prepended to every image prompt, so the two brands do not produce imagery that reads as the same model.",
-      "names": ["--ct-art-direction"]
-    },
-    "identity": {
-      "description": "The firm's name, drawn once per working slide in the padding band. A string token on the precedent art sets: a value the kit must print and must not know. Slide.astro carried one firm's name as a literal until 2026-08-28, which made it the last brand value inside the kit and would have printed that firm on the other one's piece.",
-      "names": ["--ct-firm-mark"]
-    }
-  },
-  "roles": {
-    "textOn": {
-      "--ct-text": ["--ct-ground", "--ct-surface", "--ct-well"],
-      "--ct-text-muted": ["--ct-ground", "--ct-surface", "--ct-well"],
-      "--ct-text-strong": ["--ct-ground", "--ct-surface", "--ct-well"],
-      "--ct-text-on-field": ["--ct-field"],
-      "--ct-ex-label-muted": ["--ct-ground", "--ct-surface"],
-      "--ct-field-text": ["--ct-field"],
-      "--ct-field-text-muted": ["--ct-field"],
-      "--ct-mark-text": ["--ct-mark"]
-    },
-    "graphicalOn": [
-      { "token": "--ct-ex-axis", "ground": "--ct-ground" },
-      { "token": "--ct-ex-connector", "ground": "--ct-ground" },
-      { "token": "--ct-ex-fill", "ground": "--ct-ground" },
-      { "token": "--ct-rule-firm", "ground": "--ct-ground" },
-      { "token": "--ct-rule-strong", "ground": "--ct-ground" }
-    ],
-    "perceptibleOn": [
-      { "token": "--ct-ex-axis-quiet", "ground": "--ct-ground" }
-    ],
-    "ordinal": ["--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4"],
-    "sequential": ["--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5"],
-    "series": ["--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3"],
-    "mark": {
-      "token": "--ct-mark",
-      "distinctFrom": [
-        "--ct-ex-fill",
-        "--ct-mark-soft",
-        "--ct-text-strong",
-        "--ct-ex-series-1",
-        "--ct-ex-series-2",
-        "--ct-ex-series-3",
         "--ct-ex-level-1",
         "--ct-ex-level-2",
         "--ct-ex-level-3",
@@ -162,44 +81,422 @@
         "--ct-ex-scale-2",
         "--ct-ex-scale-3",
         "--ct-ex-scale-4",
-        "--ct-ex-scale-5"
+        "--ct-ex-scale-5",
+        "--ct-ex-series-1",
+        "--ct-ex-series-2",
+        "--ct-ex-series-3"
+      ]
+    },
+    "mark": {
+      "description": "The single marked value on an exhibit. Mark is the body, mark-soft is the field a mark sits on so the mark still reads against it, mark-text is type carried on the mark. A mark must also stand apart from every categorical series, because a chart carrying both devices puts them side by side and a marked value that is the colour of a category is not marked. It must also stand apart from every step of every scale. A mark says this value differs from its neighbours; a scale says this value is larger than its neighbours. A mark that is the colour of a magnitude is making the second claim while meaning the first.",
+      "names": [
+        "--ct-mark",
+        "--ct-mark-soft",
+        "--ct-mark-text"
+      ]
+    },
+    "field": {
+      "description": "The full-bleed colour field of a divider or statement page, and the type carried on it. Field-text-muted is secondary type on a full-bleed field, where field-text is the primary. A cover carries a title and a kicker and the kicker has to recede without falling below the body floor.",
+      "names": [
+        "--ct-field",
+        "--ct-field-text",
+        "--ct-field-text-muted"
+      ]
+    },
+    "separation": {
+      "description": "How a panel separates from its ground, WHEN it separates at all. A tinted panel separating by fill alone is the default and is what both shipped decks do; separation is an opt-in the caller makes on one element, judged for that element, and the brand says what it looks like. One system supplies a real border and no shadow, the other the reverse. The .s-sep rule sets both, always, and no component ever branches on which: the branch would be the kit knowing something about a design language it is not entitled to know.",
+      "names": [
+        "--ct-sep-border",
+        "--ct-sep-shadow"
+      ]
+    },
+    "type": {
+      "description": "Three families, ten sizes, five weights, four tracking values bound to size band, and leading on a four-pixel baseline. A system with one family aliases all three family names to it.",
+      "names": [
+        "--ct-font-display",
+        "--ct-font-body",
+        "--ct-font-mono",
+        "--ct-text-xs",
+        "--ct-text-sm",
+        "--ct-text-base",
+        "--ct-text-md",
+        "--ct-text-lg",
+        "--ct-text-xl",
+        "--ct-text-2xl",
+        "--ct-text-3xl",
+        "--ct-text-4xl",
+        "--ct-text-5xl",
+        "--ct-weight-light",
+        "--ct-weight-normal",
+        "--ct-weight-medium",
+        "--ct-weight-semibold",
+        "--ct-weight-bold",
+        "--ct-tracking-tight",
+        "--ct-tracking-snug",
+        "--ct-tracking-normal",
+        "--ct-tracking-wide",
+        "--ct-leading-4",
+        "--ct-leading-5",
+        "--ct-leading-6",
+        "--ct-leading-7",
+        "--ct-leading-8",
+        "--ct-leading-9",
+        "--ct-leading-10",
+        "--ct-leading-11",
+        "--ct-leading-12",
+        "--ct-leading-14",
+        "--ct-leading-16",
+        "--ct-leading-18",
+        "--ct-leading-22"
+      ]
+    },
+    "line": {
+      "description": "How heavily a division is drawn, as three steps. The kit chooses which step each division takes, because the hierarchy between divisions is structure: a booktabs boundary has to read heavier than a row divider or the table stops being a table. The brand chooses what each step measures, because absolute weight is identity, and a house that rules at a hairline and a house that rules at three pixels are drawing the same structure in their own hand. Held to hair <= bold <= heavy so a brand cannot invert the hierarchy, and to a floor and ceiling so a division cannot vanish or become a block.",
+      "names": [
+        "--ct-rule-w-hair",
+        "--ct-rule-w-bold",
+        "--ct-rule-w-heavy"
+      ]
+    },
+    "master": {
+      "description": "The furniture a page carries around its content: the frame the canvas sits in, the rule under an action title, the footer band and its divider, and the lane. The lane is the one device here that most decks do not have -- a rail down one side is this kit's first consumer's own signature, not a general shape -- so it is removable: a brand sets --ct-lane-w and --ct-lane-rule-w to 0 and moves the page number into the footer with --ct-num-pos. Most real variation lives in the title and footer bands rather than in a rail, which is why those carry a divider, a placement and a mark size of their own. This is the layer that makes a template recognisable before a word of it is read, and until 2026-08-31 every value in it was a literal in the kit. What a brand gets is an enumerated vocabulary of values, never a coordinate space: it may say how long a tick is and whether a title is ruled, and it may not say that the title goes at the foot or that the source line is optional. Reading order, zone hierarchy and provenance are the kit's, because moving them changes what the page argues rather than whose page it is.",
+      "names": [
+        "--ct-frame-w",
+        "--ct-title-rule-w",
+        "--ct-title-rule-pad",
+        "--ct-lane-w",
+        "--ct-lane-rule-w",
+        "--ct-way-tick",
+        "--ct-way-tick-here",
+        "--ct-num-pos",
+        "--ct-num-left",
+        "--ct-num-right",
+        "--ct-num-bottom",
+        "--ct-foot-rule-w",
+        "--ct-foot-rule-pad",
+        "--ct-firm-mark-size"
+      ]
+    },
+    "shape": {
+      "description": "Corner treatment, named by what the corner belongs to rather than by a size. Panel is a tinted field carrying reading: a commentary rail, a KPI band, an annotation strip, the ink finding. Hard corners and soft corners are one of the loudest signals of whose deck this is, and until 2026-08-31 the kit drew no radius anywhere and a rounded house could not be expressed at all. Capped, because past a point a tinted zone stops reading as a zone and starts reading as a card. Data marks are deliberately NOT offered a radius yet: a rounded bar end shortens the bar a reader measures, so that one needs its own decision rather than a token.",
+      "names": [
+        "--ct-radius-panel"
+      ]
+    },
+    "space": {
+      "description": "Ten steps on a four-pixel base. No value exists between them.",
+      "names": [
+        "--ct-space-1",
+        "--ct-space-2",
+        "--ct-space-3",
+        "--ct-space-4",
+        "--ct-space-6",
+        "--ct-space-8",
+        "--ct-space-12",
+        "--ct-space-16",
+        "--ct-space-24",
+        "--ct-space-32"
+      ]
+    },
+    "geometry": {
+      "description": "The slide profile. Declared per system rather than defaulted, because one system is a document that also renders slides and the other is being changed to slide-first. --ct-slide-margin was removed on 2026-08-31 and not replaced: it never meant a margin, it meant the width of the lane down one side, and it now says so as --ct-lane-w in the master group. One name for one thing.",
+      "names": [
+        "--ct-slide-w",
+        "--ct-slide-h",
+        "--ct-slide-pad",
+        "--ct-slide-measure"
+      ]
+    },
+    "art": {
+      "description": "A string prepended to every image prompt, so the two brands do not produce imagery that reads as the same model.",
+      "names": [
+        "--ct-art-direction"
+      ]
+    },
+    "identity": {
+      "description": "The firm's name, drawn once per working slide in the padding band. A string token on the precedent art sets: a value the kit must print and must not know. Slide.astro carried one firm's name as a literal until 2026-08-28, which made it the last brand value inside the kit and would have printed that firm on the other one's piece.",
+      "names": [
+        "--ct-firm-mark"
+      ]
+    },
+    "status": {
+      "optional": true,
+      "description": "The three-way judgement a page makes about something it is tracking: on track, watch, at risk. Each reading is a mark and the field that mark sits in, because one value cannot do both jobs. The mark carries type at the body floor; the field is the tint it carries that type on. A status mark must also stand apart from the emphasis mark, for the reason the mark group already gives about series: a page that says this value is marked and this value is at risk in the same colour is making one claim and meaning two. Optional, because a system that never renders a judgement should not have to invent three colours to satisfy a contract, and a brand that does render one should not be able to ship two thirds of a set: declare all six or none, since the reading a partial set cannot express is the one a reader takes as absent rather than as unsupported.",
+      "names": [
+        "--ct-status-ok",
+        "--ct-status-ok-field",
+        "--ct-status-watch",
+        "--ct-status-watch-field",
+        "--ct-status-risk",
+        "--ct-status-risk-field"
+      ]
+    },
+    "series-extended": {
+      "optional": true,
+      "description": "Categories four to six, for the chart that genuinely has more than three. The first three series are mandatory and are what nearly every chart uses; these are the escalation past them, declared by a brand whose palette can separate six and left undeclared by one that cannot, in which case a component that reaches for them paints nothing and the chart was the wrong chart. Held to the same floors as the first three: every pair 0.08 apart in OKLab and every one visible on the ground. Declare all three or none.",
+      "names": [
+        "--ct-ex-series-4",
+        "--ct-ex-series-5",
+        "--ct-ex-series-6"
+      ]
+    },
+    "lead": {
+      "optional": true,
+      "description": "What a brand with more than one hue needs and a brand with one does not. Muted is the tone the rest of a series takes when one of its items is emphasised: emphasis inside a chart is the series colour kept on one item and taken off the others, never a colour the legend does not carry. Well-lead is the one tinted surface a page may carry, in the family that leads the section, so a filled zone says which section it belongs to without the page reading as coloured. A brand with one hue declares neither; components fall back to fill-quiet and to well.",
+      "names": [
+        "--ct-ex-muted",
+        "--ct-well-lead"
+      ]
+    }
+  },
+  "roles": {
+    "textOn": {
+      "--ct-text": [
+        "--ct-ground",
+        "--ct-surface",
+        "--ct-well",
+        "--ct-well-lead"
+      ],
+      "--ct-text-muted": [
+        "--ct-ground",
+        "--ct-surface",
+        "--ct-well",
+        "--ct-well-lead"
+      ],
+      "--ct-text-strong": [
+        "--ct-ground",
+        "--ct-surface",
+        "--ct-well",
+        "--ct-well-lead"
+      ],
+      "--ct-text-on-field": [
+        "--ct-field"
+      ],
+      "--ct-ex-label-muted": [
+        "--ct-ground",
+        "--ct-surface"
+      ],
+      "--ct-field-text": [
+        "--ct-field"
+      ],
+      "--ct-field-text-muted": [
+        "--ct-field"
+      ],
+      "--ct-mark-text": [
+        "--ct-mark"
+      ],
+      "--ct-status-ok": [
+        "--ct-status-ok-field",
+        "--ct-ground"
+      ],
+      "--ct-status-watch": [
+        "--ct-status-watch-field",
+        "--ct-ground"
+      ],
+      "--ct-status-risk": [
+        "--ct-status-risk-field",
+        "--ct-ground"
+      ]
+    },
+    "graphicalOn": [
+      {
+        "token": "--ct-ex-axis",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-ex-connector",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-ex-fill",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-rule-firm",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-rule-strong",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-ex-muted",
+        "ground": "--ct-ground"
+      }
+    ],
+    "perceptibleOn": [
+      {
+        "token": "--ct-ex-axis-quiet",
+        "ground": "--ct-ground"
+      },
+      {
+        "token": "--ct-ex-level-1",
+        "ground": "--ct-ground"
+      }
+    ],
+    "ordinal": [
+      "--ct-ex-level-1",
+      "--ct-ex-level-2",
+      "--ct-ex-level-3",
+      "--ct-ex-level-4"
+    ],
+    "sequential": [
+      "--ct-ex-scale-1",
+      "--ct-ex-scale-2",
+      "--ct-ex-scale-3",
+      "--ct-ex-scale-4",
+      "--ct-ex-scale-5"
+    ],
+    "series": [
+      "--ct-ex-series-1",
+      "--ct-ex-series-2",
+      "--ct-ex-series-3",
+      "--ct-ex-series-4",
+      "--ct-ex-series-5",
+      "--ct-ex-series-6"
+    ],
+    "mark": {
+      "token": "--ct-mark",
+      "distinctFrom": [
+        "--ct-ex-fill",
+        "--ct-mark-soft",
+        "--ct-text-strong"
       ]
     },
     "colourNames": [
-      "--ct-ground", "--ct-surface", "--ct-well", "--ct-rule", "--ct-rule-firm", "--ct-rule-strong",
-      "--ct-text", "--ct-text-muted", "--ct-text-strong", "--ct-text-on-field",
-      "--ct-ex-axis", "--ct-ex-axis-quiet", "--ct-ex-connector", "--ct-ex-fill", "--ct-ex-fill-quiet", "--ct-ex-label-muted",
-      "--ct-ex-level-1", "--ct-ex-level-2", "--ct-ex-level-3", "--ct-ex-level-4",
-      "--ct-ex-scale-1", "--ct-ex-scale-2", "--ct-ex-scale-3", "--ct-ex-scale-4", "--ct-ex-scale-5",
-      "--ct-ex-series-1", "--ct-ex-series-2", "--ct-ex-series-3",
-      "--ct-mark", "--ct-mark-soft", "--ct-mark-text",
-      "--ct-field", "--ct-field-text", "--ct-field-text-muted"
+      "--ct-ground",
+      "--ct-surface",
+      "--ct-well",
+      "--ct-rule",
+      "--ct-rule-firm",
+      "--ct-rule-strong",
+      "--ct-text",
+      "--ct-text-muted",
+      "--ct-text-strong",
+      "--ct-text-on-field",
+      "--ct-ex-axis",
+      "--ct-ex-axis-quiet",
+      "--ct-ex-connector",
+      "--ct-ex-fill",
+      "--ct-ex-fill-quiet",
+      "--ct-ex-label-muted",
+      "--ct-ex-level-1",
+      "--ct-ex-level-2",
+      "--ct-ex-level-3",
+      "--ct-ex-level-4",
+      "--ct-ex-scale-1",
+      "--ct-ex-scale-2",
+      "--ct-ex-scale-3",
+      "--ct-ex-scale-4",
+      "--ct-ex-scale-5",
+      "--ct-ex-series-1",
+      "--ct-ex-series-2",
+      "--ct-ex-series-3",
+      "--ct-mark",
+      "--ct-mark-soft",
+      "--ct-mark-text",
+      "--ct-field",
+      "--ct-field-text",
+      "--ct-field-text-muted",
+      "--ct-status-ok",
+      "--ct-status-ok-field",
+      "--ct-status-watch",
+      "--ct-status-watch-field",
+      "--ct-status-risk",
+      "--ct-status-risk-field",
+      "--ct-ex-series-4",
+      "--ct-ex-series-5",
+      "--ct-ex-series-6",
+      "--ct-ex-muted",
+      "--ct-well-lead"
     ],
     "lengths": {
       "ordered": [
         {
-          "names": ["--ct-rule-w-hair", "--ct-rule-w-bold", "--ct-rule-w-heavy"],
+          "names": [
+            "--ct-rule-w-hair",
+            "--ct-rule-w-bold",
+            "--ct-rule-w-heavy"
+          ],
           "why": "The kit draws a row divider at hair, an emphatic division at bold and the loudest division a page carries at heavy, and it reads the hierarchy back out of that ordering. A brand that sets bold lighter than hair has not restyled the deck, it has inverted what the deck says about which division matters."
         },
         {
-          "names": ["--ct-way-tick", "--ct-way-tick-here"],
+          "names": [
+            "--ct-way-tick",
+            "--ct-way-tick-here"
+          ],
           "why": "The waymarker's current-section tick is the emphasis: it is drawn longer than its neighbours so a reader can see where in the deck they are. A brand that draws it shorter has not restyled the waymarker, it has pointed it at the wrong section."
         },
         {
-          "names": ["--ct-way-tick-here", "--ct-lane-w"],
+          "names": [
+            "--ct-way-tick-here",
+            "--ct-lane-w"
+          ],
           "blame": "lower",
           "why": "The lane is the waymarker's home and --ct-lane-w is its width, so a tick longer than the lane is drawing outside its own furniture band and into the measure. Expressed against the lane rather than against a fixed number, so a brand with a wide lane may draw long ticks and a brand with a narrow one may not. A deck with no rail sets the lane to 0 and its ticks to 0, which is the same statement made twice and reads as deliberate rather than as an oversight."
         }
       ],
       "bounded": [
-        { "name": "--ct-frame-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
-        { "name": "--ct-title-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
-        { "name": "--ct-lane-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
-        { "name": "--ct-foot-rule-w", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling", "allowZero": true },
-        { "name": "--ct-rule-w-hair", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
-        { "name": "--ct-rule-w-bold", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
-        { "name": "--ct-rule-w-heavy", "floor": "ruleWeightFloor", "ceiling": "ruleWeightCeiling" },
-        { "name": "--ct-radius-panel", "floor": null, "ceiling": "panelRadiusCeiling" }
+        {
+          "name": "--ct-frame-w",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling",
+          "allowZero": true
+        },
+        {
+          "name": "--ct-title-rule-w",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling",
+          "allowZero": true
+        },
+        {
+          "name": "--ct-lane-rule-w",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling",
+          "allowZero": true
+        },
+        {
+          "name": "--ct-foot-rule-w",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling",
+          "allowZero": true
+        },
+        {
+          "name": "--ct-rule-w-hair",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling"
+        },
+        {
+          "name": "--ct-rule-w-bold",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling"
+        },
+        {
+          "name": "--ct-rule-w-heavy",
+          "floor": "ruleWeightFloor",
+          "ceiling": "ruleWeightCeiling"
+        },
+        {
+          "name": "--ct-radius-panel",
+          "floor": null,
+          "ceiling": "panelRadiusCeiling"
+        }
+      ]
+    },
+    "status": {
+      "marks": [
+        "--ct-status-ok",
+        "--ct-status-watch",
+        "--ct-status-risk"
+      ],
+      "distinctFrom": [
+        "--ct-mark"
+      ]
+    },
+    "emphasis": {
+      "muted": "--ct-ex-muted",
+      "distinctFrom": [
+        "--ct-ex-series-1"
       ]
     }
   }

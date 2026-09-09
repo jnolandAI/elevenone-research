@@ -95,17 +95,27 @@ if (callout) {
   });
 }
 
+// Emphasis never leaves the legend: the marked line keeps its series colour
+// and the other lines mute. Until 2026-09-02 the marked line took --ct-mark,
+// a colour the key did not carry.
+const hasMark = laid.lines.some((l) => l.mark);
 const stroke = (l: (typeof laid.lines)[number], i: number) => {
-  if (l.mark) return 'var(--ct-mark)';
   // A benchmark is structure, not a category, so it is held to the axis floor
   // rather than given a series name. It drew grey-50 at 2.22:1, below the 3:1
   // a non-text object needs.
   if (l.reference) return 'var(--ct-ex-axis)';
+  if (hasMark && !l.mark) return 'var(--ct-ex-muted, var(--ct-ex-fill-quiet))';
   return i === 0
     ? 'var(--ct-ex-series-1)'
     : i === 1
       ? 'var(--ct-ex-series-2)'
-      : 'var(--ct-ex-series-3)';
+      : i === 2
+        ? 'var(--ct-ex-series-3)'
+        : i === 3
+          ? 'var(--ct-ex-series-4)'
+          : i === 4
+            ? 'var(--ct-ex-series-5)'
+            : 'var(--ct-ex-series-6)';
 };
 ---
 

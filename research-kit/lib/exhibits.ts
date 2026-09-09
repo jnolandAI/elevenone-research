@@ -415,7 +415,7 @@ export function columnLayout(
   if (counts.size > 1) throw new Error('Columns: groups carry different numbers of series');
   const seriesCount = groups[0]!.values.length;
   if (seriesCount === 0) throw new Error('Columns: no values');
-  if (seriesCount > 3) throw new Error(`Columns: ${seriesCount} series, three is the ceiling`);
+  if (seriesCount > 6) throw new Error(`Columns: ${seriesCount} series, six is the ceiling`);
 
   const values = groups.flatMap((g) => [...g.values]);
   if (values.some((v) => v < 0)) {

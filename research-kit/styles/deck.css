@@ -1081,16 +1081,17 @@
 /* grey-10 up, not grey-05 up: the first version started one step too light
    and lv1 was indistinguishable from the page, which turns a four-step scale
    into a three-step one. */
-/* Raw on purpose: --ct-ex-level-1 resolves to grey-05, which measures 0.0152
-   in OKLab lightness from the page, below the contract's 0.03 floor for a
-   recessive mark -- the same regression the comment above already found by
-   eye. The ramp cannot move up to clear the floor either: grey-10 to
-   grey-20 measures 0.0271, still below the 0.03 floor for a separable scale
-   step. No four-step ordinal ramp in this palette is both perceptible from
-   the page and separable within the grey-40 cap dark body text requires, so
-   this one site stays a raw grey-10 reference rather than a contract role. */
+/* Level-1 read a site-supplied --deck-ordinal-lv1 from 2026-08-28 to
+   2026-09-02 rather than the contract, because the first consumer's
+   --ct-ex-level-1 sat 0.0152 from its page, under the 0.03 floor for a
+   recessive mark, and no four-step run of its grey ramp could clear that
+   floor and still separate its steps and carry body text on level-4. Its
+   second ramp can (0.0305, 0.033/0.058/0.080, 4.82:1), the contract now
+   holds level-1 to the floor by name (roles.perceptibleOn), and the other
+   consumer had never supplied the raw name at all, so its matrix level-1
+   painted nothing. One name for four levels again. */
 /* An ordinal tint level, named for its rank rather than its value. */
-.s-matrix__cell--lv1 { background: var(--deck-ordinal-lv1); }
+.s-matrix__cell--lv1 { background: var(--ct-ex-level-1); }
 .s-matrix__cell--lv2 { background: var(--ct-ex-level-2); }
 .s-matrix__cell--lv3 { background: var(--ct-ex-level-3); }
 .s-matrix__cell--lv4 { background: var(--ct-ex-level-4); }
@@ -1113,4 +1114,80 @@
   font-size: var(--ct-text-xs);
   line-height: var(--ct-leading-4);
   color: var(--ct-text-strong);
+}
+
+/* Status ---------------------------------------------------------------------
+
+   The three-way reading a page makes about something it tracks: on track,
+   watch, at risk. Two forms, because a piece uses both. A tag states the
+   reading on its own field and can be read alone. A dot attaches the reading
+   to something already named beside it: a table row, a phase, a list item.
+
+   The dot is not a tag scaled down, and it never appears without the word it
+   marks. Three hues carrying three readings with no text is unreadable to
+   anyone who cannot separate them, and the kit would rather not offer the
+   shape than offer that one. The tag is the default for the same reason: it
+   carries its word by construction.
+
+   Squares. This kit corners a mark the way it corners a panel, and the status
+   group is the only colour group whose members are drawn as filled shapes
+   rather than as type or a rule.
+
+   The group is optional in the contract, so these rules resolve to nothing on
+   a brand that declares no status set. That is the intended failure: the
+   colour drops out and the word remains, which is legible, rather than the
+   tag painting an unset background and swallowing its own text. */
+.s-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ct-space-2);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-4);
+  font-weight: var(--ct-weight-medium);
+}
+
+.s-status__tag {
+  padding: var(--ct-space-1) var(--ct-space-2);
+}
+
+/* Sized from the space scale rather than from the type it sits beside: the
+   dot is a mark in the layout, not a glyph, and pinning it to --ct-space-2
+   keeps it square at every type size the row might take. */
+.s-status__dot {
+  width: var(--ct-space-2);
+  height: var(--ct-space-2);
+  flex: none;
+}
+
+.s-status--ok .s-status__tag {
+  color: var(--ct-status-ok);
+  background: var(--ct-status-ok-field);
+}
+.s-status--ok .s-status__dot { background: var(--ct-status-ok); }
+
+.s-status--watch .s-status__tag {
+  color: var(--ct-status-watch);
+  background: var(--ct-status-watch-field);
+}
+.s-status--watch .s-status__dot { background: var(--ct-status-watch); }
+
+.s-status--risk .s-status__tag {
+  color: var(--ct-status-risk);
+  background: var(--ct-status-risk-field);
+}
+.s-status--risk .s-status__dot { background: var(--ct-status-risk); }
+
+/* The lead surface -----------------------------------------------------------
+
+   The one tinted field a page may carry, in the family that leads the
+   section. The default well is grey; a brand with a second hue may set
+   --ct-well-lead to that family's palest step and put it on exactly one of
+   these three per page, so the surface says which section the page belongs
+   to without the page reading as coloured. The group is optional, and the
+   fallback is the ordinary well: a brand that declares no lead surface sees
+   no difference between these and their unmodified forms. */
+.s-kpi--lead,
+.s-annot--lead,
+.s-finding--lead {
+  background: var(--ct-well-lead, var(--ct-well));
 }

@@ -154,16 +154,26 @@ const series = (s: number) =>
     ? 'var(--ct-ex-series-1)'
     : s === 1
       ? 'var(--ct-ex-series-2)'
-      : 'var(--ct-ex-series-3)';
+      : s === 2
+        ? 'var(--ct-ex-series-3)'
+        : s === 3
+          ? 'var(--ct-ex-series-4)'
+          : s === 4
+            ? 'var(--ct-ex-series-5)'
+            : 'var(--ct-ex-series-6)';
 
-// The slate budget is one value, not one group. A marked group accents exactly
-// one bar and leaves its neighbours in series, whether or not markSeries was
-// stated. The unstated case used to give every neighbour --ct-mark-soft, which
-// is slate-300 at 1.65:1: a mark tint doing a mark body's job.
+// Emphasis never leaves the legend. The marked bar keeps the colour its
+// series carries in the key, and the other bars of that same series mute, so
+// the key still describes every bar and the eye still lands on one. Until
+// 2026-09-02 the marked bar took --ct-mark, a colour the key did not carry,
+// which read as a fourth category rather than as emphasis. The other series
+// are untouched either way: one value is emphasised, not one group.
+const hasMark = laid.groups.some((g) => g.mark);
 const fill = (g: (typeof laid.groups)[number], s: number) => {
-  if (!g.mark) return series(s);
+  if (!hasMark) return series(s);
   const accent = markSeries ?? 0;
-  return s === accent ? 'var(--ct-mark)' : series(s);
+  if (s !== accent) return series(s);
+  return g.mark ? series(s) : 'var(--ct-ex-muted, var(--ct-ex-fill-quiet))';
 };
 
 if (markSeries !== undefined && (markSeries < 0 || markSeries >= (groups[0]?.values.length ?? 0))) {

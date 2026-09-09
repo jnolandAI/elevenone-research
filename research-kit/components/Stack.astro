@@ -75,18 +75,19 @@ const tone = [
   'var(--ct-ex-scale-5)', 'var(--ct-ex-scale-4)', 'var(--ct-ex-scale-3)',
   'var(--ct-ex-scale-2)', 'var(--ct-ex-scale-1)',
 ];
-// A marked column spends one value, not one group: the same ramp with the mark
-// standing in for its darkest step. It drew a full slate twin before, which was
-// the one place in this kit that spent the hue on a group.
-const markTone = [
-  'var(--ct-mark)', 'var(--ct-ex-scale-4)', 'var(--ct-ex-scale-3)',
-  'var(--ct-ex-scale-2)', 'var(--ct-ex-scale-1)',
-];
-const fill = (mark: boolean | undefined, s: number) => (mark ? markTone[s] : tone[s]);
+// A marked column keeps every band on the ramp and takes an ink outline
+// instead (.col--mark below). A composition ramp is one measure in ordered
+// bands, and a reader compares band heights across columns, so neither of
+// the emphasis moves the categorical exhibits make is open to it: muting the
+// other columns lightens the very bands being compared, and replacing a
+// band's colour, which this did with --ct-mark until 2026-09-02, paints one
+// band in a colour the key does not carry. Ink is structure everywhere else
+// on the page, so an ink edge reads as emphasis without reading as data.
+const fill = (s: number) => tone[s];
 // A value set inside the two darkest bands has to knock out; below that it sets
 // in --ct-text-strong and not --ct-text. grey-80 on grey-60 is 2.64:1, under the
 // 4.5:1 body floor, while ink clears the three pale bands at 5.52, 11.21 and
-// 15.58. The mark reads the same way: white on slate-800 is 12.70:1.
+// 15.58.
 const inside = (s: number) =>
   s <= 1 ? 'var(--ct-text-on-field)' : 'var(--ct-text-strong)';
 ---
@@ -112,7 +113,7 @@ const inside = (s: number) =>
       <>
         {c.segments.map((s) => (
           <>
-            <rect x={s.x} y={s.y} width={s.width} height={s.height} fill={fill(c.mark, s.segment)} />
+            <rect x={s.x} y={s.y} width={s.width} height={s.height} fill={fill(s.segment)} />
             {!s.tight && (
               <text
                 class="inband"
@@ -126,6 +127,15 @@ const inside = (s: number) =>
             )}
           </>
         ))}
+        {c.mark && (
+          <rect
+            class="col--mark"
+            x={c.segments[0]!.x}
+            y={c.topY}
+            width={c.segments[0]!.width}
+            height={laid.baseline - c.topY}
+          />
+        )}
         <text class:list={['total', { 'total--mark': c.mark }]} x={c.centre} y={c.topY - 8} text-anchor="middle">
           {c.totalText}
         </text>
@@ -192,6 +202,15 @@ const inside = (s: number) =>
   }
 
   .total--mark { fill: var(--ct-mark); font-weight: var(--ct-weight-semibold); }
+
+  /* The marked column's outline: drawn after its bands so it sits on top of
+     them, in the ink the strongest rule takes, 1.5 wide so it survives the
+     white hairlines between bands. Nothing about the bands changes. */
+  .col--mark {
+    fill: none;
+    stroke: var(--ct-rule-strong);
+    stroke-width: 1.5;
+  }
 
   .cat {
     font-size: var(--ct-text-xs);

@@ -76,7 +76,12 @@ const lettered = new Set(labels);
 <figure class="map-fig" style={`max-width: ${width}px`}>
   <svg class="fig" viewBox="0 0 975 610" role="img" aria-label={alt}>
     {
-      US_STATES.map((s) => {
+      /* Marked states are drawn last. Every state strokes its own edge in the
+         ground colour, so a marked state drawn in source order has its ink
+         edge overpainted by each neighbour that follows it. */
+      [...US_STATES]
+        .sort((a, c) => Number(!!bandOf(a.abbr)?.mark) - Number(!!bandOf(c.abbr)?.mark))
+        .map((s) => {
         const b = bandOf(s.abbr);
         return (
           <path
@@ -116,7 +121,7 @@ const lettered = new Set(labels);
               class:list={['state', `state--l${b.level}`, { 'state--mark': b.mark }]}
               width="14"
               height="10"
-              stroke="none"
+              stroke={b.mark ? undefined : 'none'}
             />
           </svg>
           {b.label}
@@ -155,7 +160,16 @@ const lettered = new Set(labels);
   .state--l1 { fill: var(--ct-ex-scale-3); }
   .state--l2 { fill: var(--ct-ex-scale-4); }
   .state--l3 { fill: var(--ct-ex-scale-5); }
-  .state--mark { fill: var(--ct-mark); }
+  /* A marked state keeps its band's fill and takes an ink edge. A choropleth
+     is one measure in ordered levels, so a marked state painted in a colour
+     the legend does not carry, which this did with --ct-mark until
+     2026-09-02, read as a fifth level. The edge is the ink the strongest
+     rule takes, a quarter wider than the ground hairline between states, and
+     the marked states are drawn last so no neighbour paints over it. */
+  .state--mark {
+    stroke: var(--ct-rule-strong);
+    stroke-width: 1.25;
+  }
 
   /* The swatch is an SVG rect and not a tinted span, so the accent stays a
      fill. Slate is allowed to mark a shape in an exhibit and is never allowed

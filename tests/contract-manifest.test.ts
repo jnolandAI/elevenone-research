@@ -24,13 +24,55 @@ describe('token contract', () => {
     }
   });
 
+  it('carries the status group, optional and whole', () => {
+    // Optional is the contract's one exemption and it is deliberately narrow:
+    // it waives presence and nothing else. A brand that renders no judgement
+    // declares none of these six; a brand that renders one declares all six,
+    // which checks.mjs enforces separately. Two thirds of a status set is
+    // worse than none, because the reading it cannot express reads as absent
+    // rather than as unsupported.
+    const status = contract.groups.status;
+    expect(status, 'group status').toBeDefined();
+    expect(status.optional, 'status must be optional or every brand owes three colours').toBe(true);
+    expect(status.names).toHaveLength(6);
+    for (const reading of ['ok', 'watch', 'risk']) {
+      expect(status.names).toContain(`--ct-status-${reading}`);
+      expect(status.names).toContain(`--ct-status-${reading}-field`);
+    }
+  });
+
+  it('holds every other group to being mandatory', () => {
+    const optional = Object.entries(contract.groups)
+      .filter(([, g]: [string, any]) => g.optional)
+      .map(([n]) => n);
+    expect(optional, 'a group opted out of presence without this test being told')
+      .toEqual(['status', 'series-extended', 'lead']);
+  });
+
+  it('gives each status mark its own field and the page ground to sit on', () => {
+    for (const reading of ['ok', 'watch', 'risk']) {
+      expect(contract.roles.textOn[`--ct-status-${reading}`])
+        .toEqual([`--ct-status-${reading}-field`, '--ct-ground']);
+    }
+    expect(contract.roles.status.marks).toEqual([
+      '--ct-status-ok', '--ct-status-watch', '--ct-status-risk',
+    ]);
+    // A marked value and an at-risk value drawn the same colour make one
+    // claim and mean two.
+    expect(contract.roles.status.distinctFrom).toContain('--ct-mark');
+  });
+
   it('carries the separation pair, because CSS cannot branch on a value', () => {
     expect(allNames).toContain('--ct-sep-border');
     expect(allNames).toContain('--ct-sep-shadow');
   });
 
-  it('declares three series, though only two are consumed today', () => {
-    expect(contract.roles.series).toEqual(['--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3']);
+  it('declares six series: three mandatory, three in the optional extension', () => {
+    expect(contract.roles.series).toEqual([
+      '--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3',
+      '--ct-ex-series-4', '--ct-ex-series-5', '--ct-ex-series-6',
+    ]);
+    expect(contract.groups['series-extended'].names).toEqual(['--ct-ex-series-4', '--ct-ex-series-5', '--ct-ex-series-6']);
   });
 
   it('keeps the ordinal and sequential scales at the lengths the refactor needs', () => {
@@ -52,6 +94,10 @@ describe('token contract', () => {
       ...contract.roles.graphicalOn.map((r: any) => r.ground),
       ...contract.roles.perceptibleOn.map((r: any) => r.token),
       ...contract.roles.perceptibleOn.map((r: any) => r.ground),
+      ...contract.roles.status.marks,
+      ...contract.roles.status.distinctFrom,
+      contract.roles.emphasis.muted,
+      ...contract.roles.emphasis.distinctFrom,
     ];
     for (const n of referenced) expect(allNames, `role references undeclared ${n}`).toContain(n);
   });
@@ -82,7 +128,7 @@ describe('token contract', () => {
     }
   });
 
-  it('pins all fifteen neighbours the mark must stand off', () => {
+  it('pins the three neighbours the mark must stand off', () => {
     // A mark has to stand off the fill it sits among, the field it sits on,
     // strong type, and every categorical series. Strong type was added after
     // a greyscale adapter was found resolving --ct-mark and --ct-text-strong
@@ -99,15 +145,19 @@ describe('token contract', () => {
     // nothing had compared a mark to a magnitude. Deleting an entry from this
     // list would leave the suite green without it, so the list is pinned
     // rather than merely iterated.
+    // The three series left this list on 2026-09-02, and the ordinal levels
+    // and sequential steps the same day once Stack and Map stopped painting
+    // a marked column or state in the mark: both keep their scale colour and
+    // take an ink edge, and series emphasis is by muting (roles.emphasis).
+    // The mark is drawn beside nothing in any chart. It stays off the fill,
+    // its own soft tint and strong type because it is still page furniture
+    // sitting near all three.
     expect(contract.roles.mark.distinctFrom).toEqual([
       '--ct-ex-fill', '--ct-mark-soft', '--ct-text-strong',
-      '--ct-ex-series-1', '--ct-ex-series-2', '--ct-ex-series-3',
-      '--ct-ex-level-1', '--ct-ex-level-2', '--ct-ex-level-3', '--ct-ex-level-4',
-      '--ct-ex-scale-1', '--ct-ex-scale-2', '--ct-ex-scale-3', '--ct-ex-scale-4', '--ct-ex-scale-5',
     ]);
   });
 
-  it('roles.mark.distinctFrom covers every ordinal, sequential and series name, not just the ones pinned above', () => {
+  it('roles.mark.distinctFrom names no scale, level or series, and this is derived rather than pinned', () => {
     // The test above pins distinctFrom to an exact, hand-enumerated list. A
     // hand-enumerated list only proves nothing already in it was deleted; it
     // cannot catch a name that should have been added and never was. That is
@@ -119,14 +169,22 @@ describe('token contract', () => {
     // fifth series or a sixth scale step added to those roles without a
     // matching edit to distinctFrom fails here even if the pinned-list test
     // above is updated to match the omission.
-    const categorical = new Set<string>([
+    //
+    // On 2026-09-02 the direction reversed. The mark is no longer drawn
+    // inside any chart: series emphasis is by muting (roles.emphasis), and a
+    // marked Stack column or Map state keeps its scale colour and takes an
+    // ink edge. So the mark must NOT be held off a scale, level or series,
+    // and a brand that rotates two families needs its mark and its second
+    // series at the same step, 0.047 apart. The set is still derived from
+    // the roles rather than hand-listed, for the reason above: a new scale
+    // added to the roles and quietly added to distinctFrom fails here.
+    const chart = new Set<string>([
       ...contract.roles.ordinal,
       ...contract.roles.sequential,
       ...contract.roles.series,
     ]);
-    const distinctFrom = new Set(contract.roles.mark.distinctFrom as string[]);
-    for (const n of categorical) {
-      expect(distinctFrom, `mark.distinctFrom is missing ${n}`).toContain(n);
+    for (const n of contract.roles.mark.distinctFrom) {
+      expect(chart.has(n), `mark.distinctFrom holds a chart colour, ${n}`).toBe(false);
     }
   });
 

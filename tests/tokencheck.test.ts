@@ -29,6 +29,25 @@ const VALUES: Record<string, string> = {
   '--ct-ex-series-1': '#8A8A8A', '--ct-ex-series-2': '#4A4A4A', '--ct-ex-series-3': '#282828',
   '--ct-mark': '#111111', '--ct-mark-soft': '#DDDDDD', '--ct-mark-text': '#FFFFFF',
   '--ct-field': '#222222', '--ct-field-text': '#FFFFFF', '--ct-field-text-muted': '#999999',
+  /* The optional status group, taken up in full so the fixture exercises the
+     status check rather than skipping it. These three carry hue where the rest
+     of the fixture does not, and have to: a status set separated only by value
+     is three shades of the same judgement. They clear the mark by 0.311 at the
+     nearest, each other by 0.117 at the nearest, and 5.34:1 on their own fields
+     at the tightest. An adapter that declares none of these is exercised
+     separately by the optional-group tests. */
+  '--ct-status-ok': '#1E6B34', '--ct-status-ok-field': '#DFF2E4',
+  '--ct-status-watch': '#7A5A00', '--ct-status-watch-field': '#F5EAD0',
+  '--ct-status-risk': '#A32020', '--ct-status-risk-field': '#FBE3E1',
+  /* The optional series extension and the lead group, taken up in full so
+     the six-series and emphasis checks are exercised. Series 4 is a fourth
+     grey step; 5 and 6 carry hue because a grey ladder that clears 3:1 on
+     white runs out of separable steps at four. Muted is darker than series
+     1 here, which no real brand would choose: the fixture's series 1 sits
+     at 3.4:1, right on the floor, so a lighter muted tone would be invisible.
+     Tightest series pair 0.109; muted 0.159 from series 1. */
+  '--ct-ex-series-4': '#6A6A6A', '--ct-ex-series-5': '#3E5E9A', '--ct-ex-series-6': '#8E3B2F',
+  '--ct-ex-muted': '#5C5C5C', '--ct-well-lead': '#F0F0F0',
 };
 
 /* Everything not a colour gets a plausible literal so presence passes; the
@@ -372,55 +391,50 @@ describe('tokencheck', () => {
     expect(m.value).toBeGreaterThanOrEqual(m.floor);
   });
 
-  it('fails a mark that is the same colour as a series', () => {
-    // The defect this gate exists for. Both real adapters shipped it: Noland's
-    // mark and series 1 were both slate-800, and Eleven One's mark and series 3
-    // were both --ink, a dE of exactly 0.0000. Nothing compared the two roles,
-    // so nothing failed.
+  it('no longer compares the mark to a series, because the mark is not drawn inside a chart', () => {
+    // Until 2026-09-02 this test required the opposite: both real adapters
+    // had shipped a mark the same colour as one of their series and nothing
+    // caught it. The rotation retired the mark as a chart colour: the marked
+    // bar keeps its series colour and the rest of the series mutes
+    // (roles.emphasis), and the mark is the waymarker tick, the implication
+    // rule and a marked figure. A brand that rotates two families sets its
+    // mark to the lead at one step and its second series to the other family
+    // at the same step, 0.047 apart, which the old comparison refused.
     const r = run({ '--ct-ex-series-2': '#111111' });
+    expect(r.findings.filter((f: any) => f.check === 'mark'), JSON.stringify(r.findings, null, 2)).toEqual([]);
+  });
+
+  it('fails a muted tone that is the same colour as the series it is meant to mute', () => {
+    // The check that replaced the one above. If the rest of a marked series
+    // is the colour the marked item keeps, nothing is emphasised.
+    const r = run({ '--ct-ex-muted': '#8A8A8A' });
     expect(r.ok).toBe(false);
     expect(
-      r.findings.some((f: any) => f.check === 'mark' && f.token === '--ct-mark'),
+      r.findings.some((f: any) => f.check === 'emphasis' && f.token === '--ct-ex-muted'),
       JSON.stringify(r.findings, null, 2),
     ).toBe(true);
   });
 
-  it('fails a mark that is the same colour as a step of a scale', () => {
-    // The two defects this widening exists for, both shipped. Noland's mark sat
-    // 0.0563 from --ct-ex-scale-5 and Map's marked state 0.0474 from its own top
-    // choropleth level. distinctFrom named no scale at all, so nothing compared
-    // a mark to a magnitude.
-    const r = run({ '--ct-ex-scale-3': '#111111' });
-    expect(r.ok).toBe(false);
-    const f = r.findings.find(
-      (x: any) => x.check === 'mark' && x.message.includes('--ct-ex-scale-3'),
-    );
-    expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
+  it('no longer compares the mark to a scale step or an ordinal level', () => {
+    // These two comparisons were added after Noland's mark sat 0.0563 from
+    // --ct-ex-scale-5 and Map's marked state 0.0474 from its own top level.
+    // They went on 2026-09-02 with the defect they guarded: Stack and Map
+    // now keep a marked column or state on its scale colour and mark it
+    // with an ink edge, so the mark is never painted beside a scale.
+    for (const over of [{ '--ct-ex-scale-3': '#111111' }, { '--ct-ex-level-3': '#111111' }]) {
+      const r = run(over);
+      expect(r.findings.filter((f: any) => f.check === 'mark'), JSON.stringify(r.findings, null, 2)).toEqual([]);
+    }
   });
 
-  it('fails a mark that is the same colour as an ordinal level', () => {
-    const r = run({ '--ct-ex-level-3': '#111111' });
-    expect(r.ok).toBe(false);
-    const f = r.findings.find(
-      (x: any) => x.check === 'mark' && x.message.includes('--ct-ex-level-3'),
-    );
-    expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
-  });
-
-  it('names which series the mark collided with, not just that it collided', () => {
+  it('names which series the muted tone collided with, not just that it collided', () => {
     // Both series failure modes emit check: 'series' and are told apart only by
     // their message, a gap already recorded against this suite. Do not repeat it
-    // one role over: a finding that says "the mark is too close to something"
-    // cannot be acted on.
-    const r = run({ '--ct-ex-series-2': '#111111' });
-    // Findings are { check, token, message }; the mark loop's message already
-    // interpolates the neighbour, so this passes without touching checks.mjs.
-    // It is here to keep it that way. Selected by the neighbour it names, not
-    // by position: .find(check === 'mark') alone would grab whichever mark
-    // finding sorts first, which is only correct today because this fixture
-    // produces exactly one.
-    const f = r.findings.find((x: any) => x.check === 'mark' && x.message.includes('--ct-ex-series-2'));
+    // one role over: a finding that says "the muted tone is too close to
+    // something" cannot be acted on.
+    const r = run({ '--ct-ex-muted': '#8A8A8A' });
+    const f = r.findings.find((x: any) => x.check === 'emphasis' && x.message.includes('--ct-ex-series-1'));
     expect(f, JSON.stringify(r.findings, null, 2)).toBeDefined();
-    expect(f!.message).toContain('--ct-ex-series-2');
+    expect(f!.message).toContain('--ct-ex-series-1');
   });
 });

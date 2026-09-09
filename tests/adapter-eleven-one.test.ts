@@ -17,10 +17,14 @@ describe('the Eleven One Research adapter', () => {
   });
 
   it('declares every contract name exactly once', () => {
-    const contractNames = Object.values(contract.groups).flatMap((g: any) => g.names) as string[];
+    const contractNames = Object.values(contract.groups)
+  .filter((g: any) => !g.optional)
+  .flatMap((g: any) => g.names) as string[];
     const decls = [...adapter.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--ct-[\w-]+)\s*:/g)]
       .map((m) => m[1]!);
     expect(new Set(decls).size, 'a name is declared twice').toBe(decls.length);
+    // Optional groups are exempt: an adapter may decline one entirely, and
+    // checks.mjs fails it separately if it declares only part of one.
     for (const n of contractNames) expect(decls, `missing ${n}`).toContain(n);
   });
 
@@ -37,6 +41,9 @@ describe('the Eleven One Research adapter', () => {
 
   it('introduces no hue, which is the rule its own token test enforces', () => {
     for (const name of contract.roles.colourNames) {
+      // colourNames spans the optional groups too. This adapter declares no
+      // status set, and a name it never took up is not a hue it introduced.
+      if (tokens.get(name) === undefined) continue;
       const c = parseHex(tokens.get(name)!);
       expect(c, `${name} did not resolve to a colour`).not.toBeNull();
       expect(neutralSpread(c!), `${name} resolves to ${tokens.get(name)}, which carries hue`)

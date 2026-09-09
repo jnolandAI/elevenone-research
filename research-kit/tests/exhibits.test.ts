@@ -453,13 +453,24 @@ describe('the multi-series exhibits take their categories from the contract', ()
     }
   });
 
-  it('draws three series and no more', () => {
+  it('draws six series and no more', () => {
+    // Three mandatory and three from the optional extension, since 2026-09-02.
     for (const [name, src] of [['Trend', trend], ['Columns', columns]] as const) {
-      for (const n of [1, 2, 3]) {
+      for (const n of [1, 2, 3, 4, 5, 6]) {
         expect(src, `${name} does not read --ct-ex-series-${n}`).toContain(`--ct-ex-series-${n}`);
       }
-      expect(src, `${name} reads a fourth series that the contract does not have`)
-        .not.toContain('--ct-ex-series-4');
+      expect(src, `${name} reads a seventh series that the contract does not have`)
+        .not.toContain('--ct-ex-series-7');
+    }
+  });
+
+  it('keeps emphasis inside the legend: the marked item holds its series colour and the rest mute', () => {
+    // A marked bar or line that took --ct-mark was a colour the key did not
+    // carry, which reads as a fourth category rather than as emphasis.
+    for (const [name, src] of [['Trend', trend], ['Columns', columns]] as const) {
+      const fn = src.match(name === 'Trend' ? /const stroke = [\s\S]*?\n};/ : /const fill = [\s\S]*?\n};/)![0]!;
+      expect(fn, `${name} still paints the marked item in --ct-mark`).not.toContain('--ct-mark');
+      expect(fn, `${name} does not mute the rest of a marked series`).toContain('--ct-ex-muted');
     }
   });
 
@@ -540,19 +551,21 @@ describe('the composition ramp is the contract scale, and the mark is one value'
     ]);
   });
 
-  it('marks a column by replacing its darkest step and nothing else', () => {
-    // The rule Columns.astro states: the slate budget is one value, not one
-    // group. markTone must differ from tone at index 0 alone.
-    const tone = stack.match(/const tone = \[([^\]]+)\]/)![1]!;
-    const markTone = stack.match(/const markTone = \[([^\]]+)\]/)![1]!;
-    const t = tone.split(',').map((s) => s.trim());
-    const m = markTone.split(',').map((s) => s.trim());
-    expect(m.length).toBe(t.length);
-    // Exact match, not toContain: markTone[0] must be the mark itself, not
-    // any token that merely contains the substring '--ct-mark', which
-    // '--ct-mark-soft' also satisfies.
-    expect(m[0]).toBe("'var(--ct-mark)'");
-    expect(m.slice(1)).toEqual(t.slice(1));
+  it('marks a column with an ink outline and leaves every band on the ramp', () => {
+    // Until 2026-09-02 a marked column replaced its darkest band with
+    // --ct-mark, a colour the key did not carry. A composition ramp is one
+    // measure in ordered bands, so emphasis cannot touch the bands at all:
+    // the marked column keeps the same ramp as its neighbours and takes an
+    // edge in the ink the strongest rule takes.
+    expect(stack, 'a second tone list for the marked column').not.toContain('markTone');
+    const fill = stack.match(/const fill = [^;]+;/)![0]!;
+    expect(fill, 'fill reaches past the ramp').not.toContain('--ct-mark');
+    expect(fill).toContain('tone[s]');
+    const rule = stack.match(/\.col--mark\s*\{[^}]+\}/)?.[0] ?? '';
+    expect(rule, 'no .col--mark rule').not.toBe('');
+    expect(rule).toContain('fill: none');
+    expect(rule).toContain('--ct-rule-strong');
+    expect(stack, 'the outline is not drawn').toContain('class="col--mark"');
   });
 
   it('sets in-band values in a colour that clears the band they sit on', () => {

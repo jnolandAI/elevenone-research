@@ -101,7 +101,8 @@ if (callout) {
   .span--mark { fill: var(--ct-mark-soft); }
 
   .mid { fill: var(--ct-ex-fill); }
-  .mid--mark { fill: var(--ct-mark); }
+  /* The marked dot keeps the first series colour; the others are the fill. */
+  .mid--mark { fill: var(--ct-ex-series-1); }
 
   .lab {
     font-size: var(--ct-text-xs);

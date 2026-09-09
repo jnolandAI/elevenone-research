@@ -115,6 +115,12 @@ const ROOTS: [RegExp, string][] = [
  * The count is 16, not 17: recounted against committed bytes with these
  * exact `ROOTS` regexes after an earlier round's report claimed 17, and the
  * six counts below (3, 2+2, 4+2+3) sum to 16.
+ *
+ * 2026-09-09: the firm overview was rebuilt on the collateral layer on
+ * 2026-09-08 and carries no hand-written Page or Dense root any more, so
+ * those two entries came out and the total is 9 across four entries
+ * (3, 2+2, 2). Its Cover entry stays: the cover title without --sm and the
+ * styled second body paragraph survived the rebuild.
  */
 const repoEnv = NOLAND.repo;
 const EXEMPT: Record<string, Partial<Record<string, { count: number; reason: string }>>> = repoEnv
@@ -150,16 +156,6 @@ const EXEMPT: Record<string, Partial<Record<string, { count: number; reason: str
         },
       },
       [join(repoEnv, 'src/pages/firm-overview.astro')]: {
-        Page: {
-          count: 4,
-          reason:
-            'The practice page (slide 2) has an outer wrapper of s-grow s-two-up s-pad-t — a ' +
-            'third class Page.bodyClass cannot add — and its own two inner columns are plain ' +
-            's-stack layout divs with no <h2> at all, reusing the class as a utility rather ' +
-            "than as Page's shape. The roles page (slide 4) splits its body across two " +
-            'sibling divs, s-pad-t alone and s-grow alone, never combined into the one body ' +
-            'wrapper Page emits.',
-        },
         Cover: {
           count: 2,
           reason:
@@ -170,19 +166,6 @@ const EXEMPT: Record<string, Partial<Record<string, { count: number; reason: str
             '(slide 16) carries a second, styled s-cover__body paragraph ' +
             "(color: var(--color-ground)) after the first; Cover's body prop is a single " +
             'optional string with no second slot and no inline style.',
-        },
-        Dense: {
-          count: 3,
-          reason:
-            'The practice ledger (slide 2) is class="s-dense s-pad-t" — Dense\'s class:list ' +
-            'is always s-dense plus --under/--fill and cannot append a bare utility class ' +
-            '(confirmed: passing class="s-pad-t" through ...rest was tried and Astro drops ' +
-            'it in favour of class:list, verified by build and html-diff, not assumed). The ' +
-            'cases block (slide 11) carries s-dense__fig per row, which Dense has no field ' +
-            "for. The contents block (slide 2) is the one exclusion invisible in source " +
-            "text: its final row's num is the empty string, so Dense's " +
-            '{row.num && <p class="s-dense__num">...} correctly omits that row\'s paragraph, ' +
-            'while the hand-written .map() renders it unconditionally regardless of content.',
         },
       },
     }

@@ -32,11 +32,19 @@ const { bars, connectors, baseline } = bridgeLayout(steps, {
   digits,
 });
 
-// Three waterfall roles are three categories, not three magnitudes.
+// Two waterfall roles. An anchor is a total, and a total is drawn in ink, the
+// same ink the strongest rule takes; a step is the data and takes the first
+// series. Sign is carried by direction, which is what a waterfall is for.
+// When one step is marked it keeps the series colour and the other steps
+// mute, so the emphasis is a colour the chart already carries. Until
+// 2026-09-02 the two signs took the second and third series and the marked
+// step took --ct-mark: three colours for one measure, and a fourth for the
+// reading.
+const hasMark = bars.some((b) => b.mark);
 const fill = (b: (typeof bars)[number]) => {
-  if (b.mark) return 'var(--ct-mark)';
-  if (b.anchor) return 'var(--ct-ex-series-1)';
-  return b.value < 0 ? 'var(--ct-ex-series-2)' : 'var(--ct-ex-series-3)';
+  if (b.anchor) return 'var(--ct-rule-strong)';
+  if (hasMark && !b.mark) return 'var(--ct-ex-muted, var(--ct-ex-fill-quiet))';
+  return 'var(--ct-ex-series-1)';
 };
 
 let co = null;

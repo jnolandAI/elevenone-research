@@ -28,15 +28,23 @@ interface Props {
   sections?: number;
   /** Full-bleed: no lane, no padding. For covers and dividers. */
   full?: boolean;
+  /**
+   * Which family leads this slide's section, for a brand that rotates one.
+   * Rendered as data-lead on the frame and read by the brand's own
+   * stylesheet, never by the kit: the kit does not know what the families
+   * are called, only that a section may have one. Unset leaves the brand's
+   * default lead.
+   */
+  lead?: string;
 }
 
-const { n, section, sections = 0, full = false } = Astro.props;
+const { n, section, sections = 0, full = false, lead } = Astro.props;
 const num = String(n).padStart(2, '0');
 const here = section ? parseInt(section, 10) : 0;
 const ticks = section && sections > 0 ? Array.from({ length: sections }, (_, i) => i + 1) : [];
 ---
 
-<div class="scale">
+<div class="scale" data-lead={lead}>
   <div class="slide">
     {
       !full && (

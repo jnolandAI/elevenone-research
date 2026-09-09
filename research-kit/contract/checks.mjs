@@ -16,6 +16,12 @@ export const MEASURE_ORDER = {
   // measure, but it is registered anyway: the cost of an unused entry is
   // nothing and the cost of a missing one is a NaN in the CLI's comparator.
   ordered: 5, bounded: 6, length: 7,
+  // The optional status group, added 2026-09-01. Sorts beside mark because it
+  // is the same kind of comparison: a signal that has to stand apart from the
+  // things around it.
+  status: 8,
+  // Emphasis by muting, added 2026-09-02 with the lead group.
+  emphasis: 9,
 };
 
 /* The spec asks tokencheck to make five checks: presence, contrast,
@@ -45,12 +51,38 @@ export function checkAdapter({ contract, tokens }) {
   const roles = contract.roles;
   const th = (k) => contract.thresholds[k].value;
   const allNames = Object.values(groups).flatMap((g) => g.names);
+  /* A group may declare itself optional: the status group does, because a
+     system that never renders a judgement should not have to invent three
+     colours to satisfy a contract. Optional is exempt from presence and from
+     nothing else. Every check below is already guarded by have(), so an
+     absent optional token drops out of the comparisons on its own rather
+     than needing a second exemption per check. */
+  const optionalNames = new Set(
+    Object.values(groups).filter((g) => g.optional).flatMap((g) => g.names),
+  );
+  const declared = (name) => {
+    const v = tokens.get(name);
+    return v !== undefined && v.trim() !== '';
+  };
 
   // 1. Presence. Declared, and not resolved away to nothing.
   for (const name of allNames) {
+    if (optionalNames.has(name) && tokens.get(name) === undefined) continue;
     const v = tokens.get(name);
     if (v === undefined) fail('presence', name, 'not declared by the adapter');
     else if (v.trim() === '') fail('presence', name, 'declared but resolves to nothing, so a var() points at a name the base stylesheet does not declare');
+  }
+
+  // 1b. All or none, per optional group. Two thirds of a status set is worse
+  //     than none: the reading it cannot express reads as absent rather than
+  //     as unsupported, and nothing downstream can tell those apart.
+  for (const [groupName, group] of Object.entries(groups)) {
+    if (!group.optional) continue;
+    const present = group.names.filter(declared);
+    if (present.length > 0 && present.length < group.names.length) {
+      const missing = group.names.filter((n) => !declared(n));
+      fail('presence', missing[0], `the optional ${groupName} group is declared in part: ${present.length} of ${group.names.length} names, missing ${missing.join(', ')}. Declare all of it or none of it.`);
+    }
   }
 
   // 2. Colour. Every name with a colour job resolves to a parseable colour.
@@ -185,6 +217,52 @@ export function checkAdapter({ contract, tokens }) {
   //    Bounds, because a division that cannot be seen is not a division and a
   //    division heavy enough to be a shape is a third element between two
   //    others. Both change what the page argues rather than how it looks.
+  // 6b. Status. The three readings must be mutually distinguishable, and each
+  //     must stand apart from the emphasis mark, for the reason the mark
+  //     section gives about series: a marked value and an at-risk value drawn
+  //     the same colour make one claim and mean two. Same OKLab measure and
+  //     the same floors; the group is optional, so an adapter that declares
+  //     none of it produces no comparisons here rather than a finding.
+  if (roles.status) {
+    const marks = roles.status.marks.filter((n) => rgb.has(n));
+    for (let i = 0; i < marks.length; i++) {
+      for (let j = i + 1; j < marks.length; j++) {
+        const value = deltaEOK(rgb.get(marks[i]), rgb.get(marks[j]));
+        const floor = th('seriesDeltaEOK');
+        measures.push({ check: 'status', pair: [marks[i], marks[j]], value, floor });
+        if (value < floor) {
+          fail('status', marks[j], `${value.toFixed(3)} in OKLab from ${marks[i]}, needs ${floor}`);
+        }
+      }
+      for (const neighbour of roles.status.distinctFrom) {
+        if (!have(marks[i], neighbour)) continue;
+        const value = deltaEOK(rgb.get(marks[i]), rgb.get(neighbour));
+        const floor = th('markDeltaEOK');
+        measures.push({ check: 'status', pair: [marks[i], neighbour], value, floor });
+        if (value < floor) {
+          fail('status', marks[i], `${value.toFixed(3)} in OKLab from ${neighbour}, needs ${floor}`);
+        }
+      }
+    }
+  }
+
+  // 6c. Emphasis. The muted tone the rest of a series takes when one item is
+  //     emphasised must stand apart from the series colour the item keeps,
+  //     or nothing is emphasised. Optional group, so no comparison when the
+  //     brand declares no muted tone. Its visibility on the ground is held
+  //     by graphicalOn above, since a muted bar is still a bar.
+  if (roles.emphasis && have(roles.emphasis.muted)) {
+    for (const neighbour of roles.emphasis.distinctFrom) {
+      if (!have(neighbour)) continue;
+      const value = deltaEOK(rgb.get(roles.emphasis.muted), rgb.get(neighbour));
+      const floor = th('seriesDeltaEOK');
+      measures.push({ check: 'emphasis', pair: [roles.emphasis.muted, neighbour], value, floor });
+      if (value < floor) {
+        fail('emphasis', roles.emphasis.muted, `${value.toFixed(3)} in OKLab from ${neighbour}, needs ${floor}: the rest of the series is not muted`);
+      }
+    }
+  }
+
   const lengths = roles.lengths;
   if (lengths) {
     // "1px" | "1" | "0.5px" -> number. A length that is not a plain px value
