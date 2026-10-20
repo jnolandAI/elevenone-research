@@ -52,6 +52,8 @@ intact from the tool result to the sentence the reader sees.
 - Pass on what `notes` says. Preliminary BLS values, restated SEC figures, ACS margins of error,
   five-year ACS pooling, and third-party copyright on a FRED series all change what a reader may
   conclude, or may republish.
+- Show the result's `notices` beneath the sources. They are the publishers' own words, which
+  their terms require a product using their data to show; quote them as given.
 - For ACS estimates, report the margin of error alongside the estimate when comparing two areas:
   two estimates whose margins overlap are not shown to differ.
 

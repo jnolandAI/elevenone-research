@@ -59,6 +59,13 @@ const acs = (preset: string, title: string, keywords: string[]): CatalogEntry =>
   keywords: [...keywords, 'demographics', 'census', 'acs', 'state', 'county', 'zip', 'metro', 'local', 'market'],
 });
 
+// Series FRED relays from owners who hold copyright in them: S&P, ICE, CoreLogic, the
+// University of Michigan, Cboe, and Freddie Mac's mortgage survey (kept out until its
+// notes are read with a key). FRED's API terms require the owner's permission before such a
+// series is used beyond personal use, so the catalog does not offer them and the warmer does
+// not fetch them. A caller can still ask for one by id, and the result is flagged.
+export const THIRD_PARTY_FRED = ['SP500', 'BAMLH0A0HYM2', 'CSUSHPINSA', 'UMCSENT', 'VIXCLS', 'MORTGAGE30US'];
+
 export const CATALOG: CatalogEntry[] = [
   // output and growth
   fred('GDP', 'Gross Domestic Product', 'Quarterly', 'Billions of dollars, SAAR', ['gdp', 'output', 'economy', 'nominal', 'growth']),
@@ -94,11 +101,7 @@ export const CATALOG: CatalogEntry[] = [
   fred('DGS10', 'Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity', 'Daily', 'Percent', ['treasury', '10', 'year', 'yield', 'rates', 'bond', 'interest', 'discount']),
   fred('DGS2', 'Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity', 'Daily', 'Percent', ['treasury', '2', 'year', 'yield', 'rates']),
   fred('T10Y2Y', '10-Year Treasury Minus 2-Year Treasury', 'Daily', 'Percent', ['yield', 'curve', 'spread', 'inversion', 'recession']),
-  fred('MORTGAGE30US', '30-Year Fixed Rate Mortgage Average', 'Weekly', 'Percent', ['mortgage', 'rates', 'housing', 'home', 'loans']),
-  fred('BAMLH0A0HYM2', 'ICE BofA US High Yield Index Option-Adjusted Spread', 'Daily', 'Percent', ['high', 'yield', 'credit', 'spread', 'junk', 'risk']),
   fred('BUSLOANS', 'Commercial and Industrial Loans, All Commercial Banks', 'Monthly', 'Billions of dollars, SA', ['business', 'loans', 'credit', 'lending', 'banks']),
-  fred('SP500', 'S&P 500', 'Daily', 'Index', ['stocks', 'equity', 'market', 's&p', 'sp500']),
-  fred('VIXCLS', 'CBOE Volatility Index: VIX', 'Daily', 'Index', ['vix', 'volatility', 'risk', 'markets']),
   fred('DTWEXBGS', 'Nominal Broad U.S. Dollar Index', 'Daily', 'Index Jan 2006=100', ['dollar', 'currency', 'fx', 'exchange']),
   fred('DEXUSEU', 'U.S. Dollars to Euro Spot Exchange Rate', 'Daily', 'U.S. dollars per euro', ['euro', 'eur', 'exchange', 'fx', 'currency']),
   fred('M2SL', 'M2 Money Stock', 'Monthly', 'Billions of dollars, SA', ['money', 'supply', 'm2', 'liquidity']),
@@ -106,10 +109,8 @@ export const CATALOG: CatalogEntry[] = [
   fred('RSAFS', 'Advance Retail Sales: Retail Trade and Food Services', 'Monthly', 'Millions of dollars, SA', ['retail', 'sales', 'consumer', 'spending', 'demand']),
   fred('PCE', 'Personal Consumption Expenditures', 'Monthly', 'Billions of dollars, SAAR', ['consumer', 'spending', 'consumption', 'pce']),
   fred('PSAVERT', 'Personal Saving Rate', 'Monthly', 'Percent', ['saving', 'savings', 'consumer', 'household']),
-  fred('UMCSENT', 'University of Michigan: Consumer Sentiment', 'Monthly', 'Index 1966:Q1=100', ['consumer', 'sentiment', 'confidence']),
   fred('TOTALSL', 'Total Consumer Credit Owned and Securitized', 'Monthly', 'Billions of dollars, SA', ['consumer', 'credit', 'debt', 'household', 'borrowing']),
   fred('HOUST', 'New Privately-Owned Housing Units Started: Total Units', 'Monthly', 'Thousands of units, SAAR', ['housing', 'starts', 'construction', 'residential', 'real', 'estate']),
-  fred('CSUSHPINSA', 'S&P CoreLogic Case-Shiller U.S. National Home Price Index', 'Monthly', 'Index Jan 2000=100', ['home', 'prices', 'housing', 'real', 'estate', 'case', 'shiller']),
   // energy and trade
   fred('DCOILWTICO', 'Crude Oil Prices: West Texas Intermediate (WTI)', 'Daily', 'Dollars per barrel', ['oil', 'crude', 'energy', 'wti', 'commodity']),
   fred('GASREGW', 'US Regular All Formulations Gas Price', 'Weekly', 'Dollars per gallon', ['gas', 'gasoline', 'fuel', 'energy']),

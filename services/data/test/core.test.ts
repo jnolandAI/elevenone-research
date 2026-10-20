@@ -148,3 +148,22 @@ describe('the warmer, without a BLS key', () => {
     expect(warmRefs(testDeps(ROUTES, { BLS_API_KEY: '' })).some((r) => r.startsWith('bls:'))).toBe(false);
   });
 });
+
+describe('SEC fair access', () => {
+  it('spaces the starts of SEC requests, so eight in flight cannot exceed its rate', async () => {
+    const starts: number[] = [];
+    const f = fakeFetch([[/x\.test/, () => (starts.push(Date.now()), Response.json({ ok: 1 }))]]);
+    const up = new Upstream({ fetch: f, minIntervalMs: { sec: 40 } });
+    await Promise.all([1, 2, 3, 4].map((i) => up.json({ source: 'sec', url: `https://x.test/${i}`, ttlMs: 1 })));
+    const gaps = starts.sort((a, b) => a - b).slice(1).map((t, i) => t - starts[i]!);
+    for (const g of gaps) expect(g).toBeGreaterThanOrEqual(35);
+  });
+
+  it('leaves other publishers unspaced', async () => {
+    const f = fakeFetch([[/x\.test/, { ok: 1 }]]);
+    const up = new Upstream({ fetch: f, minIntervalMs: { sec: 1000 } });
+    const t = Date.now();
+    await Promise.all([1, 2, 3].map((i) => up.json({ source: 'worldbank', url: `https://x.test/${i}`, ttlMs: 1 })));
+    expect(Date.now() - t).toBeLessThan(500);
+  });
+});

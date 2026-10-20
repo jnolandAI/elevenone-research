@@ -100,3 +100,27 @@ describe('credentials never leave the server', () => {
     }
   });
 });
+
+describe('publisher notices', () => {
+  it('carries, quoted exactly, the notice each publisher used requires, and no other', async () => {
+    const r = await runTool(testDeps(), 'get_series', { refs: ['fred:UNRATE', 'bls:CES6054160001'] });
+    expect(r.notices).toEqual([
+      'This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.',
+      'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.',
+    ]);
+    const census = await runTool(testDeps(), 'census_acs', { variables: ['population'], geography: 'state' });
+    expect(census.notices).toEqual(['This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.']);
+    const bea = await runTool(testDeps(), 'bea_query', { dataset: 'Regional', params: { TableName: 'SAGDP1' } });
+    expect(bea.notices[0]).toMatch(/^This product uses the Bureau of Economic Analysis \(BEA\) Data API/);
+    const sec = await runTool(testDeps(), 'company_lookup', { query: 'AAPL' });
+    expect(sec.notices).toEqual([]);
+  });
+});
+
+describe('the catalog and third-party copyright', () => {
+  it('offers no FRED series its owner holds copyright in', async () => {
+    const { THIRD_PARTY_FRED } = await import('../src/catalog.js');
+    const refs = CATALOG.flatMap((e) => (e.ref ? [e.ref] : []));
+    for (const id of THIRD_PARTY_FRED) expect(refs).not.toContain(`fred:${id}`);
+  });
+});

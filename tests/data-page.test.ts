@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { ADDRESS, cursorLink, vscodeLink } from '../src/lib/connect';
+import { SOURCES } from '../services/data/src/sources/registry';
 
 // The /data page tells people how to connect to Eleven One Data. Its address
 // has three other homes (the registry entry, the plugin, the service README),
@@ -26,6 +27,15 @@ describe('the data page', () => {
     expect(JSON.parse(decodeURIComponent(vscodeLink.slice('vscode:mcp/install?'.length)))).toEqual({ name: 'eleven-one', type: 'http', url: ADDRESS });
     expect(page).toMatch(/href=\{cursorLink\}/);
     expect(page).toMatch(/href=\{vscodeLink\}/);
+  });
+
+  // FRED, Census and BEA require their notice "prominently within the application", and
+  // BLS requires its own. The page and the service's results must say the same words.
+  it('shows each publisher notice exactly as the service returns it, and links the FRED terms', () => {
+    for (const s of Object.values(SOURCES)) {
+      if (s.notice) expect(page, s.id).toContain(`body: '${s.notice}'`);
+    }
+    expect(page).toContain('href="https://fred.stlouisfed.org/docs/api/terms_of_use.html"');
   });
 
   // Launch is one edit in two places: set LAUNCHED to true in data.astro and

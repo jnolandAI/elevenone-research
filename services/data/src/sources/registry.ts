@@ -14,6 +14,8 @@ export interface SourceInfo {
   homepage: string;
   /** Whether the publisher requires a credential this service holds on the caller's behalf */
   credential: 'none' | 'required' | 'optional';
+  /** Text the publisher's terms require a product built on its API to show, quoted exactly */
+  notice?: string;
   configured: (c: Config) => boolean;
 }
 
@@ -38,9 +40,10 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     tier: 1,
     covers: 'About 800,000 U.S. and international economic time series from 100+ official sources',
     license: 'Mostly public domain; some series carry third-party copyright, flagged per result',
-    terms_url: 'https://fred.stlouisfed.org/legal/',
+    terms_url: 'https://fred.stlouisfed.org/docs/api/terms_of_use.html',
     homepage: 'https://fred.stlouisfed.org',
     credential: 'required',
+    notice: 'This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.',
     configured: (c) => Boolean(c.fredKey),
   },
   bls: {
@@ -53,6 +56,7 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     terms_url: 'https://www.bls.gov/developers/termsOfService.htm',
     homepage: 'https://www.bls.gov',
     credential: 'optional',
+    notice: 'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.',
     configured: () => true,
   },
   census: {
@@ -65,6 +69,7 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     terms_url: 'https://www.census.gov/data/developers/about/terms-of-service.html',
     homepage: 'https://data.census.gov',
     credential: 'required',
+    notice: 'This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.',
     configured: (c) => Boolean(c.censusKey),
   },
   bea: {
@@ -77,6 +82,7 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     terms_url: 'https://apps.bea.gov/API/_pdf/bea_api_tos.pdf',
     homepage: 'https://www.bea.gov',
     credential: 'required',
+    notice: 'This product uses the Bureau of Economic Analysis (BEA) Data API but is not endorsed or certified by BEA.',
     configured: (c) => Boolean(c.beaKey),
   },
   worldbank: {
@@ -89,6 +95,7 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     terms_url: 'https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets',
     homepage: 'https://data.worldbank.org',
     credential: 'none',
+    notice: 'World Bank data are licensed under CC BY 4.0. The World Bank does not endorse this product.',
     configured: () => true,
   },
 };

@@ -16,7 +16,7 @@ The MCP server and the REST API serve the same nine tools, all read-only.
 
 | Tool | What it answers |
 |---|---|
-| `find_data` | Plain words in, ready-to-run tool calls out: a curated catalog of 79 series and tables plus live FRED search |
+| `find_data` | Plain words in, ready-to-run tool calls out: a curated catalog of 73 series and tables plus live FRED search |
 | `get_series` | Up to ten time series at once from FRED, BLS and the World Bank (`fred:UNRATE`, `bls:CES6054160001`, `worldbank:NY.GDP.MKTP.CD:USA;DEU`) |
 | `company_lookup` | SEC registrants by ticker, CIK or name |
 | `company_financials` | Reported revenue, income, balance sheet and cash flow by year or quarter, each value cited to its 10-K or 10-Q, with restatements flagged and margins computed and labelled |

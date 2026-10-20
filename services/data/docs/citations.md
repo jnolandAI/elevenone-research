@@ -1,6 +1,6 @@
-# The citation contract, version 1.0
+# The citation contract, version 1.1
 
-Every tool result is one envelope: `data`, `citations`, `notes` and `meta`. This document says
+Every tool result is one envelope: `data`, `citations`, `notes`, `notices` and `meta`. This document says
 what each promises. `test/tools.test.ts` and `test/core.test.ts` hold the code to it, and a rule
 here that no test checks says so.
 
@@ -43,6 +43,15 @@ formula says which was used.
 `notes` is where caveats go: preliminary values (BLS footnote P), restated periods, 90% margins
 of error, five-year ACS pooling, fourth quarters that are not filed on their own, third-party
 copyright. A client presenting a figure should pass its notes on.
+
+## Notices are the publishers' words
+
+FRED, the Census Bureau and BEA require a product built on their APIs to show a notice that it is
+not endorsed by them, BLS requires one saying it cannot vouch for data once retrieved, and the
+World Bank's licence requires attribution. `notices` carries one line for each publisher a result
+used and nothing for a publisher that asks for none (SEC). The FRED, Census, BEA and BLS lines are
+quoted exactly from their terms; the World Bank line is this service's attribution under CC BY 4.0.
+A client showing the figures should show the notices with them. Added in 1.1.
 
 ## Credentials never leave the server
 

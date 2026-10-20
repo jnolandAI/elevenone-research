@@ -40,6 +40,9 @@ interface Stored {
 
 const CONCURRENCY: Partial<Record<SourceId, number>> = { sec: 8 };
 const DEFAULT_CONCURRENCY = 6;
+// SEC's fair-access rule is at most ten requests a second per requester. Concurrency alone
+// does not bound a rate: eight fast answers in flight can start more than ten a second.
+const MIN_INTERVAL_MS: Partial<Record<SourceId, number>> = { sec: 110 };
 const RETRYABLE = new Set([429, 500, 502, 503, 504]);
 
 export function stripParams(url: string, params: readonly string[] = []): string {
@@ -73,6 +76,8 @@ export interface UpstreamOptions {
   retries?: number;
   retryBaseMs?: number;
   now?: () => number;
+  /** Least time between the starts of two requests to one publisher */
+  minIntervalMs?: Partial<Record<SourceId, number>>;
 }
 
 export class Upstream {
@@ -84,6 +89,8 @@ export class Upstream {
   private readonly retries: number;
   private readonly retryBaseMs: number;
   private readonly now: () => number;
+  private readonly minInterval: Partial<Record<SourceId, number>>;
+  private readonly nextStart = new Map<SourceId, number>();
 
   constructor(opts: UpstreamOptions = {}) {
     this.fetchImpl = opts.fetch ?? ((input, init) => fetch(input, init));
@@ -91,6 +98,7 @@ export class Upstream {
     this.retries = opts.retries ?? 2;
     this.retryBaseMs = opts.retryBaseMs ?? 300;
     this.now = opts.now ?? Date.now;
+    this.minInterval = opts.minIntervalMs ?? MIN_INTERVAL_MS;
     this.cache = new TtlCache(opts.cacheMaxEntries ?? 2_000, this.now);
   }
 
@@ -127,10 +135,21 @@ export class Upstream {
     return g;
   }
 
+  /** Waits for this publisher's next free start slot, and books the one after it. Retries take a slot too. */
+  private async space(source: SourceId): Promise<void> {
+    const gap = this.minInterval[source];
+    if (!gap) return;
+    const t = Date.now();
+    const slot = Math.max(t, this.nextStart.get(source) ?? 0);
+    this.nextStart.set(source, slot + gap);
+    if (slot > t) await sleep(slot - t);
+  }
+
   private async fetchWithRetry(req: UpstreamRequest, apiUrl: string): Promise<Stored> {
     let lastError: ToolError | undefined;
     for (let attempt = 0; attempt <= this.retries; attempt++) {
       if (attempt > 0) await sleep(this.retryBaseMs * 2 ** (attempt - 1));
+      await this.space(req.source);
       let res: Response;
       try {
         res = await this.fetchImpl(req.url, {

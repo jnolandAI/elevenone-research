@@ -20,6 +20,16 @@ const sources = [
   { label: 'World Bank', body: 'Development indicators for more than two hundred economies.' },
 ];
 
+// The publishers' terms require these, word for word. tests/data-page.test.ts holds each
+// one equal to the notice the service itself returns for that publisher.
+const notices = [
+  { label: 'FRED', body: 'This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.' },
+  { label: 'Bureau of Labor Statistics', body: 'BLS.gov cannot vouch for the data or analyses derived from these data after the data have been retrieved from BLS.gov.' },
+  { label: 'Census Bureau', body: 'This product uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.' },
+  { label: 'Bureau of Economic Analysis', body: 'This product uses the Bureau of Economic Analysis (BEA) Data API but is not endorsed or certified by BEA.' },
+  { label: 'World Bank', body: 'World Bank data are licensed under CC BY 4.0. The World Bank does not endorse this product.' },
+];
+
 const claudeCode = `claude mcp add --transport http eleven-one ${ADDRESS}`;
 const plugin = '/plugin install eleven-one-data --marketplace jnolandAI/elevenone-research';
 const cursorConfig = JSON.stringify({ mcpServers: { 'eleven-one': { url: ADDRESS } } }, null, 2);
@@ -91,6 +101,11 @@ const citation = 'U.S. Bureau of Labor Statistics, "All employees, management, s
     <p>Each figure is returned as its publisher printed it. A value the publisher left blank comes back blank, a value revised in a later filing is marked as revised, and a figure the service computes, such as a margin, is marked as computed and names the reported figures it came from. Caveats travel with the figures: preliminary estimates, survey margins of error, and third-party copyright on a series.</p>
     <p>Every result carries one citation per source, ready to paste into a footnote.</p>
     <Code code={citation} wrap />
+  </Section>
+
+  <Section label="Publisher notices" id="notices">
+    <Ledger rows={notices} />
+    <p>Every result carries the notices for the sources it used. Using FRED data through the service means agreeing to the <a href="https://fred.stlouisfed.org/docs/api/terms_of_use.html">FRED® API Terms of Use</a>. None of the publishers endorses Eleven One Research or the service.</p>
   </Section>
 
   <Section label="Keys" id="keys">

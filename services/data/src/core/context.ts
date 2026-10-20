@@ -2,7 +2,7 @@ import { Citations } from './citation.js';
 import type { Citation } from './citation.js';
 import type { Upstream, UpstreamRequest, UpstreamResponse } from './http.js';
 import type { Config } from '../config.js';
-import type { SourceId } from '../sources/registry.js';
+import { SOURCES, type SourceId } from '../sources/registry.js';
 
 /** The envelope every tool returns, over MCP and over REST alike. */
 export interface ToolResult<T = unknown> {
@@ -10,6 +10,8 @@ export interface ToolResult<T = unknown> {
   citations: Citation[];
   /** Caveats a reader needs: suppressed cells, preliminary values, third-party copyright */
   notes: string[];
+  /** The notices the terms of each publisher used require a product to show, quoted exactly */
+  notices: string[];
   meta: {
     tool: string;
     sources: SourceId[];
@@ -50,6 +52,7 @@ export class ToolContext {
       data,
       citations: this.cite.list(),
       notes: [...this.notes],
+      notices: [...this.sources].flatMap((s) => (SOURCES[s].notice ? [SOURCES[s].notice!] : [])),
       meta: {
         tool,
         sources: [...this.sources],
