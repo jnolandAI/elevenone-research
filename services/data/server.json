@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.elevenoneresearch/data",
+  "title": "Eleven One Data",
+  "description": "Cited figures from SEC EDGAR, FRED, BLS, Census, BEA and the World Bank, behind one key.",
+  "version": "0.2.0",
+  "websiteUrl": "https://elevenoneresearch.com",
+  "repository": {
+    "url": "https://github.com/jnolandAI/elevenone-research",
+    "source": "github",
+    "subfolder": "services/data"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://data.elevenoneresearch.com/mcp"
+    }
+  ]
+}

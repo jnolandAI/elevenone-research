@@ -60,6 +60,7 @@ may display, store or redistribute) and attribution the licensor requires.
 - **Citation formats.** Export a result's citations as Chicago, APA or BibTeX.
 - **Signed results.** A signature over each envelope, so a client can show a figure came from
   the service unaltered.
-- **MCP OAuth.** The remote-MCP authorization flow, so a client connects from Claude or another
-  host without pasting a key.
+- **Accounts behind sign-in.** OAuth 2.1 is in place (0.2.0), with the sign-in step asking for a
+  key. Real accounts, by email or single sign-on, replace that step without changing what a
+  client sees.
 - **Status per source.** Latency and error rate per publisher, on a public status page.

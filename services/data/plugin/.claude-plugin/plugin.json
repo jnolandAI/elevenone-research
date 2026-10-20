@@ -1,0 +1,13 @@
+{
+  "name": "eleven-one-data",
+  "displayName": "Eleven One Data",
+  "version": "0.2.0",
+  "description": "Cited figures from SEC EDGAR, FRED, BLS, the Census Bureau, BEA and the World Bank, with a skill for researching and citing them the way a consultant's client expects.",
+  "author": {
+    "name": "Eleven One Research",
+    "url": "https://elevenoneresearch.com"
+  },
+  "homepage": "https://elevenoneresearch.com",
+  "repository": "https://github.com/jnolandAI/elevenone-research",
+  "keywords": ["research", "data", "citations", "sec", "fred", "bls", "census", "bea", "world-bank", "consulting"]
+}

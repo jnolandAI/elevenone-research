@@ -21,7 +21,8 @@ falsifier on the page.
 | `scripts/render_field.mjs` | The field bake. `--check` proves the shipped render is what `design-canvas` draws |
 | `docs/` | The contracts the generators and the brief format are held to |
 | `references/legacy-imagery/` | Superseded imagery, kept for reference and never published |
-| `services/data/` | Eleven One Data: cited figures from SEC, FRED, BLS, Census, BEA and the World Bank behind one key, over MCP and REST. Its own package, tests and deploy; see its README |
+| `services/data/` | Eleven One Data: cited figures from SEC, FRED, BLS, Census, BEA and the World Bank behind one key, over MCP and REST. Its own package, tests and deploy; see its README. The Claude plugin installs with `/plugin install eleven-one-data --marketplace jnolandAI/elevenone-research` |
+| `.claude-plugin/` | The marketplace that lists that plugin |
 | `design-canvas/` | The eleven-gradient set, its generators and its checks |
 | `design-canvas/archive/` | The four directions and the early hue studies the set replaced |
 | `prototypes/archive/` | Colour-system prototypes the set replaced, all of them accent-based |

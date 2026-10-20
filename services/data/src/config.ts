@@ -10,8 +10,16 @@ export interface Config {
   beaKey?: string;
   /** sha256 hex of a client key -> the label it was issued under */
   apiKeyHashes: Map<string, string>;
+  /** The no-key tier: requests without a key are served, limited per client address */
   allowAnonymous: boolean;
   ratePerMinute: number;
+  anonRatePerMinute: number;
+  /** The public origin, e.g. https://data.elevenoneresearch.com. OAuth issuer and token audience derive from it. */
+  publicUrl?: string;
+  /** Signs OAuth codes and tokens. OAuth is off without it. */
+  oauthSecret?: string;
+  /** The token OpenAI's app submission asks to find at /.well-known/openai-apps-challenge */
+  openaiAppsChallenge?: string;
   upstreamTimeoutMs: number;
   cacheMaxEntries: number;
 }
@@ -49,6 +57,20 @@ function secUserAgent(v: string | undefined): string | undefined {
   return ua;
 }
 
+function publicUrl(v: string | undefined): string | undefined {
+  const t = nonEmpty(v);
+  if (!t) return undefined;
+  const u = new URL(t);
+  if (u.protocol !== 'https:' && u.hostname !== 'localhost' && u.hostname !== '127.0.0.1') throw new Error('EO_PUBLIC_URL must be https');
+  return u.origin;
+}
+
+function oauthSecret(v: string | undefined): string | undefined {
+  const t = nonEmpty(v);
+  if (t && t.length < 32) throw new Error('EO_OAUTH_SECRET must be at least 32 characters (openssl rand -base64 48)');
+  return t;
+}
+
 export function loadConfig(env: Env = process.env): Config {
   return {
     port: int(env.PORT, 8787),
@@ -60,6 +82,10 @@ export function loadConfig(env: Env = process.env): Config {
     apiKeyHashes: parseKeyHashes(env.EO_API_KEY_HASHES),
     allowAnonymous: env.EO_ALLOW_ANONYMOUS === '1',
     ratePerMinute: int(env.EO_RATE_PER_MINUTE, 120),
+    anonRatePerMinute: int(env.EO_ANON_RATE_PER_MINUTE, 10),
+    publicUrl: publicUrl(env.EO_PUBLIC_URL),
+    oauthSecret: oauthSecret(env.EO_OAUTH_SECRET),
+    openaiAppsChallenge: nonEmpty(env.EO_OPENAI_APPS_CHALLENGE),
     upstreamTimeoutMs: int(env.EO_UPSTREAM_TIMEOUT_MS, 10_000),
     cacheMaxEntries: int(env.EO_CACHE_MAX_ENTRIES, 2_000),
   };

@@ -6,6 +6,7 @@ import { ToolError } from './core/errors.js';
 import type { Config } from './config.js';
 
 export const KEY_PREFIX = 'eo_';
+export const ANONYMOUS = 'anonymous';
 
 export function hashKey(key: string): string {
   return createHash('sha256').update(key).digest('hex');
@@ -24,8 +25,8 @@ export function bearer(headers: Headers): string | undefined {
 /** The label a key was issued under, or a ToolError saying why the request is refused. */
 export function authenticate(config: Config, token: string | undefined): string {
   if (!token) {
-    if (config.allowAnonymous) return 'anonymous';
-    throw new ToolError('unauthorized', 'Send your Eleven One key as "Authorization: Bearer <key>".');
+    if (config.allowAnonymous) return ANONYMOUS;
+    throw new ToolError('unauthorized', 'Send your Eleven One key as "Authorization: Bearer <key>", or connect through OAuth.');
   }
   const label = config.apiKeyHashes.get(hashKey(token));
   if (!label) throw new ToolError('unauthorized', 'That key is not recognised.');
@@ -41,15 +42,17 @@ export class RateLimiter {
     private readonly now: () => number = Date.now,
   ) {}
 
-  take(client: string): void {
+  take(client: string, perMinute = this.perMinute): void {
     const t = this.now();
     const w = this.windows.get(client);
     if (!w || t - w.start >= 60_000) {
+      // the no-key tier keys windows by address, so drop finished windows before they pile up
+      if (this.windows.size >= 10_000) for (const [k, v] of this.windows) if (t - v.start >= 60_000) this.windows.delete(k);
       this.windows.set(client, { start: t, count: 1 });
       return;
     }
-    if (w.count >= this.perMinute) {
-      throw new ToolError('rate_limited', `More than ${this.perMinute} requests this minute; retry in ${Math.ceil((w.start + 60_000 - t) / 1000)}s.`);
+    if (w.count >= perMinute) {
+      throw new ToolError('rate_limited', `More than ${perMinute} requests this minute; retry in ${Math.ceil((w.start + 60_000 - t) / 1000)}s.`);
     }
     w.count++;
   }

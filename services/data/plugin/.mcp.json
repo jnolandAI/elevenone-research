@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "eleven-one": {
+      "type": "http",
+      "url": "https://data.elevenoneresearch.com/mcp"
+    }
+  }
+}

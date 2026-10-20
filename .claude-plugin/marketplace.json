@@ -1,0 +1,17 @@
+{
+  "name": "elevenone",
+  "owner": {
+    "name": "Eleven One Research",
+    "url": "https://elevenoneresearch.com"
+  },
+  "metadata": {
+    "description": "Plugins from Eleven One Research"
+  },
+  "plugins": [
+    {
+      "name": "eleven-one-data",
+      "source": "./services/data/plugin",
+      "description": "Cited figures from SEC EDGAR, FRED, BLS, the Census Bureau, BEA and the World Bank, with a skill for citing them."
+    }
+  ]
+}

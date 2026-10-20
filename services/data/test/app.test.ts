@@ -104,3 +104,11 @@ describe('MCP over streamable HTTP', () => {
     expect((await app().request('/mcp', { headers: auth })).status).toBe(405);
   });
 });
+
+describe('ChatGPT domain verification', () => {
+  it('serves the challenge token when one is set, and nothing when not', async () => {
+    expect((await app({ EO_OPENAI_APPS_CHALLENGE: 'tok-123' }).request('/.well-known/openai-apps-challenge')).status).toBe(200);
+    expect(await (await app({ EO_OPENAI_APPS_CHALLENGE: 'tok-123' }).request('/.well-known/openai-apps-challenge')).text()).toBe('tok-123');
+    expect((await app().request('/.well-known/openai-apps-challenge')).status).toBe(404);
+  });
+});
