@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import Opener from '../components/site/Opener.astro';
+import Section from '../components/site/Section.astro';
+import Ledger from '../components/site/Ledger.astro';
+import Code from '../components/site/Code.astro';
+import { ADDRESS, cursorLink, vscodeLink } from '../lib/connect';
+
+// The page is drafted ahead of the service. It carries noindex, and
+// astro.config.mjs keeps it out of the sitemap, until data.elevenoneresearch.com
+// answers; tests/data-page.test.ts says what to change at launch.
+const LAUNCHED = false;
+
+const sources = [
+  { label: 'SEC EDGAR', body: 'Filings by every registrant, the financial statement figures tagged in them, and a search of their full text since 2001.' },
+  { label: 'FRED', body: 'Economic time series published by the Federal Reserve Bank of St. Louis, each credited to the agency that produced it.' },
+  { label: 'Bureau of Labor Statistics', body: 'Employment, wages, prices and productivity, by industry and by area.' },
+  { label: 'Census Bureau', body: 'The American Community Survey, from the national level down to county, metro area and ZIP code, with margins of error.' },
+  { label: 'Bureau of Economic Analysis', body: 'The national accounts, output and income by state and county, and output by industry.' },
+  { label: 'World Bank', body: 'Development indicators for more than two hundred economies.' },
+];
+
+const claudeCode = `claude mcp add --transport http eleven-one ${ADDRESS}`;
+const plugin = '/plugin install eleven-one-data --marketplace jnolandAI/elevenone-research';
+const cursorConfig = JSON.stringify({ mcpServers: { 'eleven-one': { url: ADDRESS } } }, null, 2);
+const vscodeConfig = JSON.stringify({ servers: { 'eleven-one': { type: 'http', url: ADDRESS } } }, null, 2);
+const header = 'Authorization: Bearer <your Eleven One key>';
+const curl = `curl https://data.elevenoneresearch.com/v1/tools/company_financials \\
+  -H "Authorization: Bearer $ELEVEN_ONE_KEY" \\
+  -H "content-type: application/json" \\
+  -d '{"company": "ACN", "metrics": ["revenue", "operating_margin"]}'`;
+const citation = 'U.S. Bureau of Labor Statistics, "All employees, management, scientific, and technical consulting services" (CES6054160001), Current Employment Statistics, retrieved 2026-10-19, https://data.bls.gov/timeseries/CES6054160001.';
+---
+<Base
+  title="Eleven One Data · Eleven One Research"
+  description="Eleven One Data connects an AI assistant to SEC, Federal Reserve, BLS, Census, BEA and World Bank data, and returns every figure with its source."
+  noindex={!LAUNCHED}
+>
+  <Opener
+    kicker="Eleven One Research"
+    title="Eleven One Data"
+    standfirst="Eleven One Data connects an AI assistant to the public sources that research rests on. The assistant receives each figure with its publisher, the publisher's own identifier for it, and a link where a reader can check it."
+  />
+
+  <Section label="The address" id="address">
+    <p>Every assistant connects to the same address.</p>
+    <Code code={ADDRESS} />
+    <p>The address uses the Model Context Protocol, an open standard that Claude, ChatGPT and most coding assistants support for reaching outside tools. An assistant connected to it can look figures up. It cannot change anything.</p>
+  </Section>
+
+  <Section label="Sources" id="sources">
+    <Ledger rows={sources} />
+    <p>One Eleven One key covers all six. The service holds the credentials each publisher requires, so a user registers with none of them.</p>
+  </Section>
+
+  <Section label="Claude" id="claude">
+    <ol>
+      <li>In Claude, open Customize, then Connectors, and choose Add custom connector.</li>
+      <li>Paste the address and choose Add.</li>
+      <li>Choose Connect. A sign-in page on elevenoneresearch.com asks for the Eleven One key.</li>
+    </ol>
+    <p>The key is checked on that page and is not passed to Claude. Claude receives a token that expires and renews itself, and retiring the key ends it. Once the connector is added, it is available in the Claude desktop and mobile apps as well.</p>
+    <Code label="Claude Code" code={claudeCode} />
+    <p>A Claude plugin installs the same connection together with instructions that keep the assistant citing each figure to its publisher.</p>
+    <Code label="Claude Code plugin" code={plugin} />
+  </Section>
+
+  <Section label="ChatGPT" id="chatgpt">
+    <ol>
+      <li>In ChatGPT's settings, open Apps, then Advanced settings, and turn on developer mode.</li>
+      <li>Create an app with the address, and choose OAuth for its authentication.</li>
+      <li>Sign in with the Eleven One key when the sign-in page opens.</li>
+    </ol>
+    <p>ChatGPT renames its menus from time to time. The address and the sign-in step stay the same.</p>
+  </Section>
+
+  <Section label="Cursor and VS Code" id="editors">
+    <p><a href={cursorLink}>Add to Cursor</a> or <a href={vscodeLink}>add to VS Code</a>. Either editor opens the sign-in page the first time a tool is used. To add the connection by hand, use the entry for the editor.</p>
+    <Code label="~/.cursor/mcp.json" code={cursorConfig} />
+    <Code label=".vscode/mcp.json" code={vscodeConfig} />
+    <p>A tool that cannot open a sign-in page sends the key as a header instead.</p>
+    <Code code={header} />
+  </Section>
+
+  <Section label="Scripts and notebooks" id="scripts">
+    <p>The same tools answer plain HTTPS requests, for scripts, notebooks and spreadsheets that fetch data. A request carries the key as a header, and the response is the same JSON an assistant receives.</p>
+    <Code code={curl} />
+  </Section>
+
+  <Section label="What comes back" id="results">
+    <p>Each figure is returned as its publisher printed it. A value the publisher left blank comes back blank, a value revised in a later filing is marked as revised, and a figure the service computes, such as a margin, is marked as computed and names the reported figures it came from. Caveats travel with the figures: preliminary estimates, survey margins of error, and third-party copyright on a series.</p>
+    <p>Every result carries one citation per source, ready to paste into a footnote.</p>
+    <Code code={citation} wrap />
+  </Section>
+
+  <Section label="Keys" id="keys">
+    <p>Keys are issued on request to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>. A key is shown once, when it is issued, and the service keeps only a digest of it.</p>
+  </Section>
+</Base>

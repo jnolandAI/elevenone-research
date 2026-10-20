@@ -13,7 +13,7 @@ const homeComponents = [
 ];
 
 const pages = [
-  ...['index', 'work', 'method', 'about', '404'].map((p) => ({
+  ...['index', 'work', 'method', 'about', 'data', '404'].map((p) => ({
     name: p,
     src: readFileSync(`src/pages/${p}.astro`, 'utf8'),
   })),

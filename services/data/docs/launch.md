@@ -33,14 +33,18 @@ and BEA adapters.
       that needs three sources
 - [ ] ChatGPT: the same, in Developer Mode
 - [ ] Claude Code: `/plugin install eleven-one-data --marketplace jnolandAI/elevenone-research`
+- [ ] The Add to Cursor and add to VS Code links on `/data`. Both follow each editor's documented
+      link format, but neither editor's documentation shows a remote server in one, so click them
 
 ## 4. Pages the directories ask for (you)
 
 Both directories want public URLs for these. The privacy policy and terms are legal documents
 and need the owner's decisions; the rest can be drafted from this repository.
 
-- [ ] A documentation page, e.g. `elevenoneresearch.com/data`: what it is, the tools, how to
-      connect each client
+- [ ] The documentation page is drafted at `src/pages/data.astro` and kept out of search. To
+      publish it, set `LAUNCHED` to true there and remove `'/data'` from `UNLAUNCHED` in
+      `astro.config.mjs`; `tests/data-page.test.ts` fails until both are done. Whether it joins
+      the nav is a separate decision, and `tests/pages.test.ts` pins the nav as it stands
 - [ ] Privacy policy: what is logged (time, path, status, latency, client label, tool name; not
       a tool's arguments or results), retention, third parties (the publishers queried), contact
 - [ ] Terms of use, including that figures carry their publishers' licences

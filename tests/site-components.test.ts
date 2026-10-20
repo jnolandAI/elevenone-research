@@ -4,6 +4,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Opener from '../src/components/site/Opener.astro';
 import Section from '../src/components/site/Section.astro';
 import Ledger from '../src/components/site/Ledger.astro';
+import Code from '../src/components/site/Code.astro';
 
 // The spec's page grammar, section 2. These check the markup the pages
 // build on and the two style rules that keep the tokens test green: no hex
@@ -59,8 +60,22 @@ describe('Ledger', () => {
   });
 });
 
+describe('Code', () => {
+  it('renders the text verbatim in a focusable pre, escaped, with an optional label', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(Code, { props: { label: '.vscode/mcp.json', code: '{"url": "<x>"}' } });
+    expect(html).toMatch(/<figcaption[^>]*>\.vscode\/mcp\.json<\/figcaption>/);
+    expect(html).toMatch(/<pre[^>]*tabindex="0"/);
+    expect(html).toContain('&lt;x&gt;');
+    const bare = await c.renderToString(Code, { props: { code: 'x' } });
+    expect(bare).not.toContain('<figcaption');
+    expect(bare).not.toMatch(/class="[^"]*\bwrap\b/);
+    expect(await c.renderToString(Code, { props: { code: 'x', wrap: true } })).toMatch(/<pre[^>]*class="[^"]*\bwrap\b/);
+  });
+});
+
 describe('the style rules the tokens test depends on', () => {
-  for (const name of ['Opener', 'Section', 'Ledger']) {
+  for (const name of ['Opener', 'Section', 'Ledger', 'Code']) {
     it(`${name} writes no hex and puts no sized text in --g70`, () => {
       const style = (src(name).match(/<style[^>]*>([\s\S]*?)<\/style>/) ?? [])[1] ?? '';
       expect(style, 'hex').not.toMatch(/#[0-9A-Fa-f]{3,8}\b/);

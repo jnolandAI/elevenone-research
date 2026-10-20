@@ -1,0 +1,31 @@
+---
+interface Props {
+  code: string;
+  /** Where the text goes: a file path, or the program it is typed into */
+  label?: string;
+  /** Wrap long lines. For text a reader pastes as prose, such as a citation; a command keeps its lines. */
+  wrap?: boolean;
+}
+const { code, label, wrap = false } = Astro.props;
+---
+<figure class="code">
+  {label && <figcaption class="mono">{label}</figcaption>}
+  <pre class:list={['mono', { wrap }]} tabindex="0"><code>{code}</code></pre>
+</figure>
+
+<style>
+  /* A block of text a reader copies exactly. It sits on white with a hairline, the one
+     surface in the page grammar, because the reader has to see where it starts and ends.
+     It scrolls inside itself on a phone so the page never does. */
+  .code { margin: 0 0 20px; max-width: 62ch; }
+  .code:last-child { margin-bottom: 0; }
+  figcaption { font-size: 12.5px; color: var(--g80); margin: 0 0 8px; }
+  pre {
+    margin: 0; padding: 14px 16px;
+    background: var(--w); border: 1px solid var(--g20); border-radius: var(--r-s);
+    font-size: 13.5px; line-height: 1.6; color: var(--ink);
+    overflow-x: auto; white-space: pre;
+  }
+  pre.wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+  pre:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+</style>

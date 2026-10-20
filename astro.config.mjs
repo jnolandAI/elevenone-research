@@ -22,6 +22,11 @@ function draftSlugs() {
 }
 const DRAFTS = draftSlugs();
 
+// Pages drafted ahead of what they describe, and noindexed until it exists. The same
+// gap applies: the sitemap would advertise them anyway. tests/data-page.test.ts holds
+// /data's entry here to the LAUNCHED flag in its page.
+const UNLAUNCHED = ['/data'];
+
 export default defineConfig({
   site: 'https://elevenoneresearch.com',
   // Reports became Work on 2026-09-02. A static redirect page is enough for
@@ -30,7 +35,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !DRAFTS.some((slug) => new RegExp(`/briefs/${slug}/?$`).test(page)),
+      filter: (page) =>
+        !DRAFTS.some((slug) => new RegExp(`/briefs/${slug}/?$`).test(page)) &&
+        !UNLAUNCHED.some((path) => new URL(page).pathname.replace(/\/$/, '') === path),
     }),
   ],
   build: {

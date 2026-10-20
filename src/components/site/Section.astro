@@ -26,6 +26,9 @@ const { label, id } = Astro.props;
     font-size: 11.5px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
     color: var(--g80); margin: 4px 0 0;
   }
+  /* A grid item will not shrink below its content by default, so a line of code would
+     widen the column, and on a phone the page. Zero lets it scroll inside its own block. */
+  .body { min-width: 0; }
   .body :global(p) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; }
   .body :global(p:last-child) { margin-bottom: 0; }
   /* A paragraph that follows a ledger takes the ledger's own row spacing
@@ -33,6 +36,10 @@ const { label, id } = Astro.props;
      this itself: its scoped selector loses to the global paragraph rule
      here. */
   .body :global(dl + p) { margin-top: 18px; }
+  /* Steps a reader follows in order. Same measure and colour as a paragraph, numbered,
+     with the numbers inside the measure so the list does not hang into the label column. */
+  .body :global(ol) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; padding-left: 1.4em; }
+  .body :global(li + li) { margin-top: 6px; }
   .body :global(a) {
     color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
     text-decoration-thickness: 1px; text-decoration-color: var(--g40);
