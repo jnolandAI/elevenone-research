@@ -27,7 +27,7 @@ export const SOURCES: Record<SourceId, SourceInfo> = {
     tier: 1,
     covers: 'Filings by every SEC registrant, XBRL financial statement facts, and full-text search of filings since 2001',
     license: 'U.S. government work, public domain',
-    terms_url: 'https://www.sec.gov/privacy#security',
+    terms_url: 'https://www.sec.gov/about/developer-resources',
     homepage: 'https://www.sec.gov/edgar',
     credential: 'none',
     // SEC answers 403 to automated requests whose User-Agent carries no contact email.

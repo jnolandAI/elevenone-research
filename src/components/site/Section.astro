@@ -36,10 +36,11 @@ const { label, id } = Astro.props;
      this itself: its scoped selector loses to the global paragraph rule
      here. */
   .body :global(dl + p) { margin-top: 18px; }
-  /* Steps a reader follows in order. Same measure and colour as a paragraph, numbered,
-     with the numbers inside the measure so the list does not hang into the label column. */
-  .body :global(ol) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; padding-left: 1.4em; }
+  /* Lists: steps a reader follows in order, or the items of a clause. Same measure and colour
+     as a paragraph, with the markers inside the measure so they do not hang into the label column. */
+  .body :global(ol), .body :global(ul) { font-size: 17px; line-height: 1.7; color: var(--g80); max-width: 62ch; margin: 0 0 20px; padding-left: 1.4em; }
   .body :global(li + li) { margin-top: 6px; }
+  .body :global(p code) { font-family: var(--font-mono); font-weight: 300; font-size: .88em; color: var(--ink); }
   .body :global(a) {
     color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
     text-decoration-thickness: 1px; text-decoration-color: var(--g40);

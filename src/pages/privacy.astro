@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import Opener from '../components/site/Opener.astro';
+import Section from '../components/site/Section.astro';
+import Ledger from '../components/site/Ledger.astro';
+import { LAUNCHED, EFFECTIVE } from '../lib/connect';
+
+// Written from what services/data does, so each statement can be checked against the code.
+// The choices behind it (retention, contact, who is served) are recorded in
+// services/data/docs/legal/decisions.md. A lawyer should read it before launch.
+
+const collected = [
+  { label: 'Requests for a key', body: 'A key is requested by email, and the request carries whatever the sender includes, usually a name, an email address and an organization. It is kept as business correspondence.' },
+  { label: 'Keys', body: 'A key is shown once, when it is issued. The service stores a SHA-256 digest of it and a label chosen when it was issued, usually the organization\'s name. The key cannot be recovered from the digest.' },
+  { label: 'Each request', body: 'The time, the method and path, the response status, how long the response took, and the label of the key that made it. For a call through the Model Context Protocol, also the tool\'s name and how many requests to publishers it took. Not the tool\'s arguments (the company, series, place or phrase asked about), and not its results.' },
+  { label: 'Errors', body: 'When the service fails in a way it did not anticipate, it logs the error and where in the service it happened. Expected errors, such as an unknown company, go back to the user and are not logged.' },
+  { label: 'Signing in', body: 'The sign-in page compares the key entered against the stored digests. The key is not stored and is not passed to the assistant, which receives a signed token that expires after an hour and can be renewed for up to thirty days. Tokens are not stored either: each carries its own expiry and the digest of the key it was issued for. The page sets no cookies.' },
+  { label: 'Assistants', body: 'An assistant that registers to sign in sends its name and the address to return the user to. Both are written into the identifier the service gives back, and are not stored. Where an assistant identifies itself by a published metadata document, the service fetches it and keeps it in memory for up to an hour.' },
+];
+
+const recipients = [
+  { label: 'Publishers', body: 'The SEC, the Federal Reserve Bank of St. Louis (FRED), the Bureau of Labor Statistics, the Census Bureau, the Bureau of Economic Analysis and the World Bank receive the requests described above. They come from the service\'s server, which identifies itself to the SEC as the SEC\'s fair-access rules require. No user\'s identity, key or internet address is sent to a publisher.' },
+  { label: 'The connected assistant', body: 'Results go into the user\'s conversation with Claude, ChatGPT, a coding tool or a script. What that provider does with a conversation is governed by the user\'s agreement with it.' },
+  { label: 'Service providers', body: 'The service runs with a cloud hosting provider, which processes requests on its behalf and keeps its own access logs, including internet addresses, under its own policy. Email to the address below is handled by an email provider.' },
+  { label: 'When the law requires', body: 'Information may be disclosed to comply with a legal obligation or a valid legal request, or to protect the service and its users from abuse.' },
+];
+
+const retention = [
+  { label: 'Request and error logs', body: 'Thirty days, then deleted.' },
+  { label: 'Key digests and labels', body: 'While the key is active, and ninety days after it is retired.' },
+  { label: 'Correspondence about keys', body: 'While the key is active, and ninety days after it is retired.' },
+];
+---
+<Base
+  title="Privacy policy · Eleven One Research"
+  description="What Eleven One Data records, what it does not, who receives it, and how long it is kept."
+  noindex={!LAUNCHED}
+>
+  <Opener
+    kicker="Eleven One Research"
+    title="Privacy policy"
+    standfirst="What Eleven One Data records, what it does not, who receives it, and how long it is kept."
+  />
+
+  <Section label="Scope" id="scope">
+    <p>{EFFECTIVE ? `Effective ${EFFECTIVE}.` : 'Draft. This policy takes effect when Eleven One Data launches.'}</p>
+    <p>Eleven One Data is a service of Eleven One Research, part of Eleven Hundred LLC. This policy covers the service at data.elevenoneresearch.com, its sign-in page, requests for a key, and the website elevenoneresearch.com. The service is offered to businesses and professionals in the United States.</p>
+  </Section>
+
+  <Section label="In brief" id="brief">
+    <ul>
+      <li>The service records which key made a request, which tool it called, when, and how long the answer took. It does not record what was asked or what was returned.</li>
+      <li>Keys are stored only as a one-way digest.</li>
+      <li>The publishers that supply the data see requests from the service's server, never from a user.</li>
+      <li>Nothing is sold, nothing is used for advertising, and nothing a user asks is used to train a model.</li>
+    </ul>
+  </Section>
+
+  <Section label="What is collected" id="collected">
+    <Ledger rows={collected} />
+  </Section>
+
+  <Section label="Questions asked" id="questions">
+    <p>To answer a question, the service sends the relevant part of it to the publisher that holds the data: a ticker to the SEC, a series identifier to FRED, a county to the Census Bureau, a search phrase to SEC full-text search.</p>
+    <p>Answers are kept in an in-memory cache, keyed by the request sent to the publisher, for between one hour and thirty days depending on the source, so the same question is answered faster the next time. The cache is not written to disk, does not record which user asked, and is emptied whenever the service restarts.</p>
+  </Section>
+
+  <Section label="Who receives it" id="recipients">
+    <Ledger rows={recipients} />
+    <p>Information is not sold or rented, and is not used for advertising.</p>
+  </Section>
+
+  <Section label="Retention" id="retention">
+    <Ledger rows={retention} />
+  </Section>
+
+  <Section label="Security" id="security">
+    <p>The service is reached only over HTTPS. Keys are stored as digests, tokens are signed and expire, the sign-in page cannot be embedded in another site, and every key is rate limited. No method of transmission or storage is perfectly secure, and Eleven One Research cannot guarantee that information will never be reached without authorization.</p>
+  </Section>
+
+  <Section label="Choices" id="choices">
+    <p>A key holder can ask to see the information held about their key, to have it corrected, or to have the key retired and its records deleted. Retiring a key ends every sign-in made with it immediately.</p>
+  </Section>
+
+  <Section label="Age" id="age">
+    <p>The service is offered to businesses and professionals. It is not directed to anyone under 18 and does not knowingly collect information from them.</p>
+  </Section>
+
+  <Section label="The website" id="website">
+    <p>elevenoneresearch.com sets no cookies, runs no analytics script and loads nothing from a third party; its fonts are served from the site itself. The site is hosted on Netlify, which keeps access logs, including internet addresses, under its own policy.</p>
+  </Section>
+
+  <Section label="Changes" id="changes">
+    <p>If this policy changes in a way that affects how information is used, key holders are told by email at least thirty days before the change takes effect, and the date above changes.</p>
+  </Section>
+
+  <Section label="Contact" id="contact">
+    <p>Requests and questions about this policy can be sent to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>.</p>
+  </Section>
+</Base>

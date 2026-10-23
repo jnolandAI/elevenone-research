@@ -24,8 +24,8 @@ const DRAFTS = draftSlugs();
 
 // Pages drafted ahead of what they describe, and noindexed until it exists. The same
 // gap applies: the sitemap would advertise them anyway. tests/data-page.test.ts holds
-// /data's entry here to the LAUNCHED flag in its page.
-const UNLAUNCHED = ['/data'];
+// these entries to LAUNCHED in src/lib/connect.ts.
+const UNLAUNCHED = ['/data', '/privacy', '/terms'];
 
 export default defineConfig({
   site: 'https://elevenoneresearch.com',

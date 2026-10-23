@@ -41,14 +41,17 @@ and BEA adapters.
 Both directories want public URLs for these. The privacy policy and terms are legal documents
 and need the owner's decisions; the rest can be drafted from this repository.
 
-- [ ] The documentation page is drafted at `src/pages/data.astro` and kept out of search. To
-      publish it, set `LAUNCHED` to true there and remove `'/data'` from `UNLAUNCHED` in
-      `astro.config.mjs`; `tests/data-page.test.ts` fails until both are done. Whether it joins
-      the nav is a separate decision, and `tests/pages.test.ts` pins the nav as it stands
-- [ ] Privacy policy: what is logged (time, path, status, latency, client label, tool name; not
-      a tool's arguments or results), retention, third parties (the publishers queried), contact
-- [ ] Terms of use, including that figures carry their publishers' licences
-- [ ] Support contact
+- [x] `/data`, `/privacy` and `/terms` are built and kept out of search. The choices behind the
+      privacy policy and terms are in `docs/legal/decisions.md`
+- [ ] A lawyer reads `/privacy` and `/terms`, and the notes at the foot of `decisions.md`
+- [ ] Add Eleven Hundred LLC's state of formation and postal address to both (D1, D7)
+- [ ] Name the host in the privacy policy once it is chosen (D4), and confirm Netlify Analytics
+      is off for elevenoneresearch.com
+- [ ] At launch: set `LAUNCHED` and `EFFECTIVE` in `src/lib/connect.ts`, empty `UNLAUNCHED` in
+      `astro.config.mjs` (`tests/data-page.test.ts` fails until both are done), and link
+      `/privacy` and `/terms` from the footer. Whether `/data` joins the nav is a separate
+      decision, and `tests/pages.test.ts` pins the nav as it stands
+- [x] Support contact: info@elevenoneresearch.com
 - [ ] Icon, light and dark
 - [ ] A reviewer key with a label such as `anthropic-review`, retired after review
 

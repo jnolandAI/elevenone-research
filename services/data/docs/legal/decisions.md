@@ -1,25 +1,27 @@
-# Decisions the privacy policy and terms need
+# Decisions behind the privacy policy and terms
 
-Each is marked in `privacy.md` and `terms.md` as **[Decision Dn]**. Where there is an obvious
-default, it is given; none is settled until the owner settles it.
+The text lives in the site, at `src/pages/privacy.astro` and `src/pages/terms.astro`, and goes
+live with `/data` (see `src/lib/connect.ts`). This records the choice behind each part of it.
+The defaults below were applied on 2026-10-23; where the text departs from a default, the last
+column says how and why. None of it has had a lawyer's reading yet.
 
-| | Decision | Where | A default to consider |
+| | Decision | Default applied | As written, where it differs |
 |---|---|---|---|
-| D1 | The legal entity offering the service: name, state of formation, postal address | both | The repository's README says Eleven One Research is part of Eleven Hundred LLC |
-| D2 | The contact address for keys, privacy and support, and the email provider behind it | both | info@elevenoneresearch.com, which the site already uses, or a data@ alias |
-| D3 | How long request logs, retired-key records and key correspondence are kept | privacy | 30 days for logs; 90 days after a key is retired |
-| D4 | The service's host and region, the host's own log retention, and whether Netlify Analytics is on for the site | privacy | Set when the host is chosen; check Netlify's dashboard |
-| D5 | Whether the no-key tier is offered. If it is, internet addresses are logged for it | privacy | Off, as the code ships |
-| D6 | Free during a preview, or paid; if paid, where price, invoicing, taxes and refunds are stated | terms | Free preview, with these terms saying fees will be set in writing before any charge |
-| D7 | Governing law and courts | terms | The state of formation in D1 |
-| D8 | The liability cap | terms | Fees paid in the prior twelve months; for a free service, a fixed sum. The site's tests bar a price on any page, so a sum would need the test's agreement or wording without a figure |
-| D9 | Business and professional use only, 18 and over | both | Yes |
-| D10 | Whether users in the EU, UK or California are served. If so, the privacy policy needs the sections its note describes | privacy | U.S. business users at first, with the policy written so additions do not contradict it |
-| D11 | Effective date | both | The launch date |
-| D12 | Whether a key may be shared within an organization | terms | One key per organization, shareable within it, with a label per organization |
-| D13 | Notice before a change to the terms or policy, or before access ends | both | 30 days by email |
-| D14 | Preview with no availability commitment, or a stated target | terms | Preview |
-| D15 | Whether results may be redistributed in bulk, and confirming no resale of access | terms | No resale; results may go into client work, not into a competing data feed |
+| D1 | The legal entity offering the service | Eleven Hundred LLC | Named without a state of formation or postal address, which are not recorded in this repository. Add both when known |
+| D2 | Contact for keys, privacy and support | info@elevenoneresearch.com | The email provider is described, not named |
+| D3 | Retention | Logs 30 days; key records 90 days after a key is retired | Correspondence about a key follows the key record |
+| D4 | Host, region and host log retention; Netlify Analytics | Set when the host is chosen | Described as "a cloud hosting provider" until it is chosen. Whether Netlify Analytics is on could not be checked from here: elevenoneresearch.com is not in the Netlify team this session can see. The policy claims only what the code proves (no cookies, no analytics script) |
+| D5 | The no-key tier | Off | The policy says nothing about it. Turning it on logs internet addresses, so the policy must change first |
+| D6 | Fees | Free preview; fees agreed in writing before any charge | |
+| D7 | Governing law and courts | The state of formation in D1 | "The state in which Eleven Hundred LLC is organized", since that state is not recorded here |
+| D8 | Liability cap | Fees paid in the prior twelve months; a fixed sum for a free service | Fees paid in the prior twelve months only. A fixed sum would need a figure, which the site's tests bar on every page; while access is free this cap is nil, which a lawyer may want to replace with a sum and a test exemption |
+| D9 | Business and professional use, 18 and over | Yes | |
+| D10 | Who is served | U.S. business users | The policy carries no EU, UK or California sections. Serving those users needs them added first |
+| D11 | Effective date | The launch date | `EFFECTIVE` in `src/lib/connect.ts`, which a test requires once `LAUNCHED` is true. Until then the pages say they are drafts |
+| D12 | Key sharing | One key per organization, shareable within it | |
+| D13 | Notice of changes, or of access ending | 30 days by email | Not for a breach, or where a publisher requires otherwise |
+| D14 | Availability | Preview, no commitment | |
+| D15 | Redistribution | No resale; results may go into client work, not a competing feed | |
 
 ## Not a decision, but needs a lawyer's eye
 

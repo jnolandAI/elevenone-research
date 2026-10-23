@@ -4,12 +4,7 @@ import Opener from '../components/site/Opener.astro';
 import Section from '../components/site/Section.astro';
 import Ledger from '../components/site/Ledger.astro';
 import Code from '../components/site/Code.astro';
-import { ADDRESS, cursorLink, vscodeLink } from '../lib/connect';
-
-// The page is drafted ahead of the service. It carries noindex, and
-// astro.config.mjs keeps it out of the sitemap, until data.elevenoneresearch.com
-// answers; tests/data-page.test.ts says what to change at launch.
-const LAUNCHED = false;
+import { ADDRESS, LAUNCHED, cursorLink, vscodeLink } from '../lib/connect';
 
 const sources = [
   { label: 'SEC EDGAR', body: 'Filings by every registrant, the financial statement figures tagged in them, and a search of their full text since 2001.' },
@@ -110,5 +105,6 @@ const citation = 'U.S. Bureau of Labor Statistics, "All employees, management, s
 
   <Section label="Keys" id="keys">
     <p>Keys are issued on request to <a href="mailto:info@elevenoneresearch.com">info@elevenoneresearch.com</a>. A key is shown once, when it is issued, and the service keeps only a digest of it.</p>
+    <p>Use of the service is governed by the <a href="/terms">terms of use</a>, and what it records is set out in the <a href="/privacy">privacy policy</a>.</p>
   </Section>
 </Base>
