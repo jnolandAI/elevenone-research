@@ -16,8 +16,9 @@ are the owner's to take.
 - [ ] First client keys: `npm run keygen -- <label>`, one per client, hashes into
       `EO_API_KEY_HASHES`
 
-Then run `npm run smoke` locally with the keys set. It is the first live run of the FRED, Census
-and BEA adapters.
+Then run `npm run verify-keys`, which makes one live call per publisher and says which
+credential is missing or rejected, without printing any. It is the first live run of the FRED,
+Census and BEA adapters.
 
 ## 2. Host (you)
 

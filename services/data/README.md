@@ -85,6 +85,7 @@ npm run keygen -- acme      # issue a client key; put the hash in EO_API_KEY_HAS
 npm run dev                 # http://localhost:8787
 npm test                    # unit, contract and OAuth tests, no network
 npm run check               # typecheck
+npm run verify-keys         # one live call per publisher with this environment's credentials
 npm run smoke               # live checks through a real MCP client: EO_URL, EO_KEY
 npm run stdio               # MCP over stdio, for a local client
 ```
