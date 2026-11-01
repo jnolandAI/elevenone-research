@@ -1,0 +1,46 @@
+{
+  "exhibit": "s1-demo-petersen",
+  "note": "Pipeline demonstration, not a published piece: Petersen's (2009) public clustered-SE test data, regenerated through the S1 statistics engine. It proves an exhibit can be rebuilt from this manifest and checked byte for byte; a real piece copies the pattern with its own data and claims.",
+  "data_source": "https://www.kellogg.northwestern.edu/faculty/petersen/htm/papers/se/test_data.htm",
+  "spec": {
+    "source": {"kind": "csv", "path": "petersen.csv"},
+    "model": {
+      "method": "ols",
+      "method_version": "S1.0.1",
+      "outcome": "y",
+      "terms": ["x"],
+      "intercept": true,
+      "se": {"type": "cluster", "cluster": ["firmid", "year"], "small_sample": "cgm"},
+      "confidence_level": 0.95,
+      "engine": "python",
+      "seed": 0,
+      "marginal_effects": [{"id": "ame_x", "type": "ame", "column": "x"}]
+    }
+  },
+  "now": "2026-11-01T00:00:00.000Z",
+  "expected_output_hash": "78b4050784f508e51496a7f59947d7f58a2ffa5bc4d56e30a1cdcce857b76822",
+  "figures": [
+    "coef/x/estimate",
+    "coef/x/std_error",
+    "coef/x/conf_low",
+    "coef/x/conf_high",
+    "coef/x/p_value",
+    "glance/nobs",
+    "glance/r2"
+  ],
+  "claims": [
+    {
+      "id": "A",
+      "text": "With standard errors clustered by firm and year, x moves y by 1.035 per unit.",
+      "cites": ["coef/x/estimate", "coef/x/p_value"],
+      "assertion": {"figure": "coef/x/estimate", "test": "significant"},
+      "standing": "supported"
+    },
+    {
+      "id": "B",
+      "text": "The two-way clustered standard error on x is 0.0536.",
+      "cites": ["coef/x/std_error"],
+      "standing": "firm"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "exhibit": "s1-demo-petersen",
+  "engine": {
+    "name": "s1",
+    "method": "ols",
+    "method_version": "S1.0.1"
+  },
+  "now": "2026-11-01T00:00:00.000Z",
+  "input_hash": "75f90bb8da740746e6fd0a65083e1b2624d414dc1b0fdf428eeb7b4648e9d4ce",
+  "output_hash": "78b4050784f508e51496a7f59947d7f58a2ffa5bc4d56e30a1cdcce857b76822",
+  "rows": {
+    "count": 5000,
+    "enumerated": true,
+    "numbering": "data rows, 1-based",
+    "ranges": [
+      [
+        1,
+        5000
+      ]
+    ],
+    "sha256": "a3d44437f284b46e5d827df6101e63efe16f752040ad67db809c061bc367bde5"
+  },
+  "figures": {
+    "coef/x/estimate": {
+      "value": 1.0348334383759608,
+      "display": "1.035",
+      "unit": "y per unit of the term"
+    },
+    "coef/x/std_error": {
+      "value": 0.053558022948540736,
+      "display": "0.05356",
+      "unit": "y per unit of the term"
+    },
+    "coef/x/conf_low": {
+      "value": 0.9136767731376088,
+      "display": "0.9137",
+      "unit": "y per unit of the term"
+    },
+    "coef/x/conf_high": {
+      "value": 1.1559901036143128,
+      "display": "1.156",
+      "unit": "y per unit of the term"
+    },
+    "coef/x/p_value": {
+      "value": 1.2306313210771443e-08,
+      "display": "<0.001",
+      "unit": "probability"
+    },
+    "glance/nobs": {
+      "value": 5000,
+      "display": "5,000",
+      "unit": "rows"
+    },
+    "glance/r2": {
+      "value": 0.20776573087275374,
+      "display": "0.2078",
+      "unit": "share"
+    }
+  },
+  "claims": [
+    {
+      "id": "A",
+      "verdict": "accepted_with_warnings",
+      "reasons": [],
+      "warnings": [
+        "cluster_count: only 10 clusters; cluster SEs can be too small with few clusters (a wild cluster bootstrap is planned as S1.1)"
+      ],
+      "standing_ceiling": "supported",
+      "rests_on": "S1 ols (S1.0.1) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output 78b4050784f5",
+      "assumes": [
+        "standard errors: cluster, clustered by firmid, year (cgm small-sample rule)",
+        "breusch_pagan: no evidence of heteroskedasticity at the 0.05 level",
+        "reset: no evidence of a missing nonlinear term"
+      ],
+      "cites": [
+        "coef/x/estimate",
+        "coef/x/p_value"
+      ]
+    },
+    {
+      "id": "B",
+      "verdict": "accepted_with_warnings",
+      "reasons": [],
+      "warnings": [
+        "cluster_count: only 10 clusters; cluster SEs can be too small with few clusters (a wild cluster bootstrap is planned as S1.1)",
+        "standing 'firm' is above what the diagnostics support ('supported')"
+      ],
+      "standing_ceiling": "supported",
+      "rests_on": "S1 ols (S1.0.1) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output 78b4050784f5",
+      "assumes": [
+        "standard errors: cluster, clustered by firmid, year (cgm small-sample rule)",
+        "breusch_pagan: no evidence of heteroskedasticity at the 0.05 level",
+        "reset: no evidence of a missing nonlinear term"
+      ],
+      "cites": [
+        "coef/x/std_error"
+      ]
+    }
+  ]
+}
