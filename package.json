@@ -21,7 +21,9 @@
     "artcheck": "node research-kit/scripts/artcheck.mjs --manifest art/piece-001.manifest.json --out public/assets/art --src src/pages/pieces --adapter src/styles/contract-adapter.css",
     "htmlcheck": "node research-kit/scripts/html-capture.mjs",
     "s1:exhibit": "python scripts/s1_exhibit.py exhibits/s1/demo-petersen/manifest.json",
-    "s1:check": "python scripts/s1_exhibit.py exhibits/s1/demo-petersen/manifest.json --check"
+    "s1:check": "python scripts/s1_exhibit.py exhibits/s1/demo-petersen/manifest.json --check",
+    "s2:exhibit": "python scripts/s1_exhibit.py exhibits/s2/demo-mpdta/manifest.json",
+    "s2:check": "python scripts/s1_exhibit.py exhibits/s2/demo-mpdta/manifest.json --check"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

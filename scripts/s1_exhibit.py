@@ -1,9 +1,9 @@
-"""Regenerate an exhibit from an S1 statistics manifest, or check that the committed one matches.
+"""Regenerate an exhibit from an S1 or S2 statistics manifest, or check that the committed one matches.
 
     python scripts/s1_exhibit.py exhibits/s1/<name>/manifest.json            # write exhibit.json
     python scripts/s1_exhibit.py exhibits/s1/<name>/manifest.json --check    # prove it is current
 
-The manifest holds an S1 spec (its data path relative to the manifest), the clock, the expected
+The manifest holds an S1 spec, or with "engine": "s2" an S2 (staggered DiD) spec (its data path relative to the manifest), the clock, the expected
 output hash, the figure ids the exhibit uses, and the claims the piece makes about them. The script
 runs the S1 engine from the Noland Advisory Analysis checkout (NA_ANALYSIS_REPO, else the sibling
 folder), reviews the claims with the engine's own claim check, and writes exhibit.json beside the
@@ -41,8 +41,8 @@ def stats_python(repo: Path) -> Path:
     return exe
 
 
-def run_s1(exe: Path, args: list[str], cwd: Path) -> dict:
-    proc = subprocess.run([str(exe), "-m", "na_stats", "--engine", "s1", *args], cwd=cwd, capture_output=True,
+def run_s1(exe: Path, args: list[str], cwd: Path, engine: str = "s1") -> dict:
+    proc = subprocess.run([str(exe), "-m", "na_stats", "--engine", engine, *args], cwd=cwd, capture_output=True,
                           text=True, timeout=600)
     lines = [ln for ln in proc.stdout.splitlines() if ln.strip()]
     if len(lines) != 1:
@@ -54,24 +54,26 @@ def build(manifest_path: Path) -> tuple[str, dict]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     exe = stats_python(analysis_repo())
     here = manifest_path.parent
+    engine = manifest.get("engine", "s1")
     with tempfile.TemporaryDirectory(prefix="s1-exhibit-") as tmp:
         spec_path = Path(tmp) / "spec.json"
         spec_path.write_text(json.dumps(manifest["spec"]), encoding="utf-8")
-        out = run_s1(exe, ["--input-json", str(spec_path), "--now", manifest["now"]], cwd=here)
+        out = run_s1(exe, ["--input-json", str(spec_path), "--now", manifest["now"]], cwd=here, engine=engine)
         if out["status"] != "ok":
             sys.exit(f"S1 did not fit: {json.dumps(out.get('errors', out))[:800]}")
         art = out["artifact"]
         art_path, claims_path = Path(tmp) / "artifact.json", Path(tmp) / "claims.json"
         art_path.write_text(json.dumps(art), encoding="utf-8")
         claims_path.write_text(json.dumps(manifest["claims"]), encoding="utf-8")
-        reviews = run_s1(exe, ["--check-claims", str(claims_path), "--artifact-json", str(art_path)], cwd=here)["reviews"]
+        reviews = run_s1(exe, ["--check-claims", str(claims_path), "--artifact-json", str(art_path)], cwd=here,
+                         engine=engine)["reviews"]
     figs = {f["id"]: f for f in art["figures"]}
     missing = [i for i in manifest["figures"] if i not in figs]
     if missing:
         sys.exit(f"the run has no figures {missing}")
     exhibit = {
         "exhibit": manifest["exhibit"],
-        "engine": {"name": "s1", "method": art["meta"]["method"], "method_version": art["meta"]["method_version"]},
+        "engine": {"name": engine, "method": art["meta"]["method"], "method_version": art["meta"]["method_version"]},
         "now": art["meta"]["now"],
         "input_hash": art["meta"]["input_hash"],
         "output_hash": art["meta"]["output_hash"],

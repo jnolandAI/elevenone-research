@@ -1,0 +1,59 @@
+{
+  "exhibit": "s2-demo-mpdta",
+  "engine": "s2",
+  "note": "Pipeline demonstration, not a published piece: the mpdta teen-employment panel that ships with the R did package (GPL-3), regenerated through the S2 statistics engine. Callaway-Sant'Anna with log population as a covariate, an event study, and a HonestDiD smoothness check on the first-year effect.",
+  "data_source": "R package did 2.5.1, data(mpdta); Callaway and Sant'Anna (2021)",
+  "spec": {
+    "source": {"kind": "csv", "path": "mpdta.csv"},
+    "model": {
+      "method": "cs",
+      "method_version": "S2.0.0",
+      "outcome": "lemp",
+      "covariates": ["lpop"],
+      "engine": "python",
+      "seed": 0,
+      "panel": {"unit": "countyreal", "time": "year", "cohort": {"column": "first.treat", "never_treated": 0},
+                "unbalanced": "refuse", "first_period_treated": "drop"},
+      "control_group": "never_treated",
+      "anticipation": 0,
+      "base_period": "universal",
+      "cs": {"estimation": "dr", "trim_level": 0.995},
+      "aggregation": [{"type": "dynamic", "min_e": null, "max_e": null, "balance_e": null}],
+      "inference": {"type": "analytic", "cluster": ["countyreal"]},
+      "confidence_level": 0.95,
+      "honest": {"restriction": "smoothness", "grid": [0.0, 0.01, 0.02], "method": "flci", "l_vec": [1, 0, 0, 0],
+                 "critical_value": "exact"}
+    }
+  },
+  "now": "2026-11-01T00:00:00.000Z",
+  "expected_output_hash": "e5b6cd2ee0f97091b0afd306ad9fe619dde7810ee5a2e71613ba1cb5b0164bf2",
+  "figures": [
+    "agg/dynamic/overall/estimate",
+    "agg/dynamic/overall/std_error",
+    "agg/dynamic/overall/p_value",
+    "agg/dynamic/0/estimate",
+    "agg/dynamic/0/conf_low",
+    "agg/dynamic/0/conf_high",
+    "honest/original/conf_low",
+    "honest/original/conf_high",
+    "honest/smoothness/0/conf_low",
+    "honest/smoothness/0/conf_high",
+    "pre_test/p_value"
+  ],
+  "claims": [
+    {
+      "id": "A",
+      "text": "Averaged over the years after the increase, teen employment in treated counties was 0.080 log points lower.",
+      "cites": ["agg/dynamic/overall/estimate", "agg/dynamic/overall/p_value"],
+      "assertion": {"figure": "agg/dynamic/overall/estimate", "test": "significant"},
+      "standing": "supported"
+    },
+    {
+      "id": "B",
+      "text": "The first-year effect is not distinguishable from zero, and the HonestDiD interval for it is wider still.",
+      "cites": ["agg/dynamic/0/p_value", "honest/smoothness/0/conf_low", "honest/smoothness/0/conf_high"],
+      "assertion": {"figure": "agg/dynamic/0/p_value", "test": "not_significant"},
+      "standing": "supported"
+    }
+  ]
+}

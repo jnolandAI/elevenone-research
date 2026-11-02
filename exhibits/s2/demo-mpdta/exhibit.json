@@ -1,0 +1,131 @@
+{
+  "exhibit": "s2-demo-mpdta",
+  "engine": {
+    "name": "s2",
+    "method": "cs",
+    "method_version": "S2.0.0"
+  },
+  "now": "2026-11-01T00:00:00.000Z",
+  "input_hash": "bdc2604ff3e70d2189393b8daa4fcf38b952e925a820a8a416d59a9d6875a2ad",
+  "output_hash": "e5b6cd2ee0f97091b0afd306ad9fe619dde7810ee5a2e71613ba1cb5b0164bf2",
+  "rows": {
+    "count": 2500,
+    "enumerated": true,
+    "numbering": "data rows, 1-based",
+    "ranges": [
+      [
+        1,
+        2500
+      ]
+    ],
+    "sha256": "dfda9e56518558aae6d120abcb2937f0dd540f02fce13e6c078405d6d31de8c1"
+  },
+  "figures": {
+    "agg/dynamic/overall/estimate": {
+      "value": -0.08035394974402431,
+      "display": "-0.08035",
+      "unit": "lemp units"
+    },
+    "agg/dynamic/overall/std_error": {
+      "value": 0.01895755724482492,
+      "display": "0.01896",
+      "unit": "lemp units"
+    },
+    "agg/dynamic/overall/p_value": {
+      "value": 2.2489434364558733e-05,
+      "display": "<0.001",
+      "unit": "probability"
+    },
+    "agg/dynamic/0/estimate": {
+      "value": -0.02106035975079987,
+      "display": "-0.02106",
+      "unit": "lemp units"
+    },
+    "agg/dynamic/0/conf_low": {
+      "value": -0.0435886006400081,
+      "display": "-0.04359",
+      "unit": "lemp units"
+    },
+    "agg/dynamic/0/conf_high": {
+      "value": 0.0014678811384083584,
+      "display": "0.001468",
+      "unit": "lemp units"
+    },
+    "honest/original/conf_low": {
+      "value": -0.04358860064000809,
+      "display": "-0.04359",
+      "unit": "lemp units"
+    },
+    "honest/original/conf_high": {
+      "value": 0.001467881138408355,
+      "display": "0.001468",
+      "unit": "lemp units"
+    },
+    "honest/smoothness/0/conf_low": {
+      "value": -0.050608933759169195,
+      "display": "-0.05061",
+      "unit": "lemp units"
+    },
+    "honest/smoothness/0/conf_high": {
+      "value": 0.00580043133870432,
+      "display": "0.0058",
+      "unit": "lemp units"
+    },
+    "pre_test/p_value": {
+      "value": 0.2326722805732323,
+      "display": "0.233",
+      "unit": "probability"
+    }
+  },
+  "claims": [
+    {
+      "id": "A",
+      "verdict": "accepted",
+      "reasons": [],
+      "warnings": [],
+      "standing_ceiling": "firm",
+      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 09478a8433d4, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output e5b6cd2ee0f9",
+      "assumes": [
+        "control group: never_treated",
+        "base period: universal",
+        "anticipation: 0",
+        "estimation: dr",
+        "trim level: 0.995",
+        "covariates: ['lpop']",
+        "inference: analytic influence functions, summed within clusters",
+        "cluster: countyreal",
+        "pre_test: no joint evidence against parallel trends before treatment; passing a pre-test does not establish parallel trends (Roth 2022); see the HonestDiD sensitivity",
+        "honest_breakdown: the original interval already contains zero"
+      ],
+      "cites": [
+        "agg/dynamic/overall/estimate",
+        "agg/dynamic/overall/p_value"
+      ]
+    },
+    {
+      "id": "B",
+      "verdict": "accepted",
+      "reasons": [],
+      "warnings": [],
+      "standing_ceiling": "firm",
+      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 09478a8433d4, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output e5b6cd2ee0f9",
+      "assumes": [
+        "control group: never_treated",
+        "base period: universal",
+        "anticipation: 0",
+        "estimation: dr",
+        "trim level: 0.995",
+        "covariates: ['lpop']",
+        "inference: analytic influence functions, summed within clusters",
+        "cluster: countyreal",
+        "pre_test: no joint evidence against parallel trends before treatment; passing a pre-test does not establish parallel trends (Roth 2022); see the HonestDiD sensitivity",
+        "honest_breakdown: the original interval already contains zero"
+      ],
+      "cites": [
+        "agg/dynamic/0/p_value",
+        "honest/smoothness/0/conf_low",
+        "honest/smoothness/0/conf_high"
+      ]
+    }
+  ]
+}
