@@ -6,7 +6,7 @@
     "source": {"kind": "csv", "path": "petersen.csv"},
     "model": {
       "method": "ols",
-      "method_version": "S1.0.1",
+      "method_version": "S1.1.0",
       "outcome": "y",
       "terms": ["x"],
       "intercept": true,
@@ -18,7 +18,7 @@
     }
   },
   "now": "2026-11-01T00:00:00.000Z",
-  "expected_output_hash": "78b4050784f508e51496a7f59947d7f58a2ffa5bc4d56e30a1cdcce857b76822",
+  "expected_output_hash": "ae0d2662dd216cb77d2c91a60c21188f2a7f807eec256c37dee53bb306f8b928",
   "figures": [
     "coef/x/estimate",
     "coef/x/std_error",

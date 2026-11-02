@@ -3,11 +3,11 @@
   "engine": {
     "name": "s1",
     "method": "ols",
-    "method_version": "S1.0.1"
+    "method_version": "S1.1.0"
   },
   "now": "2026-11-01T00:00:00.000Z",
-  "input_hash": "75f90bb8da740746e6fd0a65083e1b2624d414dc1b0fdf428eeb7b4648e9d4ce",
-  "output_hash": "78b4050784f508e51496a7f59947d7f58a2ffa5bc4d56e30a1cdcce857b76822",
+  "input_hash": "5027dddef2af22ef8ba606973989085ccdb62bb8033c04324d658f59aee47795",
+  "output_hash": "ae0d2662dd216cb77d2c91a60c21188f2a7f807eec256c37dee53bb306f8b928",
   "rows": {
     "count": 5000,
     "enumerated": true,
@@ -63,10 +63,10 @@
       "verdict": "accepted_with_warnings",
       "reasons": [],
       "warnings": [
-        "cluster_count: only 10 clusters; cluster SEs can be too small with few clusters (a wild cluster bootstrap is planned as S1.1)"
+        "cluster_count: only 10 clusters; analytic cluster p-values can be too small with few clusters. The wild cluster bootstrap (model.bootstrap) is built for one-way clustering only"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S1 ols (S1.0.1) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output 78b4050784f5",
+      "rests_on": "S1 ols (S1.1.0) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output ae0d2662dd21",
       "assumes": [
         "standard errors: cluster, clustered by firmid, year (cgm small-sample rule)",
         "breusch_pagan: no evidence of heteroskedasticity at the 0.05 level",
@@ -82,11 +82,11 @@
       "verdict": "accepted_with_warnings",
       "reasons": [],
       "warnings": [
-        "cluster_count: only 10 clusters; cluster SEs can be too small with few clusters (a wild cluster bootstrap is planned as S1.1)",
+        "cluster_count: only 10 clusters; analytic cluster p-values can be too small with few clusters. The wild cluster bootstrap (model.bootstrap) is built for one-way clustering only",
         "standing 'firm' is above what the diagnostics support ('supported')"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S1 ols (S1.0.1) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output 78b4050784f5",
+      "rests_on": "S1 ols (S1.1.0) on petersen.csv sha256 eed404280448, n = 5,000, run 2026-11-01T00:00:00.000Z, output ae0d2662dd21",
       "assumes": [
         "standard errors: cluster, clustered by firmid, year (cgm small-sample rule)",
         "breusch_pagan: no evidence of heteroskedasticity at the 0.05 level",
