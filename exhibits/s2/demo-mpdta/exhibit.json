@@ -6,8 +6,8 @@
     "method_version": "S2.0.0"
   },
   "now": "2026-11-01T00:00:00.000Z",
-  "input_hash": "bdc2604ff3e70d2189393b8daa4fcf38b952e925a820a8a416d59a9d6875a2ad",
-  "output_hash": "e5b6cd2ee0f97091b0afd306ad9fe619dde7810ee5a2e71613ba1cb5b0164bf2",
+  "input_hash": "c999c6be4341ddd11b0e3e0e1d5facbca3788bbcaf7c271b00b9a311189bb68c",
+  "output_hash": "9d9ff226b0a6814735ded49a8a3ac3355061a6e6c45d77a096cd978f8e5503bc",
   "rows": {
     "count": 2500,
     "enumerated": true,
@@ -84,7 +84,7 @@
       "reasons": [],
       "warnings": [],
       "standing_ceiling": "firm",
-      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 09478a8433d4, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output e5b6cd2ee0f9",
+      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 2283bea1221a, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output 9d9ff226b0a6",
       "assumes": [
         "control group: never_treated",
         "base period: universal",
@@ -108,7 +108,7 @@
       "reasons": [],
       "warnings": [],
       "standing_ceiling": "firm",
-      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 09478a8433d4, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output e5b6cd2ee0f9",
+      "rests_on": "S2 cs (S2.0.0) on mpdta.csv sha256 2283bea1221a, 500 units over 5 periods, run 2026-11-01T00:00:00.000Z, output 9d9ff226b0a6",
       "assumes": [
         "control group: never_treated",
         "base period: universal",
