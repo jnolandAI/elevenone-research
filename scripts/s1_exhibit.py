@@ -1,9 +1,9 @@
-"""Regenerate an exhibit from an S1 or S2 statistics manifest, or check that the committed one matches.
+"""Regenerate an exhibit from an S1, S2 or S3 statistics manifest, or check that the committed one matches.
 
     python scripts/s1_exhibit.py exhibits/s1/<name>/manifest.json            # write exhibit.json
     python scripts/s1_exhibit.py exhibits/s1/<name>/manifest.json --check    # prove it is current
 
-The manifest holds an S1 spec, or with "engine": "s2" an S2 (staggered DiD) spec (its data path relative to the manifest), the clock, the expected
+The manifest holds an S1 spec, or with "engine": "s2" an S2 (staggered DiD) spec or "s3" an S3 (survey) spec (its data path relative to the manifest), the clock, the expected
 output hash, the figure ids the exhibit uses, and the claims the piece makes about them. The script
 runs the S1 engine from the Noland Advisory Analysis checkout (NA_ANALYSIS_REPO, else the sibling
 folder), reviews the claims with the engine's own claim check, and writes exhibit.json beside the

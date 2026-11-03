@@ -1,0 +1,193 @@
+{
+  "exhibit": "s3-demo-nhanes",
+  "engine": {
+    "name": "s3",
+    "method": "estimate",
+    "method_version": "S3.0.0"
+  },
+  "now": "2026-11-02T00:00:00.000Z",
+  "input_hash": "4c50b119706e1913ff688129c3c58289f628eb8d119e33437201eab5ee7646ad",
+  "output_hash": "d3c191f93d266b5d362b305e2e95ac643cbeb8329ff0c3130cace0fa299fa8e1",
+  "rows": {
+    "count": 8704,
+    "enumerated": true,
+    "numbering": "data rows, 1-based",
+    "ranges": [
+      [
+        1,
+        8704
+      ]
+    ],
+    "sha256": "66dbad4e311453872d22500d2275639b5693ccf253ffa21d5c5ea3d3efce314b"
+  },
+  "figures": {
+    "est/obesity/yes/estimate": {
+      "value": 0.42670980512463813,
+      "display": "0.4267",
+      "unit": "share"
+    },
+    "est/obesity/yes/ci_lower": {
+      "value": 0.3896938348463193,
+      "display": "0.3897",
+      "unit": "share"
+    },
+    "est/obesity/yes/ci_upper": {
+      "value": 0.4643473337254644,
+      "display": "0.4643",
+      "unit": "share"
+    },
+    "est/obesity/yes/respondents": {
+      "value": 5175,
+      "display": "5,175",
+      "unit": "respondents (unweighted)"
+    },
+    "est/obesity/yes/deff_srswor": {
+      "value": 6.265599936176302,
+      "display": "6.266",
+      "unit": "ratio"
+    },
+    "est/obesity_sex/adult_sex=female/yes/estimate": {
+      "value": 0.4238630755668692,
+      "display": "0.4239",
+      "unit": "share"
+    },
+    "est/obesity_sex/adult_sex=female/yes/ci_lower": {
+      "value": 0.38323288670188327,
+      "display": "0.3832",
+      "unit": "share"
+    },
+    "est/obesity_sex/adult_sex=female/yes/ci_upper": {
+      "value": 0.4652736154046001,
+      "display": "0.4653",
+      "unit": "share"
+    },
+    "est/obesity_sex/adult_sex=male/yes/estimate": {
+      "value": 0.4297828385721279,
+      "display": "0.4298",
+      "unit": "share"
+    },
+    "est/obesity_sex/adult_sex=male/yes/ci_lower": {
+      "value": 0.3733179087335016,
+      "display": "0.3733",
+      "unit": "share"
+    },
+    "est/obesity_sex/adult_sex=male/yes/ci_upper": {
+      "value": 0.4876344860748482,
+      "display": "0.4876",
+      "unit": "share"
+    },
+    "est/obesity_race/adult_race=Non-Hispanic Asian/yes/estimate": {
+      "value": 0.1757474379760293,
+      "display": "0.1757",
+      "unit": "share"
+    },
+    "est/obesity_race/adult_race=Non-Hispanic Black/yes/estimate": {
+      "value": 0.4950077615791018,
+      "display": "0.495",
+      "unit": "share"
+    },
+    "est/obesity_race/adult_race=Non-Hispanic White/yes/estimate": {
+      "value": 0.42898977706250657,
+      "display": "0.429",
+      "unit": "share"
+    },
+    "est/obesity_race/adult_race=Mexican American/yes/estimate": {
+      "value": 0.5152976516528168,
+      "display": "0.5153",
+      "unit": "share"
+    },
+    "est/bmi/adult=adult/estimate": {
+      "value": 29.833835234138423,
+      "display": "29.83",
+      "unit": "bmi units"
+    },
+    "est/bmi_median/adult=adult/p0.5/estimate": {
+      "value": 28.7,
+      "display": "28.7",
+      "unit": "bmi units"
+    }
+  },
+  "claims": [
+    {
+      "id": "A",
+      "verdict": "accepted_with_warnings",
+      "reasons": [],
+      "warnings": [
+        "the number 30 in the text matches none of the cited figures",
+        "weight_variability: Kish's design effect from weighting is 2.41, so the weights alone cut the effective sample from 8,704 to 3,611",
+        "extreme_weights: the largest weight is 18.7 times the median",
+        "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
+      ],
+      "standing_ceiling": "supported",
+      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "assumes": [
+        "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
+        "lonely psu: refuse",
+        "df: design",
+        "item missing: drop_per_estimate",
+        "domain rule: subpopulation",
+        "proportion ci: beta",
+        "quantile: {'rule': 'math', 'interval': 'woodruff_wald'}"
+      ],
+      "cites": [
+        "est/obesity/yes/estimate",
+        "est/obesity/yes/ci_lower",
+        "est/obesity/yes/ci_upper"
+      ]
+    },
+    {
+      "id": "B",
+      "verdict": "accepted_with_warnings",
+      "reasons": [],
+      "warnings": [
+        "weight_variability: Kish's design effect from weighting is 2.41, so the weights alone cut the effective sample from 8,704 to 3,611",
+        "extreme_weights: the largest weight is 18.7 times the median",
+        "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
+      ],
+      "standing_ceiling": "supported",
+      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "assumes": [
+        "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
+        "lonely psu: refuse",
+        "df: design",
+        "item missing: drop_per_estimate",
+        "domain rule: subpopulation",
+        "proportion ci: beta",
+        "quantile: {'rule': 'math', 'interval': 'woodruff_wald'}"
+      ],
+      "cites": [
+        "est/obesity_race/adult_race=Non-Hispanic Asian/yes/estimate",
+        "est/obesity_race/adult_race=Non-Hispanic Black/yes/estimate"
+      ]
+    },
+    {
+      "id": "C",
+      "verdict": "accepted_with_warnings",
+      "reasons": [],
+      "warnings": [
+        "weight_variability: Kish's design effect from weighting is 2.41, so the weights alone cut the effective sample from 8,704 to 3,611",
+        "extreme_weights: the largest weight is 18.7 times the median",
+        "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
+      ],
+      "standing_ceiling": "supported",
+      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "assumes": [
+        "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
+        "lonely psu: refuse",
+        "df: design",
+        "item missing: drop_per_estimate",
+        "domain rule: subpopulation",
+        "proportion ci: beta",
+        "quantile: {'rule': 'math', 'interval': 'woodruff_wald'}"
+      ],
+      "cites": [
+        "est/obesity_sex/adult_sex=female/yes/estimate",
+        "est/obesity_sex/adult_sex=female/yes/ci_lower",
+        "est/obesity_sex/adult_sex=female/yes/ci_upper",
+        "est/obesity_sex/adult_sex=male/yes/estimate",
+        "est/obesity_sex/adult_sex=male/yes/ci_lower",
+        "est/obesity_sex/adult_sex=male/yes/ci_upper"
+      ]
+    }
+  ]
+}

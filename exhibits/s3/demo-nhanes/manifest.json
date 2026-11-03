@@ -1,0 +1,74 @@
+{
+  "exhibit": "s3-demo-nhanes",
+  "engine": "s3",
+  "note": "Pipeline demonstration, not a published piece: the 8,704 examined participants of NHANES 2017-2018 (National Center for Health Statistics, public domain), regenerated through the S3 statistics engine. Adult (aged 20 and over) obesity prevalence overall, by sex and by race and Hispanic origin, each estimated as a subpopulation of the full stratified two-PSU design with the exam weights and Korn-Graubard intervals. The CSV is built by scripts/nhanes_extract.py from the CDC files DEMO_J.xpt and BMX_J.xpt, whose sha256 the script checks. These are crude prevalences; pregnant women are not excluded and no age adjustment is applied, so they differ slightly from the NCHS data brief figures.",
+  "data_source": "National Center for Health Statistics, National Health and Nutrition Examination Survey 2017-2018: DEMO_J and BMX_J (https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/)",
+  "spec": {
+    "source": {"kind": "csv", "path": "nhanes-2017-2018.csv"},
+    "model": {
+      "method": "estimate",
+      "method_version": "S3.0.0",
+      "design": {"type": "stratified_cluster", "ids": ["psu"], "strata": "stratum", "weights": "wt_exam", "fpc": [],
+                 "fpc_kind": null, "nest": true, "lonely_psu": "refuse", "df": "design"},
+      "estimates": [
+        {"id": "obesity", "statistic": "proportion", "variable": "obese"},
+        {"id": "obesity_sex", "statistic": "proportion", "variable": "obese", "by": "adult_sex"},
+        {"id": "obesity_race", "statistic": "proportion", "variable": "obese", "by": "adult_race"},
+        {"id": "bmi", "statistic": "mean", "variable": "bmi", "by": "adult"},
+        {"id": "bmi_median", "statistic": "quantile", "variable": "bmi", "probabilities": [0.5], "by": "adult"}
+      ],
+      "item_missing": "drop_per_estimate",
+      "proportion_ci": "beta",
+      "quantile": {"rule": "math", "interval": "woodruff_wald"},
+      "design_effect": ["kish", "srswor"],
+      "domain_rule": "subpopulation",
+      "confidence_level": 0.95,
+      "engine": "python",
+      "seed": 0
+    }
+  },
+  "now": "2026-11-02T00:00:00.000Z",
+  "expected_output_hash": "d3c191f93d266b5d362b305e2e95ac643cbeb8329ff0c3130cace0fa299fa8e1",
+  "figures": [
+    "est/obesity/yes/estimate",
+    "est/obesity/yes/ci_lower",
+    "est/obesity/yes/ci_upper",
+    "est/obesity/yes/respondents",
+    "est/obesity/yes/deff_srswor",
+    "est/obesity_sex/adult_sex=female/yes/estimate",
+    "est/obesity_sex/adult_sex=female/yes/ci_lower",
+    "est/obesity_sex/adult_sex=female/yes/ci_upper",
+    "est/obesity_sex/adult_sex=male/yes/estimate",
+    "est/obesity_sex/adult_sex=male/yes/ci_lower",
+    "est/obesity_sex/adult_sex=male/yes/ci_upper",
+    "est/obesity_race/adult_race=Non-Hispanic Asian/yes/estimate",
+    "est/obesity_race/adult_race=Non-Hispanic Black/yes/estimate",
+    "est/obesity_race/adult_race=Non-Hispanic White/yes/estimate",
+    "est/obesity_race/adult_race=Mexican American/yes/estimate",
+    "est/bmi/adult=adult/estimate",
+    "est/bmi_median/adult=adult/p0.5/estimate"
+  ],
+  "claims": [
+    {
+      "id": "A",
+      "text": "Among adults, 42.7% (39.0% to 46.4%) had a body mass index of 30 or more.",
+      "cites": ["est/obesity/yes/estimate", "est/obesity/yes/ci_lower", "est/obesity/yes/ci_upper"],
+      "standing": "supported"
+    },
+    {
+      "id": "B",
+      "text": "The share was 17.6% among non-Hispanic Asian adults and 49.5% among non-Hispanic Black adults.",
+      "cites": ["est/obesity_race/adult_race=Non-Hispanic Asian/yes/estimate",
+                "est/obesity_race/adult_race=Non-Hispanic Black/yes/estimate"],
+      "standing": "supported"
+    },
+    {
+      "id": "C",
+      "text": "The share was 42.4% among women (38.3% to 46.5%) and 43.0% among men (37.3% to 48.8%).",
+      "cites": ["est/obesity_sex/adult_sex=female/yes/estimate", "est/obesity_sex/adult_sex=female/yes/ci_lower",
+                "est/obesity_sex/adult_sex=female/yes/ci_upper", "est/obesity_sex/adult_sex=male/yes/estimate",
+                "est/obesity_sex/adult_sex=male/yes/ci_lower", "est/obesity_sex/adult_sex=male/yes/ci_upper"],
+      "standing": "supported"
+    }
+  ]
+}
