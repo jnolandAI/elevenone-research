@@ -7,7 +7,7 @@
     "source": {"kind": "csv", "path": "nhanes-2017-2018.csv"},
     "model": {
       "method": "estimate",
-      "method_version": "S3.0.0",
+      "method_version": "S3.1.0",
       "design": {"type": "stratified_cluster", "ids": ["psu"], "strata": "stratum", "weights": "wt_exam", "fpc": [],
                  "fpc_kind": null, "nest": true, "lonely_psu": "refuse", "df": "design"},
       "estimates": [
@@ -28,7 +28,7 @@
     }
   },
   "now": "2026-11-02T00:00:00.000Z",
-  "expected_output_hash": "d3c191f93d266b5d362b305e2e95ac643cbeb8329ff0c3130cace0fa299fa8e1",
+  "expected_output_hash": "5c5ce360c89d59cb7938ea30c76e460137a4e95df0435bc2924c316d24cad16f",
   "figures": [
     "est/obesity/yes/estimate",
     "est/obesity/yes/ci_lower",

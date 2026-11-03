@@ -3,11 +3,11 @@
   "engine": {
     "name": "s3",
     "method": "estimate",
-    "method_version": "S3.0.0"
+    "method_version": "S3.1.0"
   },
   "now": "2026-11-02T00:00:00.000Z",
-  "input_hash": "4c50b119706e1913ff688129c3c58289f628eb8d119e33437201eab5ee7646ad",
-  "output_hash": "d3c191f93d266b5d362b305e2e95ac643cbeb8329ff0c3130cace0fa299fa8e1",
+  "input_hash": "bf5b59a563b6f1db85f34a825e147e5b0df2736b3080a2587f99ff36e6a891be",
+  "output_hash": "5c5ce360c89d59cb7938ea30c76e460137a4e95df0435bc2924c316d24cad16f",
   "rows": {
     "count": 8704,
     "enumerated": true,
@@ -119,7 +119,7 @@
         "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "rests_on": "S3 estimate (S3.1.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output 5c5ce360c89d",
       "assumes": [
         "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
         "lonely psu: refuse",
@@ -145,7 +145,7 @@
         "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "rests_on": "S3 estimate (S3.1.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output 5c5ce360c89d",
       "assumes": [
         "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
         "lonely psu: refuse",
@@ -170,7 +170,7 @@
         "design_df: 15 design degrees of freedom (PSUs minus strata); intervals widen and the normal approximation weakens"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S3 estimate (S3.0.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output d3c191f93d26",
+      "rests_on": "S3 estimate (S3.1.0) on nhanes-2017-2018.csv sha256 4bafcc326486, 8,704 respondents, 30 PSUs in 15 strata, run 2026-11-02T00:00:00.000Z, output 5c5ce360c89d",
       "assumes": [
         "variance: Taylor linearization (R survey's svyrecvar), later stages added when an fpc is given",
         "lonely psu: refuse",
