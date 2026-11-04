@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
    committed exhibit to the manifest and to the claim block's rules. */
 
 // Each engine's claim check words its "Rests on" row differently: S1 gives n, S2 units, S3 respondents, S5 series.
-const RESTS_ON: Record<string, RegExp> = { s1: /n = [\d,]+/, s2: /[\d,]+ units/, s3: /[\d,]+ respondents/, s5: /[\d,]+ series/ };
+const RESTS_ON: Record<string, RegExp> = { s1: /n = [\d,]+/, s2: /[\d,]+ units/, s3: /[\d,]+ respondents/, s5: /[\d,]+ series/, s6: /[\d,]+ rows/ };
 const exhibits = Object.keys(RESTS_ON).flatMap((engine) => {
   const root = join(__dirname, '..', 'exhibits', engine);
   return existsSync(root)

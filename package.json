@@ -27,7 +27,9 @@
     "s3:exhibit": "python scripts/s1_exhibit.py exhibits/s3/demo-nhanes/manifest.json",
     "s3:check": "python scripts/s1_exhibit.py exhibits/s3/demo-nhanes/manifest.json --check",
     "s5:exhibit": "python scripts/s1_exhibit.py exhibits/s5/demo-retail/manifest.json",
-    "s5:check": "python scripts/s1_exhibit.py exhibits/s5/demo-retail/manifest.json --check"
+    "s5:check": "python scripts/s1_exhibit.py exhibits/s5/demo-retail/manifest.json --check",
+    "s6:exhibit": "python scripts/s1_exhibit.py exhibits/s6/demo-firm-survival/manifest.json",
+    "s6:check": "python scripts/s1_exhibit.py exhibits/s6/demo-firm-survival/manifest.json --check"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

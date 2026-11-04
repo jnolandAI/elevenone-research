@@ -1,0 +1,73 @@
+{
+  "exhibit": "s6-demo-firm-survival",
+  "engine": "s6",
+  "note": "Pipeline demonstration, not a published piece: US employer firms counted by year and firm age from 1978 to 2023 (US Census Bureau, Business Dynamics Statistics, 2023 release, public domain), regenerated through the S6 statistics engine. The firms aged 0 in 2005, 2010, 2015 and 2018 are followed to age 5, the last age the table reports one year at a time, and the shifted beta-geometric model is fitted to each cohort and projected to age 10. The CSV is built by scripts/bds_extract.py from the Census file, whose sha256 the script checks. The counts can also move with ownership changes, so a firm that leaves a cohort has not always closed. They are the ones the Census Bureau published in that file, and later revisions would change them.",
+  "data_source": "US Census Bureau, Business Dynamics Statistics, firm characteristics by firm age, 2023 release (https://www2.census.gov/programs-surveys/bds/tables/time-series/2023/bds2023_fa.csv)",
+  "spec": {
+    "source": {
+      "kind": "csv",
+      "path": "bds-firm-cohorts.csv"
+    },
+    "model": {
+      "method": "survival",
+      "method_version": "S6.0.0",
+      "outcome": null,
+      "analyses": [
+        {
+          "id": "firms",
+          "kind": "retention",
+          "cohort": "cohort",
+          "period": "age",
+          "survivors": "firms",
+          "model": "shifted_beta_geometric",
+          "horizon": 10,
+          "discount_rate": 0.1,
+          "value_per_period": null
+        }
+      ],
+      "item_missing": "drop_per_analysis",
+      "confidence_level": 0.95,
+      "engine": "python",
+      "seed": 1
+    }
+  },
+  "now": "2026-11-04T00:00:00.000Z",
+  "expected_output_hash": "44050840ee43a298aac4d103d11fedfe7f22faced814a5447580a0a8b026664b",
+  "figures": [
+    "ret/firms/2005/t0/observed",
+    "ret/firms/2005/t5/observed",
+    "ret/firms/2005/t10/fitted",
+    "ret/firms/2018/t1/retention",
+    "ret/firms/2018/t5/retention",
+    "ret/firms/2018/alpha",
+    "ret/firms/2018/beta"
+  ],
+  "claims": [
+    {
+      "id": "A",
+      "text": "Of the 518,727 employer firms aged 0 in 2005, 230,229 were counted at age 5.",
+      "cites": [
+        "ret/firms/2005/t0/observed",
+        "ret/firms/2005/t5/observed"
+      ],
+      "standing": "firm"
+    },
+    {
+      "id": "B",
+      "text": "For the 2018 cohort the fitted retention rate is 78.6% in the first year and 94.1% in the fifth.",
+      "cites": [
+        "ret/firms/2018/t1/retention",
+        "ret/firms/2018/t5/retention"
+      ],
+      "standing": "supported"
+    },
+    {
+      "id": "C",
+      "text": "The model fitted to the five observed years projects 158,965 firms from the 2005 cohort at age 10.",
+      "cites": [
+        "ret/firms/2005/t10/fitted"
+      ],
+      "standing": "supported"
+    }
+  ]
+}

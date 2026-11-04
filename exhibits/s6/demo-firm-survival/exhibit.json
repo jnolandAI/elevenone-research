@@ -1,0 +1,106 @@
+{
+  "exhibit": "s6-demo-firm-survival",
+  "engine": {
+    "name": "s6",
+    "method": "survival",
+    "method_version": "S6.0.0"
+  },
+  "now": "2026-11-04T00:00:00.000Z",
+  "input_hash": "b6837842b4e28b10097813e5e1feaccc9412442902807c55a791188b36a11285",
+  "output_hash": "44050840ee43a298aac4d103d11fedfe7f22faced814a5447580a0a8b026664b",
+  "rows": {
+    "count": 24,
+    "enumerated": true,
+    "numbering": "data rows, 1-based",
+    "ranges": [
+      [
+        1,
+        24
+      ]
+    ],
+    "sha256": "088889b8071756d3559dc2172e525644f0be09d4b3fb26a697070bddcb805338"
+  },
+  "figures": {
+    "ret/firms/2005/t0/observed": {
+      "value": 518727.0,
+      "display": "5.187e+05",
+      "unit": "customers"
+    },
+    "ret/firms/2005/t5/observed": {
+      "value": 230229.0,
+      "display": "2.302e+05",
+      "unit": "customers"
+    },
+    "ret/firms/2005/t10/fitted": {
+      "value": 158965.0851965835,
+      "display": "1.59e+05",
+      "unit": "customers"
+    },
+    "ret/firms/2018/t1/retention": {
+      "value": 0.7856088868968774,
+      "display": "0.7856",
+      "unit": "probability"
+    },
+    "ret/firms/2018/t5/retention": {
+      "value": 0.940758443910808,
+      "display": "0.9408",
+      "unit": "probability"
+    },
+    "ret/firms/2018/alpha": {
+      "value": 0.32744826079735534,
+      "display": "0.3274",
+      "unit": "parameter"
+    },
+    "ret/firms/2018/beta": {
+      "value": 1.1998923834011372,
+      "display": "1.2",
+      "unit": "parameter"
+    }
+  },
+  "claims": [
+    {
+      "id": "A",
+      "verdict": "accepted",
+      "reasons": [],
+      "warnings": [],
+      "standing_ceiling": "firm",
+      "rests_on": "S6 survival (S6.0.0) on bds-firm-cohorts.csv sha256 009e18fa68a1, 24 rows, run 2026-11-04T00:00:00.000Z, output 44050840ee43",
+      "assumes": [
+        "firms (retention): cohort cohort, period age, survivors firms, model shifted_beta_geometric, horizon 10, discount rate 0.1"
+      ],
+      "cites": [
+        "ret/firms/2005/t0/observed",
+        "ret/firms/2005/t5/observed"
+      ]
+    },
+    {
+      "id": "B",
+      "verdict": "accepted",
+      "reasons": [],
+      "warnings": [],
+      "standing_ceiling": "firm",
+      "rests_on": "S6 survival (S6.0.0) on bds-firm-cohorts.csv sha256 009e18fa68a1, 24 rows, run 2026-11-04T00:00:00.000Z, output 44050840ee43",
+      "assumes": [
+        "firms (retention): cohort cohort, period age, survivors firms, model shifted_beta_geometric, horizon 10, discount rate 0.1"
+      ],
+      "cites": [
+        "ret/firms/2018/t1/retention",
+        "ret/firms/2018/t5/retention"
+      ]
+    },
+    {
+      "id": "C",
+      "verdict": "accepted",
+      "reasons": [],
+      "warnings": [],
+      "standing_ceiling": "firm",
+      "rests_on": "S6 survival (S6.0.0) on bds-firm-cohorts.csv sha256 009e18fa68a1, 24 rows, run 2026-11-04T00:00:00.000Z, output 44050840ee43",
+      "assumes": [
+        "firms (retention): cohort cohort, period age, survivors firms, model shifted_beta_geometric, horizon 10, discount rate 0.1"
+      ],
+      "cites": [
+        "ret/firms/2005/t10/fitted"
+      ]
+    }
+  ]
+}
