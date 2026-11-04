@@ -2,12 +2,12 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/* The site-side half of the exhibit contract for S1, S2 and S3 (scripts/s1_exhibit.py writes the file;
-   `npm run s1:check`, `s2:check` and `s3:check` prove it is what its manifest produces). These checks need no Python: they hold the
+/* The site-side half of the exhibit contract for S1, S2, S3 and S5 (scripts/s1_exhibit.py writes the file;
+   `npm run s1:check`, `s2:check`, `s3:check` and `s5:check` prove it is what its manifest produces). These checks need no Python: they hold the
    committed exhibit to the manifest and to the claim block's rules. */
 
-// Each engine's claim check words its "Rests on" row differently: S1 gives n, S2 units, S3 respondents.
-const RESTS_ON: Record<string, RegExp> = { s1: /n = [\d,]+/, s2: /[\d,]+ units/, s3: /[\d,]+ respondents/ };
+// Each engine's claim check words its "Rests on" row differently: S1 gives n, S2 units, S3 respondents, S5 series.
+const RESTS_ON: Record<string, RegExp> = { s1: /n = [\d,]+/, s2: /[\d,]+ units/, s3: /[\d,]+ respondents/, s5: /[\d,]+ series/ };
 const exhibits = Object.keys(RESTS_ON).flatMap((engine) => {
   const root = join(__dirname, '..', 'exhibits', engine);
   return existsSync(root)

@@ -1,0 +1,224 @@
+{
+  "exhibit": "s5-demo-retail",
+  "engine": "s5",
+  "note": "Pipeline demonstration, not a published piece: US retail and food services sales, not seasonally adjusted, monthly from January 1992 to August 2026, in millions of dollars (US Census Bureau, Monthly Retail Trade Survey, public domain), regenerated through the S5 statistics engine. Exponential smoothing and ARIMA are each selected by AICc and compared with the seasonal naive benchmark over eight rolling origins from August 2021 to February 2025, twelve months ahead. The CSV is built by scripts/mrts_extract.py from the Census workbook, whose sha256 the script checks. The estimates are the ones the Census Bureau published in that workbook, and later revisions would change them.",
+  "data_source": "US Census Bureau, Monthly Retail Trade Survey, Estimates of Monthly Retail and Food Services Sales by Kind of Business, Retail and food services sales, total, not adjusted (https://www.census.gov/retail/mrts/www/mrtssales92-present.xlsx)",
+  "spec": {
+    "source": {
+      "kind": "csv",
+      "path": "mrts-retail-food.csv"
+    },
+    "model": {
+      "method": "forecast",
+      "method_version": "S5.0.0",
+      "series": {
+        "key": null,
+        "period": "month",
+        "value": "sales",
+        "frequency": "month",
+        "seasonal_period": 12,
+        "gaps": "refuse",
+        "aggregate": {
+          "rule": "none",
+          "week_start": null
+        }
+      },
+      "horizon": 12,
+      "levels": [
+        80,
+        95
+      ],
+      "transform": {
+        "kind": "none",
+        "lambda": null,
+        "lambda_bounds": null,
+        "guerrero_subseries": null,
+        "lambda_solver": null,
+        "back_transform": null
+      },
+      "models": [
+        {
+          "id": "seasonal_naive",
+          "kind": "benchmark",
+          "method": "seasonal_naive",
+          "seasonal_test": null,
+          "interval": "analytic"
+        },
+        {
+          "id": "ets",
+          "kind": "ets",
+          "model": "select",
+          "damped": null,
+          "select": {
+            "errors": [
+              "A",
+              "M"
+            ],
+            "trends": [
+              "N",
+              "A"
+            ],
+            "seasons": [
+              "N",
+              "A",
+              "M"
+            ],
+            "damped_options": [
+              true,
+              false
+            ],
+            "allow_multiplicative_trend": false,
+            "restrict_infinite_variance": true,
+            "criterion": "aicc"
+          },
+          "opt_criterion": "lik",
+          "nmse": null,
+          "bounds": "both",
+          "limits": {
+            "alpha": [
+              0.0001,
+              0.9999
+            ],
+            "beta": [
+              0.0001,
+              0.9999
+            ],
+            "gamma": [
+              0.0001,
+              0.9999
+            ],
+            "phi": [
+              0.8,
+              0.98
+            ]
+          },
+          "initial_states": "optimized",
+          "seasonal_constraint": "sum_to_period",
+          "optimum": {
+            "starts": 0,
+            "polish": "none"
+          },
+          "interval": "analytic",
+          "paths": null
+        },
+        {
+          "id": "arima",
+          "kind": "arima",
+          "order": null,
+          "seasonal_order": null,
+          "constant": null,
+          "select": {
+            "search": "stepwise",
+            "approximation": "css_when_long",
+            "seasonal": true,
+            "max": {
+              "p": 5,
+              "q": 5,
+              "P": 2,
+              "Q": 2,
+              "total": 5,
+              "d": 2,
+              "D": 1
+            },
+            "start": {
+              "p": 2,
+              "q": 2,
+              "P": 1,
+              "Q": 1
+            },
+            "criterion": "aicc",
+            "d": null,
+            "d_test": {
+              "test": "kpss",
+              "level": 0.05,
+              "lags": "hobijn"
+            },
+            "D": null,
+            "D_test": {
+              "test": "seas",
+              "threshold": 0.64
+            },
+            "allow_mean": true,
+            "allow_drift": true
+          },
+          "estimation": "css_ml",
+          "sigma2": "df_corrected",
+          "ss_init": "gardner1980",
+          "stationarity": "enforce",
+          "optimum": {
+            "starts": 0,
+            "polish": "none"
+          },
+          "interval": "analytic"
+        }
+      ],
+      "evaluation": {
+        "kind": "rolling_origin",
+        "origins": {
+          "first": 356,
+          "step": 6,
+          "count": 8
+        },
+        "window": "expanding",
+        "width": null,
+        "refit": "every_origin",
+        "measures": [
+          "mae",
+          "smape_abs",
+          "mase",
+          "coverage"
+        ],
+        "scale_lag": "seasonal_period",
+        "msis_level": null,
+        "aggregate": "series_mean_of_horizon_means",
+        "relative_to": "seasonal_naive"
+      },
+      "engine": "python",
+      "seed": 20261103
+    }
+  },
+  "now": "2026-11-03T00:00:00.000Z",
+  "expected_output_hash": "2359a17ae6e66abafc541ec651f6164f607f40b38e2b8c7f855f41c10fe95266",
+  "figures": [
+    "fc/series/ets/h1/point",
+    "fc/series/ets/h1/lo95",
+    "fc/series/ets/h1/hi95",
+    "acc/ets/mase",
+    "acc/seasonal_naive/mase",
+    "acc/arima/mase",
+    "acc/ets/coverage95",
+    "acc/arima/coverage95"
+  ],
+  "claims": [
+    {
+      "id": "A",
+      "text": "The ETS(M,Ad,M) model forecasts sales of $707,924 million for September 2026, with a 95% interval of $672,819 million to $743,029 million.",
+      "cites": [
+        "fc/series/ets/h1/point",
+        "fc/series/ets/h1/lo95",
+        "fc/series/ets/h1/hi95"
+      ],
+      "standing": "supported"
+    },
+    {
+      "id": "B",
+      "about": "forecast_accuracy",
+      "text": "Over eight rolling origins the mean absolute scaled error was 0.82 for ETS, 1.17 for ARIMA and 1.40 for the seasonal naive benchmark.",
+      "cites": [
+        "acc/ets/mase",
+        "acc/arima/mase",
+        "acc/seasonal_naive/mase"
+      ],
+      "standing": "supported"
+    },
+    {
+      "id": "C",
+      "text": "In the same backtest 97.9% of actual months fell inside the ETS 95% interval and 82.3% fell inside the ARIMA 95% interval.",
+      "cites": [
+        "acc/ets/coverage95",
+        "acc/arima/coverage95"
+      ],
+      "standing": "supported"
+    }
+  ]
+}
