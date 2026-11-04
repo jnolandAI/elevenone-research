@@ -3,11 +3,11 @@
   "engine": {
     "name": "s5",
     "method": "forecast",
-    "method_version": "S5.0.0"
+    "method_version": "S5.1.0"
   },
   "now": "2026-11-03T00:00:00.000Z",
-  "input_hash": "6768713678c2ca09b31915b755d76e93579204ccb9cfba9ee53da35d24cc06cb",
-  "output_hash": "2359a17ae6e66abafc541ec651f6164f607f40b38e2b8c7f855f41c10fe95266",
+  "input_hash": "5afb5167ed863a5750279ad99ed39b8936e7944cbd49120dbaf59e50e67a30fd",
+  "output_hash": "66a42c13eb0ce4b61c6bedac0591d6a8d144eb54324312fe3d7632a077644f7c",
   "rows": {
     "count": 416,
     "enumerated": true,
@@ -72,7 +72,7 @@
         "parameter_bound (ets, series): on a limit: phi 0.98"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S5 forecast (S5.0.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 2359a17ae6e6",
+      "rests_on": "S5 forecast (S5.1.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 66a42c13eb0c",
       "assumes": [
         "ets on series: ETS(M,Ad,M), intervals at [80.0, 95.0]"
       ],
@@ -93,7 +93,7 @@
         "residual_autocorrelation (arima, series): Ljung-Box Q 46.39 on 20 df at lag 24, p 0.0007124; the residuals are autocorrelated"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S5 forecast (S5.0.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 2359a17ae6e6",
+      "rests_on": "S5 forecast (S5.1.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 66a42c13eb0c",
       "assumes": [
         "arima on series: ARIMA(1,1,2)(0,1,1)[12], intervals at [80.0, 95.0]",
         "ets on series: ETS(M,Ad,M), intervals at [80.0, 95.0]",
@@ -115,7 +115,7 @@
         "residual_autocorrelation (arima, series): Ljung-Box Q 46.39 on 20 df at lag 24, p 0.0007124; the residuals are autocorrelated"
       ],
       "standing_ceiling": "supported",
-      "rests_on": "S5 forecast (S5.0.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 2359a17ae6e6",
+      "rests_on": "S5 forecast (S5.1.0) on mrts-retail-food.csv sha256 e5f07f54c62a, 1 series, run 2026-11-03T00:00:00.000Z, output 66a42c13eb0c",
       "assumes": [
         "arima on series: ARIMA(1,1,2)(0,1,1)[12], intervals at [80.0, 95.0]",
         "ets on series: ETS(M,Ad,M), intervals at [80.0, 95.0]"

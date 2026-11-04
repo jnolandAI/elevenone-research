@@ -10,7 +10,7 @@
     },
     "model": {
       "method": "forecast",
-      "method_version": "S5.0.0",
+      "method_version": "S5.1.0",
       "series": {
         "key": null,
         "period": "month",
@@ -178,7 +178,7 @@
     }
   },
   "now": "2026-11-03T00:00:00.000Z",
-  "expected_output_hash": "2359a17ae6e66abafc541ec651f6164f607f40b38e2b8c7f855f41c10fe95266",
+  "expected_output_hash": "66a42c13eb0ce4b61c6bedac0591d6a8d144eb54324312fe3d7632a077644f7c",
   "figures": [
     "fc/series/ets/h1/point",
     "fc/series/ets/h1/lo95",
